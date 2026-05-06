@@ -72,9 +72,12 @@ async function sendKakaoMessage(message: string) {
   })
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url)
+    const hour = searchParams.get('hour') || '06'
     const today = new Date().toISOString().split('T')[0]
+    const reportKey = `${today}_${hour}`
 
     const [ionqNews, quantumNews] = await Promise.all([
       fetchNews('IONQ'),
@@ -83,10 +86,10 @@ export async function GET() {
 
     const summary = await summarizeWithGroq(ionqNews, quantumNews)
 
-    const { data: report } = await supabase
+const { data: report } = await supabase
       .from('reports')
       .upsert({
-        date: today,
+        date: reportKey,
         summary: summary.overall_summary,
         ionq_news: ionqNews.map((n, i) => ({ ...n, summary: summary.ionq_summaries[i] })),
         quantum_news: quantumNews.map((n, i) => ({ ...n, summary: summary.quantum_summaries[i] }))
@@ -94,9 +97,8 @@ export async function GET() {
       .select()
       .single()
 
-    const reportUrl = `${process.env.NEXT_PUBLIC_API_URL}/reports/${today}`
-    const kakaoMessage = `[양자컴퓨터 뉴스 일일요약 ${today}]\n\n${summary.overall_summary}\n\n리포트 보기: ${reportUrl}`
-
+    const reportUrl = `${process.env.NEXT_PUBLIC_API_URL}/reports/${reportKey}`
+    const kakaoMessage = `[양자컴퓨터 뉴스 일일요약 ${reportKey}]\n\n${summary.overall_summary}\n\n리포트 보기: ${reportUrl}`
     await sendKakaoMessage(kakaoMessage)
 
     return Response.json({ success: true, report })

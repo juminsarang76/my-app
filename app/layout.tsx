@@ -25,19 +25,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body className="min-h-full">
         <nav style={{
-          width: 200,
-          minHeight: '100vh',
-          borderRight: '1px solid #eee',
-          padding: '32px 16px',
+          borderBottom: '1px solid #eee',
+          padding: '12px 20px',
           fontFamily: 'sans-serif',
-          flexShrink: 0
+          display: 'flex',
+          alignItems: 'center',
+          gap: 24
         }}>
-          <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 24, color: '#111' }}>
+          <div style={{ fontSize: 15, fontWeight: 500, color: '#111' }}>
             My App
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{ display: 'flex', gap: 4 }}>
             <Link href="/" style={{ fontSize: 13, color: '#555', textDecoration: 'none', padding: '6px 10px', borderRadius: 6 }}>
               할 일 목록
             </Link>
@@ -51,5 +54,5 @@ export default function RootLayout({
         </main>
       </body>
     </html>
-  );
+  )
 }
