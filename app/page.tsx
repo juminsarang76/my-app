@@ -53,7 +53,7 @@ export default function Home() {
   }, [])
 
   return (
-    <main style={{ maxWidth: 480, margin: '60px auto', padding: '0 20px', fontFamily: 'sans-serif' }}>
+    <div style={{ maxWidth: 480, margin: '60px auto', padding: '0 20px', fontFamily: 'sans-serif' }}>
       <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 24 }}>할 일 목록</h1>
       <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
         <input
@@ -96,6 +96,6 @@ export default function Home() {
           </li>
         ))}
       </ul>
-    </main>
+    </div>
   )
 }
