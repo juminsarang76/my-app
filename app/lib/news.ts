@@ -20,6 +20,8 @@ export type Summary = {
   geeks: string[]
 }
 
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+
 function stripCdata(s: string): string {
   return s.replace(/<!\[CDATA\[|\]\]>/g, '').trim()
 }
@@ -29,17 +31,39 @@ function extractTag(xml: string, tag: string): string {
   return m ? stripCdata(m[1]) : ''
 }
 
-async function fetchRss(url: string, count = 5): Promise<NewsItem[]> {
+function extractAttrHref(xml: string): string {
+  const m = xml.match(/href=['"]([^'"]+)['"]/i)
+  return m ? m[1] : ''
+}
+
+function parseRss(text: string, count: number): NewsItem[] {
+  const items = text.match(/<item[\s>][\s\S]*?<\/item>/g) || []
+  return items.slice(0, count).map(item => ({
+    title: extractTag(item, 'title'),
+    link: extractTag(item, 'link') || extractTag(item, 'guid'),
+    pubDate: extractTag(item, 'pubDate'),
+  }))
+}
+
+function parseAtom(text: string, count: number): NewsItem[] {
+  const entries = text.match(/<entry[\s>][\s\S]*?<\/entry>/g) || []
+  return entries.slice(0, count).map(entry => {
+    const linkTag = entry.match(/<link[^>]*rel=['"]alternate['"][^>]*>/i)?.[0] ?? ''
+    return {
+      title: extractTag(entry, 'title'),
+      link: extractAttrHref(linkTag) || extractTag(entry, 'id'),
+      pubDate: extractTag(entry, 'published') || extractTag(entry, 'updated'),
+    }
+  })
+}
+
+async function fetchFeed(url: string, count = 5): Promise<NewsItem[]> {
   try {
-    const res = await fetch(url, { cache: 'no-store' })
+    const res = await fetch(url, { cache: 'no-store', headers: { 'User-Agent': UA } })
     if (!res.ok) return []
     const text = await res.text()
-    const items = text.match(/<item[\s>][\s\S]*?<\/item>/g) || []
-    return items.slice(0, count).map(item => ({
-      title: extractTag(item, 'title'),
-      link: extractTag(item, 'link') || extractTag(item, 'guid'),
-      pubDate: extractTag(item, 'pubDate'),
-    }))
+    if (text.includes('<entry')) return parseAtom(text, count)
+    return parseRss(text, count)
   } catch {
     return []
   }
@@ -47,10 +71,10 @@ async function fetchRss(url: string, count = 5): Promise<NewsItem[]> {
 
 export async function fetchAllNews(): Promise<AllNews> {
   const [quantum, youtube, yozm, geeks] = await Promise.all([
-    fetchRss('https://news.google.com/rss/search?q=양자컴퓨터+OR+IONQ&hl=ko&gl=KR&ceid=KR:ko'),
-    fetchRss('https://news.google.com/rss/search?q=양자컴퓨터+youtube&hl=ko&gl=KR&ceid=KR:ko'),
-    fetchRss('https://yozm.wishket.com/magazine/rss/'),
-    fetchRss('https://news.hada.io/rss'),
+    fetchFeed('https://news.google.com/rss/search?q=양자컴퓨터+OR+IONQ&hl=ko&gl=KR&ceid=KR:ko'),
+    fetchFeed('https://news.google.com/rss/search?q=양자컴퓨터+youtube&hl=ko&gl=KR&ceid=KR:ko'),
+    fetchFeed('https://yozm.wishket.com/magazine/feed/'),
+    fetchFeed('https://news.hada.io/rss/news'),
   ])
   return { quantum, youtube, yozm, geeks }
 }
@@ -114,6 +138,7 @@ overall_summary는 5줄 이내, 각 카테고리 요약은 각 3줄 이내로 �
 export function buildReportPayload(news: AllNews, summary: Summary) {
   return {
     summary: summary.overall,
+    ionq_news: [],
     quantum_news: news.quantum.map((n, i) => ({ ...n, summary: summary.quantum[i] ?? '' })),
     youtube_news: news.youtube.map((n, i) => ({ ...n, summary: summary.youtube[i] ?? '' })),
     yozm_news: news.yozm.map((n, i) => ({ ...n, summary: summary.yozm[i] ?? '' })),

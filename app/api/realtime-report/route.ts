@@ -32,11 +32,13 @@ export async function POST() {
     const summary = await summarizeNews(news)
     const payload = buildReportPayload(news, summary)
 
-    const { data: report } = await supabase
+    const { data: report, error: dbError } = await supabase
       .from('reports')
       .upsert({ date: key, ...payload })
       .select()
       .single()
+
+    if (dbError) throw new Error(`Supabase upsert failed: ${JSON.stringify(dbError)}`)
 
     const timeLabel = `${hhmm.slice(0, 2)}:${hhmm.slice(2)}`
     await sendKakaoMessage(
