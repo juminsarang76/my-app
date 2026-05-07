@@ -119,7 +119,7 @@ export default function RealtimePage() {
                 <h2 style={{ fontSize: 16, fontWeight: 500, marginBottom: 14 }}>{cat.label}</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {items.map((news, i) => (
-                    <div key={i} style={{ padding: '14px 18px', border: '1px solid #eee', borderRadius: 10 }}>
+                    <div key={i} style={{ padding: '14px 18px', border: '1px solid #BAE6FD', borderRadius: 10, background: '#EFF8FF' }}>
                       <div style={{ fontSize: 14, fontWeight: 500, color: '#111', marginBottom: 4, lineHeight: 1.5 }}>
                         {news.summary}
                       </div>

@@ -67,9 +67,9 @@ function QuoteCard({ q }: { q: Quote }) {
     >
       <div style={{
         padding: '16px 20px',
-        border: '1px solid #eee',
+        border: '1px solid #BAE6FD',
         borderRadius: 12,
-        background: 'white',
+        background: '#EFF8FF',
         cursor: 'pointer',
         transition: 'border-color 0.15s',
       }}>

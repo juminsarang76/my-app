@@ -74,7 +74,7 @@ export default function Home() {
         {todos.map((todo) => (
           <li
             key={todo.id}
-            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', border: '1px solid #eee', borderRadius: 8 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', border: '1px solid #BAE6FD', borderRadius: 8, background: '#EFF8FF' }}
           >
             <input
               type="checkbox"

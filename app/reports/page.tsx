@@ -23,7 +23,7 @@ export default async function ReportsPage() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {reports?.map(report => (
           <Link key={report.id} href={`/reports/${report.date}`} style={{ textDecoration: 'none' }}>
-            <div style={{ padding: '16px 20px', border: '1px solid #eee', borderRadius: 12, cursor: 'pointer' }}>
+            <div style={{ padding: '16px 20px', border: '1px solid #BAE6FD', borderRadius: 12, cursor: 'pointer', background: '#EFF8FF' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <div style={{ fontSize: 15, fontWeight: 500, color: '#111' }}>
                   정기요약 {report.date}
