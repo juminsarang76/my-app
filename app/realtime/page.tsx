@@ -28,29 +28,36 @@ const CATEGORIES = [
 export default function RealtimePage() {
   const [report, setReport] = useState<Report | null>(null)
   const [loading, setLoading] = useState(true)
-  const [updating, setUpdating] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [sending, setSending] = useState(false)
+  const [fetchError, setFetchError] = useState<string | null>(null)
+  const [sendResult, setSendResult] = useState<'success' | 'error' | null>(null)
 
   useEffect(() => {
-    fetch('/api/realtime-report')
+    fetch('/api/realtime-report', { method: 'POST' })
       .then(r => r.json())
-      .then(data => { setReport(data); setLoading(false) })
-      .catch(() => setLoading(false))
+      .then(data => {
+        if (data.error) setFetchError(data.error)
+        else if (data.report) setReport(data.report)
+      })
+      .catch(() => setFetchError('뉴스 수집 중 오류가 발생했습니다.'))
+      .finally(() => setLoading(false))
   }, [])
 
-  const handleUpdate = async () => {
-    setUpdating(true)
-    setError(null)
-    setReport(null)
+  const handleSendKakao = async () => {
+    if (!report) return
+    setSending(true)
+    setSendResult(null)
     try {
-      const res = await fetch('/api/realtime-report', { method: 'POST' })
-      const data = await res.json()
-      if (!res.ok) setError(data.error ?? '업데이트에 실패했습니다.')
-      else if (data.report) setReport(data.report)
+      const res = await fetch('/api/send-kakao', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ summary: report.summary, date: report.date }),
+      })
+      setSendResult(res.ok ? 'success' : 'error')
     } catch {
-      setError('네트워크 오류가 발생했습니다.')
+      setSendResult('error')
     } finally {
-      setUpdating(false)
+      setSending(false)
     }
   }
 
@@ -59,35 +66,43 @@ export default function RealtimePage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <h1 style={{ fontSize: 22, fontWeight: 500 }}>실시간요약</h1>
         <button
-          onClick={handleUpdate}
-          disabled={updating}
+          onClick={handleSendKakao}
+          disabled={sending || !report}
           style={{
             padding: '8px 18px',
-            background: updating ? '#aaa' : '#1D9E75',
-            color: 'white',
+            background: sending || !report ? '#aaa' : '#FEE500',
+            color: sending || !report ? 'white' : '#3C1E1E',
             border: 'none',
             borderRadius: 8,
             fontSize: 13,
-            cursor: updating ? 'not-allowed' : 'pointer',
+            fontWeight: 500,
+            cursor: sending || !report ? 'not-allowed' : 'pointer',
           }}
         >
-          {updating ? '업데이트 중...' : '실시간 업데이트'}
+          {sending ? '전송 중...' : '카카오톡 전송'}
         </button>
       </div>
       <p style={{ fontSize: 13, color: '#888', marginBottom: 28 }}>
-        버튼을 누르면 최신 뉴스를 수집·요약하고 카카오톡으로 전송합니다.
+        페이지 진입 시 자동으로 최신 뉴스를 수집합니다.
       </p>
 
-      {error && (
-        <div style={{ background: '#fff0f0', border: '1px solid #fcc', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: 13, color: '#c00' }}>
-          {error}
+      {sendResult === 'success' && (
+        <div style={{ background: '#f0fff8', border: '1px solid #b2f5e0', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#0a7' }}>
+          카카오톡으로 전송됐습니다.
+        </div>
+      )}
+      {sendResult === 'error' && (
+        <div style={{ background: '#fff0f0', border: '1px solid #fcc', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#c00' }}>
+          카카오톡 전송에 실패했습니다.
         </div>
       )}
 
-      {(loading || updating) ? (
-        <p style={{ color: '#aaa', fontSize: 14 }}>{updating ? '뉴스를 수집하고 있습니다...' : '불러오는 중...'}</p>
+      {loading ? (
+        <p style={{ color: '#aaa', fontSize: 14 }}>뉴스를 수집하고 있습니다...</p>
+      ) : fetchError ? (
+        <p style={{ color: '#c00', fontSize: 14 }}>{fetchError}</p>
       ) : !report ? (
-        <p style={{ color: '#aaa', fontSize: 14 }}>업데이트 버튼을 눌러 최신 뉴스를 가져오세요.</p>
+        <p style={{ color: '#aaa', fontSize: 14 }}>데이터를 불러오지 못했습니다.</p>
       ) : (
         <>
           <div style={{ background: '#f8f8f8', borderRadius: 12, padding: '16px 20px', marginBottom: 32 }}>

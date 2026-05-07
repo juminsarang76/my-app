@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate } from '@/app/lib/news'
-import { sendKakaoMessage } from '@/app/lib/kakao'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,11 +38,6 @@ export async function POST() {
       .single()
 
     if (dbError) throw new Error(`Supabase upsert failed: ${JSON.stringify(dbError)}`)
-
-    const timeLabel = `${hhmm.slice(0, 2)}:${hhmm.slice(2)}`
-    await sendKakaoMessage(
-      `[양자뉴스 실시간요약 ${date} ${timeLabel}]\n\n${summary.overall}\n\n자세히 보기: ${process.env.NEXT_PUBLIC_API_URL}/realtime`
-    )
 
     return Response.json({ success: true, report })
   } catch (error: unknown) {
