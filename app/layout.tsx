@@ -18,6 +18,14 @@ export const metadata: Metadata = {
   description: "양자뉴스 일일요약 서비스",
 };
 
+const NAV_LINKS = [
+  { href: '/reports',  label: '정기요약' },
+  { href: '/realtime', label: '실시간요약' },
+  { href: '/stocks',   label: '증권뉴스' },
+  { href: '/',         label: '할 일' },
+  { href: '/photos',   label: '사진' },
+]
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,9 +33,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </head>
       <body className="min-h-full">
         <nav style={{
           borderBottom: '1px solid #eee',
@@ -35,18 +40,21 @@ export default function RootLayout({
           fontFamily: 'sans-serif',
           display: 'flex',
           alignItems: 'center',
-          gap: 24
+          gap: 24,
         }}>
-          <div style={{ fontSize: 15, fontWeight: 500, color: '#111' }}>
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#111', flexShrink: 0 }}>
             My App
           </div>
-          <div style={{ display: 'flex', gap: 4 }}>
-            <Link href="/" style={{ fontSize: 13, color: '#555', textDecoration: 'none', padding: '6px 10px', borderRadius: 6 }}>
-              할 일 목록
-            </Link>
-            <Link href="/reports" style={{ fontSize: 13, color: '#555', textDecoration: 'none', padding: '6px 10px', borderRadius: 6 }}>
-              양자뉴스 일일요약
-            </Link>
+          <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                style={{ fontSize: 13, color: '#555', textDecoration: 'none', padding: '6px 10px', borderRadius: 6 }}
+              >
+                {label}
+              </Link>
+            ))}
           </div>
         </nav>
         <main style={{ flex: 1 }}>
