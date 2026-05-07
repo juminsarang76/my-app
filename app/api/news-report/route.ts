@@ -7,11 +7,12 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
 )
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const force = new URL(req.url).searchParams.get('force') === 'true'
     const hour = getKSTHour()
-    // 한국시 6시~12시(정오) 범위 외에는 실행 차단
-    if (hour < 6 || hour >= 12) {
+    // 한국시 6시~12시(정오) 범위 외에는 실행 차단 (force=true로 우회 가능)
+    if (!force && (hour < 6 || hour >= 12)) {
       return Response.json(
         { error: `정기요약은 한국시 06:00~12:00 사이에만 생성됩니다. (현재 KST ${hour}시)` },
         { status: 403 }
