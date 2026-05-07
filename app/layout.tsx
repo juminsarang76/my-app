@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const NAV_LINKS = [
   { href: '/reports',  label: '정기요약' },
   { href: '/realtime', label: '실시간요약' },
-  { href: '/stocks',   label: '증권뉴스' },
+  { href: '/stocks',   label: '증시지수' },
   { href: '/',         label: '할 일' },
   { href: '/photos',   label: '사진' },
 ]

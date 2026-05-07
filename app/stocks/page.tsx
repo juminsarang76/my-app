@@ -75,7 +75,7 @@ function QuoteCard({ q }: { q: Quote }) {
       }}>
         <div style={{ fontSize: 12, color: '#888', marginBottom: 6 }}>{q.label}</div>
         <div style={{ fontSize: 20, fontWeight: 600, color: '#111', marginBottom: 4 }}>{q.price}</div>
-        <div style={{ fontSize: 13, color: q.isUp ? '#1D9E75' : '#E24B4A' }}>
+        <div style={{ fontSize: 13, color: q.isUp ? '#E24B4A' : '#0369A1' }}>
           {q.isUp ? '▲' : '▼'} {q.change} ({q.changePercent}%)
         </div>
         <div style={{ fontSize: 11, color: '#ccc', marginTop: 8 }}>TradingView →</div>
@@ -96,7 +96,7 @@ export default async function StocksPage() {
 
   return (
     <main style={{ maxWidth: 680, margin: '40px auto', padding: '0 20px', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 28 }}>증권뉴스</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 28 }}>증시지수</h1>
 
       <section style={{ marginBottom: 28 }}>
         <h2 style={{ fontSize: 13, fontWeight: 500, color: '#888', marginBottom: 12 }}>미국 증시</h2>
@@ -119,7 +119,7 @@ export default async function StocksPage() {
         </div>
       </section>
 
-      <p style={{ fontSize: 11, color: '#bbb' }}>데이터 출처: Yahoo Finance · 5분 캐시 · 클릭 시 TradingView 차트</p>
+      <p style={{ fontSize: 11, color: '#bbb' }}>데이터 출처: Yahoo Finance · 5분 캐시 · 클릭 시 TradingView 차트 · <span style={{ color: '#E24B4A' }}>▲ 상승</span> / <span style={{ color: '#0369A1' }}>▼ 하락</span></p>
     </main>
   )
 }
