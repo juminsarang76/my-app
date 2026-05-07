@@ -61,16 +61,17 @@ export default async function ReportPage({ params }: { params: Promise<{ date: s
                   <div style={{ fontSize: 14, fontWeight: 500, color: '#111', marginBottom: 4, lineHeight: 1.5 }}>
                     {news.summary}
                   </div>
-                  <div style={{ fontSize: 12, color: '#999', marginBottom: 8 }}>{news.title}</div>
-                  {news.link && (
+                  {news.link ? (
                     <a
                       href={news.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ fontSize: 12, color: '#1D9E75', textDecoration: 'none' }}
+                      style={{ fontSize: 12, color: '#999', textDecoration: 'none' }}
                     >
-                      원문 보기 →
+                      {news.title}
                     </a>
+                  ) : (
+                    <div style={{ fontSize: 12, color: '#999' }}>{news.title}</div>
                   )}
                 </div>
               ))}
