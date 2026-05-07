@@ -72,7 +72,7 @@ async function fetchFeed(url: string, count = 5): Promise<NewsItem[]> {
 export async function fetchAllNews(): Promise<AllNews> {
   const [quantum, youtube, yozm, geeks] = await Promise.all([
     fetchFeed('https://news.google.com/rss/search?q=양자컴퓨터+OR+IONQ&hl=ko&gl=KR&ceid=KR:ko'),
-    fetchFeed('https://news.google.com/rss/search?q=양자컴퓨터+youtube&hl=ko&gl=KR&ceid=KR:ko'),
+    fetchFeed('https://news.google.com/rss/search?q=AI+인공지능+site:youtube.com&hl=ko&gl=KR&ceid=KR:ko'),
     fetchFeed('https://yozm.wishket.com/magazine/feed/'),
     fetchFeed('https://news.hada.io/rss/news'),
   ])
