@@ -87,7 +87,7 @@ export default function RealtimePage() {
       </p>
 
       {sendResult === 'success' && (
-        <div style={{ background: '#f0fff8', border: '1px solid #b2f5e0', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#0a7' }}>
+        <div style={{ background: '#EFF8FF', border: '1px solid #BAE6FD', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#0284C7' }}>
           카카오톡으로 전송됐습니다.
         </div>
       )}
@@ -105,7 +105,7 @@ export default function RealtimePage() {
         <p style={{ color: '#aaa', fontSize: 14 }}>데이터를 불러오지 못했습니다.</p>
       ) : (
         <>
-          <div style={{ background: '#f8f8f8', borderRadius: 12, padding: '16px 20px', marginBottom: 32 }}>
+          <div style={{ background: '#EFF8FF', borderRadius: 12, padding: '16px 20px', marginBottom: 32 }}>
             <div style={{ fontSize: 12, fontWeight: 500, color: '#888', marginBottom: 8 }}>전체 요약</div>
             <div style={{ fontSize: 14, lineHeight: 1.9, color: '#333', whiteSpace: 'pre-line' }}>
               {report.summary}

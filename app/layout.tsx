@@ -35,14 +35,14 @@ export default function RootLayout({
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
         <nav style={{
-          borderBottom: '1px solid #eee',
+          background: '#0EA5E9',
           padding: '12px 20px',
           fontFamily: 'sans-serif',
           display: 'flex',
           alignItems: 'center',
           gap: 24,
         }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: '#111', flexShrink: 0 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: 'white', flexShrink: 0 }}>
             My App
           </div>
           <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -50,7 +50,7 @@ export default function RootLayout({
               <Link
                 key={href}
                 href={href}
-                style={{ fontSize: 13, color: '#555', textDecoration: 'none', padding: '6px 10px', borderRadius: 6 }}
+                style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', textDecoration: 'none', padding: '6px 10px', borderRadius: 6 }}
               >
                 {label}
               </Link>
