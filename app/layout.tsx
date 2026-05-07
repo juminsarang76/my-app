@@ -35,7 +35,7 @@ export default function RootLayout({
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
         <nav style={{
-          background: '#0EA5E9',
+          background: '#0369A1',
           padding: '12px 20px',
           fontFamily: 'sans-serif',
           display: 'flex',

@@ -75,7 +75,7 @@ function QuoteCard({ q }: { q: Quote }) {
       }}>
         <div style={{ fontSize: 12, color: '#888', marginBottom: 6 }}>{q.label}</div>
         <div style={{ fontSize: 20, fontWeight: 600, color: '#111', marginBottom: 4 }}>{q.price}</div>
-        <div style={{ fontSize: 13, color: q.isUp ? '#0EA5E9' : '#E24B4A' }}>
+        <div style={{ fontSize: 13, color: q.isUp ? '#1D9E75' : '#E24B4A' }}>
           {q.isUp ? '▲' : '▼'} {q.change} ({q.changePercent}%)
         </div>
         <div style={{ fontSize: 11, color: '#ccc', marginTop: 8 }}>TradingView →</div>

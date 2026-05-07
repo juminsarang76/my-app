@@ -65,7 +65,7 @@ export default function Home() {
         />
         <button
           onClick={addTodo}
-          style={{ padding: '8px 16px', background: '#0EA5E9', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, cursor: 'pointer' }}
+          style={{ padding: '8px 16px', background: '#1D9E75', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, cursor: 'pointer' }}
         >
           추가
         </button>
