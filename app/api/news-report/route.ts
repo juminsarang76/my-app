@@ -26,7 +26,7 @@ export async function GET(req: Request) {
 
     const { data: report } = await supabase
       .from('reports')
-      .upsert({ date, ...payload })
+      .upsert({ date, ...payload }, { onConflict: 'date' })
       .select()
       .single()
 

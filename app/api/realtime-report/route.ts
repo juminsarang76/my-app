@@ -33,7 +33,7 @@ export async function POST() {
 
     const { data: report, error: dbError } = await supabase
       .from('reports')
-      .upsert({ date: key, ...payload })
+      .upsert({ date: key, ...payload }, { onConflict: 'date' })
       .select()
       .single()
 
