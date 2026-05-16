@@ -25,6 +25,7 @@ const NAV_LINKS = [
   { href: '/',         label: '할 일' },
   { href: '/photos',   label: '사진' },
   { href: '/민준입시.html', label: '민준입시' },
+  { href: '/강의.html',    label: '강의' },
 ]
 
 export default function RootLayout({

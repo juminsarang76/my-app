@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나는 어떻게 살고, 어떻게 일할 것인가 — 청년 수련회 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────
+   TOKENS
+───────────────────────────────────── */
+:root{
+  --bg:       #080B12;
+  --bg1:      #0E1220;
+  --bg2:      #131828;
+  --card:     #161C2C;
+  --card2:    #1C2438;
+  --border:   rgba(255,255,255,.07);
+  --border2:  rgba(255,255,255,.12);
+
+  --gold:     #F0B429;
+  --gold-lt:  #FFD97D;
+  --cyan:     #22D3EE;
+  --cyan-lt:  #67E8F9;
+  --red:      #F87171;
+  --red-lt:   #FCA5A5;
+  --green:    #4ADE80;
+  --green-lt: #86EFAC;
+  --violet:   #A78BFA;
+  --pink:     #F472B6;
+  --orange:   #FB923C;
+
+  --t1: #F8FAFC;
+  --t2: rgba(248,250,252,.6);
+  --t3: rgba(248,250,252,.33);
+
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Noto Serif KR', serif;
+  --sans: 'Noto Sans KR', sans-serif;
+  --display: 'Bebas Neue', sans-serif;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--t1);
+  line-height:1.75;
+  overflow-x:hidden;
+}
+
+/* grain */
+body::after{
+  content:'';
+  position:fixed;inset:0;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;opacity:.5;
+}
+
+/* ─────────────────────────────────────
+   NAV
+───────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  height:58px;
+  display:flex;align-items:center;
+  padding:0 1.5rem;gap:1.5rem;
+  background:rgba(8,11,18,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:var(--display);
+  font-size:1.3rem;letter-spacing:.06em;
+  color:var(--gold);white-space:nowrap;flex-shrink:0;
+}
+.nav-pills{
+  display:flex;gap:.2rem;list-style:none;
+  overflow-x:auto;scrollbar-width:none;flex:1;
+}
+.nav-pills::-webkit-scrollbar{display:none}
+.nav-pills a{
+  display:block;padding:.3rem .8rem;border-radius:20px;
+  font-size:.72rem;font-weight:700;
+  color:var(--t3);white-space:nowrap;
+  transition:all .25s;letter-spacing:.02em;
+}
+.nav-pills a:hover,.nav-pills a.on{color:var(--bg);background:var(--gold);}
+.nav-mono{
+  margin-left:auto;flex-shrink:0;
+  font-family:var(--mono);font-size:.68rem;color:var(--t3);
+}
+@media(max-width:700px){.nav-pills,.nav-mono{display:none}}
+
+/* ─────────────────────────────────────
+   HERO
+───────────────────────────────────── */
+.hero{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:5rem 2rem 4rem;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 60% at 85% 15%,rgba(240,180,41,.09) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 15% 85%,rgba(34,211,238,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 55% 55%,rgba(167,139,250,.05) 0%,transparent 55%);
+  animation:meshPulse 14s ease-in-out infinite alternate;
+}
+@keyframes meshPulse{
+  0%{transform:scale(1) rotate(0deg)}
+  100%{transform:scale(1.06) rotate(1deg)}
+}
+.hero-lines{
+  position:absolute;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(240,180,41,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(240,180,41,.03) 1px,transparent 1px);
+  background-size:64px 64px;
+  animation:linesDrift 25s linear infinite;
+}
+@keyframes linesDrift{to{background-position:64px 64px}}
+
+.hero-inner{
+  position:relative;z-index:2;
+  max-width:960px;width:100%;text-align:center;
+}
+.hero-chip{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.25);
+  padding:.38rem 1.1rem;border-radius:30px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:2.25rem;
+  opacity:0;animation:up .7s ease .2s forwards;
+}
+.hero-h{
+  font-family:var(--display);
+  font-size:clamp(3.5rem,9vw,9rem);
+  line-height:.92;letter-spacing:.03em;
+  margin-bottom:1.5rem;
+  opacity:0;animation:up .8s ease .4s forwards;
+}
+.hero-h .l1{display:block;color:var(--t1)}
+.hero-h .l2{
+  display:block;
+  background:linear-gradient(110deg,var(--gold),var(--orange),var(--red));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-h .l3{display:block;color:var(--cyan)}
+.hero-sub{
+  font-size:clamp(.95rem,2vw,1.15rem);
+  color:var(--t2);line-height:1.9;
+  max-width:620px;margin:0 auto 2.5rem;
+  opacity:0;animation:up .8s ease .6s forwards;
+}
+.hero-tags{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;
+  opacity:0;animation:up .8s ease .8s forwards;
+}
+.hero-tag{
+  display:flex;align-items:center;gap:.4rem;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  padding:.4rem .95rem;border-radius:8px;
+  font-size:.8rem;color:var(--t2);
+}
+.hero-tag b{color:var(--gold-lt)}
+.scroll-cue{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  color:var(--t3);font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;
+  opacity:0;animation:fadeIn 1s ease 1.5s forwards;
+}
+.scroll-cue-bar{width:1px;height:44px;background:linear-gradient(var(--gold),transparent);animation:scBar 2s ease-in-out infinite}
+@keyframes scBar{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:.7}}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
+.page{padding:6rem 2rem;max-width:1080px;margin:0 auto}
+.stripe{padding:6rem 2rem}
+.stripe.dark{background:var(--bg1)}
+.stripe.soft{background:var(--bg2)}
+.stripe .page-inner{max-width:1080px;margin:0 auto}
+
+.sec-eyebrow{
+  font-family:var(--mono);font-size:.68rem;
+  letter-spacing:.15em;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.28rem .75rem;border-radius:4px;
+  margin-bottom:.9rem;
+}
+.ey-gold  {color:var(--gold);  background:rgba(240,180,41,.1); border:1px solid rgba(240,180,41,.2)}
+.ey-cyan  {color:var(--cyan);  background:rgba(34,211,238,.08); border:1px solid rgba(34,211,238,.18)}
+.ey-red   {color:var(--red);   background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.18)}
+.ey-green {color:var(--green); background:rgba(74,222,128,.08); border:1px solid rgba(74,222,128,.18)}
+.ey-violet{color:var(--violet);background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.18)}
+.ey-pink  {color:var(--pink);  background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.18)}
+.ey-orange{color:var(--orange);background:rgba(251,146,60,.08); border:1px solid rgba(251,146,60,.18)}
+
+.sec-h{
+  font-family:var(--display);
+  font-size:clamp(2.4rem,5.5vw,4.8rem);
+  line-height:1;letter-spacing:.03em;
+  margin-bottom:.85rem;
+}
+.sec-h em{
+  font-style:normal;
+  background:linear-gradient(110deg,var(--gold),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sec-h em.r{background:linear-gradient(110deg,var(--red),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-h em.g{background:linear-gradient(110deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-h em.v{background:linear-gradient(110deg,var(--violet),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-lead{font-size:.97rem;color:var(--t2);line-height:1.9;max-width:700px;margin-bottom:2.75rem}
+
+/* ─────────────────────────────────────
+   GRID / CARDS
+───────────────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.ga{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:1.2rem}
+
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:1.6rem;
+  position:relative;overflow:hidden;
+  transition:transform .35s cubic-bezier(.22,.68,0,1.2),border-color .3s,box-shadow .3s;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  opacity:0;transition:opacity .3s;
+}
+.card:hover{transform:translateY(-5px);box-shadow:0 16px 50px rgba(0,0,0,.45)}
+.card:hover::before{opacity:1}
+.card.c-gold::before{background:linear-gradient(90deg,var(--gold),var(--orange))}
+.card.c-gold:hover{border-color:rgba(240,180,41,.25)}
+.card.c-cyan::before{background:linear-gradient(90deg,var(--cyan),var(--green))}
+.card.c-cyan:hover{border-color:rgba(34,211,238,.25)}
+.card.c-red::before{background:linear-gradient(90deg,var(--red),var(--pink))}
+.card.c-red:hover{border-color:rgba(248,113,113,.25)}
+.card.c-green::before{background:linear-gradient(90deg,var(--green),var(--cyan))}
+.card.c-green:hover{border-color:rgba(74,222,128,.25)}
+.card.c-violet::before{background:linear-gradient(90deg,var(--violet),var(--pink))}
+.card.c-violet:hover{border-color:rgba(167,139,250,.25)}
+.card.c-orange::before{background:linear-gradient(90deg,var(--orange),var(--gold))}
+.card.c-orange:hover{border-color:rgba(251,146,60,.25)}
+
+.card-ico{font-size:1.9rem;margin-bottom:.85rem;display:block}
+.card-code{font-family:var(--mono);font-size:.62rem;color:var(--t3);margin-bottom:.65rem}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:.55rem}
+.card p{font-size:.85rem;color:var(--t2);line-height:1.8}
+.chip{
+  display:inline-block;margin-top:.85rem;
+  padding:.3rem .7rem;border-radius:6px;
+  font-size:.75rem;font-weight:700;
+}
+.chip-gold  {background:rgba(240,180,41,.12);color:var(--gold-lt)}
+.chip-cyan  {background:rgba(34,211,238,.1); color:var(--cyan-lt)}
+.chip-red   {background:rgba(248,113,113,.1);color:var(--red-lt)}
+.chip-green {background:rgba(74,222,128,.1); color:var(--green-lt)}
+.chip-violet{background:rgba(167,139,250,.1);color:var(--violet)}
+.chip-orange{background:rgba(251,146,60,.1); color:var(--orange)}
+
+/* ─────────────────────────────────────
+   VERSE / CALLOUT
+───────────────────────────────────── */
+.verse{
+  background:linear-gradient(135deg,rgba(240,180,41,.07),rgba(34,211,238,.04));
+  border:1px solid rgba(240,180,41,.18);
+  border-radius:14px;padding:1.6rem 2.1rem;
+  margin:2.25rem 0;position:relative;
+}
+.verse::before{
+  content:'"';position:absolute;top:-.5rem;left:1.4rem;
+  font-family:var(--serif);font-size:4.5rem;
+  color:rgba(240,180,41,.1);line-height:1;
+}
+.verse p{
+  font-family:var(--serif);font-size:1rem;
+  line-height:1.95;color:rgba(248,250,252,.88);
+  font-style:italic;position:relative;z-index:1;
+}
+.verse cite{
+  display:block;margin-top:.55rem;
+  font-family:var(--mono);font-size:.72rem;
+  color:var(--gold);font-style:normal;font-weight:500;
+}
+
+.big-q{
+  text-align:center;padding:3.5rem 1rem;position:relative;
+}
+.big-q::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 55% at center,rgba(240,180,41,.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+.big-q-txt{
+  font-family:var(--display);
+  font-size:clamp(1.8rem,5vw,3.8rem);
+  line-height:1.2;position:relative;z-index:1;
+  letter-spacing:.03em;
+}
+.big-q-ref{
+  margin-top:.8rem;font-family:var(--mono);
+  font-size:.75rem;color:var(--t3);position:relative;z-index:1;
+}
+
+/* ─────────────────────────────────────
+   STATS
+───────────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin:1.75rem 0}
+.stat{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:1.4rem 1rem;text-align:center;
+  transition:transform .3s,border-color .3s;
+}
+.stat:hover{transform:scale(1.04)}
+.stat-n{
+  font-family:var(--display);
+  font-size:2.8rem;line-height:1;margin-bottom:.35rem;
+}
+.stat-l{font-size:.76rem;color:var(--t2);line-height:1.5}
+
+/* ─────────────────────────────────────
+   BAR CHART
+───────────────────────────────────── */
+.bc{display:flex;flex-direction:column;gap:.95rem}
+.bc-row{display:grid;grid-template-columns:150px 1fr 52px;align-items:center;gap:.9rem}
+.bc-lbl{font-size:.82rem;font-weight:500;text-align:right;color:var(--t2)}
+.bc-track{height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
+.bc-fill{height:100%;border-radius:6px;width:0;transition:width 1.6s cubic-bezier(.25,.46,.45,.94)}
+.bc-val{font-family:var(--mono);font-size:.78rem;color:var(--t2)}
+
+/* ─────────────────────────────────────
+   PROGRESS
+───────────────────────────────────── */
+.prog-list{display:flex;flex-direction:column;gap:1rem;margin:1.5rem 0}
+.prog-hd{display:flex;justify-content:space-between;margin-bottom:.35rem}
+.prog-name{font-size:.86rem;font-weight:700}
+.prog-note{font-family:var(--mono);font-size:.73rem;color:var(--t2)}
+.prog-track{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;width:0;transition:width 1.5s cubic-bezier(.25,.46,.45,.94)}
+
+/* ─────────────────────────────────────
+   TIMELINE
+───────────────────────────────────── */
+.tl{position:relative;padding-left:2.4rem;margin:1.75rem 0}
+.tl::before{
+  content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;
+  background:linear-gradient(180deg,var(--gold),var(--cyan),var(--green),transparent);
+}
+.tl-item{
+  position:relative;margin-bottom:2rem;
+  opacity:0;transform:translateX(-12px);transition:all .5s ease;
+}
+.tl-item.vis{opacity:1;transform:none}
+.tl-item::before{
+  content:'';position:absolute;left:-2.05rem;top:.4rem;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--gold);border:2px solid var(--bg);z-index:1;
+}
+.tl-badge{
+  font-family:var(--mono);font-size:.62rem;color:var(--gold);
+  background:rgba(240,180,41,.1);padding:.17rem .5rem;border-radius:3px;
+  display:inline-block;margin-bottom:.3rem;
+}
+.tl-title{font-weight:800;font-size:.97rem;margin-bottom:.3rem}
+.tl-desc{font-size:.84rem;color:var(--t2);line-height:1.8}
+
+/* ─────────────────────────────────────
+   ACCORDION
+───────────────────────────────────── */
+.acc{margin:1.6rem 0}
+.acc-item{border-bottom:1px solid var(--border)}
+.acc-btn{
+  width:100%;background:none;border:none;cursor:pointer;
+  padding:1rem 0;display:flex;align-items:center;justify-content:space-between;
+  text-align:left;color:var(--t1);
+  font-size:.93rem;font-weight:700;font-family:var(--sans);
+  transition:color .25s;
+}
+.acc-btn:hover{color:var(--gold)}
+.acc-ico{
+  width:22px;height:22px;border-radius:50%;flex-shrink:0;
+  background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;color:var(--gold);
+  transition:transform .3s,background .3s,color .3s;
+}
+.acc-item.open .acc-ico{transform:rotate(45deg);background:var(--gold);color:var(--bg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.acc-item.open .acc-body{max-height:600px}
+.acc-body p{font-size:.86rem;color:var(--t2);line-height:1.9;padding-bottom:1rem}
+.acc-body ul{padding-bottom:1rem}
+.acc-body li{font-size:.84rem;color:var(--t2);line-height:1.8;margin-left:1.1rem;margin-bottom:.2rem}
+
+/* ─────────────────────────────────────
+   TABLE
+───────────────────────────────────── */
+.tbl-wrap{overflow-x:auto;margin:1.5rem 0}
+table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:560px}
+th{padding:.7rem .8rem;text-align:left;color:var(--t3);font-weight:600;border-bottom:1px solid rgba(255,255,255,.1);white-space:nowrap}
+td{padding:.65rem .8rem;border-bottom:1px solid rgba(255,255,255,.05);color:var(--t2);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ─────────────────────────────────────
+   STEP FLOW
+───────────────────────────────────── */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0}
+.flow-step{
+  padding:1.4rem 1.1rem;text-align:center;
+  background:var(--card);border:1px solid var(--border);
+  position:relative;transition:background .3s,border-color .3s;
+}
+.flow-step:not(:last-child)::after{
+  content:'→';position:absolute;right:-.6rem;top:50%;
+  transform:translateY(-50%);font-size:1rem;color:var(--gold);z-index:1;
+}
+.flow-step:hover{background:rgba(240,180,41,.05);border-color:rgba(240,180,41,.2)}
+.fs-n{font-family:var(--mono);font-size:.62rem;color:var(--gold);background:rgba(240,180,41,.1);border-radius:10px;padding:.16rem .5rem;display:inline-block;margin-bottom:.55rem}
+.fs-ico{font-size:1.6rem;margin-bottom:.35rem}
+.fs-title{font-weight:800;font-size:.85rem;margin-bottom:.28rem}
+.fs-desc{font-size:.76rem;color:var(--t2);line-height:1.7}
+
+/* ─────────────────────────────────────
+   CHECKLIST
+───────────────────────────────────── */
+.chk{list-style:none;display:flex;flex-direction:column;gap:.55rem;margin:1.1rem 0}
+.chk li{display:flex;align-items:flex-start;gap:.6rem;font-size:.84rem;color:var(--t2);line-height:1.7}
+.chk li::before{content:'✓';color:var(--green);font-weight:900;flex-shrink:0;margin-top:.1rem}
+
+/* ─────────────────────────────────────
+   HIGHLIGHT BOX
+───────────────────────────────────── */
+.hbox{
+  padding:1.1rem 1.4rem;border-radius:10px;margin:1rem 0;
+  font-size:.84rem;line-height:1.85;
+}
+.hbox-gold  {background:rgba(240,180,41,.08);border-left:2px solid var(--gold);color:var(--t2)}
+.hbox-cyan  {background:rgba(34,211,238,.07);border-left:2px solid var(--cyan);color:var(--t2)}
+.hbox-red   {background:rgba(248,113,113,.07);border-left:2px solid var(--red);color:var(--t2)}
+.hbox-green {background:rgba(74,222,128,.07); border-left:2px solid var(--green);color:var(--t2)}
+.hbox-violet{background:rgba(167,139,250,.07);border-left:2px solid var(--violet);color:var(--t2)}
+
+/* ─────────────────────────────────────
+   REVEAL
+───────────────────────────────────── */
+.rev{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.rev.vis{opacity:1;transform:none}
+.rev-l{opacity:0;transform:translateX(-24px);transition:opacity .65s ease,transform .65s ease}
+.rev-l.vis{opacity:1;transform:none}
+.rev-r{opacity:0;transform:translateX(24px);transition:opacity .65s ease,transform .65s ease}
+.rev-r.vis{opacity:1;transform:none}
+
+/* ─────────────────────────────────────
+   DIVIDER / LABEL
+───────────────────────────────────── */
+.part-label{
+  display:flex;align-items:center;gap:1rem;
+  padding:3rem 0 1rem;
+}
+.part-label-bar{width:3px;height:48px;border-radius:2px;flex-shrink:0}
+.part-label-sub{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.14em}
+.part-label-title{font-weight:800;font-size:1.05rem}
+
+/* ─────────────────────────────────────
+   FINAL CTA
+───────────────────────────────────── */
+.cta{
+  background:var(--bg1);
+  border-top:1px solid var(--border);
+  padding:7rem 2rem;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 50% 60% at 50% 0%,rgba(240,180,41,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 35% at 80% 100%,rgba(34,211,238,.05) 0%,transparent 55%);
+  pointer-events:none;
+}
+.cta-h{
+  font-family:var(--display);
+  font-size:clamp(2.5rem,6vw,5.5rem);
+  line-height:1;letter-spacing:.03em;
+  margin-bottom:1.1rem;position:relative;z-index:1;
+}
+.cta-h .g{
+  background:linear-gradient(110deg,var(--gold),var(--orange),var(--red),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.cta-p{font-size:1rem;color:var(--t2);max-width:540px;margin:0 auto 2.5rem;line-height:1.9;position:relative;z-index:1}
+.cta-verse{
+  display:inline-block;position:relative;z-index:1;
+  background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.2);
+  border-radius:12px;padding:1.3rem 2rem;
+  font-family:var(--serif);font-style:italic;
+  font-size:.95rem;line-height:1.85;color:rgba(248,250,252,.88);
+}
+.cta-verse strong{display:block;margin-top:.45rem;color:var(--gold-lt);font-style:normal}
+
+/* ─────────────────────────────────────
+   PRINT BTN + FOOTER
+───────────────────────────────────── */
+.print-btn{
+  position:fixed;bottom:1.75rem;right:1.75rem;z-index:800;
+  background:var(--gold);color:var(--bg);
+  border:none;padding:.6rem 1.35rem;border-radius:8px;
+  font-size:.78rem;font-weight:900;cursor:pointer;
+  box-shadow:0 8px 30px rgba(240,180,41,.3);
+  transition:all .3s;font-family:var(--sans);
+}
+.print-btn:hover{background:var(--cyan);box-shadow:0 8px 30px rgba(34,211,238,.3)}
+footer{
+  background:#040609;padding:1.6rem 2rem;text-align:center;
+  color:var(--t3);font-family:var(--mono);font-size:.68rem;
+  border-top:1px solid rgba(255,255,255,.04);
+}
+
+/* ─────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────── */
+@media(max-width:860px){.g3,.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+@media(max-width:560px){
+  .g3,.g4,.g2,.ga{grid-template-columns:1fr}
+  .bc-row{grid-template-columns:90px 1fr 40px}
+  .flow{grid-template-columns:1fr 1fr}
+  .flow-step:not(:last-child)::after{display:none}
+}
+@media print{
+  .nav,.print-btn,.scroll-cue{display:none}
+  .rev,.rev-l,.rev-r,.tl-item{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stat,.verse{background:#f4f4f4;border:1px solid #ddd}
+}
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨 인쇄</button>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">취업 × 소명 2026</div>
+  <ul class="nav-pills">
+    <li><a href="#s-intro">커리큘럼</a></li>
+    <li><a href="#s-job">취업이란</a></li>
+    <li><a href="#s-fields">취업 분야</a></li>
+    <li><a href="#s-steps">취업 단계</a></li>
+    <li><a href="#s-aichange">AI 변화</a></li>
+    <li><a href="#s-history">역사 사례</a></li>
+    <li><a href="#s-newjobs">새 기회</a></li>
+    <li><a href="#s-faith">기독교 소명</a></li>
+    <li><a href="#s-action">결단</a></li>
+  </ul>
+  <div class="nav-mono" id="navLbl">—</div>
+</nav>
+
+<!-- ═══════════════════════════════
+     HERO
+═══════════════════════════════ -->
+<header class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-inner">
+    <div class="hero-chip">✦ 2026 청년부 여름 수련회 특강 ✦</div>
+    <h1 class="hero-h">
+      <span class="l1">나는 어떻게</span>
+      <span class="l2">살고,</span>
+      <span class="l3">일할 것인가?</span>
+    </h1>
+    <p class="hero-sub">
+      취업 준비의 현실부터 AI·로봇·기후 혁명이 열어주는 새 기회까지.<br>
+      기독교인 청년으로서 불안을 넘어 소명으로 나아가는 여정.
+    </p>
+    <div class="hero-tags">
+      <div class="hero-tag">📋 <b>9개 파트</b> · 2시간 30분</div>
+      <div class="hero-tag">💼 <b>취업 실전</b> 전략</div>
+      <div class="hero-tag">🤖 <b>AI 시대</b> 변화</div>
+      <div class="hero-tag">🦾 <b>로봇·생명·우주·기후</b></div>
+      <div class="hero-tag">✝️ <b>기독교 소명</b></div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-cue-bar"></div>
+    <span>SCROLL</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════
+     커리큘럼 개요
+═══════════════════════════════ -->
+<section class="stripe dark" id="s-intro">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-gold">Curriculum Overview</div>
+      <h2 class="sec-h">전체 강의 흐름</h2>
+      <p class="sec-lead">현실 → 이해 → 기회 → 소명 순서로 진행됩니다. 각 파트는 독립적으로도, 연속적으로도 활용할 수 있습니다.</p>
+    </div>
+    <div class="tl rev">
+      <div class="tl-item"><div class="tl-badge">Part 1 · 20분</div><div class="tl-title">취업이란 무엇인가? — 불안의 정체 파악</div><div class="tl-desc">취업의 본질, 흔한 착각, 불안의 원인. 시작 전 마음의 틀 잡기.</div></div>
+      <div class="tl-item"><div class="tl-badge">Part 2 · 20분</div><div class="tl-title">다양한 취업 분야 탐색 — 8가지 경로</div><div class="tl-desc">공직·공사·외국계·대기업·중소기업·스타트업·창업·대학원 각 분야의 특성과 준비법.</div></div>
+      <div class="tl-item"><div class="tl-badge">Part 3 · 20분</div><div class="tl-title">취업 단계별 실전 — 서류부터 최종 면접까지</div><div class="tl-desc">서류·필기·전화·외국어·대기업 면접 각 단계의 핵심 전략.</div></div>
+      <div class="tl-item"><div class="tl-badge">Part 4 · 20분</div><div class="tl-title">AI가 바꾸는 회사와 인재상</div><div class="tl-desc">기업 내 AI 도입 현황, 새로운 인재상, AI 대체 불가 역량.</div></div>
+      <div class="tl-item"><div class="tl-badge">Part 5 · 15분</div><div class="tl-title">역사 속 기술 혁명 — 과거에서 배우는 인사이트</div><div class="tl-desc">산업혁명·인터넷 혁명 사례로 보는 기술 전환기 생존 법칙.</div></div>
+      <div class="tl-item"><div class="tl-badge">Part 6 · 25분</div><div class="tl-title">기술 혁명이 열어주는 새 직업 기회</div><div class="tl-desc">AI·피지컬AI/로봇·생명공학·우주·기후 5대 혁명의 새 일자리.</div></div>
+      <div class="tl-item"><div class="tl-badge">Part 7 · 20분</div><div class="tl-title">기독교인의 정체성 · 소명 · 취업 전략</div><div class="tl-desc">불안 해독, Imago Dei 정체성, Job→Career→Calling, 분별법.</div></div>
+      <div class="tl-item"><div class="tl-badge">Part 8 · 15분</div><div class="tl-title">소외된 이웃을 위한 소명적 직업</div><div class="tl-desc">AI 소외·기후 소외 피해자를 섬기는 구체적 직업 방향.</div></div>
+      <div class="tl-item"><div class="tl-badge">Part 9 · 15분</div><div class="tl-title">인생 청사진 & 결단</div><div class="tl-desc">4영역 균형, 인생 목적 한 문장, 오늘의 구체적 첫 걸음.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 1 · 취업이란?
+═══════════════════════════════ -->
+<section class="stripe" id="s-job">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-gold">Part 1 · 20분</div>
+      <h2 class="sec-h">취업이란 <em>무엇인가?</em></h2>
+      <p class="sec-lead">가장 기본적인 질문부터 시작합니다. 취업의 본질을 오해하면 아무리 열심히 해도 방향이 틀립니다.</p>
+    </div>
+
+    <!-- 핵심 정의 -->
+    <div class="big-q rev">
+      <div class="big-q-txt">
+        취업은 <span style="color:var(--red)">내 기준</span>이 아니라<br>
+        <span style="color:var(--gold)">상대방(회사)의 기준</span>에 맞추는 것이다
+      </div>
+      <div class="big-q-ref">취업 준비의 출발점 — 내가 얼마나 준비했는지가 아니라, 회사가 무엇을 원하는지를 먼저 파악해야 합니다</div>
+    </div>
+
+    <!-- 3대 착각 -->
+    <div class="rev">
+      <h3 style="font-weight:800;font-size:1.1rem;margin-bottom:1.2rem;color:var(--red-lt)">😤 취준생이 빠지는 3대 착각</h3>
+      <div class="g3">
+        <div class="card c-red">
+          <span class="card-ico">📚</span>
+          <div class="card-code">// Mistake 01</div>
+          <h3>"내가 이만큼 준비했으니 회사가 알아보겠지"</h3>
+          <p>회사는 당신의 노력량을 보지 않습니다. 회사가 필요로 하는 것을 당신이 갖고 있는지를 봅니다. 준비의 방향이 중요합니다.</p>
+          <div class="chip chip-red">→ 회사의 JD(직무기술서)를 먼저 읽어라</div>
+        </div>
+        <div class="card c-red">
+          <span class="card-ico">🏆</span>
+          <div class="card-code">// Mistake 02</div>
+          <h3>"스펙이 높으면 어디든 붙는다"</h3>
+          <p>스펙은 서류 통과 기준이지 합격 기준이 아닙니다. 스펙이 좋아도 '왜 우리 회사인가?'에 답 못하면 떨어집니다. 직무 적합성이 핵심.</p>
+          <div class="chip chip-red">→ 스펙보다 스토리, 능력보다 적합성</div>
+        </div>
+        <div class="card c-red">
+          <span class="card-ico">⏳</span>
+          <div class="card-code">// Mistake 03</div>
+          <h3>"좀 더 준비되면 지원해야지"</h3>
+          <p>'완벽한 준비'는 없습니다. 일정 수준이 되면 지원하며 배우는 것이 더 효과적입니다. 지원하지 않으면 합격률 0%입니다.</p>
+          <div class="chip chip-red">→ 70% 준비되면 지원, 피드백으로 성장</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 불안은 어디서 오는가 -->
+    <div class="rev" style="margin-top:2.5rem">
+      <h3 style="font-weight:800;font-size:1.1rem;margin-bottom:1.2rem;color:var(--gold-lt)">🔍 취업 불안은 어디서 오는가?</h3>
+      <div class="g2">
+        <div>
+          <div class="acc">
+            <div class="acc-item">
+              <button class="acc-btn">① 비교에서 오는 불안 — SNS의 함정<span class="acc-ico">+</span></button>
+              <div class="acc-body"><p>인스타그램·링크드인은 타인의 하이라이트 릴입니다. 남의 합격 소식만 보이고, 탈락한 수십 번은 보이지 않습니다. 내 타임라인을 남의 것과 비교하는 순간 불안이 시작됩니다. 당신의 페이스는 당신만의 것입니다.</p></div>
+            </div>
+            <div class="acc-item">
+              <button class="acc-btn">② 불확실성에서 오는 불안 — 모름의 공포<span class="acc-ico">+</span></button>
+              <div class="acc-body"><p>"내가 맞는 길을 가고 있는가?"라는 질문에 답이 없을 때 불안합니다. 방향이 없으면 노력이 불안을 줄이지 못합니다. 방향 설정이 먼저입니다. 지금 이 강의의 목표가 바로 그것입니다.</p></div>
+            </div>
+            <div class="acc-item">
+              <button class="acc-btn">③ 정체성 혼란에서 오는 불안 — "취업 못하면 나는 실패자"<span class="acc-ico">+</span></button>
+              <div class="acc-body"><p>취업 결과가 나의 가치를 결정한다는 생각이 불안을 극단으로 만듭니다. 취업은 내 가치의 증명이 아닙니다. 기독교인에게 이 부분이 특히 중요합니다. 정체성이 견고하면 불안이 줄어듭니다.</p></div>
+            </div>
+            <div class="acc-item">
+              <button class="acc-btn">④ 시대 변화에서 오는 불안 — "AI가 다 대체하면?"<span class="acc-ico">+</span></button>
+              <div class="acc-body"><p>AI·자동화 뉴스가 쏟아지며 미래가 불투명하게 느껴집니다. 그러나 역사상 모든 기술 혁명 때도 "사람이 할 일이 없어진다"는 공포가 있었습니다. Part 5에서 자세히 다룹니다.</p></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="verse" style="margin:0">
+            <p>"너희는 이 세대를 본받지 말고 오직 마음을 새롭게 함으로 변화를 받아 하나님의 선하시고 기뻐하시고 온전하신 뜻이 무엇인지 분별하도록 하라"</p>
+            <cite>— 로마서 12:2</cite>
+          </div>
+          <div class="card c-gold" style="margin-top:1.25rem">
+            <h3 style="color:var(--gold-lt)">💡 불안을 다루는 기독교인의 방법</h3>
+            <ul class="chk">
+              <li>불안의 원인을 직시하고 이름 붙이기</li>
+              <li>정체성을 성과가 아닌 하나님 형상에 두기</li>
+              <li>방향을 기도와 분별로 찾기</li>
+              <li>공동체 안에서 나누기 (혼자 감당 않기)</li>
+              <li>불안한 채로 한 걸음 내딛는 용기 갖기</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 2 · 취업 분야
+═══════════════════════════════ -->
+<section class="stripe soft" id="s-fields">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-cyan">Part 2 · 20분</div>
+      <h2 class="sec-h">다양한 <em>취업 분야</em></h2>
+      <p class="sec-lead">8가지 경로는 우열이 없습니다. 내 소명·성향·상황에 맞는 길을 선택하는 것이 핵심입니다.</p>
+    </div>
+
+    <!-- 8개 분야 카드 -->
+    <div class="ga rev">
+
+      <div class="card c-gold">
+        <span class="card-ico">🏛️</span>
+        <div class="card-code">// Path 01</div>
+        <h3>공직 (공무원)</h3>
+        <p>중앙부처·지방직·교육직·경찰·소방 등. 안정성 최고, 공익 기여 명확. 장기 준비 필요, 경쟁 치열.</p>
+        <div class="hbox hbox-gold" style="margin-top:.85rem;font-size:.78rem">
+          <b style="color:var(--gold)">핵심 준비</b> 필기시험 중심, 1-3년 장기 로드맵, 시험 범위 명확<br>
+          <b style="color:var(--gold)">적합한 사람</b> 안정 추구, 사회 기여 동기, 꾸준한 학습 능력자
+        </div>
+        <div class="chip chip-gold">평균 준비 기간 18개월</div>
+      </div>
+
+      <div class="card c-cyan">
+        <span class="card-ico">🏢</span>
+        <div class="card-code">// Path 02</div>
+        <h3>공기업 · 공사</h3>
+        <p>한전·코레일·LH·국민건강보험 등. 준공무원 수준 안정성, 상대적으로 높은 연봉. NCS 기반 채용.</p>
+        <div class="hbox hbox-cyan" style="margin-top:.85rem;font-size:.78rem">
+          <b style="color:var(--cyan)">핵심 준비</b> NCS 직업기초능력, 전공 필기, 기업 이해도<br>
+          <b style="color:var(--cyan)">적합한 사람</b> 워라밸 중시, 공공성 + 민간 역동성 둘 다 원하는 사람
+        </div>
+        <div class="chip chip-cyan">NCS 필기 + 직무면접</div>
+      </div>
+
+      <div class="card c-violet">
+        <span class="card-ico">🌐</span>
+        <div class="card-code">// Path 03</div>
+        <h3>외국계 기업</h3>
+        <p>글로벌 본사 한국지사 또는 외국 본사 직접 지원. 영어 필수, 수평적 문화, 높은 연봉, 빠른 성장.</p>
+        <div class="hbox hbox-violet" style="margin-top:.85rem;font-size:.78rem">
+          <b style="color:var(--violet)">핵심 준비</b> 영어 실력 (회화+작문), 직무 전문성, 글로벌 경험<br>
+          <b style="color:var(--violet)">적합한 사람</b> 글로벌 환경 선호, 영어 자신 있는 사람, 성과 중심 문화 적합자
+        </div>
+        <div class="chip chip-violet">Cover Letter + 영어 면접</div>
+      </div>
+
+      <div class="card c-gold">
+        <span class="card-ico">🏗️</span>
+        <div class="card-code">// Path 04</div>
+        <h3>대기업</h3>
+        <p>삼성·현대·SK·LG·롯데 등. 체계적 시스템, 높은 연봉, 브랜드 가치. 공채 경쟁 치열, 적성검사 필수.</p>
+        <div class="hbox hbox-gold" style="margin-top:.85rem;font-size:.78rem">
+          <b style="color:var(--gold)">핵심 준비</b> GSAT·HMAT 등 적성검사, 직무면접, 임원면접<br>
+          <b style="color:var(--gold)">적합한 사람</b> 체계 속 성장 원하는 사람, 조직 적응력 높은 사람
+        </div>
+        <div class="chip chip-gold">적성검사 + 다단계 면접</div>
+      </div>
+
+      <div class="card c-cyan">
+        <span class="card-ico">🏬</span>
+        <div class="card-code">// Path 05</div>
+        <h3>중소기업</h3>
+        <p>국내 기업의 99%. 다양한 업무 경험, 빠른 성장, 낮은 진입 장벽. 연봉·복지 편차 크다.</p>
+        <div class="hbox hbox-cyan" style="margin-top:.85rem;font-size:.78rem">
+          <b style="color:var(--cyan)">핵심 준비</b> 해당 산업 이해, 즉시 전력 어필, 성장 의지 보여주기<br>
+          <b style="color:var(--cyan)">적합한 사람</b> 빠르게 다양한 경험 원하는 사람, 대기업 전 경력 쌓기
+        </div>
+        <div class="chip chip-cyan">직무 중심 서류 + 실무 면접</div>
+      </div>
+
+      <div class="card c-orange">
+        <span class="card-ico">🚀</span>
+        <div class="card-code">// Path 06</div>
+        <h3>스타트업</h3>
+        <p>초기~성장기 기술 기업. 불확실성 높지만 큰 임팩트, 스톡옵션 가능, 수평적 문화. 실력이 곧 경쟁력.</p>
+        <div class="hbox" style="margin-top:.85rem;font-size:.78rem;background:rgba(251,146,60,.07);border-left:2px solid var(--orange);color:var(--t2)">
+          <b style="color:var(--orange)">핵심 준비</b> 포트폴리오 (직접 만든 것), 문제 해결 능력, 도전 마인드<br>
+          <b style="color:var(--orange)">적합한 사람</b> 변화를 즐기는 사람, 임팩트 지향, 리스크 감수 가능자
+        </div>
+        <div class="chip chip-orange">GitHub·포트폴리오 중심</div>
+      </div>
+
+      <div class="card c-green">
+        <span class="card-ico">💡</span>
+        <div class="card-code">// Path 07</div>
+        <h3>창업</h3>
+        <p>스스로 회사를 만드는 것. 최고 자유도와 최고 리스크. AI 시대에 진입 비용이 급감. 1인 창업도 가능.</p>
+        <div class="hbox hbox-green" style="margin-top:.85rem;font-size:.78rem">
+          <b style="color:var(--green)">핵심 준비</b> 문제 발견 능력, 실행력, 실패 회복력, 도메인 전문성<br>
+          <b style="color:var(--green)">적합한 사람</b> 없는 것을 만들고 싶은 사람, 사회 문제 해결 동기 있는 사람
+        </div>
+        <div class="chip chip-green">아이디어 → MVP → 투자</div>
+      </div>
+
+      <div class="card c-violet">
+        <span class="card-ico">🎓</span>
+        <div class="card-code">// Path 08</div>
+        <h3>대학원</h3>
+        <p>석사·박사 과정. 연구직·교수직·전문직 진출 경로. AI·바이오·우주 등 첨단 분야에서 가치 급상승.</p>
+        <div class="hbox hbox-violet" style="margin-top:.85rem;font-size:.78rem">
+          <b style="color:var(--violet)">핵심 준비</b> 연구 경험 (학부 연구실 참여), 영어 논문 읽기, 지도교수 탐색<br>
+          <b style="color:var(--violet)">적합한 사람</b> 지적 호기심 강한 사람, 특정 분야 깊이 파고 싶은 사람
+        </div>
+        <div class="chip chip-violet">연구실 인턴 → 대학원 지원</div>
+      </div>
+
+    </div>
+
+    <!-- 비교 표 -->
+    <div class="card rev" style="margin-top:2.5rem">
+      <h3 style="margin-bottom:1.2rem">📊 8가지 경로 한눈에 비교</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>분야</th><th>안정성</th><th>초봉</th><th>성장 속도</th><th>준비 기간</th><th>AI 영향</th><th>기독교 사역 연계</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>🏛️ 공직</td><td style="color:var(--green)">★★★★★</td><td style="color:var(--t3)">보통</td><td style="color:var(--t3)">느림</td><td>1~3년</td><td style="color:var(--green)">낮음</td><td>행정·복지·교육</td></tr>
+            <tr><td>🏢 공기업</td><td style="color:var(--green)">★★★★☆</td><td>높음</td><td style="color:var(--t3)">보통</td><td>1~2년</td><td style="color:var(--green)">낮음</td><td>에너지·교통·의료</td></tr>
+            <tr><td>🌐 외국계</td><td style="color:var(--t3)">★★★☆☆</td><td style="color:var(--gold)">매우 높음</td><td style="color:var(--gold)">빠름</td><td>6개월~2년</td><td>중간</td><td>글로벌 사역 연결</td></tr>
+            <tr><td>🏗️ 대기업</td><td style="color:var(--green)">★★★★☆</td><td style="color:var(--gold)">높음</td><td>보통</td><td>6개월~1년</td><td>중간</td><td>기업 윤리·복지</td></tr>
+            <tr><td>🏬 중소기업</td><td style="color:var(--t3)">★★★☆☆</td><td style="color:var(--t3)">낮음</td><td style="color:var(--gold)">빠름</td><td style="color:var(--green)">즉시</td><td>중간</td><td>지역 사역·전문직</td></tr>
+            <tr><td>🚀 스타트업</td><td style="color:var(--red)">★★☆☆☆</td><td>보통</td><td style="color:var(--gold)">매우 빠름</td><td style="color:var(--green)">즉시</td><td style="color:var(--gold)">높음·기회↑</td><td>소셜임팩트 창업</td></tr>
+            <tr><td>💡 창업</td><td style="color:var(--red)">★☆☆☆☆</td><td>가변</td><td style="color:var(--gold)">무한</td><td>언제든</td><td style="color:var(--gold)">기회 최대↑</td><td>사회적 기업</td></tr>
+            <tr><td>🎓 대학원</td><td style="color:var(--t3)">★★★☆☆</td><td style="color:var(--t3)">낮음(학중)</td><td>분야 따라</td><td>2~5년</td><td style="color:var(--gold)">AI 분야 기회↑</td><td>연구·교육 사역</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 3 · 취업 단계
+═══════════════════════════════ -->
+<section class="stripe" id="s-steps">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-gold">Part 3 · 20분</div>
+      <h2 class="sec-h">취업 <em>단계별 실전</em></h2>
+      <p class="sec-lead">서류부터 최종 면접까지 각 단계의 핵심 전략. 어느 단계에서 주로 떨어지는지 파악하는 것이 먼저입니다.</p>
+    </div>
+
+    <!-- 플로우 -->
+    <div class="flow rev">
+      <div class="flow-step"><div class="fs-n">STEP 1</div><div class="fs-ico">📄</div><div class="fs-title">서류 전형</div><div class="fs-desc">자소서·이력서·포트폴리오</div></div>
+      <div class="flow-step"><div class="fs-n">STEP 2</div><div class="fs-ico">📝</div><div class="fs-title">필기 시험</div><div class="fs-desc">적성검사·직무지식·NCS</div></div>
+      <div class="flow-step"><div class="fs-n">STEP 3</div><div class="fs-ico">📞</div><div class="fs-title">전화 면접</div><div class="fs-desc">1차 스크리닝·간단 Q&A</div></div>
+      <div class="flow-step"><div class="fs-n">STEP 4</div><div class="fs-ico">🌐</div><div class="fs-title">외국어 면접</div><div class="fs-desc">영어·제2외국어 역량</div></div>
+      <div class="flow-step"><div class="fs-n">STEP 5</div><div class="fs-ico">👔</div><div class="fs-title">실무 면접</div><div class="fs-desc">직무 역량·경험 중심</div></div>
+      <div class="flow-step" style="border-radius:0 14px 14px 0"><div class="fs-n">STEP 6</div><div class="fs-ico">🏆</div><div class="fs-title">임원 면접</div><div class="fs-desc">가치관·비전·인성</div></div>
+    </div>
+
+    <!-- 단계별 상세 -->
+    <div class="rev" style="margin-top:2.5rem">
+      <div class="acc">
+        <div class="acc-item">
+          <button class="acc-btn">📄 서류 전형 — 합격률 10~30%, 가장 많이 탈락하는 단계<span class="acc-ico">+</span></button>
+          <div class="acc-body">
+            <p><b style="color:var(--gold)">핵심 원리:</b> 자소서는 '나의 이야기'가 아니라 '회사가 원하는 사람임을 증명하는 문서'입니다. 직무기술서(JD)의 키워드를 내 경험에 녹여 작성하세요.</p>
+            <ul>
+              <li><b>이력서:</b> 역할·성과·수치 중심으로 작성. "~했습니다" 말고 "~해서 30% 개선했습니다"</li>
+              <li><b>자소서 STAR 기법:</b> Situation(상황) → Task(과제) → Action(행동) → Result(결과)</li>
+              <li><b>AI 활용 팁:</b> ChatGPT·Claude로 JD 분석, 키워드 추출, 자소서 피드백 받기</li>
+              <li><b>합격 자소서:</b> 지원 동기가 구체적 (회사 사업·제품 언급), 직무 경험 명확, 성장 가능성 보임</li>
+            </ul>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn">📝 필기 시험 — 유형별 완전히 다른 준비법<span class="acc-ico">+</span></button>
+          <div class="acc-body">
+            <p><b style="color:var(--gold)">대기업 적성검사 (GSAT·HMAT·SKCT 등):</b> 수리·언어·추리 등 기초 인지 능력. 기출 반복이 핵심. 시간 관리가 당락 결정.</p>
+            <p><b style="color:var(--cyan)">공기업 NCS:</b> 직업기초능력 10모듈 (의사소통·수리·문제해결 등). 전공 필기 별도. 기관마다 출제 비율 다름.</p>
+            <p><b style="color:var(--green)">공무원 시험:</b> 9급·7급·5급별 과목 다름. 국어·영어·한국사 공통, 전공 과목 추가. 장기 반복 학습 전략.</p>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn">📞 전화 면접 — 짧지만 중요한 1차 인상<span class="acc-ico">+</span></button>
+          <div class="acc-body">
+            <p>보통 10~20분. 지원 동기, 경력 요약, 기본 역량 확인. <b style="color:var(--gold)">조용한 환경 확보, 메모지 준비, 천천히 명확하게 말하기.</b> "지금 통화 가능하세요?" → 잠깐 시간 달라고 해도 됩니다.</p>
+            <ul>
+              <li>자소서를 미리 리뷰하고 예상 질문 5개 준비</li>
+              <li>1분 자기소개 → 지원 동기 → 강점 순서로 준비</li>
+              <li>목소리 톤·속도가 면접관의 첫인상을 결정</li>
+            </ul>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn">🌐 외국어 면접 — 외국계·글로벌 기업 필수 관문<span class="acc-ico">+</span></button>
+          <div class="acc-body">
+            <p><b style="color:var(--gold)">영어 면접 핵심:</b> 완벽한 문법보다 명확한 전달이 중요. "Tell me about yourself"는 30초 소개 + 90초 핵심 경험 구조. 모르면 솔직하게 "Let me think for a moment" 활용.</p>
+            <ul>
+              <li>지원 직무 관련 영어 단어·표현 100개 암기</li>
+              <li>회사·산업 영문 뉴스 주 3회 읽기</li>
+              <li>AI 영어 스피킹 연습 앱 (Speak, ChatGPT 대화) 활용</li>
+              <li>외국어 면접 후 한국어로 전환 여부 확인</li>
+            </ul>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn">👔 대기업 면접 — PT·토론·심층 면접 완전 가이드<span class="acc-ico">+</span></button>
+          <div class="acc-body">
+            <p><b style="color:var(--gold)">PT 면접:</b> 주어진 자료를 분석해 발표. 구조: 현황 → 문제점 → 해결안 → 기대효과. 시간 관리가 핵심.</p>
+            <p><b style="color:var(--cyan)">토론 면접:</b> 정답이 없는 주제 토론. 경청 + 논리 + 협력. 상대를 이기는 것이 아니라 함께 해결책을 찾는 것.</p>
+            <p><b style="color:var(--violet)">임원 면접:</b> 가치관·비전·인성 중심. "우리 회사에서 10년 후 무엇을 하고 싶은가?" "가장 힘들었던 경험과 극복법은?" — 솔직하고 구체적으로 답하세요.</p>
+            <p><b style="color:var(--green)">기독교인 팁:</b> 가치관 질문에서 신앙을 언급할 때는 자연스럽게, 강요하지 않는 방식으로. "저는 사람을 섬기는 것이 삶의 가치입니다"처럼 표현 가능.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 4 · AI 변화
+═══════════════════════════════ -->
+<section class="stripe dark" id="s-aichange">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-red">Part 4 · 20분</div>
+      <h2 class="sec-h">AI가 바꾸는<br><em class="r">회사와 인재상</em></h2>
+      <p class="sec-lead">이미 변화가 시작됐습니다. 기업 내부에서 AI가 어떻게 작동하는지, 회사가 원하는 사람이 어떻게 달라지는지 파악해야 합니다.</p>
+    </div>
+
+    <!-- 통계 -->
+    <div class="stats rev">
+      <div class="stat"><div class="stat-n" style="color:var(--red)"><span class="counter" data-t="78">0</span>%</div><div class="stat-l">국내 대기업의<br>AI 도구 도입률</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--gold)"><span class="counter" data-t="40">0</span>%</div><div class="stat-l">사무직 업무의<br>AI 자동화 비율</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--cyan)"><span class="counter" data-t="3">0</span>배</div><div class="stat-l">AI 활용 직원의<br>생산성 증가</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--green)"><span class="counter" data-t="65">0</span>%</div><div class="stat-l">채용 담당자가<br>"AI 활용 능력 중요"</div></div>
+    </div>
+
+    <!-- 회사별 AI 변화 -->
+    <div class="rev" style="margin-top:2rem">
+      <h3 style="font-weight:800;font-size:1.05rem;margin-bottom:1.25rem">🏢 분야별 AI 도입 현황</h3>
+      <div class="g2">
+        <div>
+          <div class="bc">
+            <div class="bc-row"><div class="bc-lbl">마케팅·광고</div><div class="bc-track"><div class="bc-fill" data-w="88" style="background:linear-gradient(90deg,var(--red),var(--orange))"></div></div><div class="bc-val">88%</div></div>
+            <div class="bc-row"><div class="bc-lbl">고객 서비스</div><div class="bc-track"><div class="bc-fill" data-w="85" style="background:linear-gradient(90deg,var(--orange),var(--gold))"></div></div><div class="bc-val">85%</div></div>
+            <div class="bc-row"><div class="bc-lbl">HR·채용</div><div class="bc-track"><div class="bc-fill" data-w="76" style="background:linear-gradient(90deg,var(--gold),var(--cyan))"></div></div><div class="bc-val">76%</div></div>
+            <div class="bc-row"><div class="bc-lbl">재무·회계</div><div class="bc-track"><div class="bc-fill" data-w="72" style="background:linear-gradient(90deg,var(--cyan),var(--green))"></div></div><div class="bc-val">72%</div></div>
+            <div class="bc-row"><div class="bc-lbl">법무·컴플라이언스</div><div class="bc-track"><div class="bc-fill" data-w="65" style="background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div><div class="bc-val">65%</div></div>
+            <div class="bc-row"><div class="bc-lbl">R&D·연구</div><div class="bc-track"><div class="bc-fill" data-w="58" style="background:linear-gradient(90deg,var(--violet),var(--pink))"></div></div><div class="bc-val">58%</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="card c-red" style="margin-bottom:1rem">
+            <h3>❌ AI가 빠르게 대체하는 업무</h3>
+            <ul class="chk" style="gap:.4rem">
+              <li style="font-size:.8rem">단순 데이터 입력·정리·분류</li>
+              <li style="font-size:.8rem">기본 보고서·문서 초안 작성</li>
+              <li style="font-size:.8rem">정형화된 고객 응대 (FAQ 수준)</li>
+              <li style="font-size:.8rem">단순 번역·통역 업무</li>
+              <li style="font-size:.8rem">기초 이미지·영상 편집</li>
+              <li style="font-size:.8rem">일정 관리·회의록 작성</li>
+            </ul>
+          </div>
+          <div class="card c-green">
+            <h3>✅ AI 시대에 더 가치 올라가는 역량</h3>
+            <ul class="chk" style="gap:.4rem">
+              <li style="font-size:.8rem">AI 툴을 잘 다루는 프롬프트 능력</li>
+              <li style="font-size:.8rem">AI 결과를 검증하는 비판적 사고</li>
+              <li style="font-size:.8rem">사람 간 협력·설득·공감 능력</li>
+              <li style="font-size:.8rem">복잡한 윤리 판단·가치 기반 의사결정</li>
+              <li style="font-size:.8rem">새로운 문제를 정의하는 창의성</li>
+              <li style="font-size:.8rem">빠른 학습·변화 적응력</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 새 인재상 -->
+    <div class="rev" style="margin-top:2.5rem">
+      <h3 style="font-weight:800;font-size:1.05rem;margin-bottom:1.2rem">🎯 AI 시대 기업이 원하는 인재상 변화</h3>
+      <div class="g3">
+        <div class="card c-gold">
+          <span class="card-ico">🤖</span>
+          <h3>AI 협업자 (AI Co-worker)</h3>
+          <p>AI를 두려워하지 않고, AI를 활용해 10배 생산성을 내는 사람. "AI로 뭘 할 수 있는지"를 아는 사람이 2026년 채용 1순위.</p>
+          <div class="chip chip-gold">프롬프트 엔지니어링 기초 필수</div>
+        </div>
+        <div class="card c-cyan">
+          <span class="card-ico">🧩</span>
+          <h3>T자형 인재 → π자형 인재</h3>
+          <p>한 전문성(↓) + 폭넓은 기본기(→)의 T형에서, 두 개 이상의 전문성을 가진 π형으로 진화. "AI + 전공"의 융합이 핵심.</p>
+          <div class="chip chip-cyan">예: AI + 법학 / AI + 의학 / AI + 교육</div>
+        </div>
+        <div class="card c-violet">
+          <span class="card-ico">🌱</span>
+          <h3>평생 학습자 (Lifelong Learner)</h3>
+          <p>졸업장이 아니라 지속적 학습 능력이 경쟁력. 6개월마다 새 도구·기술이 나오는 시대에 배우기를 멈추면 도태됩니다.</p>
+          <div class="chip chip-violet">호기심·학습 속도가 경쟁력</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 활용 취업 준비 팁 -->
+    <div class="card rev" style="margin-top:2rem;background:linear-gradient(135deg,rgba(240,180,41,.06),rgba(34,211,238,.04))">
+      <h3 style="color:var(--gold-lt);margin-bottom:1rem">⚡ 지금 당장 취업 준비에 AI 활용하기</h3>
+      <div class="g2" style="gap:1rem">
+        <ul class="chk">
+          <li><b style="color:var(--gold)">자소서 피드백</b> — Claude/GPT에게 JD와 함께 자소서 첨삭 요청</li>
+          <li><b style="color:var(--cyan)">면접 시뮬레이션</b> — AI 면접관 역할로 예상 질문 연습</li>
+          <li><b style="color:var(--green)">산업 리서치</b> — 지원 기업의 최근 뉴스·실적·전략 AI 요약</li>
+        </ul>
+        <ul class="chk">
+          <li><b style="color:var(--violet)">영어 첨삭</b> — Cover Letter·이메일 영어 교정 및 개선</li>
+          <li><b style="color:var(--orange)">포트폴리오</b> — AI 이미지·코드 생성으로 결과물 퀄리티 향상</li>
+          <li><b style="color:var(--pink)">정보 정리</b> — 면접 전날 회사 정보를 AI로 핵심만 요약</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 5 · 역사 사례
+═══════════════════════════════ -->
+<section class="stripe soft" id="s-history">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-orange">Part 5 · 15분</div>
+      <h2 class="sec-h">역사가 말해주는<br><em>기술 혁명의 패턴</em></h2>
+      <p class="sec-lead">과거를 모르면 미래가 두렵습니다. 두 번의 거대한 기술 전환에서 실제로 어떤 일이 벌어졌는지 봅니다.</p>
+    </div>
+
+    <div class="g2 rev">
+      <!-- 사례 1 -->
+      <div class="card c-orange">
+        <span class="card-ico">⚙️</span>
+        <div class="card-code">// Case Study 01 · 19세기</div>
+        <h3>산업혁명 — 직조기가 직공의 일을 뺏다</h3>
+        <p style="margin-bottom:1rem">1800년대 영국, 방직 기계 도입으로 수공업 직조공 80%가 일자리를 잃었습니다. 러다이트 운동(기계 파괴 시위)이 일어났고, "사람이 할 일이 없어질 것"이라는 공포가 퍼졌습니다.</p>
+        <div class="hbox" style="background:rgba(251,146,60,.07);border-left:2px solid var(--orange);font-size:.8rem;color:var(--t2)">
+          <b style="color:var(--orange)">실제로 일어난 일:</b><br>
+          • 기계 오퍼레이터, 공장 관리자 등 새 직업 수백만 개 창출<br>
+          • 제품 가격 하락 → 소비 폭발 → 유통·판매·서비스 직종 폭증<br>
+          • 전체 고용 증가, 평균 임금 상승<br>
+          • 새 기술 전환기에 적응한 사람이 승자
+        </div>
+      </div>
+
+      <!-- 사례 2 -->
+      <div class="card c-cyan">
+        <span class="card-ico">💻</span>
+        <div class="card-code">// Case Study 02 · 1990-2000년대</div>
+        <h3>인터넷 혁명 — 오프라인 상점이 사라진다</h3>
+        <p style="margin-bottom:1rem">1990년대 인터넷 보급으로 "서점·음반점·여행사·은행 창구가 모두 사라진다"고 했습니다. 실제로 많은 직종이 줄었지만, 동시에 폭발적인 새 직업이 탄생했습니다.</p>
+        <div class="hbox hbox-cyan" style="font-size:.8rem">
+          <b style="color:var(--cyan)">실제로 일어난 일:</b><br>
+          • 웹 개발자, UX 디자이너, 디지털 마케터, 데이터 분석가 등 완전 새 직종<br>
+          • 유튜버, 인플루언서, 앱 개발자 — 2000년엔 존재조차 몰랐던 직업<br>
+          • 택배기사 수 10배 증가 (전자상거래 폭발)<br>
+          • 오프라인 소멸 예측과 달리 온오프라인 융합 발전
+        </div>
+      </div>
+    </div>
+
+    <!-- 인사이트 -->
+    <div class="rev" style="margin-top:2rem">
+      <div class="card" style="background:linear-gradient(135deg,rgba(240,180,41,.07),rgba(34,211,238,.05));border-color:rgba(240,180,41,.2)">
+        <h3 style="color:var(--gold-lt);font-size:1.1rem;margin-bottom:1.25rem">💡 두 사례에서 발견하는 공통 인사이트</h3>
+        <div class="g3" style="gap:1rem">
+          <div>
+            <div style="font-size:1.6rem;margin-bottom:.5rem">📉</div>
+            <h4 style="font-size:.9rem;font-weight:800;margin-bottom:.4rem;color:var(--red-lt)">없어지는 것</h4>
+            <p style="font-size:.8rem;color:var(--t2)">단순 반복 작업, 정보 중개 역할, 물리적 제약이 전부였던 직업. 기술로 100% 대체 가능한 것들은 사라진다.</p>
+          </div>
+          <div>
+            <div style="font-size:1.6rem;margin-bottom:.5rem">📈</div>
+            <h4 style="font-size:.9rem;font-weight:800;margin-bottom:.4rem;color:var(--green-lt)">생겨나는 것</h4>
+            <p style="font-size:.8rem;color:var(--t2)">새 기술을 다루는 사람, 기술이 만든 새 문제를 해결하는 사람, 기술로 증폭된 수요를 처리하는 사람. 항상 새 직업이 더 많이 생겼다.</p>
+          </div>
+          <div>
+            <div style="font-size:1.6rem;margin-bottom:.5rem">🔑</div>
+            <h4 style="font-size:.9rem;font-weight:800;margin-bottom:.4rem;color:var(--gold-lt)">승자의 공통점</h4>
+            <p style="font-size:.8rem;color:var(--t2)">새 기술을 두려워 말고 배운 사람, 사람만이 할 수 있는 영역에 집중한 사람, 전환기를 기회로 본 사람.</p>
+          </div>
+        </div>
+        <div class="hbox hbox-gold" style="margin-top:1.25rem">
+          <b style="color:var(--gold-lt)">AI 시대 적용:</b> "AI가 내 일을 빼앗을까?"가 아니라 "AI가 만드는 새 기회에서 내 소명은 무엇인가?"를 물어야 합니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="verse rev">
+      <p>"보라, 내가 새 일을 행하리니 이제 나타낼 것이라. 너희가 그것을 알지 못하겠느냐? 반드시 내가 광야에 길을 사막에 강을 내리니"</p>
+      <cite>— 이사야 43:19</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 6 · 새로운 기회
+═══════════════════════════════ -->
+<section class="stripe" id="s-newjobs">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-green">Part 6 · 25분</div>
+      <h2 class="sec-h">5대 혁명이 여는<br><em class="g">새로운 직업들</em></h2>
+      <p class="sec-lead">AI·피지컬AI/로봇·생명공학·우주·기후. 5개 혁명이 동시에 진행 중입니다. 각 분야에서 기독교 청년이 선점할 수 있는 핵심 직업을 소개합니다.</p>
+    </div>
+
+    <!-- 5대 혁명 배지 -->
+    <div class="stats rev" style="grid-template-columns:repeat(5,1fr)">
+      <div class="stat" style="background:rgba(163,230,53,.07);border-color:rgba(163,230,53,.2)"><div style="font-size:1.8rem;margin-bottom:.3rem">🤖</div><div style="font-weight:800;font-size:.82rem;color:#a3e635">소프트웨어 AI</div></div>
+      <div class="stat" style="background:rgba(34,211,238,.07);border-color:rgba(34,211,238,.2)"><div style="font-size:1.8rem;margin-bottom:.3rem">🦾</div><div style="font-weight:800;font-size:.82rem;color:var(--cyan)">피지컬AI·로봇</div></div>
+      <div class="stat" style="background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.2)"><div style="font-size:1.8rem;margin-bottom:.3rem">🧬</div><div style="font-weight:800;font-size:.82rem;color:var(--red)">생명공학</div></div>
+      <div class="stat" style="background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.2)"><div style="font-size:1.8rem;margin-bottom:.3rem">🚀</div><div style="font-weight:800;font-size:.82rem;color:var(--violet)">우주 기술</div></div>
+      <div class="stat" style="background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.2)"><div style="font-size:1.8rem;margin-bottom:.3rem">🌍</div><div style="font-weight:800;font-size:.82rem;color:var(--green)">기후 대응</div></div>
+    </div>
+
+    <!-- AI 직업 -->
+    <div class="part-label rev">
+      <div class="part-label-bar" style="background:linear-gradient(180deg,#a3e635,var(--cyan))"></div>
+      <div><div class="part-label-sub">Revolution A</div><div class="part-label-title">🤖 소프트웨어 AI — 이미 시작된 혁명</div></div>
+    </div>
+    <div class="ga rev">
+      <div class="card c-gold"><span class="card-ico">🗣️</span><div class="card-code">// AI-01</div><h3>AI 통·번역 사역자</h3><p>이주 노동자·다문화 가정을 위한 실시간 통역. 예전엔 전문 통역사 필요, 이제 스마트폰 하나로 가능.</p><div class="chip chip-gold">교회 다문화 사역 즉시 적용</div></div>
+      <div class="card c-gold"><span class="card-ico">📖</span><div class="card-code">// AI-02</div><h3>AI 콘텐츠 크리에이터</h3><p>편집·자막·썸네일·번역을 AI가 지원. 혼자서 방송국 수준의 콘텐츠 제작. 기독교 세계관으로 세상에 말 걸기.</p><div class="chip chip-gold">1인 기독교 미디어 창업 가능</div></div>
+      <div class="card c-gold"><span class="card-ico">⚖️</span><div class="card-code">// AI-03</div><h3>AI 윤리 전문가</h3><p>알고리즘 편향·감시 사회·AI 무기화에 기독교 세계관으로 대응. 기업·정부의 AI 정책에 목소리 내는 선지자적 역할.</p><div class="chip chip-gold">기독교 세계관 = 최고 경쟁력</div></div>
+    </div>
+
+    <!-- 피지컬 AI -->
+    <div class="part-label rev">
+      <div class="part-label-bar" style="background:linear-gradient(180deg,var(--cyan),var(--green))"></div>
+      <div><div class="part-label-sub">Revolution B</div><div class="part-label-title">🦾 피지컬 AI·로봇 — 몸을 가진 지능의 시대</div></div>
+    </div>
+    <div class="ga rev">
+      <div class="card c-cyan"><span class="card-ico">🦽</span><div class="card-code">// ROBOT-01</div><h3>돌봄 로봇 코디네이터</h3><p>노인·장애인 케어 로봇 운용·유지. 기술은 로봇이, 사랑은 사람이. 공감 능력이 핵심 역량.</p><div class="chip chip-cyan">사회복지 + 로봇공학 기초</div></div>
+      <div class="card c-cyan"><span class="card-ico">🌾</span><div class="card-code">// ROBOT-02</div><h3>스마트 농업 청년 농업가</h3><p>농업 로봇·드론 파종·AI 수확 예측으로 고령화 농촌 살리기. 식량 안보가 복음적 사명이 되는 자리.</p><div class="chip chip-cyan">농업 드론 자격 + 스마트팜</div></div>
+      <div class="card c-cyan"><span class="card-ico">🤲</span><div class="card-code">// ROBOT-03</div><h3>재활 로봇 접근성 사역</h3><p>비싼 로봇 의족·외골격을 저소득 장애인에게 연결하는 중개 사역. 기술과 복지의 다리.</p><div class="chip chip-cyan">재활공학사 + 장애인 복지</div></div>
+    </div>
+
+    <!-- 생명공학 -->
+    <div class="part-label rev">
+      <div class="part-label-bar" style="background:linear-gradient(180deg,var(--red),var(--pink))"></div>
+      <div><div class="part-label-sub">Revolution C</div><div class="part-label-title">🧬 생명공학 — 생명 코드를 다루는 시대</div></div>
+    </div>
+    <div class="hbox hbox-red rev" style="margin-bottom:1.25rem">
+      <b style="color:var(--red-lt)">⚠️ 기독교인에게 특히 중요:</b> 생명공학은 생명 존엄성·인간 정체성에 대한 깊은 신학적 질문을 동반합니다. 기독교 세계관을 가진 전문가가 그 안에 있는 것이 결정적입니다.
+    </div>
+    <div class="ga rev">
+      <div class="card c-red"><span class="card-ico">🧬</span><div class="card-code">// BIO-01</div><h3>유전자 편집 윤리 전문가</h3><p>CRISPR 기술의 유전병 치료는 축복, '맞춤 아기' 위험엔 경계 필요. 기독교 생명 윤리 관점의 파수꾼.</p><div class="chip chip-red">생명과학 + 생명윤리학</div></div>
+      <div class="card c-red"><span class="card-ico">💊</span><div class="card-code">// BIO-02</div><h3>AI 신약 개발 연구원</h3><p>AI로 신약 후보물질 탐색, 수십 년 → 수년으로 단축. 치료제 없는 희귀질환 환자를 위한 연구.</p><div class="chip chip-red">약학·생명과학 + AI</div></div>
+      <div class="card c-red"><span class="card-ico">🌿</span><div class="card-code">// BIO-03</div><h3>대체 단백질 푸드테크</h3><p>세포배양육·식물성 고기로 기아와 환경 파괴를 동시에 해결. 굶주리는 이웃을 위한 지속 가능한 식량 혁신.</p><div class="chip chip-red">식품공학 + 임팩트 창업</div></div>
+    </div>
+
+    <!-- 우주 -->
+    <div class="part-label rev">
+      <div class="part-label-bar" style="background:linear-gradient(180deg,var(--violet),var(--pink))"></div>
+      <div><div class="part-label-sub">Revolution D</div><div class="part-label-title">🚀 우주 기술 — 지구 너머를 꿈꾸는 시대</div></div>
+    </div>
+    <div class="ga rev">
+      <div class="card c-violet"><span class="card-ico">🛰️</span><div class="card-code">// SPACE-01</div><h3>위성 인터넷으로 오지 연결</h3><p>스타링크로 인터넷 없는 선교지·오지를 연결. 디지털 격차 해소의 가장 근본적 해법. 선교 통신 인프라 혁신.</p><div class="chip chip-violet">통신공학 + 해외 선교팀</div></div>
+      <div class="card c-violet"><span class="card-ico">🌐</span><div class="card-code">// SPACE-02</div><h3>위성 데이터 재난 모니터링</h3><p>위성 이미지로 홍수·가뭄·분쟁 지역 실시간 파악. 인도적 원조 단체의 의사결정을 돕는 데이터 전문가.</p><div class="chip chip-violet">GIS + UN 인도지원기관</div></div>
+      <div class="card c-violet"><span class="card-ico">🔭</span><div class="card-code">// SPACE-03</div><h3>우주 과학 커뮤니케이터</h3><p>우주의 장엄함은 창조주를 증거합니다(시 19:1). 과학과 신앙을 연결하는 기독교 과학 커뮤니케이터.</p><div class="chip chip-violet">천문학 + 기독교 변증학</div></div>
+    </div>
+
+    <!-- 기후 -->
+    <div class="part-label rev">
+      <div class="part-label-bar" style="background:linear-gradient(180deg,var(--green),#a3e635)"></div>
+      <div><div class="part-label-sub">Revolution E</div><div class="part-label-title">🌍 기후 대응 — 창조 청지기의 소명</div></div>
+    </div>
+    <div class="hbox hbox-green rev" style="margin-bottom:1.25rem">
+      <b style="color:var(--green-lt)">창 2:15의 소명:</b> 기후위기는 가장 가난한 자가 가장 먼저 고통받는 정의 문제입니다. 연간 2,000만 명의 기후 난민. "경작하며 지키라"는 명령이 오늘날 의미하는 것.
+    </div>
+    <div class="ga rev">
+      <div class="card c-green"><span class="card-ico">⚡</span><div class="card-code">// CLIMATE-01</div><h3>재생에너지 접근성 확대</h3><p>전기 없는 마을에 소형 태양광 설치. 에너지 빈곤은 의료·교육·경제 모두에 직결. 빛을 전하는 사역의 새 형태.</p><div class="chip chip-green">전기·신재생에너지 + 에너지 NGO</div></div>
+      <div class="card c-green"><span class="card-ico">💧</span><div class="card-code">// CLIMATE-02</div><h3>AI 수자원 관리·정수 기술</h3><p>AI 가뭄 예측 + 저비용 정수 기술. 물 구하러 수 킬로미터 걷는 여성·아이들의 삶을 바꾸는 프로젝트.</p><div class="chip chip-green">환경공학 + Water.org</div></div>
+      <div class="card c-green"><span class="card-ico">🏘️</span><div class="card-code">// CLIMATE-03</div><h3>기후 난민 정착 지원</h3><p>홍수·해수면 상승으로 삶의 터전 잃는 기후 난민 급증. 임시 거주·생계 재건·법적 지위 지원. 가장 취약한 자 곁에.</p><div class="chip chip-green">사회복지 + 기후 정의 운동</div></div>
+    </div>
+
+    <!-- 매칭 표 -->
+    <div class="card rev" style="margin-top:2.5rem">
+      <h3 style="margin-bottom:1.1rem">🗺️ 내 전공 × 기술 혁명 매칭 지도</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>내 전공·관심</th><th>🤖 AI</th><th>🦾 로봇</th><th>🧬 생명</th><th>🚀 우주</th><th>🌍 기후</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>🏥 의료·보건</td><td>AI 진단</td><td>수술로봇</td><td style="color:var(--red);font-weight:700">★★★</td><td>원격의료</td><td>폭염 피해</td></tr>
+            <tr><td>⚙️ 공학·기술</td><td>개발·설계</td><td style="color:var(--cyan);font-weight:700">★★★</td><td>바이오기기</td><td style="color:var(--violet);font-weight:700">★★★</td><td style="color:var(--green);font-weight:700">★★★</td></tr>
+            <tr><td>📖 인문·신학</td><td>AI 윤리</td><td>로봇윤리</td><td>생명윤리</td><td>우주윤리</td><td style="color:var(--green);font-weight:700">★★★</td></tr>
+            <tr><td>👥 사회·복지</td><td style="color:var(--gold);font-weight:700">★★★</td><td>돌봄로봇</td><td>보건형평</td><td>위성연결</td><td style="color:var(--green);font-weight:700">★★★</td></tr>
+            <tr><td>🌱 환경·농업</td><td>스마트팜</td><td>농업로봇</td><td>대체단백질</td><td>위성모니터</td><td style="color:var(--green);font-weight:700">★★★</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 7 · 기독교 소명
+═══════════════════════════════ -->
+<section class="stripe dark" id="s-faith">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-violet">Part 7 · 20분</div>
+      <h2 class="sec-h">정체성 · 소명 ·<br><em class="v">취업 전략</em></h2>
+      <p class="sec-lead">기독교인 청년으로서의 특별한 시각. 스펙보다 정체성이 먼저, 취업보다 소명이 먼저입니다.</p>
+    </div>
+
+    <!-- Imago Dei -->
+    <div class="big-q rev">
+      <div class="big-q-txt">
+        당신의 가치는<br>
+        <span style="color:var(--red)">학점도, 합격도, 연봉도</span> 아닌<br>
+        <span style="color:var(--gold)">하나님의 형상 (Imago Dei)</span> 에 있습니다
+      </div>
+      <div class="big-q-ref">창세기 1:27 | 시편 139:14 — AI가 아무리 발전해도 이 사실은 변하지 않습니다</div>
+    </div>
+
+    <!-- 소명 3단계 -->
+    <div class="g3 rev">
+      <div class="card" style="text-align:center;opacity:.65">
+        <div style="font-size:2.4rem;margin-bottom:.65rem">💰</div>
+        <div class="card-code" style="text-align:center">Level 01</div>
+        <h3 style="color:var(--t2)">JOB (직업)</h3>
+        <p style="font-size:.83rem">"돈을 위해 일한다." 일이 생존 수단. 월급날만 기다리다 번아웃.</p>
+      </div>
+      <div class="card c-cyan" style="text-align:center">
+        <div style="font-size:2.4rem;margin-bottom:.65rem">📈</div>
+        <div class="card-code" style="text-align:center">Level 02</div>
+        <h3 style="color:var(--cyan)">CAREER (경력)</h3>
+        <p style="font-size:.83rem">"성공을 위해 일한다." 승진·성과가 목표. 정상에 가도 공허함 남음.</p>
+      </div>
+      <div class="card c-gold" style="text-align:center">
+        <div style="font-size:2.4rem;margin-bottom:.65rem">✨</div>
+        <div class="card-code" style="text-align:center">Level 03</div>
+        <h3 style="color:var(--gold-lt)">CALLING (소명)</h3>
+        <p style="font-size:.83rem">"하나님 나라를 위해 일한다." 일이 예배. 힘들어도 의미 있음. 흔들리지 않는 삶.</p>
+        <div class="chip chip-gold">기독교인이 추구할 수준</div>
+      </div>
+    </div>
+
+    <!-- 소명 발견 질문 -->
+    <div class="rev" style="margin-top:2.5rem">
+      <h3 style="font-weight:800;font-size:1.05rem;margin-bottom:1.2rem">🗺️ 소명 발견 4가지 질문 (실습 5분)</h3>
+      <div class="flow">
+        <div class="flow-step"><div class="fs-n">Q1</div><div class="fs-ico">❤️</div><div class="fs-title">돈 없이도 하고 싶은 일은?</div><div class="fs-desc">은사와 열정의 교차점</div></div>
+        <div class="flow-step"><div class="fs-n">Q2</div><div class="fs-ico">😢</div><div class="fs-title">세상 어떤 고통이 내 마음을 아프게 하나?</div><div class="fs-desc">부담이 소명의 힌트</div></div>
+        <div class="flow-step"><div class="fs-n">Q3</div><div class="fs-ico">🌟</div><div class="fs-title">타인이 도움을 요청하는 나의 강점은?</div><div class="fs-desc">공동체가 보는 은사</div></div>
+        <div class="flow-step"><div class="fs-n">Q4</div><div class="fs-ico">✝️</div><div class="fs-title">하나님이 이 시대에 원하시는 것은?</div><div class="fs-desc">기도·말씀·공동체 분별</div></div>
+      </div>
+    </div>
+
+    <!-- 취업 전략 -->
+    <div class="g2 rev" style="margin-top:2.5rem">
+      <div class="card c-gold">
+        <h3 style="color:var(--gold-lt)">✅ 기독교인 취업 전략의 차별점</h3>
+        <ul class="chk">
+          <li>가치관 명확함 = 면접에서 가장 강한 무기</li>
+          <li>봉사·섬김 경험 → 고유한 스토리 자산</li>
+          <li>교회 네트워크 → 세상 어떤 인맥보다 신뢰도 높음</li>
+          <li>직장 = 선교지 관점 → 직업 선택 기준 달라짐</li>
+          <li>기도하며 동시에 준비 (느헤미야 모델)</li>
+          <li>실패를 하나님의 훈련으로 해석하는 회복력</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card c-red" style="margin-bottom:1rem">
+          <h3>⚠️ 하나님 뜻 분별 — 위험 신호</h3>
+          <ul class="chk" style="gap:.4rem">
+            <li style="font-size:.8rem">"연봉 높으니까 하나님 뜻이겠지"</li>
+            <li style="font-size:.8rem">감정·꿈에만 의존한 단독 결정</li>
+            <li style="font-size:.8rem">공동체 의견 무시하고 혼자 결정</li>
+            <li style="font-size:.8rem">빠른 결정이 믿음이라는 착각</li>
+          </ul>
+        </div>
+        <div class="card c-green">
+          <h3>✅ 하나님 뜻 분별 — 건강한 방법</h3>
+          <ul class="chk" style="gap:.4rem">
+            <li style="font-size:.8rem">말씀(성경)에 어긋나지 않는가?</li>
+            <li style="font-size:.8rem">기도 중 평안함이 있는가? (빌 4:7)</li>
+            <li style="font-size:.8rem">신뢰하는 멘토·공동체 확인</li>
+            <li style="font-size:.8rem">시간이 지나도 마음이 변하지 않는가?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 8 · 소외된 이웃 위한 직업
+═══════════════════════════════ -->
+<section class="stripe soft" id="s-excluded">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-pink">Part 8 · 15분</div>
+      <h2 class="sec-h">소외된 이웃을<br><em class="v">섬기는 직업</em></h2>
+      <p class="sec-lead">AI 소외·기후 소외·디지털 격차로 뒤처지는 이웃. 기독교인 청년이 이 자리에 서는 것이 가장 강력한 소명입니다.</p>
+    </div>
+
+    <!-- 소외 현황 -->
+    <div class="stats rev">
+      <div class="stat"><div class="stat-n" style="color:var(--red)"><span class="counter" data-t="42">0</span>%</div><div class="stat-l">65세 이상 고령층<br>디지털 정보 격차</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--orange)"><span class="counter" data-t="2000">0</span>만</div><div class="stat-l">연간 기후로<br>거처 잃는 난민</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--gold)"><span class="counter" data-t="300">0</span>만</div><div class="stat-l">AI 대체 위험<br>한국 일자리</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--cyan)"><span class="counter" data-t="27">0</span>%</div><div class="stat-l">장애인의<br>디지털 서비스 접근률</div></div>
+    </div>
+
+    <!-- AI 소외 섬기는 직업 -->
+    <div class="part-label rev">
+      <div class="part-label-bar" style="background:linear-gradient(180deg,var(--red),var(--orange))"></div>
+      <div><div class="part-label-sub">섬김 영역 A</div><div class="part-label-title">🤖 AI 소외 이웃을 위한 직업</div></div>
+    </div>
+    <div class="ga rev">
+      <div class="card c-orange">
+        <span class="card-ico">👴</span>
+        <h3>디지털 소외 어르신 동행 코디네이터</h3>
+        <p>키오스크·앱·비대면 행정을 못 쓰는 어르신 곁에서 함께하는 전문 봉사자. 교회·복지관 기반으로 운영 가능. 사회서비스 일자리로도 발전 가능.</p>
+        <div class="chip chip-orange">사회복지 + IT 기초 = 융합 전문직</div>
+      </div>
+      <div class="card c-orange">
+        <span class="card-ico">📚</span>
+        <h3>취약계층 AI 리터러시 교사</h3>
+        <p>저소득층·장애인·노인을 위한 AI 기초 교육 전문가. 디지털 배움터·평생교육원·교회 공부방에서 활동. 교육부·지자체 지원 프로그램 확대 중.</p>
+        <div class="chip chip-orange">교육학 + AI 활용 교육 자격</div>
+      </div>
+      <div class="card c-orange">
+        <span class="card-ico">🏥</span>
+        <h3>AI 복지 서비스 연결 전문가</h3>
+        <p>복잡한 정부 복지 서비스를 AI로 찾아주고, 디지털 신청 대행. 기초수급·장애인지원·고령층 서비스 연결. 사각지대 해소 최전선.</p>
+        <div class="chip chip-orange">사회복지사 + 행정 + AI 툴</div>
+      </div>
+      <div class="card c-orange">
+        <span class="card-ico">🧒</span>
+        <h3>취약 아동 AI 학습 보조 교사</h3>
+        <p>학원 못 가는 아이들에게 AI 튜터링 연결 + 사람의 정서 지원 병행. 예전엔 비용 때문에 불가능했던 1:1 맞춤 교육이 이제 무료로 가능.</p>
+        <div class="chip chip-orange">교육봉사 + Khan Academy AI</div>
+      </div>
+    </div>
+
+    <!-- 기후 소외 섬기는 직업 -->
+    <div class="part-label rev">
+      <div class="part-label-bar" style="background:linear-gradient(180deg,var(--green),#a3e635)"></div>
+      <div><div class="part-label-sub">섬김 영역 B</div><div class="part-label-title">🌍 기후 소외 이웃을 위한 직업</div></div>
+    </div>
+    <div class="ga rev">
+      <div class="card c-green">
+        <span class="card-ico">🌊</span>
+        <h3>기후 난민 정착 지원 전문가</h3>
+        <p>홍수·해수면 상승으로 삶의 터전 잃는 이재민 지원. 임시 거주 설계, 생계 재건, 법적 지위 지원. 기후 정의가 복음적 사명인 이유.</p>
+        <div class="chip chip-green">사회복지 + 환경법 + 국제개발</div>
+      </div>
+      <div class="card c-green">
+        <span class="card-ico">☀️</span>
+        <h3>에너지 빈곤 해결 전문가</h3>
+        <p>전기 없는 개발도상국·도서 지역에 소형 태양광 설치. 에너지 빈곤은 의료·교육·경제 모두에 직결. 전기를 전하는 선교사.</p>
+        <div class="chip chip-green">신재생에너지 + 국제 개발 NGO</div>
+      </div>
+      <div class="card c-green">
+        <span class="card-ico">💧</span>
+        <h3>물 부족 지역 정수 기술자</h3>
+        <p>오염된 물이 전염병과 사망의 원인. 저비용 정수 기술 설치·유지보수. 물 한 잔이 생명을 살리는 현장의 기술 사역자.</p>
+        <div class="chip chip-green">환경공학 + 적정기술 + Water.org</div>
+      </div>
+      <div class="card c-green">
+        <span class="card-ico">📣</span>
+        <h3>기후 정의 옹호 활동가</h3>
+        <p>기후위기 피해는 가장 가난한 자에게 집중. 기독교 창조 청지기 관점으로 정부·기업에 목소리. 아모스의 선지자적 사명.</p>
+        <div class="chip chip-green">환경정책 + 기독교 환경운동</div>
+      </div>
+    </div>
+
+    <div class="verse rev">
+      <p>"너희가 여기 내 형제 중에 지극히 작은 자 하나에게 한 것이 곧 내게 한 것이니라"</p>
+      <cite>— 마태복음 25:40 | 소외된 이웃을 섬기는 것이 예수님을 섬기는 것입니다</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     PART 9 · 인생 청사진 & 결단
+═══════════════════════════════ -->
+<section class="stripe" id="s-action">
+  <div class="page-inner">
+    <div class="rev">
+      <div class="sec-eyebrow ey-gold">Part 9 · 15분</div>
+      <h2 class="sec-h">인생 청사진 &<br><em>오늘의 결단</em></h2>
+      <p class="sec-lead">취업은 끝이 아닙니다. 취업 후 어떻게 살 것인가의 틀을 세우고, 지금 당장 시작할 한 가지를 정합니다.</p>
+    </div>
+
+    <!-- 4영역 -->
+    <div class="g4 rev">
+      <div class="card c-gold"><span class="card-ico">✝️</span><div class="card-code">Zone 01</div><h3>영성</h3><p>말씀·기도·예배·공동체. 다른 모든 영역의 기초. 취업 중에도 영성이 먼저.</p><div class="chip chip-gold">모든 것의 기초</div></div>
+      <div class="card c-cyan"><span class="card-ico">🤝</span><div class="card-code">Zone 02</div><h3>관계</h3><p>가족·친구·공동체. 취업 후 관계 망가지면 공허. 지금 투자가 미래 자산.</p><div class="chip chip-cyan">AI 대체 불가</div></div>
+      <div class="card c-green"><span class="card-ico">💪</span><div class="card-code">Zone 03</div><h3>건강</h3><p>몸과 마음. 내 몸은 하나님 성전(고전 6:19). 취준 스트레스 속 건강 우선.</p><div class="chip chip-green">지속 가능한 기반</div></div>
+      <div class="card c-violet"><span class="card-ico">📚</span><div class="card-code">Zone 04</div><h3>성장</h3><p>AI 시대엔 졸업이 없습니다. 독서·강의·경험. 평생 학습자 = 진짜 경쟁력.</p><div class="chip chip-violet">AI 시대 생존법</div></div>
+    </div>
+
+    <!-- 인생 청사진 실습 -->
+    <div class="card rev" style="margin-top:2.5rem;background:linear-gradient(135deg,rgba(240,180,41,.06),rgba(34,211,238,.04))">
+      <h3 style="color:var(--gold-lt);margin-bottom:1.1rem">📝 인생 청사진 작성 실습 (7분)</h3>
+      <div class="acc">
+        <div class="acc-item"><button class="acc-btn">① 삶의 목적 한 문장 — "나는 ___ 을 위해 산다"<span class="acc-ico">+</span></button><div class="acc-body"><p>예시: "나는 AI 시대에 소외되는 어르신들이 세상에 연결되도록 돕기 위해 산다." / "나는 기후 위기 피해를 입은 가장 가난한 이웃 곁에 서기 위해 산다." 거창하지 않아도 됩니다. 솔직하게 지금 느끼는 것을 쓰세요.</p></div></div>
+        <div class="acc-item"><button class="acc-btn">② 5년 후 내 모습 — 구체적으로 그리기<span class="acc-ico">+</span></button><div class="acc-body"><p>직업·커리어, 신앙·영성, 관계, 재정, 섬기는 이웃 각각을 적어보세요. "○○분야에서 ○○ 역할을 하고 있으며, ○○소그룹을 섬기고, ○○ 이웃과 함께하고 있다"처럼 구체적으로.</p></div></div>
+        <div class="acc-item"><button class="acc-btn">③ AI·기술 혁명 시대에 내가 섬길 이웃은 누구인가?<span class="acc-ico">+</span></button><div class="acc-body"><p>오늘 강의에서 마음에 떠오른 '소외된 이웃'이 있나요? 내 주변에서 지금 당장 시작할 수 있는 작은 섬김 한 가지를 써보세요.</p></div></div>
+        <div class="acc-item"><button class="acc-btn">④ 결코 타협하지 않을 가치관 3가지<span class="acc-ico">+</span></button><div class="acc-body"><p>연봉이 낮아도, 승진이 느려도 지킬 가치. 예: "일요일 예배는 포기 못 한다", "거짓말로 성과 내지 않겠다", "약자를 외면하는 문화에서 일하지 않겠다"</p></div></div>
+      </div>
+    </div>
+
+    <!-- 결단 3단계 -->
+    <div class="g3 rev" style="margin-top:2rem">
+      <div class="card c-gold">
+        <span class="card-ico">⚡</span>
+        <div class="card-code">// 이번 주</div>
+        <h3>소명 탐색 시작</h3>
+        <ul class="chk" style="gap:.45rem">
+          <li>AI 도구 1개 직접 써보기</li>
+          <li>소명 발견 4가지 질문 작성</li>
+          <li>기독교 선배 1명에게 연락</li>
+          <li>어르신 스마트폰 도움 드리기</li>
+        </ul>
+      </div>
+      <div class="card c-cyan">
+        <span class="card-ico">🌱</span>
+        <div class="card-code">// 이번 달</div>
+        <h3>방향 설정</h3>
+        <ul class="chk" style="gap:.45rem">
+          <li>취업 목표 분야 2~3개 좁히기</li>
+          <li>JD 5개 분석해 키워드 정리</li>
+          <li>기독교 직장인 모임 참석</li>
+          <li>관심 기술 분야 유튜브 5편</li>
+        </ul>
+      </div>
+      <div class="card c-violet">
+        <span class="card-ico">🚀</span>
+        <div class="card-code">// 3개월</div>
+        <h3>인생 청사진 완성</h3>
+        <ul class="chk" style="gap:.45rem">
+          <li>삶의 목적 한 문장 확정</li>
+          <li>5년 후 목표 구체적 작성</li>
+          <li>타협 불가 가치관 3개 확립</li>
+          <li>섬길 이웃 1명 정하기</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     CTA
+═══════════════════════════════ -->
+<section class="cta">
+  <div class="rev" style="position:relative;z-index:1">
+    <h2 class="cta-h">
+      <div style="color:var(--t1)">기술이 바꿔도</div>
+      <div class="g">사람이 해야 할 일은 남는다</div>
+    </h2>
+    <p class="cta-p">
+      취업은 목적지가 아닙니다. 하나님이 나를 이 시대, 이 자리에 두신 이유를 찾아가는 여정입니다.<br>
+      소외된 이웃 곁에 서는 것, 새 기술로 세상을 더 좋게 만드는 것—<br>
+      그것이 기독교 청년의 가장 오래된, 가장 새로운 소명입니다.
+    </p>
+    <div class="cta-verse">
+      "내가 너희를 위하여 계획하는 것들을 내가 알고 있다. 주님의 말씀이다.<br>
+      그것은 재앙이 아니라 평안이요, 너희에게 미래와 희망을 주는 것이다."
+      <strong>— 예레미야 29:11</strong>
+    </div>
+  </div>
+</section>
+
+<footer>2026 청년부 여름 수련회 특강 · 나는 어떻게 살고, 어떻게 일할 것인가? · 취업 × AI × 소명 통합 강의자료</footer>
+
+<script>
+/* ── Intersection Observer ── */
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')});
+},{threshold:.07,rootMargin:'0px 0px -35px 0px'});
+document.querySelectorAll('.rev,.rev-l,.rev-r,.tl-item').forEach(el=>io.observe(el));
+
+/* ── Counters ── */
+const cio = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target, t=+el.dataset.t;
+    let n=0; const step=t/60;
+    const tm=setInterval(()=>{
+      n+=step; if(n>=t){el.textContent=t;clearInterval(tm)}
+      else el.textContent=Math.floor(n);
+    },20);
+    cio.unobserve(el);
+  });
+},{threshold:.5});
+document.querySelectorAll('.counter').forEach(el=>cio.observe(el));
+
+/* ── Bar Charts ── */
+const bio = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.querySelectorAll('.bc-fill').forEach((b,i)=>{
+      setTimeout(()=>{b.style.width=b.dataset.w+'%'},i*120);
+    });
+    bio.unobserve(e.target);
+  });
+},{threshold:.2});
+document.querySelectorAll('.bc').forEach(el=>bio.observe(el));
+
+/* ── Progress ── */
+const pio = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.querySelectorAll('.prog-fill').forEach((b,i)=>{
+      setTimeout(()=>{b.style.width=b.dataset.w+'%'},i*110);
+    });
+    pio.unobserve(e.target);
+  });
+},{threshold:.2});
+document.querySelectorAll('.prog-list').forEach(el=>pio.observe(el));
+
+/* ── Accordion ── */
+document.querySelectorAll('.acc-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.parentElement;
+    const open=item.classList.contains('open');
+    item.parentElement.querySelectorAll('.acc-item').forEach(s=>s.classList.remove('open'));
+    if(!open)item.classList.add('open');
+  });
+});
+
+/* ── Nav ── */
+const smap={
+  hero:'—','s-intro':'커리큘럼','s-job':'취업이란','s-fields':'취업분야',
+  's-steps':'취업단계','s-aichange':'AI변화','s-history':'역사사례',
+  's-newjobs':'새기회','s-faith':'기독교소명','s-excluded':'소외이웃','s-action':'결단'
+};
+const nio = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const id=e.target.id;
+    const lbl=document.getElementById('navLbl');
+    if(smap[id]!==undefined&&lbl)lbl.textContent=smap[id];
+    document.querySelectorAll('.nav-pills a').forEach(a=>{
+      a.classList.toggle('on',a.getAttribute('href')==='#'+id);
+    });
+  });
+},{threshold:.25,rootMargin:'-58px 0px -38% 0px'});
+document.querySelectorAll('[id]').forEach(el=>nio.observe(el));
+</script>
+</body>
+</html>
