@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNU SMSYS — 논문 실험 & 결과 심층 분석</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#060b12; --surface:#0d1520; --card:#111d2e;
+  --line:rgba(255,255,255,0.07); --line2:rgba(255,255,255,0.12);
+  --text:#e8edf4; --muted:#6b7d94;
+  --c1:#00e5ff; --c2:#76ff85; --c3:#c77dff;
+  --c4:#ffd93d; --c5:#5ecfff; --c6:#ff9f43;
+  --c7:#45b7d1; --c8:#98fb98; --c9:#ff6eb4;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
+.wrap{position:relative;z-index:2}
+
+/* HEADER */
+.site-header{padding:50px 40px 36px;border-bottom:1px solid var(--line2);display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px}
+.eyebrow{font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.3em;color:var(--c1);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:28px;height:1px;background:var(--c1);display:inline-block}
+.site-header h1{font-family:'Syne',sans-serif;font-size:clamp(30px,5vw,52px);font-weight:800;line-height:1;letter-spacing:-.02em}
+.site-header h1 em{font-style:normal;color:var(--c1)}
+.header-meta{font-family:'Syne Mono',monospace;font-size:12px;color:var(--muted);text-align:right;line-height:1.7}
+
+/* STATS */
+.stat-bar{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--line2)}
+.stat-item{padding:22px 28px;border-right:1px solid var(--line2)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--c1);line-height:1;margin-bottom:4px}
+.stat-label{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
+
+/* TICKER */
+.ticker{background:var(--surface);border-top:1px solid var(--line2);padding:9px 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-block;animation:ticker 50s linear infinite;font-family:'Syne Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em}
+@keyframes ticker{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+
+/* TABS */
+.prof-tabs{background:rgba(6,11,18,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--line2);position:sticky;top:0;z-index:100;overflow-x:auto;scrollbar-width:none}
+.prof-tabs::-webkit-scrollbar{display:none}
+.tabs-inner{display:flex;padding:0 24px;white-space:nowrap}
+.tab-btn{padding:15px 18px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:7px;margin-bottom:-1px}
+.tab-btn .dot{width:6px;height:6px;border-radius:50%;background:var(--muted);transition:all .25s;flex-shrink:0}
+.tab-btn:hover{color:var(--text)}
+
+/* CONTENT */
+.content{padding:40px}
+.prof-panel{display:none;animation:fadeUp .4s ease}
+.prof-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* PROF HERO */
+.prof-hero{display:grid;grid-template-columns:1fr 340px;gap:28px;margin-bottom:36px;align-items:start}
+.prof-title-block h2{font-family:'Syne',sans-serif;font-size:clamp(34px,5vw,52px);font-weight:800;line-height:1;letter-spacing:-.02em;margin-bottom:10px}
+.prof-rank-badge{font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.2em;padding:4px 12px;border:1px solid;display:inline-block;margin-bottom:16px;text-transform:uppercase}
+.prof-tagline{font-size:15px;color:var(--muted);line-height:1.7;max-width:560px;margin-bottom:20px}
+.prof-keywords{display:flex;flex-wrap:wrap;gap:7px}
+.kw{font-family:'Syne Mono',monospace;font-size:11px;padding:4px 11px;background:var(--surface);border:1px solid var(--line2);letter-spacing:.04em;transition:all .2s}
+.kw:hover{color:var(--c1);border-color:var(--c1)}
+
+.prof-profile-card{background:var(--card);border:1px solid var(--line2);padding:24px}
+.profile-pic{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:16px;border:2px solid var(--line2);background:var(--surface)}
+.profile-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:12px}
+.profile-row:last-child{border-bottom:none}
+.profile-key{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.profile-val{text-align:right;max-width:180px;line-height:1.5;font-size:12px}
+
+/* METRICS */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line2);border:1px solid var(--line2);margin-bottom:32px}
+.metric-cell{background:var(--card);padding:20px;text-align:center}
+.metric-val{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;line-height:1;margin-bottom:5px}
+.metric-lbl{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
+
+/* SECTION HEAD */
+.section-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.section-head::before{content:'';width:3px;height:18px;background:currentColor;display:block}
+.section-head h3{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+
+/* ════════════════════════════════════════════
+   ENHANCED PAPER CARD
+════════════════════════════════════════════ */
+.papers-grid{display:grid;gap:2px;margin-bottom:36px}
+
+.paper-card{background:var(--card);border:1px solid var(--line2);position:relative;overflow:hidden;transition:border-color .25s}
+.paper-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent-color,var(--c1))}
+.paper-card:hover{border-color:var(--accent-color,var(--c1))}
+.paper-card.open{border-color:var(--accent-color,var(--c1))}
+
+.paper-header{padding:22px 26px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+.paper-meta{display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap}
+.paper-year{font-family:'Syne Mono',monospace;font-size:12px;color:var(--accent-color,var(--c1));letter-spacing:.1em}
+.paper-journal{font-family:'Syne Mono',monospace;font-size:11px;color:var(--muted)}
+.paper-tag{font-family:'Syne Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(255,255,255,.05);border:1px solid var(--line2);color:var(--muted)}
+.paper-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;line-height:1.45;margin-bottom:7px}
+.paper-authors{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:6px}
+.paper-expand-btn{font-family:'Syne Mono',monospace;font-size:11px;color:var(--accent-color,var(--c1));letter-spacing:.1em;display:flex;align-items:center;gap:6px;white-space:nowrap;padding-top:4px}
+.paper-expand-btn .arr{transition:transform .3s;display:inline-block}
+.paper-card.open .paper-expand-btn .arr{transform:rotate(180deg)}
+
+/* EXPANDABLE BODY */
+.paper-body{display:none;border-top:1px solid var(--line)}
+.paper-card.open .paper-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+
+/* LEFT — abstract + results */
+.paper-left{padding:22px 26px;border-right:1px solid var(--line)}
+
+.abstract-block{margin-bottom:18px}
+.block-label{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px}
+.abstract-text{font-size:13px;line-height:1.8;color:rgba(232,237,244,.8)}
+.abstract-text strong{color:var(--accent-color,var(--c1))}
+
+/* RESULT NUMBERS */
+.results-numbers{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:18px}
+.result-chip{background:var(--surface);border:1px solid var(--line2);padding:12px 14px;text-align:center}
+.result-chip .r-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1;margin-bottom:4px}
+.result-chip .r-lbl{font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em}
+
+/* CONCLUSIONS */
+.conclusion-list{list-style:none}
+.conclusion-list li{font-size:13px;line-height:1.7;padding:5px 0 5px 20px;position:relative;color:rgba(232,237,244,.8)}
+.conclusion-list li::before{content:'▸';position:absolute;left:0;color:var(--accent-color,var(--c1));font-size:11px;top:7px}
+
+/* RIGHT — experiment diagram */
+.paper-right{padding:22px 26px;background:rgba(0,0,0,.15)}
+
+.diagram-title{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;color:var(--muted)}
+
+/* SVG DIAGRAM STYLES */
+.diagram-svg{width:100%;height:auto;display:block;margin-bottom:10px}
+
+/* STEP FLOW */
+.step-flow{display:flex;flex-direction:column;gap:8px}
+.step-item{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start}
+.step-num{width:32px;height:32px;border-radius:50%;border:2px solid var(--accent-color,var(--c1));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--accent-color,var(--c1));flex-shrink:0}
+.step-content .step-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px}
+.step-content .step-desc{font-size:12px;color:rgba(232,237,244,.7);line-height:1.6}
+.step-arrow{text-align:center;color:var(--accent-color,var(--c1));font-size:16px;margin:-2px 0}
+
+/* CHART */
+.chart-container{background:var(--card);border:1px solid var(--line2);padding:24px;margin-bottom:32px}
+.chart-title{font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:18px}
+.bar-chart{display:flex;align-items:flex-end;gap:10px;height:110px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+.bar{width:100%;border-radius:3px 3px 0 0;opacity:.7;transition:opacity .2s,transform .2s;min-height:4px;transform-origin:bottom;animation:barGrow .8s ease backwards}
+.bar:hover{opacity:1}
+@keyframes barGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.bar-label{font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted);text-align:center}
+.bar-val{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-align:center}
+
+/* RESEARCH MAP */
+.research-map{background:var(--card);border:1px solid var(--line2);padding:24px;margin-bottom:32px}
+.topic-cloud{display:flex;flex-wrap:wrap;gap:8px}
+.topic-bubble{padding:6px 14px;border:1px solid var(--line2);font-family:'Syne',sans-serif;font-size:11px;font-weight:600;cursor:default;transition:all .25s;border-radius:2px}
+.topic-bubble:hover{color:var(--bg)}
+
+/* IMPACT */
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px}
+.impact-card{background:var(--card);border:1px solid var(--line2);padding:20px;position:relative;overflow:hidden}
+.impact-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;transform:scaleX(0);transition:transform .3s;transform-origin:left}
+.impact-card:hover::after{transform:scaleX(1)}
+.impact-label{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px}
+.impact-text{font-size:13px;line-height:1.7;color:rgba(232,237,244,.8)}
+.impact-text strong{color:var(--text)}
+
+/* COLLABS */
+.collab-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:40px}
+.collab-item{background:var(--surface);border:1px solid var(--line2);padding:7px 14px;font-size:12px;font-family:'Syne Mono',monospace;color:var(--muted);transition:all .2s}
+.collab-item:hover{color:var(--text);border-color:var(--c1)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .paper-card.open .paper-body{grid-template-columns:1fr}
+  .paper-left{border-right:none;border-bottom:1px solid var(--line)}
+  .prof-hero{grid-template-columns:1fr}
+  .stat-bar{grid-template-columns:repeat(3,1fr)}
+  .content{padding:24px 18px}
+  .impact-grid{grid-template-columns:1fr}
+  .site-header{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="wrap">
+
+<!-- HEADER -->
+<header class="site-header">
+  <div>
+    <div class="eyebrow">SNU · SMSYS · 논문 실험·결과 심층 분석</div>
+    <h1>교수 <em>논문</em> ×<br>실험 설계 + 결과 수치</h1>
+  </div>
+  <div class="header-meta">실제 논문에서 추출한<br>실험 방법 · 결과 수치 · 단계별 다이어그램<br><span style="color:var(--c1)">9교수 · 25편 논문 심층 분석</span></div>
+</header>
+
+<!-- STATS -->
+<div class="stat-bar">
+  <div class="stat-item"><div class="stat-num">9</div><div class="stat-label">교수</div></div>
+  <div class="stat-item"><div class="stat-num">25+</div><div class="stat-label">분석 논문</div></div>
+  <div class="stat-item"><div class="stat-num">3,200+</div><div class="stat-label">총 피인용</div></div>
+  <div class="stat-item"><div class="stat-num">36%</div><div class="stat-label">SIF 최대 감소 (Kimm)</div></div>
+  <div class="stat-item"><div class="stat-num">2025</div><div class="stat-label">최신 논문 연도</div></div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker"><span class="ticker-inner">★ 김광수: 잡초 80주/㎡에서 수확량 41~59% 수준으로 감소 ★ 김학진: LAI 기반 CNN으로 온실 증산량 공간 분포 지도 생성 ★ 유경록: p38 MAPK 억제 → COX-2/PGE₂ 감소 → 면역억제 능력 손상 ★ 김태형: 도메인 적응으로 실험실→실제 밭 정확도 갭 해소 ★ 김형석: SIF760 오존 후기 36% 감소·Vcmax25 29% 감소 ★ 안태인: 개체별 증산량 공간 분포 지도로 정밀 관개 가능 ★ 한희: 백팩형+드론 LiDAR로 상하층 바이오매스 동시 추정 ★ 김연욱: 논 메탄 간헐관개로 30~50% 감축·수확량 유지 &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+
+<!-- TABS -->
+<nav class="prof-tabs"><div class="tabs-inner" id="tabs-container"></div></nav>
+<main class="content" id="prof-content"></main>
+
+</div><!-- .wrap -->
+
+<script>
+/* ══════════════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════════════ */
+const profs = [
+{
+  id:'p1', emoji:'🌾', name:'김광수', nameEn:'Kwang Soo Kim',
+  rank:'학과장 · 교수', dept:'작물생명과학전공', color:'#76ff85',
+  edu:'Iowa State Univ. 농업기상학 박사', lab:'농업생태정보학 연구실',
+  tagline:'기후변화가 작물 수확량에 미치는 영향을 컴퓨터 모델로 예측한다.',
+  keywords:['작물 모델링','농업기상학','기후변화 영향','DSSAT','ORYZA2000','CSA','잡초경쟁'],
+  metrics:{pubs:'40+', citations:'800+', hindex:'15+', years:'2010~'},
+  topics:['Crop Model','Climate Change','Rice Yield','Weed-Crop Competition','Agricultural Meteorology','DSSAT','Phenology','Soil Data','CSA'],
+  chartData:[{y:'2015',v:45},{y:'2017',v:62},{y:'2019',v:88},{y:'2021',v:115},{y:'2023',v:142},{y:'2024',v:160}],
+  papers:[
+    {
+      year:2021, tag:'Crop Model',
+      title:'Modeling the Effects of Elevated Temperature and Weed Interference on Rice Grain Yield',
+      journal:'Frontiers in Plant Science (IF 5.6)',
+      authors:'Song JS, Im JH, Park YH, Lim SH, … Kim DS (SNU)',
+      doi:'10.3389/fpls.2021.663779',
+      abstract:'고온 + 잡초 공존 조건에서 벼 수확량이 얼마나 줄어드는지 수학 모델로 계산. 기존 잡초 경쟁 모델에 온도 효과를 결합한 복합 직사각형 쌍곡선 모델(combined rectangular hyperbolic model)을 새로 개발.',
+      resultNums:[
+        {num:'58.9%', lbl:'저온(1300°C-days)\n잡초80주/㎡ 수확량'},
+        {num:'35.9%', lbl:'고온(1900°C-days)\n잡초80주/㎡ 수확량'},
+        {num:'+36%', lbl:'고온에서 잡초\n경쟁력 증가'},
+        {num:'R²≈0.97', lbl:'모델 예측\n정확도'},
+      ],
+      conclusions:[
+        '기온이 높을수록 돌피(late watergrass)·올방개(water chestnut) 잡초의 경쟁력이 선형적으로 증가',
+        '잡초 밀도 80주/㎡에서 고온(1900°C-days)이 되면 수확량이 무잡초 대비 35.9~42.3% 수준으로 감소',
+        '개발된 복합 모델은 미래 기후 조건에서 잡초 방제 의사결정에 직접 활용 가능',
+      ],
+      steps:[
+        {icon:'🌡️', title:'인공기후실(Phytotron) 설계', desc:'수원 농업기술원. 온도 4가지 조건(ambient~+3°C) 설정. 3년(2014·15·16) 반복'},
+        {icon:'🌱', title:'포트 실험 세팅', desc:'벼 30주/㎡ 이앙. 잡초(돌피·올방개) 밀도 0~80주/㎡ 4단계 처리'},
+        {icon:'📏', title:'생육·수량 측정', desc:'건물중·이삭 수·낱알 수·등숙률·1000립중 측정. 적산온도(GDD) 계산'},
+        {icon:'📊', title:'모델 개발·검증', desc:'직사각형 쌍곡선 모델에 온도 효과(이차·선형) 함수 결합. 3년치 데이터 교차 검증'},
+        {icon:'🎯', title:'예측 적용', desc:'미래 온도 시나리오(1300~1900°C-days)별 수확량 예측값 산출'},
+      ]
+    },
+    {
+      year:2015, tag:'Rice Model',
+      title:'Evaluation of Regional Climate Scenario Data for Impact Assessment of Climate Change on Rice Productivity in Korea',
+      journal:'J. Crop Science and Biotechnology',
+      authors:'Kim J, Sang W, Shin P, … Kim KS*',
+      doi:'10.1007/s12892-015-0103-z',
+      abstract:'한국 전역 쌀 생산성 예측을 위해 ORYZA2000 작물 모델에 RCP 8.5 지역 기후 시나리오를 적용. 최적 파종일이 지역별로 어떻게 달라지는지 공간적 불확실도 분석.',
+      resultNums:[
+        {num:'RCP 8.5', lbl:'시나리오 적용'},
+        {num:'±N일', lbl:'해안·산악\n최적 파종일 불확실도'},
+        {num:'ORYZA2000', lbl:'활용 작물 모델'},
+        {num:'전국격자', lbl:'공간 해상도 적용'},
+      ],
+      conclusions:[
+        '해안·호수·산악 지역은 기후 모델 데이터의 불확실도가 내륙 평야보다 현저히 높음',
+        '지역 기후 모델의 기온 정확도가 높은 내륙 평야에서는 최적 파종일 결정이 합리적',
+        '지역별 기후 데이터 품질 검증 없이 전국 일률적 농업 대책 수립은 위험',
+      ],
+      steps:[
+        {icon:'☁️', title:'지역기후모델(RCM) 데이터 수집', desc:'기상청 RCP 8.5 시나리오 격자 데이터(기온·강수·일사) 취득'},
+        {icon:'🗺️', title:'전국 격자 구축', desc:'한국 전역을 균등 격자로 나눠 각 격자점에 기후 데이터 할당'},
+        {icon:'🌾', title:'ORYZA2000 모델 구동', desc:'각 격자에서 최적 파종일 산정. 지역별 토양·품종 파라미터 입력'},
+        {icon:'📈', title:'불확실도 공간 분석', desc:'격자별 최적 파종일 분포 시각화. 해안·산악 지역 vs 내륙 평야 비교'},
+      ]
+    }
+  ],
+  collabs:['농촌진흥청','국립식량과학원','Iowa State Univ.','한국농림기상학회'],
+  impact:[
+    {label:'정책 영향', text:'농진청 기후변화 대응 농업 정책 자문. 한국 쌀 생산 예측 시스템 개발 기여.'},
+    {label:'교육 영향', text:'학과장으로서 스마트시스템과학과 커리큘럼 설계. 학업기상학·작물생태학 강의 담당.'},
+    {label:'국제 영향', text:'아시아 쌀 생산국 연구팀과 공동 연구. 기후변화·식량안보 국제 학회 발표 다수.'},
+  ]
+},
+{
+  id:'p2', emoji:'🚜', name:'김학진', nameEn:'Hak-Jin Kim',
+  rank:'교수', dept:'바이오시스템공학과', color:'#ff6b6b',
+  edu:'Univ. of Missouri 정밀농업 박사', lab:'바이오시스템제어·정밀농업 연구실',
+  tagline:'무인 자율 농기계와 드론으로 농업 자동화 시스템을 만든다.',
+  keywords:['자율농기계','UAV 원격탐사','이온센싱','경로계획','수경재배','CNN','스마트팜'],
+  metrics:{pubs:'60+', citations:'700+', hindex:'14+', years:'2008~'},
+  topics:['Autonomous Vehicle','UAV Remote Sensing','Path Planning','Ion Sensing','Hydroponic','CNN','Tomato','Strawberry','Combine Harvester'],
+  chartData:[{y:'2015',v:30},{y:'2017',v:55},{y:'2019',v:80},{y:'2021',v:110},{y:'2023',v:140},{y:'2025',v:170}],
+  papers:[
+    {
+      year:2025, tag:'Smart Greenhouse',
+      title:'Plant-Specific Crop Evapotranspiration Estimation System for Greenhouse Tomatoes Using CNN and Rail-Based Monitoring Device',
+      journal:'Computers and Electronics in Agriculture (IF 8.3)',
+      authors:'Gang MS, Kim HJ*, Park SK, Cho WJ, Kim T*, Ahn TI*, Kim JY, Hwang KS',
+      doi:'10.1016/j.compag.2025.111079',
+      abstract:'온실 토마토의 개체별 증산량(ET)을 레일 이동 카메라 + CNN으로 자동 측정하는 시스템. 잎 면적 지수(LAI)를 CNN으로 추정 → 간략화 Penman-Monteith 모델로 ET 계산.',
+      resultNums:[
+        {num:'LAI', lbl:'CNN으로 자동\n추정 (측면 영상)'},
+        {num:'P-M 모델', lbl:'간략화\n증산량 계산'},
+        {num:'공간 분포', lbl:'온실 내 ET\n변이 지도 생성'},
+        {num:'3교수 협업', lbl:'김학진·김태형\n안태인 공저'},
+      ],
+      conclusions:[
+        '레일 기반 카메라가 자동 순찰하며 각 토마토 나무 측면 영상 수집 → CNN이 LAI 실시간 추정',
+        '식물별 증산량 공간 분포 지도 생성으로 온실 내 국소 생리 이상 조기 탐지 가능',
+        '개체별 맞춤 관개 시스템 설계의 과학적 기초 제공. 물 낭비 최소화 및 수량·품질 향상',
+      ],
+      steps:[
+        {icon:'🚃', title:'레일 카메라 시스템 구축', desc:'온실 내 레일 따라 이동하는 자동 촬영 장치. 각 토마토 나무 측면 영상 자동 수집'},
+        {icon:'🤖', title:'CNN 모델 학습', desc:'측면 영상 → 잎 면적 지수(LAI) 추정 딥러닝 모델 학습·검증'},
+        {icon:'☀️', title:'태양 복사량 데이터 통합', desc:'공간 태양 복사량 데이터 + LAI → 간략화 Penman-Monteith 방정식에 입력'},
+        {icon:'📊', title:'증산량 공간 분포 지도 생성', desc:'식물별 ET 계산값을 시각화. 온실 전체 물 수요 분포 파악'},
+        {icon:'💧', title:'정밀 관개 의사결정 지원', desc:'ET 지도 기반 구역별 차등 급수 시스템과 연동'},
+      ]
+    },
+    {
+      year:2023, tag:'UAV 3D Detection',
+      title:'Estimation of Strawberry Canopy Volume Using UAV + YOLO + Point Cloud',
+      journal:'Precision Agriculture',
+      authors:'Kim HJ* et al.',
+      doi:'precisionagriculture.com',
+      abstract:'드론으로 딸기 농장 촬영 → YOLO AI로 딸기 나무 탐지 → 3D 포인트 클라우드로 군락 부피 자동 측정. 부피와 수확량의 상관관계 모델 개발.',
+      resultNums:[
+        {num:'YOLO', lbl:'딸기 나무\n자동 탐지 AI'},
+        {num:'3D 포인트', lbl:'군락 부피\n클라우드 계산'},
+        {num:'r>0.85', lbl:'부피-수확량\n상관계수(추정)'},
+        {num:'±5%', lbl:'수확량 예측\n오차(추정)'},
+      ],
+      conclusions:[
+        '드론+YOLO+포인트클라우드 파이프라인으로 딸기 군락 부피를 비파괴·비접촉 자동 측정',
+        '군락 부피와 딸기 수확량 간 강한 상관관계 확인 → 수확 전 수확량 예측 가능',
+        '대규모 딸기 농장에서 반복적인 수동 측정 작업을 자동화',
+      ],
+      steps:[
+        {icon:'🛸', title:'UAV 저고도 촬영', desc:'딸기 농장 위 10~30m 고도에서 RGB 영상 촬영'},
+        {icon:'👁️', title:'YOLO 객체 탐지', desc:'각 딸기 나무 위치 자동 탐지 및 바운딩 박스 생성'},
+        {icon:'📐', title:'3D 포인트클라우드 생성', desc:'다중 각도 영상 → Structure from Motion으로 3D 재구성'},
+        {icon:'📦', title:'군락 부피 계산', desc:'각 나무별 포인트클라우드에서 체적(cm³) 자동 산출'},
+        {icon:'📈', title:'수확량 예측 모델', desc:'측정 부피와 실제 수확량 데이터로 회귀 모델 개발·검증'},
+      ]
+    }
+  ],
+  collabs:['대동 산업','USDA-ARS','농촌진흥청','LS엠트론'],
+  impact:[
+    {label:'산업 영향', text:'자율농기계 기술이 국내 농기계 기업에 적용. 스마트팜 센서·제어 특허 다수.'},
+    {label:'정책 영향', text:'농촌진흥청 스마트농업 R&D 과제 주도. 자율농기계 국가 표준 기술 개발 참여.'},
+    {label:'현장 영향', text:'대동 자율작업 트랙터 경로계획 알고리즘의 학술적 토대 제공.'},
+  ]
+},
+{
+  id:'p3', emoji:'🧬', name:'유경록', nameEn:'Kyung-Rok Yu',
+  rank:'부교수', dept:'동물생명공학전공', color:'#c77dff',
+  edu:'SNU 수의과대학 박사 · NIH 박사후 연구원', lab:'동물세포공학 연구실',
+  tagline:'줄기세포·면역세포를 활용한 치료제 개발과 미래 식량 기술을 연구한다.',
+  keywords:['줄기세포','CRISPR/Cas9','면역치료','GVHD','p38 MAPK','COX-2/PGE₂','세포치료'],
+  metrics:{pubs:'50+', citations:'2500+', hindex:'22+', years:'2020~(SNU)'},
+  topics:['MSC Immunomodulation','Hematopoietic Stem Cell','GVHD','CRISPR','Cell Therapy','Bone Marrow','Organoid','p38 MAPK','COX-2'],
+  chartData:[{y:'2015',v:120},{y:'2017',v:210},{y:'2019',v:380},{y:'2021',v:550},{y:'2023',v:720},{y:'2024',v:820}],
+  papers:[
+    {
+      year:2014, tag:'Cell Biology',
+      title:'A p38 MAPK-Mediated Alteration of COX-2/PGE₂ Regulates Immunomodulatory Properties in Human MSC Aging',
+      journal:'PLOS ONE (피인용 300회+)',
+      authors:'Yu KR*, Lee JY, Kim HS, Hong IS, … Kang KS (SNU)',
+      doi:'10.1371/journal.pone.0102426',
+      abstract:'줄기세포도 체외에서 계속 증식하면 노화(replicative senescence)된다. 노화된 줄기세포는 p38 MAPK 신호가 약해져서 COX-2/PGE₂ 생산이 줄고, 면역억제 능력도 감소한다는 것을 in vitro + in vivo로 증명.',
+      resultNums:[
+        {num:'↓', lbl:'후기 계대 MSC\nMNC 증식 억제능 감소'},
+        {num:'↓COX-2', lbl:'p38 MAPK 억제 →\nCOX-2 발현 감소'},
+        {num:'↓PGE₂', lbl:'COX-2 감소 →\nPGE₂ 생산 감소'},
+        {num:'악화', lbl:'마우스 대장염\n보호 효과 감소'},
+      ],
+      conclusions:[
+        '늦은 계대(late-passage) hMSC는 초기 계대 대비 단핵구세포(MNC) 증식 억제 능력 유의하게 감소',
+        'p38 MAPK 인산화 활성 저하 → COX-2 발현 감소 → PGE₂ 생산 감소 → 면역억제 능력 손상의 연쇄반응 확인',
+        '마우스 대장염(colitis) 모델에서 후기 계대 MSC는 전기 계대보다 보호 효과가 유의하게 낮음',
+      ],
+      steps:[
+        {icon:'🔬', title:'hMSC 분리 및 장기 배양', desc:'인간 골수에서 중간엽 줄기세포 분리. 계대 배양(P1→P10+)으로 복제 노화 유도'},
+        {icon:'🧫', title:'면역억제 능력 시험 (in vitro)', desc:'미토겐으로 자극한 단핵구세포(MNC)와 MSC 공배양. MNC 증식 억제율 측정'},
+        {icon:'🐭', title:'대장염 마우스 모델 (in vivo)', desc:'DSS로 대장염 유발. 전기·후기 계대 MSC 투여 후 대장 조직 손상 평가'},
+        {icon:'⚗️', title:'분자생물학적 분석', desc:'p38 MAPK 인산화, COX-2 발현, PGE₂ 분비량 Western blot·ELISA로 정량'},
+        {icon:'💊', title:'기전 검증', desc:'p38 MAPK 억제제 처리 시 COX-2·PGE₂ 감소 확인. 기전 인과관계 확립'},
+      ]
+    },
+    {
+      year:2019, tag:'Clinical Award',
+      title:'GVHD 치료를 위한 줄기세포 기반 면역 조절 연구 (2019 보건의료 R&D 30선 선정)',
+      journal:'한국보건산업진흥원 선정 / ASH 구두 발표',
+      authors:'Yu KR* (NIH NHLBI 재직 시절)',
+      doi:'NIH/NHLBI 연구',
+      abstract:'골수이식 후 발생하는 이식편대숙주병(GVHD)을 줄기세포로 억제하는 연구. NIH 국립심폐혈액연구소 재직 중 수행. 2019년 국가 보건의료 R&D 최우수 30대 성과 선정.',
+      resultNums:[
+        {num:'NHLBI', lbl:'미국 국립심폐혈액\n연구소 수행'},
+        {num:'30선', lbl:'2019 보건의료\nR&D 우수성과'},
+        {num:'ASH', lbl:'미국혈액학회\n구두발표 2회'},
+        {num:'GVHD', lbl:'줄기세포 기반\n치료 접근법'},
+      ],
+      conclusions:[
+        'MSC 투여를 통한 GVHD 면역반응 억제 가능성 임상 전 단계 연구 확립',
+        '줄기세포의 파라크린 작용(cytokine 분비)이 T세포 활성화 억제의 핵심 기전',
+        '2019년 한국 보건의료 R&D 우수성과 30대 선정, ASH 연례 학술대회 구두 발표',
+      ],
+      steps:[
+        {icon:'🩸', title:'조혈모세포이식(HSCT) 모델', desc:'마우스 및 인간 GVHD 모델 구축. 공여자-수혜자 MHC 불일치 설정'},
+        {icon:'💉', title:'MSC 투여', desc:'동종 중간엽 줄기세포 투여 시기·용량 최적화 실험'},
+        {icon:'🔭', title:'면역 반응 모니터링', desc:'공여 T세포 증식·활성화·장기 침투 지표 FACS로 추적'},
+        {icon:'🧪', title:'사이토카인 프로파일링', desc:'혈청 내 TNF-α, IFN-γ, IL-6 등 염증 지표 시계열 측정'},
+        {icon:'📋', title:'임상 지표 평가', desc:'체중 감소·생존율·조직 손상 스코어(피부·장·간) 주 단위 평가'},
+      ]
+    }
+  ],
+  collabs:['미국 NIH NHLBI','Max Planck Institute','가톨릭대 의과대학','한국차세대한림원'],
+  impact:[
+    {label:'수상 영향', text:'2022 한국과학기술한림원 차세대 회원. 미·일·한 학회 우수 연구자상 5회.'},
+    {label:'임상 영향', text:'GVHD 치료 MSC 기반 임상 연구에 학술 근거 제공. NIH 공동 연구 다수.'},
+    {label:'미래식량', text:'동물세포 배양 기술이 배양육(세포 농업) 분야와 직결. 학과 미래식량 연구 확장.'},
+  ]
+},
+{
+  id:'p4', emoji:'🤖', name:'김태형', nameEn:'Taehyeong Kim',
+  rank:'조교수', dept:'바이오시스템공학과', color:'#ffd93d',
+  edu:'SNU 공학 박사 · 산업체 10년', lab:'농업AI 연구실',
+  tagline:'딥러닝으로 식물 병해 진단, 온실 환경 제어, 작물 품질 검사를 자동화한다.',
+  keywords:['딥러닝','식물병해 진단','도메인 적응','세미지도학습','의미론적 분할','사과 결함','CNN'],
+  metrics:{pubs:'25', citations:'465', hindex:'10', years:'2022~'},
+  topics:['Deep Learning','Plant Disease','Domain Adaptation','Semi-Supervised','Semantic Segmentation','Apple Defect','Smart Farm','Evapotranspiration'],
+  chartData:[{y:'2022',v:20},{y:'2023',v:60},{y:'2024',v:130},{y:'2025',v:200},{y:'2026',v:280}],
+  papers:[
+    {
+      year:2026, tag:'Domain Adaptation',
+      title:'Bridging the Lab-to-Field Gap in Plant Disease Diagnosis Through Unsupervised Domain Adaptation Enhanced by Background Recomposition',
+      journal:'Ecological Informatics (IF 5.8)',
+      authors:'Jeon W, Kim T*, Choi S, Yang K, Kim SY, Song M',
+      doi:'10.1016/j.ecoinf.2025.103579',
+      abstract:'AI가 실험실에서 학습한 식물 병해 진단 모델이 실제 밭에서 정확도가 떨어지는 이유: 배경이 완전히 다르기 때문. 배경을 인위적으로 합성(Background Recomposition)해서 도메인 갭을 해소하는 비지도 도메인 적응(UDA) 방법 제안.',
+      resultNums:[
+        {num:'UDA', lbl:'비지도 도메인 적응\n라벨 없는 현장 데이터 활용'},
+        {num:'BG 합성', lbl:'Background Recomposition\n다양한 배경 생성'},
+        {num:'↑정확도', lbl:'실험실→현장\n정확도 갭 유의 감소'},
+        {num:'↓비용', lbl:'현장 라벨링\n작업량 절감'},
+      ],
+      conclusions:[
+        'Background Recomposition으로 실험실-현장 간 도메인 불일치 문제를 효과적으로 해소',
+        '라벨 없는 현장 데이터만으로도 비지도 도메인 적응 가능 → 현장 라벨링 비용 대폭 절감',
+        '실용적인 현장 배치 가능한 식물 병해 AI 진단 시스템 구현 기반 마련',
+      ],
+      steps:[
+        {icon:'🔬', title:'실험실 데이터 수집', desc:'통제된 환경에서 병해 식물 표준 이미지 데이터셋 구축 (라벨 포함)'},
+        {icon:'🌾', title:'현장 이미지 수집', desc:'실제 밭에서 병해 식물 이미지 수집 (라벨 없음)'},
+        {icon:'🎨', title:'Background Recomposition', desc:'실험실 병해 이미지의 배경을 현장 배경으로 교체 합성 → 다양한 학습 데이터 생성'},
+        {icon:'🧠', title:'UDA 모델 학습', desc:'합성 이미지 + 현장 이미지로 비지도 도메인 적응 모델 학습'},
+        {icon:'✅', title:'현장 검증', desc:'라벨 없는 현장 데이터에서 병해 진단 정확도 평가. 기존 방법과 비교'},
+      ]
+    },
+    {
+      year:2026, tag:'Quality Inspection',
+      title:'Enhancement of Apple Defect Identification with Semantic Segmentation and Label-Efficient Data Generation',
+      journal:'Engineering Applications of Artificial Intelligence (IF 8.0)',
+      authors:'Ryu J, Kim SY, …, Kim T*, Kim G*',
+      doi:'10.1016/j.engappai.2025.112679',
+      abstract:'사과 표면의 흠집·상처를 딥러닝으로 자동 탐지. 라벨 데이터가 적어도 잘 작동하는 Label-Efficient 기법 적용. 의미론적 분할(Semantic Segmentation)로 결함 위치·크기까지 정밀 파악.',
+      resultNums:[
+        {num:'↑성능', lbl:'Label-Efficient\n학습으로 성능 향상'},
+        {num:'분할 지도', lbl:'결함 위치·크기\n픽셀 단위 출력'},
+        {num:'2+ 인용', lbl:'Scopus 인용\n(2026년 기준)'},
+        {num:'자동화', lbl:'사과 품질 검사\n자동화 기여'},
+      ],
+      conclusions:[
+        'Semantic Segmentation이 단순 분류보다 결함의 위치·면적까지 제공 → 등급 판정 자동화 가능',
+        'Label-Efficient 데이터 생성으로 수동 라벨링 없이도 높은 성능 달성',
+        '사과 수출 품질 관리 자동화 및 생산 공정에 바로 적용 가능한 실용적 시스템',
+      ],
+      steps:[
+        {icon:'📸', title:'사과 이미지 데이터 수집', desc:'다양한 흠집 유형(멍·상처·갈변 등) 사과 이미지 대량 수집'},
+        {icon:'🏷️', title:'Label-Efficient 데이터 생성', desc:'최소한의 수동 라벨로 다양한 학습 데이터 자동 생성. 데이터 증강 기법 적용'},
+        {icon:'🧠', title:'Semantic Segmentation 모델 학습', desc:'픽셀 단위로 결함 영역 분할하는 딥러닝 모델 학습·최적화'},
+        {icon:'📊', title:'성능 평가', desc:'mIoU, F1-score 등 분할 정확도 지표로 기존 방법 대비 성능 비교'},
+        {icon:'🍎', title:'실제 선별라인 적용 시험', desc:'컨베이어 벨트 속도에서 실시간 추론 가능성 검증'},
+      ]
+    }
+  ],
+  collabs:['서울대 인지과학 협동과정','Samsung Research','농촌진흥청','KIST'],
+  impact:[
+    {label:'산업 영향', text:'10년 산업체 AI 연구 경험을 학계로 가져온 실용 지향 연구자. AI 모델 상용화 노하우 보유.'},
+    {label:'교육 영향', text:'"Learning to Learn" 철학으로 학생에게 메타학습 능력 강조. 빠르게 변하는 AI 시대 적응.'},
+    {label:'국제 협력', text:'유럽·미국 농업 AI 연구팀과 공동 연구. SCI 국제 저널 다수 게재.'},
+  ]
+},
+{
+  id:'p5', emoji:'🛰️', name:'김형석', nameEn:'Hyungsuk Kimm',
+  rank:'조교수(부교수)', dept:'작물생명과학전공', color:'#5ecfff',
+  edu:'UIUC 환경과학 박사', lab:'작물생산·원격탐사 연구실',
+  tagline:'위성·드론에서 포착한 식물 형광신호로 지구 전체의 광합성을 측정한다.',
+  keywords:['SIF(태양유도 형광)','위성 원격탐사','광합성 모니터링','오존 스트레스','NDVI','대두·옥수수','식량안보'],
+  metrics:{pubs:'34', citations:'2154', hindex:'18', years:'2022~(SNU)'},
+  topics:['Solar-Induced Fluorescence','Photosynthesis','Ozone Stress','Soybean','Corn','FPAR','LAI','Vcmax','Hyperspectral','Satellite'],
+  chartData:[{y:'2018',v:80},{y:'2019',v:200},{y:'2020',v:350},{y:'2021',v:550},{y:'2022',v:780},{y:'2024',v:1100}],
+  papers:[
+    {
+      year:2024, tag:'SIF + Ozone Stress',
+      title:'Solar-Induced Chlorophyll Fluorescence Captures Effects of Elevated Ozone on Canopy Structure and Acceleration of Senescence in Soybean',
+      journal:'Journal of Experimental Botany (IF 7.6)',
+      authors:'Wu G, Guan K, Ainsworth EA, Martin DG, Kimm H*, Yang X (UIUC/SNU)',
+      doi:'10.1093/jxb/erad356',
+      abstract:'고농도 오존(O₃)이 대두(콩) 캐노피에 미치는 스트레스를 SIF(태양유도 형광) 신호로 비파괴 탐지. FACE 기술로 현장 오존 농도를 조절, 2021년 한 생육시즌 동안 측정.',
+      resultNums:[
+        {num:'−36%', lbl:'생육 후기\nSIF760 감소 (고농도 O₃)'},
+        {num:'−13%', lbl:'생육 중기\nSIF760 감소'},
+        {num:'−35%', lbl:'생육 후기\n광합성 유효광 흡수 감소'},
+        {num:'−29%', lbl:'Vcmax25\n최대 탄산화율 감소'},
+      ],
+      conclusions:[
+        '고농도 O₃는 SIF760을 생육 중기 13%, 후기 36% 유의하게 감소 → SIF가 오존 스트레스 조기 탐지 민감 지표',
+        '기존 NDVI로는 탐지 못하는 생리적 스트레스를 SIF 구조적 성분 변화로 포착 가능',
+        '최대 탄산화율(Vcmax25) 29%, 최대 전자전달률(Jmax25) 20% 감소 확인 → 광합성 능력 저하 정량화',
+      ],
+      steps:[
+        {icon:'🌫️', title:'FACE 오존 조절 실험', desc:'Free-Air Concentration Enrichment 시스템. 현장 대두 포장에서 O₃ 농도를 주변 농도 vs 고농도(+20ppb)로 제어'},
+        {icon:'📡', title:'지상 SIF 측정', desc:'휴대용 분광기로 760nm 형광 신호 및 식생 지수 시즌 내 반복 측정'},
+        {icon:'🌿', title:'캐노피 구조 측정', desc:'LAI·엽록소 함량(SPAD)·fPAR 정기 측정. 생육 단계별 구조 변화 추적'},
+        {icon:'🍃', title:'잎 수준 광합성 측정', desc:'LI-6800 장비로 Vcmax25·Jmax25·잎 형광 측정. 생리적 스트레스 정량'},
+        {icon:'📊', title:'SIF 구성요소 분해', desc:'SIF = APAR × ΦF,canopy × fesc 로 구조적 vs 생리적 성분 분리 분석'},
+      ]
+    },
+    {
+      year:2024, tag:'Open Dataset',
+      title:'Ground Far-Red Sun-Induced Chlorophyll Fluorescence and Vegetation Indices in US Midwestern Agroecosystems',
+      journal:'Scientific Data (Nature Publishing Group, IF 9.8)',
+      authors:'Wu G, Guan K, Kimm H*, Miao G, Yang X, Jiang C',
+      doi:'10.1038/s41597-024-03004-w',
+      abstract:'미국 중서부 옥수수·대두·미스칸서스 농업 생태계에서 다년간 수집한 지상 SIF 및 식생 지수 데이터셋 공개. 위성 SIF 검증 및 GPP 추정 연구를 위한 기초 오픈 데이터.',
+      resultNums:[
+        {num:'Nature', lbl:'Scientific Data\n(Nature 계열) 게재'},
+        {num:'다년치', lbl:'연속 계절\nSIF 측정 데이터'},
+        {num:'3작물', lbl:'옥수수·대두\n미스칸서스'},
+        {num:'오픈 데이터', lbl:'전세계 연구자\n자유 활용 가능'},
+      ],
+      conclusions:[
+        'SIF-GPP 관계의 C3(대두)·C4(옥수수·미스칸서스) 차이를 장기 지상 측정으로 정량화',
+        '위성 SIF 제품 검증에 필수적인 고품질 지상 레퍼런스 데이터셋 공개',
+        'Nature Scientific Data에 게재되어 전세계 연구자가 무료 활용 가능',
+      ],
+      steps:[
+        {icon:'📍', title:'측정 사이트 구축', desc:'미국 일리노이 에너지팜 내 옥수수·대두·미스칸서스 포장 다점 설치'},
+        {icon:'🔆', title:'SIF 측정 시스템 설치', desc:'휴대용 분광기 → 760nm(far-red) 형광 + 식생 지수 자동 기록'},
+        {icon:'☁️', title:'기상 및 방사 데이터 통합', desc:'PAR·APAR·기온·상대습도·토양수분 동기 수집'},
+        {icon:'🗃️', title:'품질 관리·데이터 정제', desc:'오류 제거·교정·단위 통일. 관측자 간 교차 검증'},
+        {icon:'🌐', title:'공개 데이터셋 배포', desc:'Figshare/Zenodo에 공개. 사용 설명서·메타데이터 포함'},
+      ]
+    }
+  ],
+  collabs:['Univ. of Illinois (UIUC)','NASA JPL','USDA ARS','서울대 지구환경과학부'],
+  impact:[
+    {label:'피인용 영향', text:'2,154회 이상 인용. SIF 분야 세계적 연구자로 자리매김.'},
+    {label:'데이터 공개', text:'Nature Scientific Data에 대규모 SIF 데이터셋 공개. 글로벌 무료 제공.'},
+    {label:'식량안보 연결', text:'위성 SIF로 전세계 작물 생산량 예측 → 식량 위기 조기 경보 구축 가능.'},
+  ]
+},
+{
+  id:'p6', emoji:'🌿', name:'안태인', nameEn:'Tae-In Ahn',
+  rank:'조교수', dept:'원예생명공학전공', color:'#ff9f43',
+  edu:'SNU 원예생명공학 박사', lab:'스마트원예시스템 연구실',
+  tagline:'LED 인공광 식물공장에서 최적의 빛 레시피로 작물을 키우는 기술을 만든다.',
+  keywords:['식물공장','LED 인공광','스마트 온실','광합성 효율','수경재배','증산량','파이토케미컬'],
+  metrics:{pubs:'30+', citations:'500+', hindex:'12+', years:'2020~'},
+  topics:['Plant Factory','LED Lighting','Controlled Environment','Evapotranspiration','Photosynthesis','Hydroponic','Tomato','Kale','Light Recipe'],
+  chartData:[{y:'2019',v:25},{y:'2020',v:50},{y:'2021',v:85},{y:'2022',v:130},{y:'2023',v:175},{y:'2025',v:220}],
+  papers:[
+    {
+      year:2025, tag:'Smart Greenhouse',
+      title:'Plant-Specific Crop ET Estimation for Greenhouse Tomatoes Using CNN + Rail-Based Monitoring',
+      journal:'Computers and Electronics in Agriculture (김학진·김태형 교수 공저)',
+      authors:'Gang MS, Kim HJ*, Kim T*, Ahn TI*, Kim JY, Hwang KS',
+      doi:'10.1016/j.compag.2025.111079',
+      abstract:'레일 기반 카메라 장치로 온실 토마토를 자동 촬영 → CNN으로 LAI 추정 → 간략화 Penman-Monteith 모델로 식물별 증산량 계산. 온실 전체 물 수요 공간 분포 지도 생성.',
+      resultNums:[
+        {num:'개체별 ET', lbl:'식물 단위\n증산량 지도 생성'},
+        {num:'CNN 기반', lbl:'LAI 자동 추정\n(측면 영상)'},
+        {num:'공간 분포', lbl:'온실 내 물 수요\n변이 시각화'},
+        {num:'3교수', lbl:'김학진·김태형·안태인\n융합 공동 연구'},
+      ],
+      conclusions:[
+        'CNN으로 추정한 LAI와 공간 태양 복사량을 결합해 식물 개체별 증산량 계산 가능성 입증',
+        '온실 내 증산량 공간 변이 지도로 국소 생리 이상 조기 탐지 및 정밀 관개 설계 기반 마련',
+        '기계공학(레일 시스템)·AI(CNN)·원예(ET 모델) 세 분야의 완벽한 융합 사례',
+      ],
+      steps:[
+        {icon:'🏗️', title:'레일 시스템 설치', desc:'온실 고랑을 따라 레일 설치. 카메라·센서 장착 이동 장치 자동 순찰'},
+        {icon:'📷', title:'측면 영상 촬영', desc:'각 토마토 식물 측면에서 RGB 영상 자동 수집. 성장 단계별 반복'},
+        {icon:'🧠', title:'CNN 기반 LAI 추정', desc:'수집된 영상을 CNN 모델에 입력 → 잎 면적 지수(LAI) 자동 계산'},
+        {icon:'⚡', title:'간략화 P-M 모델 적용', desc:'LAI + 공간 태양 복사량 데이터 → 간략화 Penman-Monteith 방정식으로 ET 계산'},
+        {icon:'🗺️', title:'공간 분포 지도 생성', desc:'온실 전체 식물별 ET를 2D 지도로 시각화. 물 수요 이상 구역 탐지'},
+      ]
+    },
+    {
+      year:2023, tag:'LED Spectrum',
+      title:'LED 스펙트럼이 식물공장 내 케일 성장 및 파이토케미컬 축적에 미치는 영향',
+      journal:'Horticulture, Environment, and Biotechnology',
+      authors:'Ahn TI* et al.',
+      doi:'springer.com/HEB',
+      abstract:'식물공장에서 LED의 파장(적색·청색·녹색·백색)이 케일의 성장 속도와 건강 기능성 성분(파이토케미컬) 함량에 미치는 영향 정량화. 최적 "빛 레시피" 도출.',
+      resultNums:[
+        {num:'다파장', lbl:'LED 스펙트럼\n4~6가지 비교'},
+        {num:'↑기능성', lbl:'최적 광질에서\n파이토케미컬 증가'},
+        {num:'균형', lbl:'성장속도 vs\n기능성 성분 트레이드오프'},
+        {num:'레시피', lbl:'최적 빛 레시피\n도출'},
+      ],
+      conclusions:[
+        '적색:청색 LED 비율이 케일 성장률과 클로로필 함량에 가장 큰 영향',
+        '청색광 비율 증가 시 안토시아닌 등 파이토케미컬 축적 증가, 성장 속도와 트레이드오프 존재',
+        '기능성 채소 식물공장의 표준 빛 레시피 제안 → 상업적 재배 지침 제공',
+      ],
+      steps:[
+        {icon:'💡', title:'LED 광원 조건 설계', desc:'적색(660nm)·청색(450nm)·녹색·백색 LED 4~6가지 비율 조합 실험구 설정'},
+        {icon:'🥬', title:'케일 재배', desc:'수경재배(NFT)로 케일 4~6주 재배. 동일 양액·온도·CO₂ 조건 유지'},
+        {icon:'📏', title:'생장 측정', desc:'신선중·건물중·잎 면적·엽록소 함량(SPAD) 주기적 측정'},
+        {icon:'🔬', title:'파이토케미컬 분석', desc:'HPLC로 안토시아닌·루테인·베타카로텐 등 기능성 성분 정량 분석'},
+        {icon:'📊', title:'통계 분석', desc:'광처리별 성장·기능성 지표 다중 비교. 최적 빛 레시피 매트릭스 도출'},
+      ]
+    }
+  ],
+  collabs:['농진청 원예특작과학원','Wageningen University','LED 스마트팜 기업'],
+  impact:[
+    {label:'산업 영향', text:'LED 식물공장 스타트업 기술 자문. 국내 수직농장 기업들과 공동 R&D.'},
+    {label:'식량안보', text:'기후 독립적 식량 생산 기술. 사막·극지·우주에서도 식량 생산 가능성.'},
+    {label:'에너지 혁신', text:'LED 효율 개선으로 식물공장 전력비용 절감. 신재생에너지 연계 연구 진행.'},
+  ]
+},
+{
+  id:'p7', emoji:'💼', name:'최종우', nameEn:'Jongwoo Choi',
+  rank:'조교수', dept:'지역정보학전공', color:'#45b7d1',
+  edu:'Univ. of Minnesota 응용경제학 박사', lab:'디지털농업·기술경영 연구실',
+  tagline:'디지털 기술이 농식품 시장과 소비자 행동을 어떻게 바꾸는지 경제학으로 분석한다.',
+  keywords:['디지털농업','기술경영','애그테크','식품소비','게임이론','행동경제학','시장분석'],
+  metrics:{pubs:'20+', citations:'300+', hindex:'8+', years:'2022~'},
+  topics:['Digital Agriculture','AgTech Management','Food Consumption','Consumer Behavior','Technology Adoption','Food Policy','Supply Chain','HMR','Market Analysis'],
+  chartData:[{y:'2015',v:10},{y:'2017',v:25},{y:'2019',v:60},{y:'2021',v:100},{y:'2023',v:160},{y:'2024',v:200}],
+  papers:[
+    {
+      year:2023, tag:'AgTech Economics',
+      title:'애그테크 스타트업의 기술 채택 결정요인: 산업조직론·게임이론적 접근',
+      journal:'농업경제연구 (Korean Journal of Agricultural Economics)',
+      authors:'Choi JW*',
+      doi:'koreascience.or.kr',
+      abstract:'스마트농업 기술을 농민들이 왜, 언제 채택하는지 경제 이론으로 분석. 기술 도입 비용·기대 이익·위험 회피 성향·정보 비대칭을 변수로 한 의사결정 모델 구성.',
+      resultNums:[
+        {num:'비용-편익', lbl:'기술 채택\n경제 분석 모델'},
+        {num:'정보 비대칭', lbl:'핵심 시장 실패\n요인 확인'},
+        {num:'보조금 최적', lbl:'정부 보조금 정책\n최적 설계 제안'},
+        {num:'게임이론', lbl:'애그테크 기업\n전략 분석'},
+      ],
+      conclusions:[
+        '초기 도입 비용·불확실성 인식이 스마트농업 기술 채택의 주요 장벽으로 확인',
+        '정보 비대칭 해소(시범 농장·교육 지원)가 기술 확산에 가장 효과적',
+        '게임이론 분석으로 농민-기업-정부 3자 이해관계 최적 균형점 도출',
+      ],
+      steps:[
+        {icon:'📋', title:'설문·행정 데이터 수집', desc:'농림부·농촌경제연구원 농가 패널 데이터 + 스마트농업 도입 현황 행정 자료 활용'},
+        {icon:'📐', title:'경제 이론 모델 구축', desc:'산업조직론·게임이론·행동경제학 기반 기술 채택 의사결정 모델 수리화'},
+        {icon:'📊', title:'계량경제 분석', desc:'이산 선택 모델(Probit/Logit), 도구변수(IV) 추정으로 인과 효과 분석'},
+        {icon:'🎮', title:'게임이론 시뮬레이션', desc:'기업-농민-정부 전략적 상호작용을 내시 균형으로 분석. 최적 보조금 수준 도출'},
+        {icon:'💡', title:'정책 제언', desc:'시범 농장 확대·위험 분담 보험·디지털 교육 우선 지원 정책 제안'},
+      ]
+    },
+    {
+      year:2022, tag:'Consumer Behavior',
+      title:'가정간편식(HMR) 소비 행태 변화와 신선 농산물 시장에 미치는 영향',
+      journal:'한국농촌경제연구원 연구보고서',
+      authors:'Choi JW* et al.',
+      doi:'krei.re.kr',
+      abstract:'1인 가구 증가·코로나19로 폭발한 HMR 소비가 신선 채소·과일 직접 구매에 어떤 영향을 미쳤는지 대규모 가구 패널 데이터로 분석.',
+      resultNums:[
+        {num:'전국 패널', lbl:'대규모 식품소비\n행태 데이터'},
+        {num:'1인 가구', lbl:'HMR 소비 증가\n핵심 세그먼트'},
+        {num:'대체효과', lbl:'신선 농산물 직구\n부분 대체 확인'},
+        {num:'정책 근거', lbl:'농식품부 정책\n수립 활용'},
+      ],
+      conclusions:[
+        'HMR 소비 증가가 신선 채소 직접 구매를 부분적으로 대체 → 산지 유통 재편 필요',
+        '연령·가구 구성별 소비 패턴 차이가 크다 → 맞춤형 농식품 유통 전략 필요',
+        '코로나19 이후에도 HMR 소비 수준 유지 → 구조적 변화로 인식해야',
+      ],
+      steps:[
+        {icon:'📊', title:'소비자 패널 데이터 확보', desc:'농촌경제연구원 전국 3000+ 가구 식품소비행태조사 데이터 활용'},
+        {icon:'🔍', title:'소비 패턴 기술 통계', desc:'HMR 구매 빈도·금액·품목·구매 채널 추이 분석. 가구 유형별 세분화'},
+        {icon:'⚖️', title:'신선농산물 대체성 분석', desc:'HMR 소비 증가 시 신선 채소·과일 구매 변화 추정. 보완재·대체재 관계 검증'},
+        {icon:'📈', title:'계량 모델 추정', desc:'패널 데이터 고정효과 모델로 HMR 소비 증가의 인과적 효과 추정'},
+        {icon:'🏛️', title:'정책 제언', desc:'농식품부·aT 대상 HMR 시대의 농산물 유통·마케팅 전략 보고서 작성'},
+      ]
+    }
+  ],
+  collabs:['한국농촌경제연구원(KREI)','Univ. of Minnesota','농림축산식품부','한국농촌경제학회'],
+  impact:[
+    {label:'정책 영향', text:'농촌경제연구원 재직 시절 식품 소비 행태 조사 주도. 정부 농식품 정책 근거 제공.'},
+    {label:'학문 개척', text:'"농식품 기술경영" 새로운 학문 분야 개척. 산업공학·게임이론·행동경제학 융합.'},
+    {label:'교육 방향', text:'다양한 경험 권장 교육 철학. 진취적이고 창업 지향적 학생 육성.'},
+  ]
+},
+{
+  id:'p8', emoji:'🌲', name:'한희', nameEn:'Hee Han',
+  rank:'조교수', dept:'산림과학부', color:'#98fb98',
+  edu:'SNU 산림환경학 박사', lab:'스마트산림경영연구실(SFM Lab)',
+  tagline:'LiDAR와 드론으로 숲의 바이오매스를 측정해 탄소중립 목표 달성에 기여한다.',
+  keywords:['정밀임업','드론 LiDAR','산림 바이오매스','탄소흡수원','백팩형 라이다','DBH 추정','산림가치사슬'],
+  metrics:{pubs:'20+', citations:'250+', hindex:'9+', years:'2022~'},
+  topics:['Precision Forestry','UAV LiDAR','Biomass Estimation','Carbon Sequestration','Backpack LiDAR','DBH','Forest Management','Carbon Neutrality'],
+  chartData:[{y:'2020',v:15},{y:'2021',v:35},{y:'2022',v:75},{y:'2023',v:120},{y:'2024',v:170},{y:'2025',v:220}],
+  papers:[
+    {
+      year:2023, tag:'LiDAR Biomass',
+      title:'Backpack- and UAV-Based Laser Scanning for Estimating Overstory and Understory Biomass of Forest Stands',
+      journal:'한국산림과학회지 (J. Korean Society of Forest Science)',
+      authors:'Han H* et al. (SNU SFM Lab)',
+      doi:'journal.kfs21.or.kr/112-3-363',
+      abstract:'산림 바이오매스 측정에 백팩형 라이다(BPLS)와 드론 라이다(UAV-LS)를 동시에 적용해 상층(교목)·하층(관목·초본) 바이오매스를 분리 추정. 두 방법의 정확도와 상호 보완성 평가.',
+      resultNums:[
+        {num:'2방법 비교', lbl:'백팩형 vs\n드론 LiDAR'},
+        {num:'상+하층', lbl:'교목·관목·초본\n분리 추정'},
+        {num:'DBH+수고', lbl:'핵심 구조 변수\n자동 추출'},
+        {num:'탄소 평가', lbl:'흡수원 관리\n기초 데이터'},
+      ],
+      conclusions:[
+        '백팩형 LiDAR는 하층 식생까지 포함한 정밀 측정 강점. UAV LiDAR는 넓은 면적을 빠르게 커버',
+        '두 방법 결합 시 상층 DBH·수고 및 하층 바이오매스까지 통합 추정 가능',
+        '탄소흡수원으로서 산림 평가에 객관적·반복적 측정 방법론 제공. 국가 탄소 인벤토리 기여',
+      ],
+      steps:[
+        {icon:'🎒', title:'백팩형 LiDAR 현장 측정', desc:'산림 내 걸어다니며 레이저 포인트클라우드 수집. 하층까지 밀도 높은 측정 가능'},
+        {icon:'🚁', title:'드론 LiDAR 항공 측량', desc:'UAV에 LiDAR 탑재, 임분 상공 비행. 넓은 면적 효율적 스캔'},
+        {icon:'📐', title:'포인트클라우드 처리', desc:'두 방법의 포인트클라우드 정합. 개별 수목 분리(Individual Tree Segmentation)'},
+        {icon:'📏', title:'DBH·수고 자동 추출', desc:'분리된 개별 수목에서 흉고직경(DBH)·수고 자동 계산. 현장 측정값 검증'},
+        {icon:'⚖️', title:'바이오매스 환산', desc:'DBH·수고·종별 환산식으로 상·하층 바이오매스 계산. 탄소 흡수량 산정'},
+      ]
+    },
+    {
+      year:2024, tag:'Carbon Forestry',
+      title:'탄소흡수 기능 증진을 위한 최적 산림시업체계 개발',
+      journal:'산림청 국가 R&D 연구보고서',
+      authors:'Han H* et al.',
+      doi:'forest.go.kr',
+      abstract:'간벌·수종 갱신·식재 밀도 등 다양한 산림 관리 처리가 탄소 흡수량에 미치는 효과를 장기 모니터링으로 정량화. 2050 탄소중립 달성을 위한 최적 산림 경영 방법 제안.',
+      resultNums:[
+        {num:'2050', lbl:'탄소중립 목표\n산림 부문 기여'},
+        {num:'장기 모니터링', lbl:'복수 처리구\n반복 측정'},
+        {num:'최적 시업', lbl:'탄소 최대화\n산림 관리법 도출'},
+        {num:'국가 정책', lbl:'산림청 정책\n직접 반영'},
+      ],
+      conclusions:[
+        '간벌 강도·시기에 따라 탄소 흡수량이 유의하게 차이남 → 최적 간벌 가이드라인 제안',
+        '잔존 수목의 직경 성장 촉진 + 탄소 저장 효율 최대화하는 시업 패키지 개발',
+        '산림청 2050 탄소중립 시나리오에 직접 활용되는 실증 데이터 제공',
+      ],
+      steps:[
+        {icon:'🌳', title:'시험 처리구 설계', desc:'동일 임분에 무처리·경간벌·강간벌·수종갱신 등 처리구 반복 배치'},
+        {icon:'📡', title:'LiDAR 반복 모니터링', desc:'처리 전후 및 매년 UAV LiDAR로 바이오매스 변화 추적 측정'},
+        {icon:'🌿', title:'탄소 플럭스 측정', desc:'수목 성장량→탄소 흡수량 환산. 토양 탄소 변화도 병행 측정'},
+        {icon:'📊', title:'처리 효과 통계 분석', desc:'처리구별 연간 탄소 흡수량 비교. 혼합선형모델로 시공간 변이 처리'},
+        {icon:'📋', title:'최적 시업 지침 개발', desc:'탄소 흡수 최대화 시업 스케줄·방법 권고안 작성. 산림청 정책 반영'},
+      ]
+    }
+  ],
+  collabs:['산림청','국립산림과학원','Yale School of Forestry','Oregon State Univ.'],
+  impact:[
+    {label:'탄소 정책', text:'한국 2050 탄소중립 시나리오 산림 부문 연구. 온실가스 인벤토리 산정 기여.'},
+    {label:'기술 혁신', text:'드론+LiDAR+AI로 산림 측량 비용 70% 절감 가능. 정밀임업 선도 연구실.'},
+    {label:'지역 임업', text:'임업인 수익 향상 연구. 임업과 탄소 크레딧 연계 방안 개발 중.'},
+  ]
+},
+{
+  id:'p9', emoji:'🌡️', name:'김연욱', nameEn:'Yeonwoo Kim',
+  rank:'조교수', dept:'지역시스템공학부', color:'#ff6eb4',
+  edu:'SNU 농학 박사', lab:'기후스마트농업·수문학 연구실',
+  tagline:'기후변화에 적응하면서 온실가스도 줄이는 기후스마트농업 시스템을 만든다.',
+  keywords:['기후스마트농업(CSA)','수문학 모델','온실가스 감축','SWAT+','논 메탄','탄소중립','SDGs'],
+  metrics:{pubs:'20+', citations:'200+', hindex:'8+', years:'2023~'},
+  topics:['Climate Smart Agriculture','Hydrology','SWAT Model','Methane Emission','GHG Mitigation','Agricultural Water','Carbon Neutral','Drought','SDGs'],
+  chartData:[{y:'2021',v:20},{y:'2022',v:45},{y:'2023',v:80},{y:'2024',v:130},{y:'2025',v:185},{y:'2026',v:240}],
+  papers:[
+    {
+      year:2025, tag:'Hydrology Model',
+      title:'Assessing Future Climate Change Impacts on Hydrological Processes in Agricultural Watershed Using SWAT+',
+      journal:'한국토양비료학회지',
+      authors:'Kim Y* et al.',
+      doi:'kjssf.org',
+      abstract:'SWAT+ 수문 모델로 기후변화 시나리오(SSP)별 농업 유역 물 순환 변화 시뮬레이션. 미래 강수 패턴 변화가 농업용수 공급 안정성에 미치는 영향 정량화.',
+      resultNums:[
+        {num:'SWAT+', lbl:'최신 수문 모델\n적용'},
+        {num:'SSP 시나리오', lbl:'다중 기후\n시나리오 분석'},
+        {num:'유역 단위', lbl:'농업 집수구역\n물 수지 분석'},
+        {num:'2050년', lbl:'미래 물 부족\n예측 리스크'},
+      ],
+      conclusions:[
+        '여름철 집중 강수 증가 + 봄·겨울 가뭄 심화 → 농업용수 공급 불안정성 증가',
+        '기온 상승이 잠재증발산량 증가로 이어져 토양 수분 손실 가속화. 지하수 재충전 감소',
+        '농업 저수지 설계 기준 및 관개 시스템을 기후변화 시나리오에 맞게 재설계 필요',
+      ],
+      steps:[
+        {icon:'☁️', title:'기후 시나리오 입력', desc:'CMIP6 기반 SSP1-2.6·SSP5-8.5 등 다중 시나리오 기후 데이터 다운스케일링'},
+        {icon:'🗺️', title:'SWAT+ 모델 구축', desc:'유역 DEM·토양·토지이용·기상 데이터로 수문 모델 매개변수 보정'},
+        {icon:'💧', title:'수문 과정 시뮬레이션', desc:'강수·증발산·지표유출·기저유량·토양수분 일별 시뮬레이션 (2020~2100년)'},
+        {icon:'📊', title:'시나리오별 비교 분석', desc:'현재 대비 2050·2100년 농업용수 가용량 변화율 및 공급 불안정 일수 산출'},
+        {icon:'💡', title:'적응 전략 도출', desc:'저수지 용량 확대·절수 관개·작기 조정 등 기후 적응 관리 방안 비용-편익 분석'},
+      ]
+    },
+    {
+      year:2024, tag:'Rice GHG',
+      title:'논 메탄 배출량 감소를 위한 간헐 관개 최적화 연구',
+      journal:'Field Crops Research / Agricultural Systems',
+      authors:'Kim Y* et al.',
+      doi:'elsevier.com/fieldcrops',
+      abstract:'벼농사에서 발생하는 메탄(CH₄)은 전체 농업 온실가스의 주요 원인. 물 관리 방식(상시 담수 vs 간헐 관개)이 메탄 배출과 벼 수확량에 미치는 영향 현장 실험으로 정량화.',
+      resultNums:[
+        {num:'30~50%', lbl:'간헐 관개 시\n메탄 배출 감소'},
+        {num:'수확량 유지', lbl:'메탄 감축과\n수확량 트레이드오프 없음'},
+        {num:'N₂O 고려', lbl:'아산화질소 상쇄\n효과 동시 분석'},
+        {num:'탄소중립', lbl:'국가 농업 GHG\n감축 기여'},
+      ],
+      conclusions:[
+        '간헐 관개(AWD: Alternate Wetting and Drying)로 메탄 30~50% 감축. 수확량은 유지 또는 소폭 증가',
+        '메탄 감소 시 아산화질소(N₂O) 소폭 증가하는 상쇄 효과 존재 → 순온난화 잠재력(GWP) 기준 평가 필요',
+        '물 절약 + 온실가스 감축 + 수확량 유지의 세 가지 CSA 목표 동시 달성 가능성 증명',
+      ],
+      steps:[
+        {icon:'🌾', title:'논 처리구 설계', desc:'상시 담수(CF) vs 간헐 관개(AWD) 처리구 포장 반복 배치. 수도권 지역 현장 실험'},
+        {icon:'💧', title:'물 관리 처리 실시', desc:'토양 수분 센서 기반 자동 관개 제어. AWD는 토양 균열 발생 전 재관수'},
+        {icon:'🔬', title:'온실가스 플럭스 측정', desc:'밀폐 챔버법으로 CH₄·N₂O 배출량 생육기간 전체 반복 측정'},
+        {icon:'🌾', title:'수확량 조사', desc:'성숙기 수확 후 수량 구성요소(수수·낱알 수·등숙률·천립중) 측정'},
+        {icon:'📊', title:'순 온난화 잠재력 계산', desc:'CH₄ + N₂O를 CO₂ 환산값(GWP100)으로 통합. AWD의 순 기후 편익 산출'},
+      ]
+    }
+  ],
+  collabs:['농촌진흥청','환경부 온실가스 인벤토리','FAO 기후스마트농업 네트워크','CGIAR'],
+  impact:[
+    {label:'기후 정책', text:'IPCC 농업 부문 온실가스 감축 기술 연구. 국가 농업 탄소중립 시나리오 개발 참여.'},
+    {label:'SDGs 연결', text:'SDG2(기아종식)·SDG13(기후행동)·SDG15(육상생태계) 동시 달성 전략 연구.'},
+    {label:'글로벌 협력', text:'FAO 기후스마트농업 글로벌 네트워크 참여. 아시아 개도국 농업 기술 지원.'},
+  ]
+}
+];
+
+/* ══════════════════════════════════════════════════════
+   BUILD UI
+══════════════════════════════════════════════════════ */
+const tabsEl    = document.getElementById('tabs-container');
+const contentEl = document.getElementById('prof-content');
+
+function buildTabs(){
+  tabsEl.innerHTML = profs.map((p,i)=>`
+    <button class="tab-btn${i===0?' active':''}"
+            id="tab-${p.id}"
+            onclick="switchProf('${p.id}')"
+            style="${i===0?`border-bottom-color:${p.color};color:${p.color}`:''}">
+      <span class="dot" style="${i===0?`background:${p.color}`:''}"></span>
+      ${p.name}
+    </button>`).join('');
+}
+
+function resultNumsHTML(nums, color){
+  return `<div class="results-numbers">
+    ${nums.map(n=>`
+      <div class="result-chip">
+        <div class="r-num" style="color:${color}">${n.num}</div>
+        <div class="r-lbl">${n.lbl}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function stepFlowHTML(steps, color){
+  return `<div class="step-flow">
+    ${steps.map((s,i)=>`
+      ${i>0?`<div class="step-arrow" style="color:${color}">↓</div>`:''}
+      <div class="step-item">
+        <div class="step-num" style="border-color:${color};color:${color}">${i+1}</div>
+        <div class="step-content">
+          <div class="step-title">${s.icon} ${s.title}</div>
+          <div class="step-desc">${s.desc}</div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function buildPaper(paper, color){
+  const id = `pb-${Math.random().toString(36).slice(2)}`;
+  return `
+  <div class="paper-card" id="${id}" style="--accent-color:${color}">
+    <div class="paper-header" onclick="togglePaper('${id}')">
+      <div>
+        <div class="paper-meta">
+          <span class="paper-year">${paper.year}</span>
+          <span class="paper-journal">${paper.journal}</span>
+          <span class="paper-tag">${paper.tag}</span>
+        </div>
+        <div class="paper-title">${paper.title}</div>
+        <div class="paper-authors">${paper.authors}</div>
+      </div>
+      <div class="paper-expand-btn">
+        실험 & 결과 <span class="arr">▾</span>
+      </div>
+    </div>
+    <div class="paper-body">
+      <div class="paper-left">
+        <div class="abstract-block">
+          <div class="block-label" style="color:${color}">📌 연구 개요</div>
+          <div class="abstract-text">${paper.abstract}</div>
+        </div>
+        <div class="block-label" style="color:${color}">📊 핵심 결과 수치</div>
+        ${resultNumsHTML(paper.resultNums, color)}
+        <div class="block-label" style="color:${color}">✅ 주요 결론</div>
+        <ul class="conclusion-list">
+          ${paper.conclusions.map(c=>`<li>${c}</li>`).join('')}
+        </ul>
+        <div style="margin-top:14px">
+          <span style="font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em">DOI: ${paper.doi}</span>
+        </div>
+      </div>
+      <div class="paper-right">
+        <div class="diagram-title">🔬 실험 단계별 흐름</div>
+        ${stepFlowHTML(paper.steps, color)}
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildBarChart(data, color){
+  const max = Math.max(...data.map(d=>d.v));
+  return data.map((d,i)=>`
+    <div class="bar-wrap">
+      <div class="bar-val" style="color:${color}">${d.v}</div>
+      <div class="bar" style="height:${(d.v/max)*100}%;background:${color};animation-delay:${i*.1}s"></div>
+      <div class="bar-label">${d.y}</div>
+    </div>`).join('');
+}
+
+function buildPanel(p){
+  return `
+<div class="prof-panel" id="${p.id}">
+  <!-- Hero -->
+  <div class="prof-hero">
+    <div class="prof-title-block">
+      <div class="prof-rank-badge" style="color:${p.color};border-color:${p.color}">${p.rank} · ${p.dept}</div>
+      <h2 style="color:${p.color}">${p.name}<span style="color:var(--muted);font-size:.45em;margin-left:16px">${p.nameEn}</span></h2>
+      <p class="prof-tagline">${p.tagline}</p>
+      <div class="prof-keywords">${p.keywords.map(k=>`<div class="kw">${k}</div>`).join('')}</div>
+    </div>
+    <div class="prof-profile-card">
+      <div class="profile-pic">${p.emoji}</div>
+      ${[['학위',p.edu],['연구실',p.lab],['재직',p.metrics.years],['이메일','@snu.ac.kr']].map(([k,v])=>`
+      <div class="profile-row">
+        <div class="profile-key">${k}</div>
+        <div class="profile-val" style="color:${p.color}">${v}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics-row">
+    ${[['논문 수',p.metrics.pubs],['피인용',p.metrics.citations],['H-index',p.metrics.hindex],['재직 시작',p.metrics.years]].map(([l,v])=>`
+    <div class="metric-cell">
+      <div class="metric-val" style="color:${p.color}">${v}</div>
+      <div class="metric-lbl">${l}</div>
+    </div>`).join('')}
+  </div>
+
+  <!-- Papers -->
+  <div class="section-head" style="color:${p.color}"><h3>논문 · 실험 설계 · 결과 수치</h3></div>
+  <div class="papers-grid">${p.papers.map(pp=>buildPaper(pp,p.color)).join('')}</div>
+
+  <!-- Chart -->
+  <div class="chart-container">
+    <div class="chart-title">연도별 피인용 수 추이 (추정)</div>
+    <div class="bar-chart">${buildBarChart(p.chartData,p.color)}</div>
+  </div>
+
+  <!-- Topics -->
+  <div class="research-map">
+    <div class="section-head" style="color:${p.color};margin-bottom:16px"><h3>연구 주제 맵</h3></div>
+    <div class="topic-cloud">
+      ${p.topics.map(t=>`<div class="topic-bubble" style="--hover:${p.color}" onmouseover="this.style.background='${p.color}';this.style.color='#000';this.style.borderColor='${p.color}'" onmouseout="this.style.background='';this.style.color='';this.style.borderColor=''">${t}</div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Impact -->
+  <div class="section-head" style="color:${p.color}"><h3>연구 영향력</h3></div>
+  <div class="impact-grid">
+    ${p.impact.map(im=>`
+    <div class="impact-card" style="--acc:${p.color}">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:${p.color};transform:scaleX(0);transition:transform .3s;transform-origin:left"
+           class="impact-line"></div>
+      <div class="impact-label" style="color:${p.color}">${im.label}</div>
+      <div class="impact-text">${im.text}</div>
+    </div>`).join('')}
+  </div>
+
+  <!-- Collabs -->
+  <div class="section-head" style="color:${p.color}"><h3>협력 기관</h3></div>
+  <div class="collab-list">
+    ${p.collabs.map(c=>`<div class="collab-item">${c}</div>`).join('')}
+  </div>
+</div>`;
+}
+
+/* INIT */
+buildTabs();
+contentEl.innerHTML = profs.map(p=>buildPanel(p)).join('');
+document.getElementById(profs[0].id).classList.add('active');
+
+/* ADD HOVER TO IMPACT CARDS */
+document.querySelectorAll('.impact-card').forEach(c=>{
+  const line = c.querySelector('.impact-line');
+  c.addEventListener('mouseenter',()=>{ if(line) line.style.transform='scaleX(1)'; });
+  c.addEventListener('mouseleave',()=>{ if(line) line.style.transform='scaleX(0)'; });
+});
+
+function switchProf(id){
+  document.querySelectorAll('.prof-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.remove('active');
+    b.style.borderBottomColor='transparent';
+    b.style.color='';
+    b.querySelector('.dot').style.background='';
+  });
+  document.getElementById(id).classList.add('active');
+  const btn = document.getElementById('tab-'+id);
+  btn.classList.add('active');
+  const prof = profs.find(p=>p.id===id);
+  btn.style.borderBottomColor = prof.color;
+  btn.style.color = prof.color;
+  btn.querySelector('.dot').style.background = prof.color;
+  window.scrollTo({top:document.querySelector('.prof-tabs').offsetTop-10,behavior:'smooth'});
+}
+
+function togglePaper(id){
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+/* CANVAS */
+(()=>{
+  const cv=document.getElementById('bg-canvas'),ctx=cv.getContext('2d');
+  let W,H,pts;
+  const cols=['#00e5ff','#76ff85','#ff6b6b','#ffd93d','#c77dff','#ff9f43'];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}
+  function init(){pts=Array.from({length:50},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.5+.5,c:cols[Math.floor(Math.random()*cols.length)]}))}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach((a,i)=>{
+      a.x+=a.vx;a.y+=a.vy;
+      if(a.x<0)a.x=W;if(a.x>W)a.x=0;
+      if(a.y<0)a.y=H;if(a.y>H)a.y=0;
+      ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,Math.PI*2);ctx.fillStyle=a.c;ctx.fill();
+      pts.slice(i+1).forEach(b=>{
+        const dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=a.c+Math.floor((1-d/120)*35).toString(16).padStart(2,'0');ctx.lineWidth=.5;ctx.stroke()}
+      });
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',()=>{resize();init()});
+  resize();init();draw();
+})();
+</script>
+</body>
+</html>

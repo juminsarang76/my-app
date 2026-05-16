@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울대 스마트시스템과학과 — 쉽게 보는 종합 도감</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=Gowun+Dodum&family=Hi+Melody&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fffbf2;
+    --paper: #fff8e8;
+    --ink: #2d2416;
+    --tomato: #e85d4a;
+    --leaf: #5fa055;
+    --sun: #f5b945;
+    --sky: #5fa8d9;
+    --soil: #9d6a3f;
+    --berry: #c44d8c;
+    --shadow: rgba(45,36,22,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Gowun Dodum', 'Gaegu', sans-serif;
+    background: var(--bg);
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(95,160,85,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(245,185,69,0.06) 0%, transparent 40%);
+    color: var(--ink);
+    line-height: 1.85;
+    font-size: 17px;
+  }
+
+  /* ═══ HERO ═══ */
+  .hero {
+    background: linear-gradient(135deg, #5fa8d9 0%, #5fa055 60%, #f5b945 100%);
+    padding: 50px 24px 70px;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '☀️ 🌱 🌾 🌍 🚜 🌿 🌽 🛰️';
+    position: absolute;
+    inset: 0;
+    font-size: 38px;
+    opacity: 0.12;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-family: 'Gaegu', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 18px;
+    border: 2px dashed rgba(255,255,255,0.7);
+  }
+  .hero h1 {
+    font-family: 'Gaegu', sans-serif;
+    font-size: clamp(32px, 7vw, 56px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 18px;
+    text-shadow: 2px 3px 0 rgba(0,0,0,0.15);
+    position: relative;
+  }
+  .hero h1 .em {
+    background: var(--sun);
+    color: var(--ink);
+    padding: 0 10px;
+    display: inline-block;
+    transform: rotate(-2deg);
+    border-radius: 8px;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+  }
+  .hero p {
+    font-family: 'Gowun Dodum', sans-serif;
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.95;
+    position: relative;
+    line-height: 1.7;
+  }
+
+  /* ═══ STICKY NAV ═══ */
+  .nav {
+    background: white;
+    border-bottom: 4px dotted var(--leaf);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    overflow-x: auto;
+    scrollbar-width: none;
+    box-shadow: 0 4px 12px var(--shadow);
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-inner {
+    display: flex;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 16px;
+    gap: 4px;
+  }
+  .nav a {
+    padding: 14px 14px;
+    font-family: 'Gaegu', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav a:hover {
+    color: var(--tomato);
+    border-bottom-color: var(--tomato);
+  }
+
+  /* ═══ CONTAINER ═══ */
+  .container {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  /* ═══ SECTION ═══ */
+  .section {
+    margin-bottom: 60px;
+  }
+  .section-banner {
+    background: white;
+    border: 4px solid var(--ink);
+    border-radius: 20px;
+    padding: 18px 26px;
+    margin-bottom: 28px;
+    position: relative;
+    box-shadow: 6px 6px 0 var(--sun);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-banner .emoji {
+    font-size: 38px;
+  }
+  .section-banner h2 {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .section-banner .subtitle {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 18px;
+    color: var(--tomato);
+    margin-top: 2px;
+  }
+
+  /* ═══ INTRO BOX ═══ */
+  .intro-box {
+    background: white;
+    border: 3px solid var(--leaf);
+    border-radius: 18px;
+    padding: 24px 26px;
+    box-shadow: 4px 4px 0 rgba(95,160,85,0.3);
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .intro-box.tomato {
+    border-color: var(--tomato);
+    box-shadow: 4px 4px 0 rgba(232,93,74,0.3);
+  }
+  .intro-box.sun {
+    border-color: var(--sun);
+    box-shadow: 4px 4px 0 rgba(245,185,69,0.4);
+  }
+  .intro-box.sky {
+    border-color: var(--sky);
+    box-shadow: 4px 4px 0 rgba(95,168,217,0.3);
+  }
+  .intro-box p {
+    font-size: 16px;
+    line-height: 1.85;
+    margin-bottom: 10px;
+  }
+  .intro-box p:last-child { margin-bottom: 0; }
+  .intro-box strong { color: var(--tomato); font-weight: 700; }
+  .intro-box .highlight {
+    background: linear-gradient(transparent 60%, var(--sun) 60%);
+    padding: 0 3px;
+  }
+
+  /* ═══ CARTOON QUOTE ═══ */
+  .speech-bubble {
+    background: white;
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    padding: 20px 24px;
+    margin: 24px 0 32px 60px;
+    position: relative;
+    box-shadow: 4px 4px 0 var(--shadow);
+    font-family: 'Hi Melody', cursive;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 30px;
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 18px solid var(--ink);
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 33px;
+    width: 0;
+    height: 0;
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-top: 14px solid white;
+  }
+  .speech-bubble .speaker {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 15px;
+    color: var(--tomato);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  /* ═══ CONCEPT CARDS - 학과 설명 ═══ */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .concept-card {
+    background: white;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    padding: 22px 20px;
+    box-shadow: 5px 5px 0 var(--shadow);
+    transition: transform 0.2s;
+  }
+  .concept-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--shadow);
+  }
+  .concept-emoji {
+    font-size: 44px;
+    margin-bottom: 12px;
+    text-align: center;
+    display: block;
+  }
+  .concept-card h3 {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 22px;
+    color: var(--tomato);
+    margin-bottom: 8px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .concept-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  /* ═══ TIMELINE - 학과 역사 ═══ */
+  .timeline-history {
+    background: white;
+    border: 3px dashed var(--soil);
+    border-radius: 18px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 18px;
+    padding: 14px 0;
+    border-bottom: 2px dotted var(--soil);
+    align-items: center;
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-year {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--soil);
+    text-align: center;
+    background: rgba(157,106,63,0.1);
+    padding: 8px;
+    border-radius: 12px;
+  }
+  .timeline-content h4 {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 19px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .timeline-content p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  /* ═══ PROFESSOR CARD ═══ */
+  .prof-card {
+    background: white;
+    border: 4px solid var(--ink);
+    border-radius: 22px;
+    padding: 0;
+    margin-bottom: 36px;
+    overflow: hidden;
+    box-shadow: 7px 7px 0 var(--shadow);
+  }
+  .prof-header {
+    padding: 22px 26px;
+    color: white;
+    position: relative;
+  }
+  .prof-header.p1 { background: linear-gradient(135deg, #5fa055 0%, #4a8042 100%); }
+  .prof-header.p2 { background: linear-gradient(135deg, #e85d4a 0%, #c44a3a 100%); }
+  .prof-header.p3 { background: linear-gradient(135deg, #c44d8c 0%, #a03d72 100%); }
+  .prof-header.p4 { background: linear-gradient(135deg, #5fa8d9 0%, #4a85b3 100%); }
+  .prof-header.p5 { background: linear-gradient(135deg, #f5b945 0%, #d99a2e 100%); }
+  .prof-header.p6 { background: linear-gradient(135deg, #9d6a3f 0%, #7f5530 100%); }
+  .prof-header.p7 { background: linear-gradient(135deg, #5fa055 0%, #c44d8c 100%); }
+  .prof-header.p8 { background: linear-gradient(135deg, #4a8042 0%, #5fa055 100%); }
+  .prof-header.p9 { background: linear-gradient(135deg, #f5b945 0%, #e85d4a 100%); }
+  .prof-header-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .prof-emoji {
+    font-size: 50px;
+    background: rgba(255,255,255,0.25);
+    width: 70px; height: 70px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.5);
+  }
+  .prof-name-block {
+    flex: 1;
+  }
+  .prof-no {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 13px;
+    opacity: 0.8;
+  }
+  .prof-name {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 2px 0;
+  }
+  .prof-title {
+    font-size: 14px;
+    opacity: 0.95;
+  }
+  .prof-tagline {
+    font-family: 'Hi Melody', cursive;
+    font-size: 19px;
+    color: white;
+    background: rgba(0,0,0,0.18);
+    padding: 8px 16px;
+    border-radius: 16px;
+    display: inline-block;
+    margin-top: 8px;
+  }
+
+  .prof-body {
+    padding: 24px 26px;
+  }
+
+  .prof-section {
+    margin-bottom: 22px;
+  }
+  .prof-section:last-child { margin-bottom: 0; }
+  .prof-section h4 {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 21px;
+    color: var(--tomato);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 3px dotted var(--tomato);
+    padding-bottom: 6px;
+  }
+  .prof-section h4 .icon { font-size: 24px; }
+  .prof-section p {
+    font-size: 15px;
+    line-height: 1.85;
+    margin-bottom: 8px;
+  }
+  .prof-section p strong {
+    background: linear-gradient(transparent 60%, var(--sun) 60%);
+    padding: 0 3px;
+    font-weight: 700;
+  }
+  .prof-section ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .prof-section ul li {
+    padding: 5px 0 5px 26px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .prof-section ul li::before {
+    content: '🌱';
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+  }
+
+  .easy-explain {
+    background: rgba(245,185,69,0.15);
+    border-left: 5px solid var(--sun);
+    padding: 14px 18px;
+    border-radius: 0 12px 12px 0;
+    margin: 12px 0;
+    font-family: 'Hi Melody', cursive;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+  .easy-explain::before {
+    content: '🧒 ';
+    font-size: 18px;
+  }
+  .easy-explain strong { color: var(--tomato); font-weight: 700; }
+
+  .news-box {
+    background: rgba(95,168,217,0.1);
+    border: 2px dashed var(--sky);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .news-box .news-label {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 13px;
+    color: var(--sky);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .news-box .news-label::before { content: '📰 '; }
+
+  .paper-box {
+    background: rgba(95,160,85,0.1);
+    border: 2px dashed var(--leaf);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .paper-box .paper-label {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 13px;
+    color: var(--leaf);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .paper-box .paper-label::before { content: '📄 '; }
+  .paper-box em {
+    color: var(--ink);
+    font-style: italic;
+  }
+
+  /* ═══ FUN FACT ═══ */
+  .fun-fact {
+    background: linear-gradient(135deg, #fff8e8 0%, #ffefd0 100%);
+    border: 3px solid var(--sun);
+    border-radius: 20px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    position: relative;
+  }
+  .fun-fact::before {
+    content: '💡';
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 26px;
+  }
+  .fun-fact h4 {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 22px;
+    color: var(--soil);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .fun-fact p {
+    font-size: 15px;
+    line-height: 1.85;
+  }
+
+  /* ═══ FOOTER ═══ */
+  .footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 50px 24px;
+    text-align: center;
+    margin-top: 60px;
+  }
+  .footer h3 {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 28px;
+    margin-bottom: 14px;
+    color: var(--sun);
+  }
+  .footer p {
+    font-size: 14px;
+    line-height: 1.8;
+    max-width: 540px;
+    margin: 0 auto;
+    opacity: 0.85;
+  }
+  .footer .small {
+    margin-top: 20px;
+    font-size: 12px;
+    opacity: 0.5;
+    font-family: 'Gaegu', sans-serif;
+  }
+
+  /* ═══ MOBILE ═══ */
+  @media (max-width: 600px) {
+    .container { padding: 24px 14px; }
+    .speech-bubble { margin-left: 30px; padding: 16px 20px; }
+    .prof-header { padding: 18px 20px; }
+    .prof-body { padding: 20px 18px; }
+    .prof-name { font-size: 26px; }
+    .prof-emoji { width: 56px; height: 56px; font-size: 38px; }
+    .timeline-item { grid-template-columns: 70px 1fr; gap: 12px; }
+    .timeline-year { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero">
+  <div class="hero-badge">📚 초등학생도 술술 읽는 종합 도감</div>
+  <h1>서울대학교<br><span class="em">스마트시스템과학과</span><br>완전 정복!</h1>
+  <p>"우리 학교는 뭐 하는 곳이고, 어떤 선생님들이 계실까?"<br>학과와 9명의 교수님을 쉽고 재미있게 알려드릴게요 🌾✨</p>
+</header>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#what">🌱 학과란?</a>
+    <a href="#why">🤔 왜 만들었나?</a>
+    <a href="#what-do">🔬 뭘 배우나?</a>
+    <a href="#prof1">👨‍🌾 김광수</a>
+    <a href="#prof2">🚜 김학진</a>
+    <a href="#prof3">🧬 유경록</a>
+    <a href="#prof4">🤖 김태형</a>
+    <a href="#prof5">🛰️ 김형석</a>
+    <a href="#prof6">🌿 안태인</a>
+    <a href="#prof7">💼 최종우</a>
+    <a href="#prof8">🌲 한희</a>
+    <a href="#prof9">🌡️ 김연욱</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ═══════════════ 1. 학과란? ═══════════════ -->
+  <section class="section" id="what">
+    <div class="section-banner">
+      <span class="emoji">🌱</span>
+      <div>
+        <h2>스마트시스템과학과가 뭐예요?</h2>
+        <div class="subtitle">한 문장으로 말하면...</div>
+      </div>
+    </div>
+
+    <div class="intro-box tomato">
+      <p style="font-size:19px;line-height:1.8;">
+        <strong>"농업·생명·환경 문제를 컴퓨터와 데이터로 멋지게 해결하는 똑똑이를 키우는 학과예요!"</strong>
+      </p>
+    </div>
+
+    <div class="speech-bubble">
+      <div class="speaker">🌾 학과장 김광수 교수님이 이렇게 말씀하셨어요</div>
+      "예전엔 농부가 경험과 직감으로 농사를 지었어요. 그런데 이제는 <strong>날씨도 이상하고, 사람도 줄고, 먹을거리 걱정도 많아졌죠.</strong> 그래서 컴퓨터로 데이터를 분석해서 똑똑하게 농사 짓는 시대가 됐어요. 우리 학과는 바로 그런 미래 농업의 주인공을 키우는 곳이랍니다!"
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="concept-emoji">💻</span>
+        <h3>데이터 과학</h3>
+        <p>컴퓨터로 숫자와 정보를 분석해서 답을 찾는 기술이에요. AI·빅데이터·머신러닝 같은 거예요.</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">🌾</span>
+        <h3>도메인 지식</h3>
+        <p>농업·생명·환경 같은 '특정 분야'에 대한 진짜 지식이에요. 작물이 어떻게 자라는지, 동물세포가 뭔지 등등.</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">🤝</span>
+        <h3>둘을 연결!</h3>
+        <p>이 학과의 비밀은 <strong>'+'</strong> 예요! 컴퓨터 잘하면서 농업도 아는 사람. 그게 미래의 주인공이에요.</p>
+      </div>
+    </div>
+
+    <div class="fun-fact">
+      <h4>🎓 깜짝 정보!</h4>
+      <p>스마트시스템과학과는 <strong>2024년에 새로 생긴 학과</strong>예요. 그래서 2025년에 처음으로 신입생을 받았어요. 즉, 지금 들어가는 학생들은 <strong>'1기 선배'</strong>가 되는 거예요! 학과 역사를 직접 만들어가는 멋진 자리랍니다 ✨</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 2. 왜 만들었나? ═══════════════ -->
+  <section class="section" id="why">
+    <div class="section-banner">
+      <span class="emoji">🤔</span>
+      <div>
+        <h2>왜 이런 학과를 만들었을까?</h2>
+        <div class="subtitle">미래에 큰일이 나기 전에 막아야 하니까요!</div>
+      </div>
+    </div>
+
+    <div class="intro-box sun">
+      <p><strong>🌡️ 문제 1 — 기후가 이상해지고 있어요</strong></p>
+      <p>지구가 너무 뜨거워져서 비가 너무 많이 오거나 가뭄이 길어져요. 그러면 농작물이 자라기 어렵고, 우리가 먹을 음식이 부족해질 수 있어요.</p>
+    </div>
+
+    <div class="intro-box tomato">
+      <p><strong>👨‍🌾 문제 2 — 농부가 점점 줄어요</strong></p>
+      <p>한국에서 농사 짓는 분들 대부분이 할아버지·할머니예요. 젊은 사람들은 농사를 잘 안 하려고 해요. 그래서 <strong>사람 없이도 일할 수 있는 똑똑한 농업 기술</strong>이 필요해요.</p>
+    </div>
+
+    <div class="intro-box sky">
+      <p><strong>🌍 문제 3 — 세계 식량 위기</strong></p>
+      <p>아프리카나 동남아시아의 가난한 나라들은 먹을 게 부족해요. 우리나라가 똑똑한 농업 기술을 만들면 <strong>전세계 사람들을 도울 수도 있어요</strong>.</p>
+    </div>
+
+    <div class="intro-box">
+      <p><strong>🍅 문제 4 — 식품 산업이 빠르게 변하고 있어요</strong></p>
+      <p>스마트 농업 산업이 2027년까지 <strong>약 280억 달러(약 38조 원!)</strong>로 커진다고 해요. 이 거대한 시장의 리더가 되려면 지금 인재를 키워야 해요.</p>
+    </div>
+
+    <div class="speech-bubble">
+      <div class="speaker">💡 결론</div>
+      "이 모든 문제를 풀려면 <strong>농업을 잘 아는 똑똑한 컴퓨터 박사</strong>가 필요해요! 그게 바로 스마트시스템과학과가 키우려는 사람이랍니다."
+    </div>
+  </section>
+
+  <!-- ═══════════════ 3. 뭘 배우나? ═══════════════ -->
+  <section class="section" id="what-do">
+    <div class="section-banner">
+      <span class="emoji">🔬</span>
+      <div>
+        <h2>여기서 뭘 배우나요?</h2>
+        <div class="subtitle">진짜 신기한 것들을 잔뜩 배워요!</div>
+      </div>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="concept-emoji">🌾</span>
+        <h3>스마트농업 핵심기술</h3>
+        <p>IoT 센서, 드론, 로봇을 활용해서 작물과 가축을 키우는 기술을 배워요.</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">📊</span>
+        <h3>농업 빅데이터·AI</h3>
+        <p>농사 짓는 데 필요한 데이터를 모으고, AI로 분석해서 가장 좋은 결정을 내리는 법.</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">🍎</span>
+        <h3>식품 가치사슬</h3>
+        <p>농산물의 가격을 예측하고, 농장에서 식탁까지 가는 길을 똑똑하게 설계해요.</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">♻️</span>
+        <h3>지속가능한 농업</h3>
+        <p>지구를 망치지 않으면서 음식을 만드는 방법. 기후변화에 대응하는 농업도 배워요.</p>
+      </div>
+    </div>
+
+    <div class="timeline-history">
+      <h3 style="font-family:'Gaegu',sans-serif;font-size:24px;color:var(--soil);margin-bottom:18px;text-align:center;">📅 학과의 짧은 역사</h3>
+      <div class="timeline-item">
+        <div class="timeline-year">2024<br>년</div>
+        <div class="timeline-content">
+          <h4>🎉 학과 탄생!</h4>
+          <p>교육부의 첨단학과 지원으로 서울대 농업생명과학대학 안에 새로 만들어졌어요. 정원 25명!</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2025<br>년</div>
+        <div class="timeline-content">
+          <h4>🎓 첫 신입생 입학</h4>
+          <p>최초의 1기 학생들이 입학했어요. 학과 역사의 주인공들이 등장한 해예요.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2028<br>년</div>
+        <div class="timeline-content">
+          <h4>🚀 첫 졸업생 배출 예정</h4>
+          <p>1기 학생들이 졸업하면서 미래 농업의 혁신가들이 사회로 나가게 돼요.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fun-fact">
+      <h4>📍 어디에 있어요?</h4>
+      <p>서울특별시 관악구 관악로 1, <strong>서울대학교 농업생명과학대학 200동 3층</strong>이에요. CALS(College of Agriculture and Life Sciences, 농업생명과학대학)에 속해 있답니다.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 교수님 소개 시작 ═══════════════ -->
+  <section class="section">
+    <div class="section-banner">
+      <span class="emoji">👨‍🏫</span>
+      <div>
+        <h2>9명의 멋진 교수님을 만나요!</h2>
+        <div class="subtitle">한 분 한 분 어떤 연구를 하시는지 알아볼까요?</div>
+      </div>
+    </div>
+
+    <div class="intro-box">
+      <p>이 학과에는 <strong>9명의 교수님</strong>이 계세요. 각 교수님이 모두 다른 분야를 연구하시기 때문에, 마치 <strong>9가지 마법을 가진 마법사 학교</strong> 같아요! 누구를 만나도 새로운 세계를 배울 수 있답니다 ✨</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 교수 1: 김광수 ═══════════════ -->
+  <article class="prof-card" id="prof1">
+    <div class="prof-header p1">
+      <div class="prof-header-top">
+        <div class="prof-emoji">👨‍🌾</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №01 · 학과장</div>
+          <div class="prof-name">김광수 교수님</div>
+          <div class="prof-title">학과장 / 작물생명과학전공</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"날씨와 작물을 컴퓨터로 예측하는 박사님!"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력 (걸어오신 길)</h4>
+        <ul>
+          <li>미국 아이오와 주립대학교(Iowa State University)에서 <strong>농업기상학 박사</strong> 학위 받음</li>
+          <li>2010년 9월부터 서울대학교 식물생산과학부 교수로 일하심</li>
+          <li>한국농림기상학회 편집장 (학회의 학술지 편집을 책임지시는 분)</li>
+          <li>현재 <strong>스마트시스템과학과의 학과장님</strong>이세요 (학과의 대장!)</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p><strong>"기후가 변할 때 작물이 얼마나 자랄까?"</strong>를 컴퓨터로 미리 알아내는 연구를 하세요. 이걸 어려운 말로 <strong>'작물 모델링'</strong>이라고 해요.</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          마치 일기예보처럼, 김광수 교수님은 <em>"이런 날씨가 계속되면 쌀이 얼마나 나올지"</em>, <em>"옥수수가 잘 자랄지"</em>를 컴퓨터로 미리 알려주는 '농작물 점쟁이'를 만드시는 거예요! 🔮🌾
+        </div>
+
+        <p>특히 <strong>기후스마트농업(Climate Smart Agriculture)</strong>이라는 분야를 연구하세요. 이건 <strong>① 농사도 잘 되고, ② 기후 변화에 적응하면서, ③ 온실가스도 줄이는</strong> 일석삼조 농업이에요!</p>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📚</span> 대표 논문·연구</h4>
+        <div class="paper-box">
+          <div class="paper-label">대표 연구 분야</div>
+          'CERES-Rice'와 'ORYZA2000' 같은 <strong>벼 작물 모델</strong>을 한국 상황에 맞게 적용하는 연구. 컴퓨터에 벼의 특성과 한국 날씨를 입력하면, 수확량을 예측해줘요!
+        </div>
+        <div class="paper-box">
+          <div class="paper-label">국제 학술지 게재</div>
+          <em>Agricultural and Forest Meteorology</em>(농림기상 분야 세계적 학술지)에 다수의 논문을 발표하셨어요.
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📰</span> 학과장으로서의 메시지</h4>
+        <div class="news-box">
+          <div class="news-label">서울대 입학웹진 '아로리' 인터뷰 中</div>
+          "스마트시스템과학과는 <strong>경험과 직관에 의존하던 기존 농업을 넘어, 데이터 기반의 과학적 의사결정 체계</strong>를 만드는 학과입니다. 우리 졸업생들 중에 <strong>'농업 분야의 기업가'</strong>가 많이 나오길 기대해요!"
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 교수 2: 김학진 ═══════════════ -->
+  <article class="prof-card" id="prof2">
+    <div class="prof-header p2">
+      <div class="prof-header-top">
+        <div class="prof-emoji">🚜</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №02</div>
+          <div class="prof-name">김학진 교수님</div>
+          <div class="prof-title">정교수 / 바이오시스템공학과</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"무인 트랙터와 드론을 만드는 기계 박사!"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력 (걸어오신 길)</h4>
+        <ul>
+          <li>미국 미주리 주립대학교(University of Missouri)에서 <strong>정밀농업 박사</strong> 학위 받음</li>
+          <li>1995~1998년: 대우자동차 기술연구소에서 일하셨어요 (자동차 기술 전문가!)</li>
+          <li>1999~2008년: 농촌진흥청 농업공학연구소 연구사</li>
+          <li>2001년: 미국 농무부(USDA) 방문연구원으로 미국에서 연구</li>
+          <li>2008년부터 부산대학교 거쳐 서울대학교 교수로 부임</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p>한 마디로 <strong>"농기계를 똑똑하게 만드는 박사님"</strong>이에요!</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          여러분 본 적 있죠? 자율주행 자동차가 사람 없이 알아서 운전하는 거. 김학진 교수님은 <em>그걸 트랙터에서 한답니다!</em> 농부 아저씨가 운전 안 해도 트랙터가 알아서 밭을 갈고, 드론이 알아서 농작물을 살펴봐주는 기술이에요 🤖🌾
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">⚒️</span> 주요 연구 분야</h4>
+        <ul>
+          <li><strong>영상기반 무인자율 농기계</strong> — 카메라로 보면서 스스로 일하는 농기계</li>
+          <li><strong>드론을 이용한 농작물 원격탐사</strong> — 하늘에서 드론으로 작물 건강 검진!</li>
+          <li><strong>이온센싱 및 제어기술</strong> — 농약·비료를 정확히 측정하고 뿌리는 기술</li>
+          <li><strong>농용 트랙터 현가제어 시스템</strong> — 트랙터가 흔들리지 않게 하는 기술</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📰</span> 관련 뉴스 (이런 시대가 오고 있어요!)</h4>
+        <div class="news-box">
+          <div class="news-label">서울경제, 2025년 6월</div>
+          한국 농기계 기업 '대동'이 새만금에 <strong>축구장 526개 크기 농경지</strong>에 자율주행 트랙터와 AI 토양 분석 기술을 적용하기 시작했어요. 김학진 교수님이 연구하시는 분야가 실제 산업에서 활발하게 쓰이고 있다는 뜻이에요!
+        </div>
+        <div class="news-box">
+          <div class="news-label">EBN, 2025년</div>
+          국내 농기계 회사가 510만 장의 농업 데이터로 학습한 AI 트랙터를 공개했어요. 트랙터가 스스로 논둑과 장애물을 인식한답니다. <strong>"AI 시대의 농업"</strong>이 정말로 펼쳐지고 있어요!
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 교수 3: 유경록 ═══════════════ -->
+  <article class="prof-card" id="prof3">
+    <div class="prof-header p3">
+      <div class="prof-header-top">
+        <div class="prof-emoji">🧬</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №03</div>
+          <div class="prof-name">유경록 교수님</div>
+          <div class="prof-title">부교수 / 동물생명공학전공</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"세포로 신기한 일을 하는 생명공학 박사!"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력 (정말 화려해요!)</h4>
+        <ul>
+          <li>서울대학교 농업생명과학대학 학사 (2007년 졸업)</li>
+          <li>서울대학교 수의과대학에서 <strong>줄기세포 박사</strong> (2013년)</li>
+          <li>독일 막스플랑크 연구소(Max Planck Institute) 방문연구원</li>
+          <li>🇺🇸 <strong>미국 국립보건원(NIH) 박사후 연구원</strong> — 세계 최고 의학연구 기관 중 하나!</li>
+          <li>가톨릭대 의과대학 교수를 거쳐 서울대 부교수로 부임</li>
+          <li>🏆 <strong>한국과학기술한림원 차세대 회원 (2022)</strong> — 한국의 미래 과학자 인증!</li>
+          <li>🏆 미국 혈액학회(ASH) 우수상 2회 수상</li>
+          <li>🏆 2019 보건의료 R&D 우수성과 30선 선정</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p><strong>줄기세포</strong>와 <strong>면역세포</strong>를 활용해서 병을 치료하는 연구를 하세요.</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          우리 몸에는 <em>'줄기세포'</em>라는 특별한 세포가 있어요. 이 세포는 신기하게도 <strong>뼈도 되고, 근육도 되고, 피도 될 수 있는</strong> 슈퍼 세포예요! 유경록 교수님은 이런 세포를 키우고 조작해서 <strong>치료제를 만들거나, 미래에는 '배양육'(고기를 동물 안 죽이고 만드는 것)</strong>도 연구하실 수 있어요 🥩✨
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">⚒️</span> 핵심 연구 키워드</h4>
+        <ul>
+          <li><strong>CRISPR/Cas9 유전자 편집</strong> — 노벨상 받은 기술로 유전자를 자르고 붙임</li>
+          <li><strong>골수 줄기세포·면역세포 분리</strong> — 특별한 세포만 골라내기</li>
+          <li><strong>세포치료제·면역치료제 개발</strong> — 세포로 병을 치료하기</li>
+          <li><strong>이식편대숙주병(GVHD) 연구</strong> — 골수이식 부작용을 막는 연구</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📄</span> 발표 논문</h4>
+        <div class="paper-box">
+          <div class="paper-label">국제 최고 학술지에 다수 게재</div>
+          <em>Blood</em>(혈액학 최고 학술지), <em>Nature Communications</em>(세계 최고 과학 학술지) 등에 줄기세포·면역치료 연구를 발표하셨어요.
+        </div>
+        <div class="paper-box">
+          <div class="paper-label">스마트시스템과학과와의 연결</div>
+          미래 식량 문제를 해결할 <strong>'배양육(세포로 만든 고기)'</strong> 기술의 기반 연구를 하실 수 있어요.
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 교수 4: 김태형 ═══════════════ -->
+  <article class="prof-card" id="prof4">
+    <div class="prof-header p4">
+      <div class="prof-header-top">
+        <div class="prof-emoji">🤖</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №04</div>
+          <div class="prof-name">김태형 교수님</div>
+          <div class="prof-title">조교수 / 바이오시스템공학과</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"진짜 AI 박사! 농업에 인공지능을 더하는 분"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력 (걸어오신 길)</h4>
+        <ul>
+          <li>서울대학교에서 <strong>인공지능 박사</strong> 학위 받음</li>
+          <li>🏢 산업체에서 <strong>10년 이상 AI 기술 연구·개발 경험</strong> — 진짜 현장 경험자!</li>
+          <li>현재 스마트시스템과학과 조교수</li>
+          <li>(다른 교수님들과 함께 학과의 비전을 만드는 핵심 멤버)</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p><strong>"AI를 농업에 어떻게 잘 써먹을 수 있을까?"</strong>를 연구하세요.</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          ChatGPT 같은 AI 알지요? 김태형 교수님은 그런 AI를 가지고 <em>"이 토마토는 언제 익을까?"</em>, <em>"이 식물이 병에 걸렸을까?"</em>를 알아맞히는 컴퓨터를 만드세요. <strong>AI + 농업 = 미래!</strong> 🤖🍅
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">💡</span> 김태형 교수님의 명언</h4>
+        <div class="news-box">
+          <div class="news-label">서울대 입학웹진 '아로리' 인터뷰 中</div>
+          <strong>"인공지능 기술이 의미 있게 활용되기 위해서는 결국 특정 도메인, 즉 개별 분야에 적용되어야 합니다."</strong><br><br>
+          즉, AI 잘하는 사람도 농업·생명·환경을 모르면 진짜 문제를 풀 수 없다는 뜻이에요. 김태형 교수님은 <strong>두 영역을 연결하는 인재</strong>를 키우고 싶어 하세요!
+        </div>
+
+        <div class="news-box">
+          <div class="news-label">학생들에게 하시는 말씀</div>
+          <strong>"Learning to Learn"</strong> — 기술이 너무 빨리 바뀌니까, 특정 지식을 외우는 것보다 <strong>'배우는 방법 자체를 배우는 것'</strong>이 더 중요하다고 강조하세요.
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">⚒️</span> 주요 연구 방향</h4>
+        <ul>
+          <li><strong>농업 인공지능·빅데이터 분석</strong> — 농사 데이터를 AI로 분석</li>
+          <li><strong>딥러닝 기반 작물 생육 예측</strong> — 식물이 얼마나 자랄지 예측</li>
+          <li><strong>스마트팜 센서 데이터 분석</strong> — 온실 안의 모든 정보를 종합</li>
+          <li><strong>영상 인식 기반 농작업 자동화</strong> — 카메라로 보고 알아서 작업</li>
+        </ul>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 교수 5: 김형석 ═══════════════ -->
+  <article class="prof-card" id="prof5">
+    <div class="prof-header p5">
+      <div class="prof-header-top">
+        <div class="prof-emoji">🛰️</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №05</div>
+          <div class="prof-name">김형석 교수님</div>
+          <div class="prof-title">조교수 / 작물생명과학전공</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"하늘에서 지구를 살피는 위성 박사!"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력 (걸어오신 길)</h4>
+        <ul>
+          <li>미국 <strong>일리노이 대학교 어바나-샴페인 캠퍼스(UIUC)</strong>에서 환경과학(Environmental Science) 박사</li>
+          <li>(UIUC는 세계 최고 공대 중 하나, 농업·환경 분야 세계 5위 안에 드는 명문!)</li>
+          <li>현재 서울대학교 식물생산과학부에서 작물생산 및 원격탐사 전공</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p><strong>위성과 드론으로 지구의 작물을 살펴보는</strong> 연구를 하세요. 어려운 말로 '원격탐사(Remote Sensing)'라고 해요.</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          김형석 교수님은 <em>지구 위에서 인공위성으로 사진을 찍어서 "어디에 옥수수가 잘 자라고 있는지", "어느 동네 농작물이 가뭄으로 시들었는지"</em>를 알아내요. 마치 <strong>지구 전체의 농작물을 우주에서 감시하는 닥터 같죠!</strong> 🌍🛰️
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">⚒️</span> 핵심 연구</h4>
+        <ul>
+          <li><strong>위성·드론을 이용한 작물 재배면적 모니터링</strong></li>
+          <li><strong>원격탐사 기반 작물 생산성 예측</strong></li>
+          <li><strong>항공 영상 분류 및 수량 예측 모델 개발</strong></li>
+          <li>특히 <strong>전 세계 식량 안보</strong>와 직접 연결되는 연구</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📄</span> 연구 영향력</h4>
+        <div class="paper-box">
+          <div class="paper-label">국제 학술지 다수 인용</div>
+          식생지수(NDVI), 위성영상 분석, 작물 모니터링 분야에서 <strong>2,000회 이상 인용된 논문</strong>들을 가지고 계셔요. 즉, 전세계 연구자들이 김형석 교수님 연구를 참고하고 있다는 뜻!
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 교수 6: 안태인 ═══════════════ -->
+  <article class="prof-card" id="prof6">
+    <div class="prof-header p6">
+      <div class="prof-header-top">
+        <div class="prof-emoji">🌿</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №06</div>
+          <div class="prof-name">안태인 교수님</div>
+          <div class="prof-title">조교수 / 원예생명공학전공</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"실내에서 빛으로 식물을 키우는 박사!"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력</h4>
+        <ul>
+          <li>서울대학교에서 <strong>원예생명공학 박사</strong> 학위 받음</li>
+          <li>현재 서울대학교 원예생명공학전공 조교수</li>
+          <li>스마트시스템과학과 겸임</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p><strong>'식물공장'</strong>을 연구하세요. 식물공장이 뭐냐고요?</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          여러분, 햇빛 없이도 식물이 자랄 수 있을까요? <strong>네, 자랄 수 있어요!</strong> LED 전등으로 빛을 만들어주고, 적당한 온도·습도·물을 주면 실내에서도 채소가 쑥쑥 자라요. 안태인 교수님은 이런 <em>"빌딩 안에서 농사 짓는 기술"</em>을 연구하세요. <strong>도시 한복판에서 신선한 상추를 키우는 마법!</strong> 🥬💡
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">⚒️</span> 주요 연구 분야</h4>
+        <ul>
+          <li><strong>LED 인공광을 활용한 식물공장 설계</strong> — 어떤 색깔 빛이 식물에 좋을까?</li>
+          <li><strong>스마트 온실 환경 제어 시스템</strong> — 자동으로 온실 환경을 조절</li>
+          <li><strong>완전밀폐형·태양광 병행형 식물공장</strong> — 다양한 방식의 실내 농장</li>
+          <li><strong>광합성 최적화 연구</strong> — 식물이 빛을 가장 잘 받을 조건 찾기</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📰</span> 관련 뉴스</h4>
+        <div class="news-box">
+          <div class="news-label">콜드체인뉴스</div>
+          식물공장형 스마트팜은 <strong>미래 식량안보를 책임지는 핵심 기술</strong>로 주목받고 있어요. 네덜란드·일본·미국 등 선진국들이 앞다투어 투자하고 있고, 한국도 빠르게 따라가고 있어요!
+        </div>
+        <div class="news-box">
+          <div class="news-label">왜 중요할까?</div>
+          기후 변화로 들판에서 농사 짓기가 점점 어려워지고 있어요. 식물공장은 <strong>날씨와 무관하게 365일 신선한 채소를 만들 수 있는</strong> 미래 농업의 답이에요!
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 교수 7: 최종우 ═══════════════ -->
+  <article class="prof-card" id="prof7">
+    <div class="prof-header p7">
+      <div class="prof-header-top">
+        <div class="prof-emoji">💼</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №07</div>
+          <div class="prof-name">최종우 교수님</div>
+          <div class="prof-title">조교수 / 농경제사회학부 지역정보학전공</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"농업도 비즈니스다! 디지털 농업 경영 박사"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력 (걸어오신 길)</h4>
+        <ul>
+          <li>미국 <strong>미네소타 대학교(University of Minnesota)</strong>에서 응용경제학 박사 학위</li>
+          <li>(미네소타 대학은 농업경제학 분야 미국 최고 명문 중 하나!)</li>
+          <li>📊 <strong>한국농촌경제연구원(KREI) 부연구위원 3년 반</strong> — 정부 정책 연구</li>
+          <li>2022년 2학기에 서울대 농경제사회학부 조교수로 부임</li>
+          <li>현재 <strong>'디지털 농업과 기술경영 연구실'</strong> 운영 중</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p>다른 교수님들이 <strong>'농업 기술'</strong>을 연구한다면, 최종우 교수님은 <strong>'농업 비즈니스'</strong>를 연구하세요.</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          여러분, 토마토를 농부가 만들었다고 우리 집까지 어떻게 올까요? 트럭이 와서 마트에 가고, 마트에서 우리가 사잖아요. 이 모든 과정에서 <em>"누가 얼마에 팔아야 할지, 사람들이 무엇을 좋아할지, 새로운 기술이 시장을 어떻게 바꿀지"</em>를 연구하시는 거예요. <strong>농업판 경영 컨설턴트!</strong> 💼🍅
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">⚒️</span> 핵심 연구 키워드</h4>
+        <ul>
+          <li><strong>애그테크(AgTech)</strong> — 농업 기술 스타트업·기업 연구</li>
+          <li><strong>리테일테크(RetailTech)</strong> — 농산물 유통 혁신 기술</li>
+          <li><strong>푸드테크(FoodTech)</strong> — 미래 식품 산업 분석</li>
+          <li><strong>식품 소비 행태 분석</strong> — 사람들이 뭘 먹고 사는지 데이터로 분석</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">💬</span> 최종우 교수님의 말씀</h4>
+        <div class="news-box">
+          <div class="news-label">서울대 농생대 신임교수 인터뷰</div>
+          "<strong>학생 시절에는 여러 경험을 쌓는 것이 가장 중요해요.</strong> 한 곳에만 열중하지 말고 다양한 경험을 해보세요. 이 모든 경험이 더 행복한 삶을 만들어줄 거예요."
+        </div>
+        <div class="news-box">
+          <div class="news-label">앞으로의 목표</div>
+          "<strong>농식품 기술 기업 경영</strong>이라는 새로운 학문 분야를 개척하고 싶어요. 산업공학적·게임이론적·행동경제학적 접근을 농식품 산업에 적용하는 거예요."
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🌟</span> 스마트시스템과학과와의 연결</h4>
+        <p><strong>학과장이 강조한 "농업 기업가" 인재상과 정확히 맞물리는</strong> 교수님이에요. 데이터로 농업 비즈니스를 혁신하고 싶은 학생이라면 최종우 교수님이 최적!</p>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 교수 8: 한희 ═══════════════ -->
+  <article class="prof-card" id="prof8">
+    <div class="prof-header p8">
+      <div class="prof-header-top">
+        <div class="prof-emoji">🌲</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №08</div>
+          <div class="prof-name">한희 교수님</div>
+          <div class="prof-title">조교수 / 산림환경학전공</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"드론으로 숲을 측정하는 산림 박사!"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력</h4>
+        <ul>
+          <li>서울대학교에서 <strong>산림환경학 박사</strong> 학위</li>
+          <li>2022년 서울대학교 산림과학부 교수로 부임</li>
+          <li>현재 <strong>스마트산림경영연구실(SFM Lab)</strong> 운영</li>
+          <li>박사과정 4명, 석사과정 1명, 학부생 2명과 함께 연구 중</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p><strong>"숲을 어떻게 똑똑하게 관리할까?"</strong>를 연구하세요.</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          한국 땅의 약 <strong>64%가 숲</strong>이에요! 그런데 이 거대한 숲을 사람이 하나하나 다 둘러볼 수 있을까요? 못해요. 그래서 한희 교수님은 <em>드론에 LiDAR(라이다)라는 레이저 기계를 달아서 하늘에서 숲을 스캔해요.</em> 그러면 <strong>나무 한 그루 한 그루의 키, 굵기, 무게까지 다 알 수 있어요!</strong> 마치 숲을 3D로 만드는 마법사 같죠 🌲✨
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">⚒️</span> 핵심 연구 분야</h4>
+        <ul>
+          <li><strong>ICT 기반 정밀임업(Precision Forestry)</strong> — 기술로 숲을 관리</li>
+          <li><strong>산림 빅데이터·의사결정 연구</strong> — 데이터로 숲을 운영</li>
+          <li><strong>지역임업(Local Forestry)</strong> — 임업인의 소득 향상</li>
+          <li><strong>산림 가치사슬</strong> — 산림 자원의 효율적 활용</li>
+          <li><strong>탄소흡수 산림시업체계</strong> — 숲으로 지구 살리기</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📰</span> 관련 뉴스 — 왜 중요한가?</h4>
+        <div class="news-box">
+          <div class="news-label">2050 탄소중립과 산림</div>
+          한국은 <strong>2050년까지 탄소중립을 선언</strong>했어요. 즉, 이산화탄소를 더 이상 쌓이지 않게 하겠다는 약속! 그런데 한국의 온실가스 흡수량의 <strong>99.96%가 산림</strong>에서 나와요. 그래서 숲을 정확히 측정하는 한희 교수님 연구가 정말 중요해요!
+        </div>
+        <div class="news-box">
+          <div class="news-label">산림청 K-포레스트 계획</div>
+          산림청은 <strong>드론과 LiDAR로 숲을 디지털화</strong>하는 'K-포레스트' 사업을 추진 중이에요. 한희 교수님 연구실이 이 분야 핵심 연구 그룹이에요!
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📄</span> 대표 논문</h4>
+        <div class="paper-box">
+          <div class="paper-label">한국산림과학회지</div>
+          <em>"임분 상하층의 바이오매스 조사를 위한 백팩형 라이다와 드론 라이다의 적용성 평가"</em><br>
+          숲의 나무 양을 정확히 측정하는 방법을 비교한 연구예요.
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 교수 9: 김연욱 ═══════════════ -->
+  <article class="prof-card" id="prof9">
+    <div class="prof-header p9">
+      <div class="prof-header-top">
+        <div class="prof-emoji">🌡️</div>
+        <div class="prof-name-block">
+          <div class="prof-no">교수 №09</div>
+          <div class="prof-name">김연욱 교수님</div>
+          <div class="prof-title">조교수 / 생태조경·지역시스템공학부</div>
+        </div>
+      </div>
+      <div class="prof-tagline">"기후변화를 농업으로 풀어내는 박사!"</div>
+    </div>
+    <div class="prof-body">
+
+      <div class="prof-section">
+        <h4><span class="icon">📜</span> 약력</h4>
+        <ul>
+          <li>서울대학교에서 <strong>농학 박사</strong> 학위</li>
+          <li>현재 서울대학교 지역시스템공학전공 조교수</li>
+          <li>스마트시스템과학과 겸임</li>
+        </ul>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🔬</span> 어떤 연구를 하실까?</h4>
+        <p>이름부터 멋진 <strong>'기후스마트농업(Climate Smart Agriculture)'</strong>을 연구하세요.</p>
+
+        <div class="easy-explain">
+          <strong>🧒 쉽게 말하면!</strong><br>
+          요즘 폭염, 가뭄, 폭우가 너무 많죠? 농작물도 죽고, 농부도 힘들어해요. 김연욱 교수님은 <em>"기후가 이렇게 변해도 망하지 않는 농업"</em>을 만드는 연구를 하세요. 게다가 <strong>농사를 지으면서도 지구를 망치지 않게(=온실가스를 적게 내뿜게)</strong> 만드는 게 목표예요! 🌍💚
+        </div>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">🎯</span> 기후스마트농업의 3대 목표</h4>
+        <ul>
+          <li>🌾 <strong>생산성 향상</strong> — 농사가 잘 되어야 해요</li>
+          <li>🌡️ <strong>기후변화 적응</strong> — 이상한 날씨에도 견뎌야 해요</li>
+          <li>☁️ <strong>온실가스 감축</strong> — 농사가 지구 온난화를 일으키면 안 돼요</li>
+        </ul>
+        <p style="margin-top:14px;">이 <strong>세 가지를 동시에</strong> 달성하는 건 정말 어려운 일이에요. 그래서 데이터와 과학이 필요해요!</p>
+      </div>
+
+      <div class="prof-section">
+        <h4><span class="icon">📰</span> 왜 이 연구가 중요한가요?</h4>
+        <div class="news-box">
+          <div class="news-label">전세계 농업의 충격적인 사실</div>
+          UN 식량농업기구(FAO)에 따르면, <strong>전세계 온실가스의 약 24%가 농업·산림에서 나와요!</strong> 식량 시스템 전체로 보면 무려 <strong>34%</strong>예요. 즉, 농업을 똑똑하게 바꾸면 지구 온난화도 막을 수 있어요!
+        </div>
+        <div class="news-box">
+          <div class="news-label">2026년 이상기후</div>
+          세계기상기구는 슈퍼 엘니뇨를 경고하고 있어요. 한파·폭염·홍수·산불이 동시에 일어나는 시대! 김연욱 교수님의 연구가 더더욱 중요해지고 있어요.
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- ═══════════════ 마무리 ═══════════════ -->
+  <section class="section">
+    <div class="section-banner">
+      <span class="emoji">🎓</span>
+      <div>
+        <h2>9분의 교수님을 한눈에!</h2>
+        <div class="subtitle">각자 다른 분야지만 모두 '데이터+농생명'으로 연결돼요</div>
+      </div>
+    </div>
+
+    <div class="intro-box">
+      <p>이 9명의 교수님들이 가진 공통점이 있어요. 바로 <strong>"데이터 사이언스 + 자기 분야"</strong>의 결합이에요. 누구는 작물, 누구는 동물세포, 누구는 산림, 누구는 농업경영을 연구하지만 — <strong>모두 데이터와 AI라는 도구로 그 분야를 혁신하고 있어요!</strong></p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="concept-emoji">🌾</span>
+        <h3>작물·기후 분야</h3>
+        <p>김광수 · 김형석 · 김연욱<br>날씨와 작물, 위성과 데이터로 농업의 미래를 예측</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">🤖</span>
+        <h3>기계·AI 분야</h3>
+        <p>김학진 · 김태형<br>자율 농기계, AI, 드론으로 농업을 자동화</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">🧬</span>
+        <h3>생명·식물 분야</h3>
+        <p>유경록 · 안태인<br>세포·식물공장으로 미래 식량을 만드는 연구</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">🌲</span>
+        <h3>산림·환경 분야</h3>
+        <p>한희<br>드론과 LiDAR로 숲을 측정해 탄소중립에 기여</p>
+      </div>
+      <div class="concept-card">
+        <span class="concept-emoji">💼</span>
+        <h3>경영·정책 분야</h3>
+        <p>최종우<br>데이터로 농업 비즈니스와 시장을 혁신</p>
+      </div>
+    </div>
+
+    <div class="fun-fact">
+      <h4>🎯 결국 학과가 키우려는 사람은?</h4>
+      <p>학과장 김광수 교수님의 말씀처럼, <strong>"데이터 사이언스를 통해 농업·생명·환경 중 최소한 하나라도 연결할 수 있는 사람"</strong>이에요. 9명의 교수님 중 본인이 가장 흥미를 느끼는 분야를 찾고, 그 분야에 데이터적 사고를 더하면 누구나 멋진 미래 인재가 될 수 있어요! 🌟</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <h3>🌱 서울대 스마트시스템과학과 🌱</h3>
+  <p>
+    데이터로 농업·생명·환경의 미래를 새로 쓰는 사람들이 모이는 곳<br>
+    9명의 교수님과 함께 세상의 진짜 문제를 풀어가요!
+  </p>
+  <div class="small">자료 출처: 서울대 스마트시스템과학과 홈페이지, 입학웹진 아로리, 각 교수 공식 프로필, 언론 기사</div>
+</footer>
+
+</body>
+</html>

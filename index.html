@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>민준 홈</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: #f0f7ff;
+    color: #1a2a3a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .hero .emoji { font-size: 56px; display: block; margin-bottom: 16px; }
+  .hero h1 { font-size: 30px; font-weight: 700; color: #0369a1; margin-bottom: 8px; }
+  .hero p { font-size: 15px; color: #64748b; }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: white;
+    border: 1px solid #bae6fd;
+    border-radius: 16px;
+    padding: 20px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .card:hover {
+    box-shadow: 0 4px 20px rgba(3,105,161,0.13);
+    transform: translateY(-2px);
+  }
+
+  .card-icon { font-size: 30px; flex-shrink: 0; }
+  .card-body { flex: 1; }
+  .card-title { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+  .card-desc { font-size: 12px; color: #64748b; }
+  .card-arrow { font-size: 20px; color: #0369a1; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="emoji">🌟</span>
+  <h1>민준 자료실</h1>
+  <p>입시 준비 자료 모음</p>
+</div>
+
+<div class="cards">
+  <a href="민준입시.html" class="card">
+    <span class="card-icon">🎓</span>
+    <div class="card-body">
+      <div class="card-title">민준 입시 자료</div>
+      <div class="card-desc">서울대 스마트시스템과학과 입시 준비 자료 6종</div>
+    </div>
+    <span class="card-arrow">›</span>
+  </a>
+</div>
+
+</body>
+</html>

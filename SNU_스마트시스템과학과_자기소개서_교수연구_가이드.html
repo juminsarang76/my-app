@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울대 스마트시스템과학과 — 자기소개서 전략 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #1a2e42;
+    --teal: #1e8a7a;
+    --teal-light: #2ab59f;
+    --gold: #c9a84c;
+    --gold-light: #e4c97a;
+    --cream: #f5f0e8;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --card-bg: #ffffff;
+    --border: #e8e0d0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Serif KR', serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(30,138,122,0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.15) 0%, transparent 50%);
+  }
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 5vw, 44px);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.2;
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .hero h1 span { color: var(--gold-light); }
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    position: relative;
+    font-weight: 300;
+  }
+
+  /* ── TABS ── */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    background: #fff;
+    position: sticky; top: 0; z-index: 100;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 16px 22px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    margin-bottom: -2px;
+  }
+  .tab-btn:hover { color: var(--teal); }
+  .tab-btn.active {
+    color: var(--teal);
+    border-bottom-color: var(--teal);
+    font-weight: 500;
+  }
+
+  /* ── CONTENT ── */
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  /* ── PROFESSOR CARDS ── */
+  .prof-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  .prof-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .prof-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+  }
+  .prof-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 20px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .prof-badge {
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .prof-info { flex: 1; }
+  .prof-name {
+    font-size: 17px; font-weight: 700; color: var(--navy);
+    margin-bottom: 2px;
+  }
+  .prof-rank {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .prof-tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tag {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+  }
+  .tag-primary { background: rgba(30,138,122,0.1); color: var(--teal); }
+  .tag-secondary { background: rgba(201,168,76,0.12); color: #8a6d1a; }
+
+  .toggle-icon {
+    font-size: 18px; color: var(--muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    margin-top: 12px;
+  }
+  .prof-card.open .toggle-icon { transform: rotate(180deg); }
+
+  .prof-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+    margin-top: 0;
+    padding-top: 16px;
+  }
+  .prof-card.open .prof-body { display: block; }
+
+  .info-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 600px) { .info-row { grid-template-columns: 1fr; } }
+
+  .info-box {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .info-box-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .info-box-content {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .strategy-box {
+    background: linear-gradient(135deg, rgba(30,138,122,0.06), rgba(201,168,76,0.04));
+    border: 1px solid rgba(30,138,122,0.2);
+    border-left: 4px solid var(--teal);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 12px;
+  }
+  .strategy-box-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .strategy-box p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .strategy-box strong { color: var(--teal); }
+
+  /* ── STRATEGY CARDS ── */
+  .strategy-section { margin-bottom: 40px; }
+  .strategy-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .num-badge {
+    width: 28px; height: 28px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .strat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .strat-card-title {
+    font-size: 15px; font-weight: 700; color: var(--navy);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .strat-icon { font-size: 18px; }
+  .strat-card p, .strat-card ul {
+    font-size: 13px; line-height: 1.8; color: #333;
+  }
+  .strat-card ul { padding-left: 18px; }
+  .strat-card li { margin-bottom: 4px; }
+
+  .example-quote {
+    background: var(--navy);
+    color: rgba(255,255,255,0.9);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.8;
+    font-style: italic;
+  }
+  .example-quote .quote-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold-light);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-style: normal;
+    margin-bottom: 6px;
+  }
+
+  .bad-quote {
+    background: rgba(200,50,50,0.06);
+    border: 1px solid rgba(200,50,50,0.2);
+    border-left: 4px solid #d9534f;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #8b3333;
+  }
+  .bad-quote .quote-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: #d9534f;
+  }
+
+  /* ── KEYWORD MAP ── */
+  .keyword-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .kw-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .kw-card .kw-icon { font-size: 24px; margin-bottom: 8px; }
+  .kw-card .kw-word {
+    font-weight: 700; font-size: 13px; color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .kw-card .kw-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 14px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .checklist li::before {
+    content: '□';
+    font-size: 16px;
+    color: var(--teal);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  /* ── COLOR BAND ── */
+  .color-band {
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+  .band-navy { background: var(--navy); color: white; }
+  .band-navy .band-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .band-navy .band-desc { font-size: 13px; opacity: 0.75; line-height: 1.7; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px 36px; }
+    .content { padding: 24px 16px 60px; }
+    .tab-btn { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">입시 전략 리서치 가이드</div>
+  <h1>서울대학교<br><span>스마트시스템과학과</span><br>자기소개서 완전정복</h1>
+  <p class="hero-sub">교수 9인 연구 분석 × 학과 핵심 전략 × 문장 작성 가이드</p>
+</div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('professors')">👨‍🔬 교수진 연구분석</button>
+  <button class="tab-btn" onclick="showTab('strategy')">✍️ 자기소개서 전략</button>
+  <button class="tab-btn" onclick="showTab('keywords')">🔑 핵심 키워드</button>
+  <button class="tab-btn" onclick="showTab('checklist')">✅ 최종 체크리스트</button>
+</nav>
+
+<div class="content">
+
+  <!-- ══════════════════ TAB 1: 교수진 ══════════════════ -->
+  <div class="tab-panel active" id="tab-professors">
+    <p class="section-title">교수진 9인 연구 심층 분석</p>
+    <p class="section-desc">각 교수의 연구 방향을 이해하면 "왜 이 학과인가"를 훨씬 구체적으로 쓸 수 있습니다.<br>관심 있는 교수 카드를 클릭해 자소서 연결 전략을 확인하세요.</p>
+
+    <div class="prof-grid">
+
+      <!-- 김광수 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(30,138,122,0.12);">🌾</div>
+          <div class="prof-info">
+            <div class="prof-name">김광수 교수</div>
+            <div class="prof-rank">교수 · 작물생명과학전공 · Iowa State Univ. 농업기상학 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">작물생태학</span>
+              <span class="tag tag-primary">기후변화</span>
+              <span class="tag tag-secondary">농업기상학</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">기후변화가 작물 생산에 미치는 영향 분석 / 작물 생태정보학 / 농림기상 모델링 / CERES·ORYZA 등 작물모델 국내 적용</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">주요 논문·활동</div>
+              <div class="info-box-content">한국농림기상학회지 편집장 역임 / 기후변화 대응 작물모델 국내 적용성 연구 / Agricultural and Forest Meteorology 게재 다수</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p>"기후변화로 인해 농업 생산량이 불안정해지는 문제를 접했을 때, 단순한 농업기술이 아닌 <strong>기상 데이터와 작물모델을 결합한 예측 시스템</strong>이 필요하다는 것을 알게 됐습니다. 김광수 교수님의 기후-작물 모델링 연구를 통해 이 문제를 데이터 과학으로 접근할 수 있다는 가능성을 보았습니다."</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 김학진 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(201,168,76,0.12);">🚜</div>
+          <div class="prof-info">
+            <div class="prof-name">김학진 교수</div>
+            <div class="prof-rank">교수 · 바이오시스템공학과 · Univ. of Missouri, Precision Agriculture 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">정밀농업</span>
+              <span class="tag tag-primary">자율농기계</span>
+              <span class="tag tag-secondary">드론 원격탐사</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">영상기반 무인자율 농기계 작업 및 안전 기술 / 드론을 이용한 농작물 생육 원격탐사 / 이온센싱 및 제어기술 / 농용 트랙터 현가제어</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">주요 연구실적</div>
+              <div class="info-box-content">무인 농작업을 위한 경로계획 및 작업정보 매핑 / 바이오시스템제어 및 정밀농업 연구실 운영 / 농촌진흥청 연구사 및 USDA-ARS 방문연구원 이력</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p>IoT 센서, 드론, 자율주행 농기계 등 하드웨어-소프트웨어 융합 기술에 관심 있는 학생에게 최적입니다. <strong>"농업 현장에서의 자동화·무인화 기술"</strong>에 대한 관심을 드론 조작, 로보틱스 관련 탐구 활동과 연결해 쓰세요.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 유경록 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(180,80,120,0.10);">🧬</div>
+          <div class="prof-info">
+            <div class="prof-name">유경록 부교수</div>
+            <div class="prof-rank">부교수 · 동물생명공학전공 · 서울대학교 이학 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">동물세포공학</span>
+              <span class="tag tag-primary">줄기세포</span>
+              <span class="tag tag-secondary">CRISPR/Cas9</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">동물·인간 골수 줄기세포 분리 및 기능 규명 / CRISPR/Cas9 기반 유전자편집 / 세포치료제·면역치료제 개발 / 배양육 기반기술 연구</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">주요 논문·활동</div>
+              <div class="info-box-content">동물세포공학 연구실 운영 / Blood, Nature Communications 등 국제 저널 논문 리뷰 및 발표 활발 / 세포기반 치료 관련 연구 다수</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p>생명공학·의학 쪽 관심이 있는 학생에게 최적. <strong>"미래 식량문제를 해결할 배양육·세포 농업"</strong>이라는 키워드로, 생물·화학 시간에 했던 세포 관련 탐구와 연결하면 매우 독창적인 지원 동기가 됩니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 김태형 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(60,100,200,0.10);">🤖</div>
+          <div class="prof-info">
+            <div class="prof-name">김태형 조교수</div>
+            <div class="prof-rank">조교수 · 바이오시스템공학과 · 서울대학교 공학 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">농업 AI</span>
+              <span class="tag tag-primary">빅데이터</span>
+              <span class="tag tag-secondary">딥러닝</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">농업 인공지능 및 빅데이터 처리 / 딥러닝 기반 작물 생육 예측 / 스마트팜 센서 데이터 분석 / 영상 인식을 통한 농작업 자동화</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">연구 방향</div>
+              <div class="info-box-content">농업 현장에서 발생하는 환경·생육 데이터를 AI로 분석하여 최적 의사결정을 지원하는 시스템 구축이 핵심 목표</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p>코딩·AI에 관심 있는 학생에게 가장 적합한 교수입니다. <strong>"머신러닝 또는 파이썬으로 데이터를 분석한 경험"</strong>을 농업 문제와 연결하여 서술하세요. 수학 동아리, 정보 과목 심화, R&E 활동 등을 적극 활용할 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 김형석 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(30,138,122,0.10);">🛰️</div>
+          <div class="prof-info">
+            <div class="prof-name">김형석 조교수</div>
+            <div class="prof-rank">조교수 · 작물생명과학전공 · Univ. of Illinois (UIUC) Environmental Science 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">위성 원격탐사</span>
+              <span class="tag tag-primary">작물생산</span>
+              <span class="tag tag-secondary">드론 영상분석</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">위성·드론을 이용한 작물 재배면적 모니터링 / 원격탐사 기반 작물 생산성 예측 / 항공 영상 분류 및 수량 예측 모델 개발</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">주요 연구 특징</div>
+              <div class="info-box-content">UAV(드론) 영상과 위성영상을 활용한 대면적 농업 모니터링. UIUC 환경과학 박사 출신으로 글로벌 식량안보와 연계된 연구 수행</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p>환경·지리에 관심 있는 학생에게 적합. <strong>"위성/드론 데이터로 지구 전체의 식량 생산 현황을 모니터링한다"</strong>는 개념과, 지구과학 또는 환경 관련 탐구활동을 연결하면 차별화됩니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 안태인 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(80,180,100,0.12);">🌿</div>
+          <div class="prof-info">
+            <div class="prof-name">안태인 조교수</div>
+            <div class="prof-rank">조교수 · 원예생명공학전공 · 서울대학교 원예생명공학 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">시설원예</span>
+              <span class="tag tag-primary">식물공장</span>
+              <span class="tag tag-secondary">인공광 제어</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">LED 인공광을 활용한 식물공장 설계 / 스마트 온실 환경 제어 시스템 / 시설 내 작물 생육 최적화 / 완전밀폐형·하이브리드형 식물공장 연구</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">연구 방향</div>
+              <div class="info-box-content">외부 기후와 무관하게 연중 안정적으로 작물을 생산하는 스마트 식물공장 시스템. 에너지 효율, 양액 관리, 광합성 최적화가 핵심</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p>수직농업(도시농업), 식물공장에 관심 있는 학생에게 최적. <strong>"기후에 의존하지 않는 안정적 식량 생산 시스템"</strong>이라는 키워드로, 식물 생장 관련 실험·탐구 경험을 연결하세요.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 최종우 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(201,168,76,0.15);">📊</div>
+          <div class="prof-info">
+            <div class="prof-name">최종우 조교수</div>
+            <div class="prof-rank">조교수 · 지역정보학전공 · Univ. of Minnesota, Applied Economics 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">디지털농업</span>
+              <span class="tag tag-primary">기술경영</span>
+              <span class="tag tag-secondary">애그테크 정책</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">디지털농업 기술의 경제적 효과 분석 / 스마트농업 기술 채택 의사결정 / 농업 공급망 디지털화 / 응용경제학 기반 농업 정책 연구</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">연구 특징</div>
+              <div class="info-box-content">농업을 기술이 아닌 경영·경제 관점으로 접근. 데이터과학 + 사회과학 융합. 농식품 유통, 애그테크 스타트업 분석 등이 주요 관심</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p>경제·경영·사회에 관심 있는 학생에게 최적입니다. <strong>"기술만으로는 농업 혁신이 안 되고, 경제적·정책적 관점의 기술경영이 필요하다"</strong>는 시각을 가진 학생에게 강력한 차별점이 됩니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 한희 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(100,150,50,0.12);">🌲</div>
+          <div class="prof-info">
+            <div class="prof-name">한희 조교수</div>
+            <div class="prof-rank">조교수 · 산림환경학전공 · 서울대학교 산림환경학 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">산림경영정보학</span>
+              <span class="tag tag-primary">정밀임업</span>
+              <span class="tag tag-secondary">LiDAR·탄소흡수</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">ICT 기반 정밀임업(Precision Forestry) / 드론 LiDAR로 산림 바이오매스 추정 / 탄소흡수원으로서 산림 평가·관리 / 산림 디지털트윈 구현</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">주요 논문·활동</div>
+              <div class="info-box-content">백팩형 라이다·드론 라이다를 활용한 산림 바이오매스 조사 논문 / "탄소흡수 기능 증진을 위한 산림시업체계" 연구 / 스마트산림경영연구실(SFM Lab) 운영</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p>환경·탄소중립에 관심 있는 학생에게 최적. <strong>"2050 탄소중립 달성을 위해 산림의 탄소흡수 기능을 정밀하게 측정하고 관리하는 기술이 필요하다"</strong>는 관점은 매우 시의성 있고 독창적인 지원 동기가 됩니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 김연욱 -->
+      <div class="prof-card" onclick="toggleCard(this)">
+        <div class="prof-header">
+          <div class="prof-badge" style="background:rgba(30,138,122,0.12);">🌡️</div>
+          <div class="prof-info">
+            <div class="prof-name">김연욱 조교수</div>
+            <div class="prof-rank">조교수 · 지역시스템공학전공 · 서울대학교 농학 박사</div>
+            <div class="prof-tag-row">
+              <span class="tag tag-primary">기후스마트농업</span>
+              <span class="tag tag-primary">온실가스</span>
+              <span class="tag tag-secondary">탄소중립 농업</span>
+            </div>
+          </div>
+          <div class="toggle-icon">▾</div>
+        </div>
+        <div class="prof-body">
+          <div class="info-row">
+            <div class="info-box">
+              <div class="info-box-label">핵심 연구 분야</div>
+              <div class="info-box-content">기후변화 적응 농업 기술 개발 / 농업 부문 온실가스 감축 방안 / 빅데이터 기반 탄소중립 농업 시스템 / 기후스마트농업(CSA) 전략 수립</div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-label">연구 특징</div>
+              <div class="info-box-content">생산성·기후변화 적응·온실가스 감축을 동시에 달성하는 '기후스마트농업(Climate Smart Agriculture)' 구현이 핵심 목표</div>
+            </div>
+          </div>
+          <div class="strategy-box">
+            <div class="strategy-box-title">✍️ 자소서 연결 전략</div>
+            <p><strong>"식량 안보와 기후위기를 동시에 해결하는 농업"</strong>이라는 시각은 현재 가장 주목받는 연구 방향입니다. 기후 관련 뉴스 탐구, 지속가능발전목표(SDGs) 관련 활동과 연결하면 강한 인상을 줍니다.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end prof-grid -->
+  </div>
+
+  <!-- ══════════════════ TAB 2: 자소서 전략 ══════════════════ -->
+  <div class="tab-panel" id="tab-strategy">
+    <p class="section-title">자기소개서 항목별 전략</p>
+    <p class="section-desc">학과의 핵심 가치와 교수 연구를 자소서 문장에 녹이는 구체적 방법입니다.</p>
+
+    <div class="color-band band-navy">
+      <div class="band-title">📌 학과가 원하는 인재 공식</div>
+      <div class="band-desc">데이터 과학 역량 + 농업·생명·환경 도메인 지식 + 현장기반 문제해결력<br>→ 이 세 가지가 자소서 전체를 관통해야 합니다.</div>
+    </div>
+
+    <div class="strategy-section">
+      <h2><div class="num-badge">1</div>지원 동기 — 가장 중요한 항목</h2>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">✅</span> 핵심 공식</div>
+        <p><strong>[나의 경험/문제의식]</strong> → <strong>[사회적 문제 발견]</strong> → <strong>[이 학과만이 답이다]</strong></p>
+        <div class="example-quote">
+          <div class="quote-label">✅ 좋은 예시</div>
+          "뉴스에서 기후변화로 쌀 생산량이 줄어든다는 기사를 접하고, 단순한 재배 기술 개선이 아닌 <strong>AI·빅데이터로 기후 변화를 예측하고 작물 생산을 최적화하는 시스템</strong>이 필요하다고 생각했습니다. 스마트시스템과학과의 '농업 빅데이터 및 AI 의사결정' 분야와 김태형 교수님의 농업 AI 연구가 제 문제의식과 정확히 맞닿아 있었습니다."
+        </div>
+        <div class="bad-quote">
+          <div class="quote-label">❌ 피해야 할 표현</div>
+          "어릴 때부터 농업에 관심이 많았습니다" / "서울대학교에 꼭 입학하고 싶습니다" / "4차 산업혁명 시대에 발맞추어..." (추상적 수사)
+        </div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">🎯</span> 교수 연구를 구체적으로 언급하는 법</div>
+        <ul>
+          <li>관심 분야와 맞는 교수를 1~2명 선택하고, 그 분의 연구 주제를 자신의 고교 경험과 연결하세요.</li>
+          <li>"○○ 교수님의 □□ 연구를 통해 ~~한 가능성을 발견했습니다" 형태로 구체화</li>
+          <li>교수님 이름을 직접 언급하면 학과에 대한 충분한 리서치를 했다는 인상을 줍니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="strategy-section">
+      <h2><div class="num-badge">2</div>학업 역량 — 3개 축으로 배분하기</h2>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">📐</span> 데이터·수학 역량</div>
+        <p>미적분, 선형대수, 통계, 알고리즘 관련 학습 경험. 코딩 활동(파이썬, R), 수학 경시 또는 탐구 결과물. 학과 핵심 권장 과목인 <strong>미적분</strong>에서의 성취를 반드시 언급.</p>
+      </div>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">🌱</span> 농업·생명과학 역량</div>
+        <p>생물, 화학 과목 학습 내용 중 작물·세포·환경에 관련된 심화 탐구. 권장 과목인 <strong>물리학I / 화학I / 생명과학I</strong> 중 이수한 과목과 관련 활동 서술.</p>
+      </div>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">🔄</span> 융합·기획 역량</div>
+        <p>두 분야를 연결한 프로젝트나 아이디어 경험. 예: "스마트팜 설계 보고서 작성", "온실 환경 데이터 수집 실험", "기후와 농업 생산량의 상관관계 통계 분석"</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="strategy-section">
+      <h2><div class="num-badge">3</div>성장 과정 — 학과의 3대 인재상 반영</h2>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">🔧</span> 현장기반 문제해결형</div>
+        <p>실제 문제에 부딪히고 해결한 경험. 실패 → 분석 → 재시도 과정. "이론을 현장에 적용할 때 생기는 간격을 어떻게 좁혔는가"</p>
+      </div>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">🤝</span> 다학제적 통섭형</div>
+        <p>여러 분야(농학+공학+경제 등)를 연결해서 사고한 경험. 수학과 생물을 동시에 활용한 프로젝트, 융합 수업에서의 경험 등.</p>
+      </div>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">🌍</span> 기업가정신 글로벌 리더형</div>
+        <p>새로운 시도, 팀을 이끈 경험, 국제적 시각. 영어 논문 읽기, 해외 스마트농업 사례 분석, 창업 아이디어 구상 등.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="strategy-section">
+      <h2><div class="num-badge">4</div>황금 문장 구조</h2>
+      <div class="strat-card">
+        <div class="strat-card-title"><span class="strat-icon">✨</span> 모든 단락에 적용할 핵심 공식</div>
+        <div class="example-quote">
+          <div class="quote-label">황금 공식</div>
+          "[나의 구체적 경험]을 통해 [문제/한계]를 발견했고, 이를 해결하려면 [데이터·AI·농업 분야의 융합]이 필요하다는 것을 깨달았습니다. 스마트시스템과학과의 [구체적 교과목명 또는 교수 연구]를 통해 [내가 이루고 싶은 목표]를 실현하겠습니다."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ TAB 3: 키워드 ══════════════════ -->
+  <div class="tab-panel" id="tab-keywords">
+    <p class="section-title">자소서에 반드시 녹여야 할 핵심 키워드</p>
+    <p class="section-desc">아래 키워드들은 학과 PDF·홈페이지·교수 연구에서 반복적으로 등장합니다. 자소서에 자연스럽게 배치하세요.</p>
+
+    <div style="margin-bottom:32px;">
+      <h3 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:14px;">🏫 학과 정체성 키워드 (필수)</h3>
+      <div class="keyword-map">
+        <div class="kw-card"><div class="kw-icon">🔬</div><div class="kw-word">데이터 과학</div><div class="kw-desc">Data Science — 학과의 핵심 정체성</div></div>
+        <div class="kw-card"><div class="kw-icon">🌾</div><div class="kw-word">스마트농업</div><div class="kw-desc">Smart Agriculture — 학과의 목표</div></div>
+        <div class="kw-card"><div class="kw-icon">⚙️</div><div class="kw-word">디지털 전환</div><div class="kw-desc">농업의 4차 산업혁명 적용</div></div>
+        <div class="kw-card"><div class="kw-icon">🤖</div><div class="kw-word">인공지능 (AI)</div><div class="kw-desc">작물 예측·의사결정 도구</div></div>
+        <div class="kw-card"><div class="kw-icon">📡</div><div class="kw-word">IoT·빅데이터</div><div class="kw-desc">스마트팜 핵심 기술</div></div>
+        <div class="kw-card"><div class="kw-icon">♻️</div><div class="kw-word">지속가능성</div><div class="kw-desc">탄소중립·친환경 농업</div></div>
+        <div class="kw-card"><div class="kw-icon">🔗</div><div class="kw-word">융합</div><div class="kw-desc">농학+공학+경제학 통섭</div></div>
+        <div class="kw-card"><div class="kw-icon">🌐</div><div class="kw-word">글로벌 리더</div><div class="kw-desc">학과 목표 인재상</div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:32px;">
+      <h3 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:14px;">🔬 교수 연구 연결 키워드 (선택·심화)</h3>
+      <div class="keyword-map">
+        <div class="kw-card"><div class="kw-icon">🛰️</div><div class="kw-word">원격탐사</div><div class="kw-desc">김형석 교수 — 위성·드론 활용</div></div>
+        <div class="kw-card"><div class="kw-icon">🌡️</div><div class="kw-word">기후스마트농업</div><div class="kw-desc">김연욱 교수 — CSA 전략</div></div>
+        <div class="kw-card"><div class="kw-icon">🌿</div><div class="kw-word">식물공장</div><div class="kw-desc">안태인 교수 — 인공광 재배</div></div>
+        <div class="kw-card"><div class="kw-icon">🚜</div><div class="kw-word">정밀농업</div><div class="kw-desc">김학진 교수 — 자율농기계</div></div>
+        <div class="kw-card"><div class="kw-icon">🧬</div><div class="kw-word">배양육·세포농업</div><div class="kw-desc">유경록 교수 — 미래 단백질</div></div>
+        <div class="kw-card"><div class="kw-icon">🌲</div><div class="kw-word">탄소흡수원</div><div class="kw-desc">한희 교수 — 산림 탄소 관리</div></div>
+        <div class="kw-card"><div class="kw-icon">📈</div><div class="kw-word">기술경영</div><div class="kw-desc">최종우 교수 — 애그테크 경제</div></div>
+        <div class="kw-card"><div class="kw-icon">🌾</div><div class="kw-word">작물 모델링</div><div class="kw-desc">김광수 교수 — 기후-작물 예측</div></div>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:14px;">⚠️ 자소서에서 피해야 할 표현</h3>
+      <div class="strat-card">
+        <ul>
+          <li>"농업에 막연한 관심이 있습니다" → 구체적 문제의식으로 교체</li>
+          <li>"서울대에 입학하면 열심히 하겠습니다" → 무엇을 왜 하고 싶은지로 교체</li>
+          <li>"4차 산업혁명 시대에..." → 식상한 도입부, 자신만의 경험으로 시작</li>
+          <li>컴퓨터·AI만 강조하고 농업 연결 없음 → 반드시 농업·환경 문제와 연결</li>
+          <li>"교수님들의 훌륭한 연구에 매료되어..." → 구체적으로 어떤 연구, 왜 매료됐는지 서술</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ TAB 4: 체크리스트 ══════════════════ -->
+  <div class="tab-panel" id="tab-checklist">
+    <p class="section-title">제출 전 최종 체크리스트</p>
+    <p class="section-desc">자기소개서를 완성한 후, 아래 항목을 하나씩 확인하세요.</p>
+
+    <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:12px;margin-top:0;">📝 내용 완성도</h3>
+    <ul class="checklist">
+      <li>학과 키워드(AI·빅데이터·농업 융합)가 지원 동기와 자연스럽게 연결되어 있는가?</li>
+      <li>구체적인 학과 분야(예: 농업 빅데이터 및 AI 의사결정) 또는 교수 연구 이름을 한 개 이상 언급했는가?</li>
+      <li>나만의 문제의식(식량·기후·농업 문제)이 명확히 드러나는가?</li>
+      <li>데이터 과학(수학/코딩)과 농업·생명 두 분야 모두에 대한 관심이 균형 있게 표현됐는가?</li>
+      <li>핵심 권장 과목(미적분)과 연결된 학업 역량이 언급됐는가?</li>
+      <li>막연한 꿈이 아닌 구체적 진로 방향(스마트팜 엔지니어, 농업 AI 연구자, 애그테크 창업가 등)이 제시됐는가?</li>
+    </ul>
+
+    <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:12px;margin-top:24px;">🎓 인재상 반영</h3>
+    <ul class="checklist">
+      <li>현장기반 문제해결 경험(실패·분석·재시도)이 포함됐는가?</li>
+      <li>다학제적 사고(여러 분야를 연결한 경험)가 드러나는가?</li>
+      <li>기업가정신 또는 글로벌 시각을 보여주는 활동이 있는가?</li>
+    </ul>
+
+    <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:12px;margin-top:24px;">🎤 면접 대비 (구술고사)</h3>
+    <ul class="checklist">
+      <li>자소서에 쓴 내용 중 "왜?", "어떻게?"라는 심층 질문에 답할 수 있는가?</li>
+      <li>생명과학 관련 제시문(유전, 세포, 생태계 등)을 읽고 분석할 준비가 됐는가?</li>
+      <li>수학(미적분·통계) 관련 제시문을 논리적으로 풀어낼 실력이 있는가?</li>
+      <li>자소서에서 언급한 교수 연구 주제에 대해 1-2분간 설명할 수 있는가?</li>
+    </ul>
+
+    <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:12px;margin-top:24px;">✏️ 문장 품질</h3>
+    <ul class="checklist">
+      <li>모든 주장에 구체적 근거(경험, 수치, 활동명)가 있는가?</li>
+      <li>"~하고 싶습니다"가 아닌 "~를 통해 ~를 이루겠습니다" 형태로 능동적으로 썼는가?</li>
+      <li>학과 홈페이지(smsys.snu.ac.kr)의 인사말에 나온 표현을 자신의 언어로 재해석했는가?</li>
+      <li>제출 전 소리 내어 읽어서 어색한 문장을 수정했는가?</li>
+    </ul>
+
+    <div class="color-band band-navy" style="margin-top:32px;">
+      <div class="band-title">💡 마지막 조언</div>
+      <div class="band-desc">스마트시스템과학과 2025년 수시 일반전형 모집인원은 10명입니다. 경쟁이 치열한 만큼, "이 학과가 나에게 왜 딱 맞는가"를 남들과 다른 구체적인 스토리로 설득하는 것이 핵심입니다. 이 가이드에서 찾은 교수 연구와 학과 방향을 당신의 실제 경험에 연결하세요.</div>
+    </div>
+  </div>
+
+</div><!-- end content -->
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+</script>
+</body>
+</html>

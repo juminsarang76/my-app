@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNU 스마트시스템과학과 — 합격자소서 전략서</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Bodoni+Moda:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #faf7f2;
+    --rust: #b04425;
+    --rust-deep: #8a3319;
+    --moss: #4a5d3a;
+    --gold: #b8923a;
+    --gold-soft: #d4b463;
+    --line: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #d8d2c4;
+    --card: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Serif KR', serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* === EDITORIAL HERO === */
+  .masthead {
+    border-bottom: 3px double var(--ink);
+    padding: 24px 30px 18px;
+    background: var(--paper);
+    position: relative;
+  }
+  .masthead-top {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .masthead-top .vol { color: var(--rust); font-weight: 500; }
+  .masthead h1 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(34px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .masthead h1 .accent {
+    color: var(--rust);
+    font-style: italic;
+  }
+  .masthead-sub {
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 700px;
+  }
+
+  /* === MAIN LAYOUT === */
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* === DROP CAP / EDITORIAL OPENER === */
+  .opener {
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--rust);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .kicker::before, .kicker::after {
+    content: ''; flex: 1; height: 1px; background: var(--rust); opacity: 0.4;
+  }
+  .opener-body {
+    font-size: 16px;
+    line-height: 1.85;
+    color: #1a1a1a;
+  }
+  .opener-body .drop {
+    float: left;
+    font-family: 'Bodoni Moda', serif;
+    font-size: 76px;
+    font-weight: 900;
+    line-height: 0.85;
+    margin: 6px 14px -4px 0;
+    color: var(--rust);
+  }
+
+  /* === SECTION === */
+  .section {
+    padding: 50px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(28px, 4.5vw, 42px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+  .section-title em { color: var(--rust); font-style: italic; }
+  .section-lead {
+    font-size: 17px;
+    color: #333;
+    max-width: 750px;
+    margin-bottom: 32px;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* === REVELATION BOX (interview quotes) === */
+  .revelation {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 32px;
+    margin: 32px 0;
+    position: relative;
+    border-left: 6px solid var(--rust);
+  }
+  .revelation::before {
+    content: '"';
+    position: absolute;
+    top: -8px; left: 18px;
+    font-family: 'Bodoni Moda', serif;
+    font-size: 80px;
+    font-weight: 900;
+    color: var(--rust);
+    line-height: 1;
+  }
+  .revelation-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold-soft);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    margin-left: 60px;
+  }
+  .revelation-quote {
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 14px;
+    font-weight: 300;
+  }
+  .revelation-quote .emph {
+    color: var(--gold-soft);
+    font-weight: 500;
+  }
+  .revelation-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-align: right;
+    letter-spacing: 0.05em;
+  }
+
+  /* === PRINCIPLE CARD === */
+  .principle {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 28px 30px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .principle-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3px 10px;
+    margin-bottom: 14px;
+  }
+  .principle-tag.alt { background: var(--rust); }
+  .principle-tag.moss { background: var(--moss); }
+  .principle h3 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .principle p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #2a2a2a;
+  }
+  .principle p strong { color: var(--rust); font-weight: 700; }
+
+  /* === STAR FORMULA === */
+  .formula-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 32px 0;
+    border: 2px solid var(--ink);
+  }
+  @media (max-width: 700px) {
+    .formula-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .formula-cell {
+    padding: 24px 18px;
+    text-align: center;
+    border-right: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    background: var(--paper);
+  }
+  .formula-cell:nth-child(4n) { border-right: none; }
+  @media (max-width: 700px) {
+    .formula-cell:nth-child(2n) { border-right: none; }
+    .formula-cell:nth-child(4n) { border-right: none; }
+  }
+  .formula-letter {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--rust);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .formula-word {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ink);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .formula-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* === ESSAY EXAMPLE === */
+  .essay-example {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 30px;
+    margin: 24px 0;
+    position: relative;
+  }
+  .essay-example::before {
+    content: 'EXAMPLE';
+    position: absolute;
+    top: -10px; left: 24px;
+    background: var(--rust);
+    color: var(--paper);
+    padding: 4px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+  }
+  .essay-title {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    margin-top: 8px;
+  }
+  .essay-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .essay-body {
+    font-size: 15px;
+    line-height: 1.95;
+    color: #1a1a1a;
+  }
+  .essay-body .highlight {
+    background: linear-gradient(transparent 60%, var(--gold-soft) 60%);
+    padding: 0 2px;
+    font-weight: 500;
+  }
+  .essay-body .deep-highlight {
+    background: linear-gradient(transparent 60%, #ffb8a0 60%);
+    padding: 0 2px;
+  }
+  .essay-analysis {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.7;
+  }
+  .essay-analysis::before { content: '↑ '; color: var(--rust); font-style: normal; font-weight: 700; }
+
+  /* === BAD EXAMPLE === */
+  .bad-example {
+    background: rgba(176,68,37,0.04);
+    border: 1px solid rgba(176,68,37,0.2);
+    border-left: 4px solid var(--rust-deep);
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .bad-example-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--rust-deep);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .bad-text {
+    font-size: 14px;
+    color: #6a3025;
+    font-style: italic;
+    line-height: 1.7;
+  }
+  .bad-why {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  /* === PROFESSOR MATCH === */
+  .prof-mosaic {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    margin: 24px 0;
+  }
+  .prof-tile {
+    background: var(--card);
+    padding: 22px 20px;
+    transition: background 0.25s;
+    cursor: pointer;
+  }
+  .prof-tile:hover { background: var(--paper); }
+  .prof-tile-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+  .prof-tile-name {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .prof-tile-field {
+    font-size: 12px;
+    color: var(--rust);
+    font-weight: 500;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+  .prof-tile-hook {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #2a2a2a;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    min-height: 80px;
+  }
+  .prof-tile-hook strong { color: var(--ink); }
+  .prof-tile-best {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--moss);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  /* === PERSONA MATCH === */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .persona {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 20px;
+    align-items: start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 22px 24px;
+  }
+  @media (max-width: 600px) {
+    .persona { grid-template-columns: 1fr; gap: 10px; }
+  }
+  .persona-icon {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--rust);
+    line-height: 1;
+    text-align: center;
+  }
+  .persona-name {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .persona-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .persona-recipe {
+    font-size: 14px;
+    color: #1a1a1a;
+    line-height: 1.8;
+  }
+  .persona-recipe strong { color: var(--rust); }
+
+  /* === STRATEGIC MATRIX === */
+  .matrix {
+    margin: 28px 0;
+    overflow-x: auto;
+  }
+  .matrix table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 600px;
+  }
+  .matrix th, .matrix td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .matrix th {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .matrix td:first-child { font-weight: 600; color: var(--rust); }
+  .matrix tr:hover td { background: rgba(184,146,58,0.05); }
+
+  /* === MISTAKE CALLOUT === */
+  .mistake-list {
+    margin: 24px 0;
+  }
+  .mistake-item {
+    padding: 16px 20px;
+    border-left: 3px solid var(--rust-deep);
+    background: rgba(176,68,37,0.03);
+    margin-bottom: 12px;
+  }
+  .mistake-item .mtitle {
+    font-weight: 700;
+    color: var(--rust-deep);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .mistake-item .mdesc {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.7;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 50px 24px;
+    text-align: center;
+    margin-top: 40px;
+  }
+  .footer-title {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 14px;
+  }
+  .footer-title em { color: var(--gold-soft); font-style: italic; }
+  .footer p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* === NAVIGATION DOTS === */
+  .nav-bar {
+    background: var(--ink);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    border-bottom: 2px solid var(--rust);
+    scrollbar-width: none;
+  }
+  .nav-bar::-webkit-scrollbar { display: none; }
+  .nav-inner {
+    display: flex;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .nav-link {
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .nav-link:hover { color: var(--gold-soft); }
+  .nav-link.active {
+    color: var(--gold-soft);
+    border-bottom-color: var(--gold-soft);
+  }
+
+  /* === DIVIDER === */
+  .ornament {
+    text-align: center;
+    margin: 40px 0;
+    font-family: 'Bodoni Moda', serif;
+    color: var(--rust);
+    font-size: 22px;
+    letter-spacing: 1em;
+  }
+
+  /* === COUNTER-INTUITIVE BOX === */
+  .counter-intuitive {
+    background: linear-gradient(180deg, #fff8e1 0%, #fef3d0 100%);
+    border: 2px solid var(--gold);
+    padding: 28px 30px;
+    margin: 32px 0;
+    position: relative;
+  }
+  .counter-intuitive::before {
+    content: 'PLOT TWIST';
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    background: var(--gold);
+    color: var(--ink);
+    padding: 4px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+  }
+  .counter-intuitive h3 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 24px;
+    font-weight: 900;
+    margin: 10px 0 14px;
+    color: var(--ink);
+  }
+  .counter-intuitive p {
+    font-size: 15px;
+    line-height: 1.85;
+    color: #1a1a1a;
+  }
+  .counter-intuitive strong { color: var(--rust); }
+
+  /* === STEPS === */
+  .steps {
+    counter-reset: step;
+    margin: 28px 0;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 24px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    counter-increment: step;
+  }
+  @media (max-width: 600px) {
+    .step { grid-template-columns: 1fr; gap: 8px; }
+  }
+  .step::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: 'Bodoni Moda', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--rust);
+    line-height: 0.9;
+  }
+  .step-title {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .step-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #2a2a2a;
+  }
+  .step-desc strong { color: var(--rust); }
+  .step-desc em { font-style: normal; background: linear-gradient(transparent 60%, var(--gold-soft) 60%); padding: 0 2px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ MASTHEAD ═══════════════ -->
+<header class="masthead">
+  <div class="masthead-top">
+    <span class="vol">VOL. II · 전략서</span>
+    <span>입학 인터뷰 기반 심화 분석</span>
+    <span>SNU CALS · SMSYS</span>
+  </div>
+  <h1>왜 <span class="accent">데이터</span>로<br>농업을 <span class="accent">새로 정의</span>하는가</h1>
+  <p class="masthead-sub">서울대 입학웹진 '아로리' 학과장 인터뷰, 교수 9인 연구, 모집요강을 교차 분석해<br>스마트시스템과학과 합격에 필요한 진짜 메시지를 추출했습니다.</p>
+</header>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="#truth" class="nav-link active">⚡ 진짜 인재상</a>
+    <a href="#mistakes" class="nav-link">✗ 흔한 실수</a>
+    <a href="#strategy" class="nav-link">◇ 4가지 전략</a>
+    <a href="#persona" class="nav-link">▤ 페르소나 매칭</a>
+    <a href="#professors" class="nav-link">✦ 교수 활용법</a>
+    <a href="#examples" class="nav-link">¶ 실전 문장</a>
+    <a href="#blueprint" class="nav-link">⌬ 작성 설계도</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ═══════════════ OPENER ═══════════════ -->
+  <div class="opener">
+    <div class="kicker">EDITOR'S NOTE · 시작하기 전에</div>
+    <p class="opener-body">
+      <span class="drop">대</span>부분의 자기소개서는 같은 함정에 빠집니다. "4차 산업혁명 시대에 발맞춰", "AI를 활용한 농업에 관심이 많아", "교수님들의 훌륭한 연구에 매료되어"—이런 문장은 입학사정관이 하루에 수십 번 봅니다. 합격자소서는 다릅니다. 학과가 <em>실제로 원하는</em> 인재상을 정확히 짚고, 본인의 경험을 그 좌표에 정밀하게 배치합니다. <br><br>
+      이 문서는 그 좌표를 제공합니다. 서울대 입학본부가 직접 운영하는 웹진 '아로리'에 실린 <strong>학과장 김광수 교수와 김태형 교수의 인터뷰</strong>를 정밀 분석해, 그들이 직접 밝힌 "우리가 찾는 학생"이 누구인지를 추출했습니다. 단순한 키워드 리스트가 아닌, <em>그들이 말한 것</em>과 <em>그것을 자소서 언어로 어떻게 번역할 것인가</em>를 다룹니다.
+    </p>
+  </div>
+
+  <!-- ═══════════════ SECTION 1: 진짜 인재상 ═══════════════ -->
+  <section class="section" id="truth">
+    <div class="section-num">SECTION 01</div>
+    <h2 class="section-title">학과가 <em>실제로</em><br>원하는 인재의 7가지 진실</h2>
+    <p class="section-lead">학과장이 인터뷰에서 직접 한 말. 이건 추측이 아니라 학과의 공식 메시지입니다. 자소서를 쓰기 전에 반드시 이 7가지를 외워두세요.</p>
+
+    <div class="revelation">
+      <div class="revelation-label">▶ KEY INSIGHT #1 — 학과의 진짜 정체성</div>
+      <p class="revelation-quote">
+        "데이터 사이언스를 기반으로 <span class="emph">각 농업 연구 분야에 적용할 수 있는 전문가</span>를 양성하는 것이 스마트시스템과학과가 추구하는 방향입니다."
+      </p>
+      <p class="revelation-source">— 김광수 학과장 / 서울대 아로리 인터뷰</p>
+    </div>
+
+    <div class="counter-intuitive">
+      <h3>이 학과는 "AI 만능 인재"를 원하지 않는다</h3>
+      <p>
+        대부분의 지원자는 "코딩 잘하고 AI 잘 다루고 농업도 잘 아는" 만능형으로 자신을 포장합니다. <strong>이건 함정입니다.</strong> 학과장은 인터뷰에서 명확히 말합니다: "저희는 모든 분야에 대해서 다 알거나 잘하는 사람을 바라진 않아요. 그런 사람이 되기도 어렵고요."<br><br>
+        대신 학과가 찾는 인재는: <strong>(1)</strong> 데이터 사이언스에 대한 명확한 관심 <strong>+ (2)</strong> 농업·생명·환경 중 <em>하나의 도메인</em>에 대한 진짜 호기심. 이 둘을 연결할 수 있다고 보여주는 학생.<br><br>
+        그래서 권장 과목이 물리·화학·생명을 'AND'가 아닌 <strong>'OR'</strong>로 제시되어 있습니다. 이는 우연이 아닙니다. <em>"내 관심사 하나만 깊게 갔다"</em>는 서사가 오히려 더 강력합니다.
+      </p>
+    </div>
+
+    <div class="principle">
+      <span class="principle-tag alt">TRUTH 01</span>
+      <h3>이 학과는 신설 1년차다 — 개척자를 찾고 있다</h3>
+      <p>2025학년도에 첫 신입생을 받은 신설 학과. 학과장 표현 그대로 "학과의 <strong>역사와 정체성을 만들어가는 개척자이자 주인공</strong>"입니다. 자소서에 "안정된 학과의 일원이 되고 싶다"는 뉘앙스는 <strong>치명적</strong>입니다. 대신 "새로운 길을 내는 데 함께하고 싶다"는 톤이 정답.</p>
+    </div>
+
+    <div class="principle">
+      <span class="principle-tag">TRUTH 02</span>
+      <h3>혁신가·기업가·창업가 — 학과장이 직접 언급한 인재상</h3>
+      <p>김광수 학과장이 인터뷰에서 직접 밝힘: <strong>"우리과 출신 학생들 중에 기업가들이 나왔으면 좋겠다... 스타트업 기업을 만들어내면서 문제를 해결하는"</strong> 학생. 단순 연구자가 아닌 <strong>실제 사회 문제를 풀고 가치를 창출하는 사람</strong>을 원합니다. 본인의 활동 중 "문제를 발견하고 실제로 무언가를 만들어 본 경험"이 있다면 이걸 전면에 내세우세요.</p>
+    </div>
+
+    <div class="principle">
+      <span class="principle-tag moss">TRUTH 03</span>
+      <h3>"Learning to Learn" — 무엇을 배우느냐보다 배우는 능력</h3>
+      <p>김태형 교수가 강조: <strong>"기술의 변화 속도가 매우 빠르기 때문에... 학습하는 방법 자체를 배우는 것이 중요한 소양"</strong>. 자소서에 "고1 때 모르던 분야를 스스로 학습해서 ○○을 해냈다"는 메타학습 경험이 있다면 강력한 무기. 단순한 성적이 아닌 <strong>학습 곡선</strong>의 가파름을 보여주세요.</p>
+    </div>
+
+    <div class="principle">
+      <span class="principle-tag alt">TRUTH 04</span>
+      <h3>식량 안보 + 개발도상국 — 글로벌 인류애의 차원</h3>
+      <p>학과장의 마지막 메시지: <strong>"식량이라는 인류 공통의 문제 해결에 기여... 다른 나라의 어려움도 같이 해결해 보고 싶은 학생들"</strong>. 단순히 한국 농업을 발전시키겠다가 아닌, <strong>글로벌 식량 위기에 기여하겠다</strong>는 큰 스케일의 비전을 가진 학생을 찾습니다.</p>
+    </div>
+
+    <div class="principle">
+      <span class="principle-tag">TRUTH 05</span>
+      <h3>Bottom-Up → Top-Down — 학과 교육 철학의 핵심</h3>
+      <p>김태형 교수: <strong>"다양한 세부 영역을 폭넓게 접하는 Bottom-Up 학습을 통해, 이후 전체를 바라볼 수 있는 사고의 기반을 먼저 다지는 것"</strong>이 학과 교육의 의도된 설계. 본인이 고교에서 <em>여러 분야를 연결한 경험</em>(예: 동아리×수업×개인탐구)이 있다면 이게 학과 철학과 정확히 맞습니다.</p>
+    </div>
+
+    <div class="principle">
+      <span class="principle-tag moss">TRUTH 06</span>
+      <h3>경험과 직관이 아닌, "데이터 기반 의사결정"</h3>
+      <p>학과장의 핵심 표현: <strong>"경험과 직관에 의존하던 기존 농업을 넘어, 데이터 기반의 과학적 의사결정 체계가 반드시 필요"</strong>. 본인의 활동 중 <em>"감"으로 하지 않고 데이터를 모아서 결론을 낸 경험</em>이 있다면 그것이 핵심 소재입니다. 작은 것이라도 좋습니다.</p>
+    </div>
+
+    <div class="principle">
+      <span class="principle-tag">TRUTH 07</span>
+      <h3>장기적 시각 — 트렌드가 아닌 지속가능한 흥미</h3>
+      <p>김태형 교수의 마지막 조언: <strong>"너무 단기적인 트렌드에만 집중하기보다는 결국 오래갈 수 있는 선택... 자신이 흥미를 느끼는 활동들"</strong>. 자소서에 "AI가 핫해서"라는 뉘앙스는 즉시 탈락. 대신 <strong>"왜 이게 10년 후에도 의미 있을 거라고 믿는가"</strong>를 자기 언어로 설명할 수 있어야 합니다.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 2: 흔한 실수 ═══════════════ -->
+  <section class="section" id="mistakes">
+    <div class="section-num">SECTION 02</div>
+    <h2 class="section-title">99%의 지원자가<br>저지르는 <em>치명적 실수</em></h2>
+    <p class="section-lead">아래는 입학사정관이 자소서를 30초 만에 분류하는 기준입니다. 본인의 초안에 이 표현이 있다면 즉시 다시 쓰세요.</p>
+
+    <div class="mistake-list">
+      <div class="mistake-item">
+        <div class="mtitle">실수 1 — "4차 산업혁명 시대에 발맞춰"</div>
+        <div class="mdesc">너무 흔한 도입부. 학과장은 인터뷰에서 "트렌드에 집중하지 말라"고 직접 경고했습니다. 시대적 키워드가 아닌 <strong>본인의 구체적 경험</strong>에서 출발하세요.</div>
+      </div>
+      <div class="mistake-item">
+        <div class="mtitle">실수 2 — AI·코딩만 강조하고 농업은 장식</div>
+        <div class="mdesc">"AI로 농업 문제를 풀고 싶습니다"는 동기는 모든 지원자가 씁니다. 학과가 원하는 건 <strong>특정 농업/생명/환경 도메인에 대한 진짜 호기심</strong>. AI만 깊고 농업이 얕으면 "스마트시스템공학과 가지 왜 농생대를?"이라는 질문에 답할 수 없습니다.</div>
+      </div>
+      <div class="mistake-item">
+        <div class="mtitle">실수 3 — 만능형 인재로 자기 포장</div>
+        <div class="mdesc">"수학·과학·코딩·리더십·외국어 모두 잘합니다"는 자소서는 매력 없습니다. <strong>"OR 권장과목"</strong>의 의미를 기억하세요. 학과는 <em>하나에 깊은</em> 학생을 원합니다. 본인의 가장 강한 1-2가지를 진하게 그리세요.</div>
+      </div>
+      <div class="mistake-item">
+        <div class="mtitle">실수 4 — 교수님 이름과 연구만 나열</div>
+        <div class="mdesc">"○○ 교수님의 ○○ 연구에 매료되어..." 형식은 표면적입니다. 입학사정관은 압니다, 학생이 그 논문을 읽지 않았다는 걸. 대신 <strong>"○○ 교수님이 다루는 문제와 내가 △△ 활동에서 부딪힌 문제가 같은 종류였다"</strong>는 식의 연결이 진짜입니다.</div>
+      </div>
+      <div class="mistake-item">
+        <div class="mtitle">실수 5 — 추상적 미래상 ("훌륭한 인재가 되겠습니다")</div>
+        <div class="mdesc">학과장은 구체적 졸업 후 모습을 말했습니다: 기업가, 학자, 정책 입안자. 본인은 어느 쪽인지, 왜 그 길인지, 무엇을 만들고 싶은지 <strong>구체적 그림</strong>을 그려야 합니다.</div>
+      </div>
+      <div class="mistake-item">
+        <div class="mtitle">실수 6 — 학과를 잘못 이해 ("스마트팜에서 토마토 잘 키우고 싶다")</div>
+        <div class="mdesc">스마트시스템과학과는 <strong>실제 농사를 짓는 학과가 아닙니다.</strong> 데이터 사이언스로 농업 시스템을 설계·예측·최적화하는 학과입니다. 자소서가 농업 그 자체에만 머물면 "그럼 농학과 가지"가 됩니다.</div>
+      </div>
+      <div class="mistake-item">
+        <div class="mtitle">실수 7 — 신설 학과인 점을 활용하지 못함</div>
+        <div class="mdesc">대부분은 학과 신설 1년차라는 사실을 모르거나, 알아도 활용 못 합니다. 이건 강력한 차별 포인트: <strong>"학과의 정체성을 함께 만드는 1기"</strong>가 되겠다는 비전을 보여주세요. 학과장이 직접 그 표현을 썼습니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 3: 4가지 전략 ═══════════════ -->
+  <section class="section" id="strategy">
+    <div class="section-num">SECTION 03</div>
+    <h2 class="section-title">합격자소서를 만드는<br><em>STAR</em> 전략</h2>
+    <p class="section-lead">아래 4글자가 자소서 전체를 관통해야 합니다. 어느 한 항목을 쓸 때도, 모든 항목을 마무리한 후에도, 이 네 글자가 다 보이는지 확인하세요.</p>
+
+    <div class="formula-grid">
+      <div class="formula-cell">
+        <div class="formula-letter">S</div>
+        <div class="formula-word">Specific</div>
+        <div class="formula-desc">구체적 도메인 1개<br>(작물·축산·기후·산림 등)</div>
+      </div>
+      <div class="formula-cell">
+        <div class="formula-letter">T</div>
+        <div class="formula-word">Translate</div>
+        <div class="formula-desc">데이터로 번역할 줄 아는<br>사고 능력 입증</div>
+      </div>
+      <div class="formula-cell">
+        <div class="formula-letter">A</div>
+        <div class="formula-word">Action</div>
+        <div class="formula-desc">스스로 만들어 본<br>실제 결과물·활동</div>
+      </div>
+      <div class="formula-cell">
+        <div class="formula-letter">R</div>
+        <div class="formula-word">Reach</div>
+        <div class="formula-desc">글로벌 식량·기후 위기로<br>확장되는 스케일</div>
+      </div>
+    </div>
+
+    <div class="revelation">
+      <div class="revelation-label">▶ STAR 전략 적용 예시</div>
+      <p class="revelation-quote">
+        "<span class="emph">[S]</span> 작물 생육에 관심이 있어서 → <span class="emph">[T]</span> 베란다에서 키운 상추의 광량·온도를 일주일 단위로 기록·분석했더니 → <span class="emph">[A]</span> 직접 만든 엑셀 시트와 그래프로 최적 조건을 찾아냈고 → <span class="emph">[R]</span> 같은 원리가 개도국의 도시 식량 부족 문제에 적용될 수 있겠다는 생각을 했습니다."
+      </p>
+      <p class="revelation-source">— STAR 4단계가 한 문단에 모두 담긴 모범 사례</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 4: 페르소나 매칭 ═══════════════ -->
+  <section class="section" id="persona">
+    <div class="section-num">SECTION 04</div>
+    <h2 class="section-title">당신은 어떤 <em>지원자</em>인가</h2>
+    <p class="section-lead">학과는 한 가지 유형만 뽑지 않습니다. 본인의 강점이 어디인지 파악하고, 그에 맞는 서사를 짜세요. 아래 5가지 페르소나 중 본인과 가장 가까운 것을 고르세요.</p>
+
+    <div class="persona-grid">
+      <div class="persona">
+        <div class="persona-icon">α</div>
+        <div>
+          <div class="persona-name">알파 — 데이터 천재형</div>
+          <div class="persona-desc">수학·코딩에 강하고 분석을 좋아한다</div>
+          <div class="persona-recipe">
+            <strong>매칭 교수:</strong> 김태형 (농업 AI) / 김광수 (작물 모델링)<br>
+            <strong>핵심 서사:</strong> 코딩·통계로 무언가 분석한 경험 → <em>"이 도구를 농업 도메인의 어떤 구체적 문제에 적용하고 싶은지"</em>로 마무리. 도메인이 빠지면 컴퓨터공학과로 가라는 인상.<br>
+            <strong>주의:</strong> AI/코딩 자랑만 늘어놓지 말고, 반드시 농업·생명·환경 중 <em>특정 분야 호기심</em> 1개를 동등하게 노출하세요.
+          </div>
+        </div>
+      </div>
+
+      <div class="persona">
+        <div class="persona-icon">β</div>
+        <div>
+          <div class="persona-name">베타 — 생명과학 탐구형</div>
+          <div class="persona-desc">생물·화학을 좋아하고 실험·탐구를 즐긴다</div>
+          <div class="persona-recipe">
+            <strong>매칭 교수:</strong> 유경록 (세포공학·배양육) / 안태인 (식물공장)<br>
+            <strong>핵심 서사:</strong> 생물·화학 탐구활동 → <em>"이 현상을 데이터로 측정하고 예측하면 어떨까"</em>라는 질문으로 발전한 경험. 생명과학에 데이터적 사고가 결합된 모습을 그리세요.<br>
+            <strong>주의:</strong> 단순한 실험 보고서식 서술은 위험. 반드시 <em>"왜 정량적으로 접근해야 하는가"</em>의 자각이 보여야 합니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="persona">
+        <div class="persona-icon">γ</div>
+        <div>
+          <div class="persona-name">감마 — 환경·기후 활동가형</div>
+          <div class="persona-desc">기후위기·지속가능성·SDGs에 관심이 깊다</div>
+          <div class="persona-recipe">
+            <strong>매칭 교수:</strong> 김연욱 (기후스마트농업) / 한희 (탄소흡수원) / 김광수 (기후-작물 예측)<br>
+            <strong>핵심 서사:</strong> 환경 동아리·캠페인 활동 → 한계 인식 → <em>"감성적 호소를 넘어 정량적 데이터로 설득하는 기후 솔루션이 필요하다"</em>는 깨달음. 학과의 글로벌 식량안보 비전과 완벽히 맞물립니다.<br>
+            <strong>주의:</strong> 환경 윤리만 강조하면 사회과학 계열로 인식됨. 반드시 <em>기술·데이터로 풀겠다</em>는 의지가 보여야 합니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="persona">
+        <div class="persona-icon">δ</div>
+        <div>
+          <div class="persona-name">델타 — 공학·메이커형</div>
+          <div class="persona-desc">드론·로봇·아두이노 같은 하드웨어를 만든다</div>
+          <div class="persona-recipe">
+            <strong>매칭 교수:</strong> 김학진 (자율농기계·드론) / 김형석 (위성·드론 원격탐사)<br>
+            <strong>핵심 서사:</strong> 자작 프로젝트(드론·센서·로봇 키트 등) → 결과를 <em>데이터로 측정·개선한 경험</em>. "하드웨어를 만든다"가 아니라 "<em>하드웨어가 만든 데이터를 해석한다</em>"는 시각이 핵심.<br>
+            <strong>주의:</strong> 메이커 경험을 농업·환경 도메인과 연결하지 못하면 공대로 가라는 평가.
+          </div>
+        </div>
+      </div>
+
+      <div class="persona">
+        <div class="persona-icon">ε</div>
+        <div>
+          <div class="persona-name">엡실론 — 경영·사회혁신형</div>
+          <div class="persona-desc">사회문제·창업·정책에 관심이 있다</div>
+          <div class="persona-recipe">
+            <strong>매칭 교수:</strong> 최종우 (디지털농업 기술경영)<br>
+            <strong>핵심 서사:</strong> 사회문제 관심 → 솔루션 기획·시제품·발표 경험 → <em>"문제 해결을 위해서는 기술뿐 아니라 데이터 기반 의사결정 시스템이 필요하다"</em>는 자각. <strong>학과장이 직접 언급한 '기업가형 인재'와 정확히 일치</strong>.<br>
+            <strong>주의:</strong> 데이터/기술적 기초가 너무 약하면 농경제학부 권유받습니다. 반드시 정량적 사고의 단초가 필요.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 5: 교수 활용법 ═══════════════ -->
+  <section class="section" id="professors">
+    <div class="section-num">SECTION 05</div>
+    <h2 class="section-title">교수 9인을<br>자소서에 <em>녹이는 법</em></h2>
+    <p class="section-lead">교수 이름을 단순히 나열하는 것은 효과가 없습니다. 그들이 <em>현재 풀고 있는 문제</em>를 정확히 짚고, 본인의 활동과 같은 종류의 문제임을 보여줘야 합니다.</p>
+
+    <div class="prof-mosaic">
+      <!-- 김광수 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">001 · 학과장</div>
+        <div class="prof-tile-name">김광수</div>
+        <div class="prof-tile-field">기후-작물 모델링 · CSA</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "기후위기 환경에서 농작물 생산의 미래 리스크를 어떻게 정량적으로 예측할까"<br><br>
+          본인 활동이 <em>예측·시뮬레이션·모델링</em>과 관련 있으면 매칭.
+        </div>
+        <div class="prof-tile-best">★ 학과장 직접 인터뷰 · 최우선 매칭</div>
+      </div>
+
+      <!-- 김태형 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">002 · AI 도메인 전문가</div>
+        <div class="prof-tile-name">김태형</div>
+        <div class="prof-tile-field">농업 AI · 산업체 10년</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "AI 기술을 농업 도메인에 어떻게 의미 있게 결합시킬까"<br><br>
+          본인이 <em>코딩/AI를 다른 분야와 연결</em>한 경험 있으면 직격 매칭.
+        </div>
+        <div class="prof-tile-best">★ 인터뷰에서 교육철학 직접 언급</div>
+      </div>
+
+      <!-- 김학진 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">003</div>
+        <div class="prof-tile-name">김학진</div>
+        <div class="prof-tile-field">자율농기계 · 드론 원격탐사</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "농기계를 무인화하고 농작업을 자동화하기 위한 영상·센서 시스템 구축"<br><br>
+          <em>드론·로봇·자동화</em> 관심자에게 1순위.
+        </div>
+        <div class="prof-tile-best">★ 메이커·공학형 페르소나(δ)에 최적</div>
+      </div>
+
+      <!-- 유경록 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">004</div>
+        <div class="prof-tile-name">유경록</div>
+        <div class="prof-tile-field">동물세포·CRISPR·배양육</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "줄기세포·유전자편집 기술로 미래 단백질·치료제·식량을 만들기"<br><br>
+          <em>생명과학에 깊은 호기심</em>이 있다면 차별화 포인트.
+        </div>
+        <div class="prof-tile-best">★ 생명과학 탐구형(β)에게 강력</div>
+      </div>
+
+      <!-- 김형석 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">005</div>
+        <div class="prof-tile-name">김형석</div>
+        <div class="prof-tile-field">위성·드론 원격탐사</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "위성·드론 영상으로 대면적 작물 생산을 실시간 모니터링"<br><br>
+          <em>지구과학·환경공간정보·드론</em> 관심자에게.
+        </div>
+        <div class="prof-tile-best">★ UIUC 박사 · 글로벌 식량안보 직결</div>
+      </div>
+
+      <!-- 안태인 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">006</div>
+        <div class="prof-tile-name">안태인</div>
+        <div class="prof-tile-field">식물공장 · LED 인공광</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "외부 기후와 무관하게 연중 안정적으로 작물을 키울 수 있는 시설 환경 최적화"<br><br>
+          <em>수직농업·도시농업</em>에 관심 있는 학생에게.
+        </div>
+        <div class="prof-tile-best">★ 식량 위기 시대의 핵심 솔루션</div>
+      </div>
+
+      <!-- 최종우 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">007</div>
+        <div class="prof-tile-name">최종우</div>
+        <div class="prof-tile-field">디지털농업 기술경영</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "농업 기술 혁신의 경제적 효과 분석과 애그테크 산업 의사결정"<br><br>
+          <em>경영·창업·정책·사회혁신</em> 관심자에게 유일한 매칭.
+        </div>
+        <div class="prof-tile-best">★ 학과장이 언급한 "기업가" 인재상 직결</div>
+      </div>
+
+      <!-- 한희 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">008</div>
+        <div class="prof-tile-name">한희</div>
+        <div class="prof-tile-field">정밀임업 · LiDAR · 탄소흡수원</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "드론 LiDAR로 산림의 탄소흡수량을 정밀 측정해 2050 탄소중립에 기여"<br><br>
+          <em>환경·기후·산림·탄소</em> 관심자의 차별화 카드.
+        </div>
+        <div class="prof-tile-best">★ 시의성 최강 · 환경활동가형(γ)에게</div>
+      </div>
+
+      <!-- 김연욱 -->
+      <div class="prof-tile">
+        <div class="prof-tile-num">009</div>
+        <div class="prof-tile-name">김연욱</div>
+        <div class="prof-tile-field">기후스마트농업 · 온실가스</div>
+        <div class="prof-tile-hook">
+          <strong>풀고 있는 문제:</strong> "농업 생산성·기후적응·온실가스 감축을 동시에 달성하는 시스템"<br><br>
+          <em>지속가능성·SDGs</em> 가치를 가진 학생에게.
+        </div>
+        <div class="prof-tile-best">★ 학과장 표현 "기후 스마트 농업"과 일치</div>
+      </div>
+    </div>
+
+    <div class="revelation">
+      <div class="revelation-label">▶ 교수 언급의 황금 공식</div>
+      <p class="revelation-quote">
+        "○○ 교수님의 □□ 연구를 통해 ~를 알게 되었습니다"는 <span class="emph">표면적 차원</span>.<br><br>
+        합격자는 이렇게 씁니다: <span class="emph">"제가 △△ 활동에서 부딪혔던 ~~한 문제는, 알고 보니 ○○ 교수님이 □□ 연구로 풀고 있는 문제와 같은 종류였습니다."</span>
+      </p>
+      <p class="revelation-source">교수를 신격화하지 말고, 같은 문제를 공유하는 동료처럼 그리세요</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 6: 실전 문장 ═══════════════ -->
+  <section class="section" id="examples">
+    <div class="section-num">SECTION 06</div>
+    <h2 class="section-title">실전 문장의<br><em>해부학</em></h2>
+    <p class="section-lead">아래는 분석된 모범 문장들입니다. 색칠된 부분을 통해 어떤 요소가 어디에 배치되었는지 확인하고, 본인 경험에 맞춰 재구성하세요.</p>
+
+    <div class="ornament">◆ ◆ ◆</div>
+
+    <!-- 예시 1 -->
+    <div class="essay-example">
+      <div class="essay-title">지원 동기 — 환경활동가형(γ)</div>
+      <div class="essay-meta">SECTION · 환경·기후 / 권장 길이 700-900자</div>
+      <div class="essay-body">
+        고2 환경동아리에서 학교 텃밭의 작물 수확량이 매년 들쭉날쭉한 이유를 조사했습니다. 학우들은 <span class="highlight">"날씨가 이상해서"</span>라고 답했지만, 저는 <span class="deep-highlight">'이상함'을 정량적으로 정의하지 못한 채 끝나는 대화가 답답했습니다.</span> 기상청 API에서 학교 인근의 3년치 일조·강수·평균기온 데이터를 받아 수확량과 단순 상관관계를 분석해보니, 강수량보다 <span class="highlight">개화기 5일간의 평균기온</span>이 훨씬 강한 변수였습니다.<br><br>
+        이 작은 발견 이후, 저는 <span class="deep-highlight">기후위기 시대의 농업 문제는 '감'이 아니라 '데이터'로만 풀린다</span>는 확신을 가지게 되었습니다. 특히 김연욱 교수님이 다루는 '기후스마트농업' 개념—생산성·기후적응·온실가스 감축을 동시에 달성하는 시스템—은 <span class="highlight">제가 텃밭에서 느꼈던 직관을 학문적으로 확장한 영역</span>이었습니다. 스마트시스템과학과는 이 직관을 도구로 바꿔주는 곳이라 판단했습니다.
+      </div>
+      <div class="essay-analysis">
+        주황색 = 학과 키워드와 정확히 매칭되는 부분 / 노랑색 = 본인만의 구체적 경험·표현. 학과장이 인터뷰에서 강조한 "경험과 직관에 의존하던 농업을 넘어 데이터 기반 의사결정"이 본인 언어로 자연스럽게 녹아 있음.
+      </div>
+    </div>
+
+    <!-- 예시 2 -->
+    <div class="essay-example">
+      <div class="essay-title">지원 동기 — 데이터 천재형(α)</div>
+      <div class="essay-meta">SECTION · 코딩·AI 강점 학생</div>
+      <div class="essay-body">
+        파이썬으로 게임을 만들던 중1 시절부터 코딩이 즐거웠습니다. 하지만 <span class="deep-highlight">"코딩 자체가 목적이 되면 안 된다"</span>는 회의가 고1 무렵 찾아왔습니다. 코드는 <span class="highlight">현실의 어떤 문제</span>를 풀어야 의미가 있다고 느꼈고, 그 '어떤 문제'를 찾기 위해 다양한 분야를 탐색했습니다.<br><br>
+        결정적 계기는 작년 여름 폭염 때였습니다. 할머니 댁 농작물이 폐사하는 모습을 보며, <span class="highlight">기온·습도 데이터로 작물 피해를 사전에 예측할 수 있지 않을까</span>라는 질문이 떠올랐습니다. 공공데이터포털에서 농작물 재해 통계를 받아 간단한 회귀모델을 만들어 봤지만, <span class="deep-highlight">데이터만으로는 부족했습니다—작물 생리에 대한 도메인 지식이 없으면 변수 선정조차 어렵다는 걸 깨달았습니다.</span><br><br>
+        김태형 교수님이 인터뷰에서 말씀하신 <span class="highlight">"AI 기술과 도메인 지식의 결합"</span>이 정확히 제가 부딪혔던 벽이었습니다. 스마트시스템과학과는 이 두 영역을 함께 배울 수 있는 거의 유일한 학과라 판단했습니다.
+      </div>
+      <div class="essay-analysis">
+        AI/코딩 강점을 어필하면서도 "기술만으로는 부족하다"는 자각을 드러내 도메인 학습 의지를 보임. 학과의 핵심 메시지(AI + 도메인)를 정확히 짚음. 김태형 교수의 실제 인터뷰 표현을 자연스럽게 인용.
+      </div>
+    </div>
+
+    <!-- 예시 3 -->
+    <div class="essay-example">
+      <div class="essay-title">성장 경험 — 메이커·공학형(δ)</div>
+      <div class="essay-meta">SECTION · 학교생활/탐구활동</div>
+      <div class="essay-body">
+        과학동아리에서 아두이노로 자동 화분 관수 시스템을 만들었습니다. 처음엔 <span class="deep-highlight">'센서가 물 주면 끝'이라는 단순한 발상</span>으로 시작했지만, 한 달 후 화분 절반의 식물이 시들었습니다. 토양 수분 센서의 임계값을 <span class="highlight">제 직관으로 정했기 때문</span>이었습니다.<br><br>
+        그 후 2주 동안 일조량·실내온도·식물 종류별 적정 수분량 자료를 모아 <span class="highlight">조건별 임계값 매트릭스</span>를 만들었고, 시스템에 적용하니 식물 생존율이 크게 개선됐습니다. 이때 깨달은 것은, <span class="deep-highlight">하드웨어를 만드는 것보다 그 하드웨어가 만들어내는 데이터를 해석하는 일이 훨씬 어렵고 중요하다</span>는 점이었습니다.<br><br>
+        김학진 교수님의 '영상기반 자율 농기계' 연구를 처음 봤을 때, <span class="highlight">제가 작은 화분 앞에서 부딪혔던 문제가 거대한 농경지 스케일에서도 같은 구조로 존재한다</span>는 사실이 흥미로웠습니다.
+      </div>
+      <div class="essay-analysis">
+        실패-분석-개선의 과정을 데이터 중심으로 서술. 학과의 "Bottom-Up 학습" 철학과 정확히 부합. 교수 연구를 본인 경험과 같은 '문제 종류'로 연결한 마지막 문장이 특히 강력함.
+      </div>
+    </div>
+
+    <div class="ornament">◆ ◆ ◆</div>
+
+    <h3 style="font-family:'Bodoni Moda',serif;font-size:24px;font-weight:700;margin-bottom:20px;">이런 문장은 즉시 다시 쓰세요</h3>
+
+    <div class="bad-example">
+      <div class="bad-example-label">✗ BAD #1 — 추상적 시대 진단</div>
+      <p class="bad-text">"4차 산업혁명 시대를 맞아 농업도 디지털 전환이 필수가 되었습니다. 저는 이러한 시대적 흐름 속에서..."</p>
+      <p class="bad-why">→ 입학사정관이 30초 안에 다음 자소서로 넘기는 도입부. 시대 진단은 학과가 이미 알고 있습니다. 본인의 구체적 사건으로 시작하세요.</p>
+    </div>
+
+    <div class="bad-example">
+      <div class="bad-example-label">✗ BAD #2 — 교수 신격화</div>
+      <p class="bad-text">"훌륭하신 ○○ 교수님의 □□ 연구에 깊은 감명을 받아 이 학과에 지원하게 되었습니다."</p>
+      <p class="bad-why">→ 누구나 쓰는 문장. 교수 연구가 본인의 어떤 구체적 경험·문제의식과 어떻게 연결되는지 보여주세요.</p>
+    </div>
+
+    <div class="bad-example">
+      <div class="bad-example-label">✗ BAD #3 — 만능형 자기소개</div>
+      <p class="bad-text">"수학·과학에 두루 강점이 있고, 코딩도 잘하며, 농업에도 평소 관심이 많았습니다."</p>
+      <p class="bad-why">→ 모든 분야를 잘하는 학생은 아무 분야도 잘 못한다는 인상. 학과는 <em>"하나 깊은"</em> 학생을 원한다고 직접 밝혔습니다.</p>
+    </div>
+
+    <div class="bad-example">
+      <div class="bad-example-label">✗ BAD #4 — 농사형 미래상</div>
+      <p class="bad-text">"미래에는 스마트팜에서 직접 토마토를 재배해 친환경 농업을 실현하고 싶습니다."</p>
+      <p class="bad-why">→ 이 학과는 농사를 가르치지 않습니다. 시스템 설계·예측·최적화 학과입니다. 농경제학부나 원예학부 권유 받습니다.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 7: 작성 설계도 ═══════════════ -->
+  <section class="section" id="blueprint">
+    <div class="section-num">SECTION 07</div>
+    <h2 class="section-title">자소서 <em>작성 설계도</em></h2>
+    <p class="section-lead">초안을 쓰기 전에 이 7단계를 거치세요. 직접 글을 쓰는 것보다 <em>설계</em>가 훨씬 중요합니다.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div>
+          <div class="step-title">페르소나 확정</div>
+          <div class="step-desc">α/β/γ/δ/ε 중 본인이 가장 가까운 것 <strong>딱 하나</strong> 선택. 두세 개 섞으려고 하지 마세요. <em>한 가지 강점</em>이 명확하게 드러나야 합니다.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="step-title">도메인 1개 선택</div>
+          <div class="step-desc">작물·축산·기후·산림·시설원예·세포·식품유통 중 본인이 가장 흥미를 느끼는 <strong>1개 도메인</strong>을 정하세요. 이 도메인은 자소서 전체에 일관되게 등장해야 합니다. <em>"여러 분야에 관심"이라는 표현은 절대 금지.</em></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="step-title">'데이터로 풀린 작은 경험' 1개 발굴</div>
+          <div class="step-desc">크지 않아도 됩니다. 직관이 아닌 <strong>실제 측정·관찰·분석</strong>으로 무언가를 알아낸 경험. 예: 식물 키우기, 운동 기록, 동아리 활동 통계, 학교 행사 분석 등. 작아도 좋으니 <em>"감이 아니라 수치"</em>로 한 경험이 있어야 합니다.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="step-title">매칭 교수 1-2명 선정</div>
+          <div class="step-desc">본인의 도메인과 정확히 일치하는 교수 <strong>1명을 메인으로, 1명을 서브로</strong> 선택. Section 5의 매칭 가이드 참고. <em>3명 이상 나열은 절대 금지</em>—학과를 아예 모른다는 인상을 줍니다.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="step-title">글로벌 확장 포인트 설계</div>
+          <div class="step-desc">본인 경험이 어떻게 <strong>한국을 넘어 글로벌 식량·기후 문제</strong>로 확장될 수 있는지 한 줄로 정리. 학과장이 직접 강조한 메시지입니다. <em>"개발도상국의 식량 부족", "기후난민", "탄소중립"</em> 같은 키워드와 연결.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="step-title">졸업 후 비전 — 구체적 직업 1개</div>
+          <div class="step-desc">기업가/연구자/정책입안자/엔지니어 중 <strong>구체적인 한 가지</strong>를 선택. 학과장이 인터뷰에서 직접 분류한 카테고리입니다. <em>"훌륭한 인재가 되겠다" 같은 추상은 절대 금지.</em></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="step-title">초안 → STAR 검증</div>
+          <div class="step-desc">초안을 쓴 후 STAR 4요소(Specific 도메인 / Translate 데이터화 / Action 실행 / Reach 글로벌)가 <strong>모두 드러나는지</strong> 검증. 하나라도 빠지면 다시 쓰세요. 검증은 부모님·선생님이 아닌 <em>본인이 가장 엄격하게</em>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>반드시 포함</th>
+            <th>피해야 할 것</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>도입부</td>
+            <td>본인의 구체적 사건·경험 1줄</td>
+            <td>시대 진단, 사회 분석, 격언</td>
+          </tr>
+          <tr>
+            <td>지원 동기</td>
+            <td>데이터 기반 사고로 전환된 결정적 순간</td>
+            <td>"평소 관심이 많아서"</td>
+          </tr>
+          <tr>
+            <td>학업 역량</td>
+            <td>미적분 + 권장과목 1개의 실제 활용 사례</td>
+            <td>점수·등수만 나열</td>
+          </tr>
+          <tr>
+            <td>활동·탐구</td>
+            <td>실패와 수정의 과정, 데이터 활용 흔적</td>
+            <td>결과만 자랑, 직급만 강조</td>
+          </tr>
+          <tr>
+            <td>교수·연구 언급</td>
+            <td>본인 경험과 같은 '문제 종류'로 연결</td>
+            <td>이름만 나열, 신격화</td>
+          </tr>
+          <tr>
+            <td>미래 비전</td>
+            <td>구체적 직업 + 글로벌 스케일</td>
+            <td>"훌륭한 사람" 같은 추상</td>
+          </tr>
+          <tr>
+            <td>전체 톤</td>
+            <td>"개척자" 의식, 1기로서의 자부심</td>
+            <td>안정성 추구, 수동적 톤</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="footer-title">합격은 <em>설계</em>에서 결정됩니다</div>
+  <p>이 가이드는 학과 공식 인터뷰·교수진 연구·모집요강을 정밀 교차분석한 결과입니다.<br>도구로 활용하되, 자소서의 모든 문장은 반드시 본인의 진짜 경험에서 나와야 합니다.<br>스마트시스템과학과 1기의 자리에서 만나기를 기원합니다.</p>
+</footer>
+
+<script>
+  // Nav highlight on scroll
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      if (window.scrollY >= sectionTop) {
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

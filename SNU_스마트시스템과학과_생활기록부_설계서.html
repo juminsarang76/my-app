@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNU 스마트시스템과학과 — 합격 생활기록부 설계서</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Bodoni+Moda:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #faf7f2;
+    --rust: #b04425;
+    --rust-deep: #8a3319;
+    --moss: #4a5d3a;
+    --moss-deep: #2d3a23;
+    --gold: #b8923a;
+    --gold-soft: #d4b463;
+    --line: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #d8d2c4;
+    --card: #ffffff;
+    --grade1: #3a6b8a;
+    --grade2: #b8923a;
+    --grade3: #b04425;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Serif KR', serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* === MASTHEAD === */
+  .masthead {
+    border-bottom: 3px double var(--ink);
+    padding: 28px 30px 22px;
+    background: var(--paper);
+  }
+  .masthead-top {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .masthead-top .vol { color: var(--rust); font-weight: 500; }
+  .masthead h1 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(34px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .masthead h1 .accent { color: var(--rust); font-style: italic; }
+  .masthead-sub {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 750px;
+    font-weight: 300;
+  }
+
+  /* === ALERT BANNER === */
+  .alert-banner {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 24px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+  .alert-banner .em { color: var(--gold-soft); font-weight: 500; }
+
+  /* === NAV === */
+  .nav-bar {
+    background: var(--ink);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    border-bottom: 2px solid var(--rust);
+    scrollbar-width: none;
+  }
+  .nav-bar::-webkit-scrollbar { display: none; }
+  .nav-inner {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .nav-link {
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .nav-link:hover { color: var(--gold-soft); }
+  .nav-link.active {
+    color: var(--gold-soft);
+    border-bottom-color: var(--gold-soft);
+  }
+
+  /* === CONTAINER === */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* === OPENER === */
+  .opener {
+    padding: 50px 0 36px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--rust);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .kicker::before, .kicker::after {
+    content: ''; flex: 1; height: 1px; background: var(--rust); opacity: 0.4;
+  }
+  .opener-body {
+    font-size: 16px;
+    line-height: 1.85;
+    max-width: 850px;
+  }
+  .opener-body .drop {
+    float: left;
+    font-family: 'Bodoni Moda', serif;
+    font-size: 76px;
+    font-weight: 900;
+    line-height: 0.85;
+    margin: 6px 14px -4px 0;
+    color: var(--rust);
+  }
+
+  /* === SECTION === */
+  .section {
+    padding: 60px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(30px, 4.5vw, 46px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 22px;
+    letter-spacing: -0.01em;
+  }
+  .section-title em { color: var(--rust); font-style: italic; }
+  .section-lead {
+    font-size: 17px;
+    color: #333;
+    max-width: 800px;
+    margin-bottom: 36px;
+    line-height: 1.85;
+    font-weight: 300;
+  }
+
+  /* === PARADIGM SHIFT === */
+  .paradigm-shift {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 36px 40px;
+    margin: 28px 0;
+    border-left: 6px solid var(--rust);
+  }
+  .paradigm-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold-soft);
+    margin-bottom: 16px;
+  }
+  .paradigm-title {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 18px;
+    line-height: 1.25;
+  }
+  .paradigm-title em { color: var(--gold-soft); font-style: italic; }
+  .paradigm-body {
+    font-size: 15px;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.85);
+  }
+  .paradigm-body strong { color: var(--gold-soft); }
+
+  /* === COMPARE TABLE === */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 2px solid var(--ink);
+    margin: 28px 0;
+  }
+  @media (max-width: 700px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+  .compare-cell {
+    padding: 24px 26px;
+    border-right: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .compare-cell:nth-child(2n) { border-right: none; }
+  @media (max-width: 700px) {
+    .compare-cell { border-right: none; }
+  }
+  .compare-cell.old { background: rgba(176,68,37,0.05); }
+  .compare-cell.new { background: rgba(74,93,58,0.06); }
+  .compare-cell h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .compare-cell.old h4 { color: var(--rust-deep); }
+  .compare-cell.new h4 { color: var(--moss-deep); }
+  .compare-cell h5 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .compare-cell p {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #2a2a2a;
+  }
+
+  /* === ELEMENT GRID === */
+  .element-list {
+    list-style: none;
+    margin: 24px 0;
+  }
+  .element-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 200px;
+    gap: 24px;
+    padding: 22px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    align-items: center;
+  }
+  @media (max-width: 700px) {
+    .element-item { grid-template-columns: 1fr; gap: 12px; }
+  }
+  .element-num {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--rust);
+    line-height: 0.9;
+  }
+  .element-content h4 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .element-content p {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.7;
+  }
+  .element-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-align: center;
+    padding: 10px 14px;
+    letter-spacing: 0.1em;
+  }
+  .element-status.reflect {
+    background: var(--moss);
+    color: var(--paper);
+  }
+  .element-status.noreflect {
+    background: rgba(176,68,37,0.15);
+    color: var(--rust-deep);
+    text-decoration: line-through;
+  }
+  .element-status.partial {
+    background: rgba(184,146,58,0.2);
+    color: var(--ink);
+  }
+
+  /* === COMPETENCY CARD === */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin: 32px 0;
+  }
+  @media (max-width: 800px) {
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+  .comp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    position: relative;
+    border-top: 4px solid;
+  }
+  .comp-card.academic { border-top-color: var(--grade1); }
+  .comp-card.career { border-top-color: var(--rust); }
+  .comp-card.community { border-top-color: var(--moss); }
+  .comp-card-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .comp-card h3 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+  .comp-card.academic h3 { color: var(--grade1); }
+  .comp-card.career h3 { color: var(--rust); }
+  .comp-card.community h3 { color: var(--moss); }
+  .comp-card .comp-weight {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    margin-bottom: 14px;
+    letter-spacing: 0.1em;
+  }
+  .comp-card ul {
+    list-style: none;
+    margin: 14px 0 8px;
+  }
+  .comp-card ul li {
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 4px 0 4px 14px;
+    position: relative;
+    color: #333;
+  }
+  .comp-card ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--rust);
+    font-size: 11px;
+    top: 6px;
+  }
+  .comp-card .smsys-emphasis {
+    background: rgba(184,146,58,0.1);
+    border-top: 1px dashed var(--border);
+    margin-top: 16px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #2a2a2a;
+  }
+  .comp-card .smsys-emphasis strong { color: var(--rust); }
+
+  /* === GRADE TIMELINE === */
+  .timeline {
+    margin: 32px 0;
+    position: relative;
+  }
+  .grade-block {
+    margin-bottom: 36px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .grade-header {
+    padding: 22px 28px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .grade-header.g1 { background: linear-gradient(135deg, var(--grade1) 0%, #2a4f6b 100%); }
+  .grade-header.g2 { background: linear-gradient(135deg, var(--grade2) 0%, #8a6b1e 100%); }
+  .grade-header.g3 { background: linear-gradient(135deg, var(--grade3) 0%, #6f2c14 100%); }
+  .grade-header h3 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 26px;
+    font-weight: 900;
+  }
+  .grade-header h3 .yr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    opacity: 0.7;
+    letter-spacing: 0.15em;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 400;
+  }
+  .grade-header .grade-mission {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(0,0,0,0.3);
+    padding: 8px 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .grade-body {
+    padding: 28px;
+  }
+  .grade-section {
+    margin-bottom: 26px;
+  }
+  .grade-section:last-child { margin-bottom: 0; }
+  .grade-section h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--rust);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .grade-section p {
+    font-size: 14px;
+    line-height: 1.85;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+  .grade-section .tactic {
+    background: var(--paper);
+    border-left: 3px solid var(--rust);
+    padding: 14px 18px;
+    margin: 10px 0;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .grade-section .tactic strong {
+    color: var(--rust);
+    font-weight: 700;
+  }
+  .grade-section .topic-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .grade-section .topic-list .topic {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 4px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  /* === SUBJECT TABLE === */
+  .subject-table {
+    margin: 28px 0;
+    overflow-x: auto;
+  }
+  .subject-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 720px;
+    background: var(--card);
+  }
+  .subject-table th, .subject-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .subject-table th {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .subject-table td:first-child {
+    font-weight: 700;
+    color: var(--rust);
+    font-family: 'Bodoni Moda', serif;
+    font-size: 14px;
+    min-width: 120px;
+  }
+  .subject-table .priority {
+    display: inline-block;
+    padding: 2px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .subject-table .priority.high { background: var(--rust); color: white; }
+  .subject-table .priority.med { background: var(--gold); color: var(--ink); }
+  .subject-table .priority.low { background: var(--border); color: var(--ink); }
+
+  /* === SETUK EXAMPLES === */
+  .setuk-example {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 28px 30px;
+    margin: 24px 0;
+    position: relative;
+  }
+  .setuk-example::before {
+    content: 'SETUK · 세특';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    background: var(--rust);
+    color: var(--paper);
+    padding: 4px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+  }
+  .setuk-subject {
+    margin-top: 10px;
+    font-family: 'Bodoni Moda', serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .setuk-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .setuk-body {
+    font-size: 14px;
+    line-height: 1.95;
+    background: var(--paper);
+    padding: 18px 20px;
+    border-left: 3px solid var(--moss);
+    color: #1a1a1a;
+  }
+  .setuk-body .h-key {
+    background: linear-gradient(transparent 60%, var(--gold-soft) 60%);
+    padding: 0 2px;
+    font-weight: 500;
+  }
+  .setuk-body .h-action {
+    background: linear-gradient(transparent 60%, #ffc4ad 60%);
+    padding: 0 2px;
+  }
+  .setuk-body .h-result {
+    background: linear-gradient(transparent 60%, #b8d4a0 60%);
+    padding: 0 2px;
+  }
+  .setuk-analysis {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .setuk-analysis strong { color: var(--ink); font-weight: 600; }
+  .legend-bar {
+    display: flex;
+    gap: 16px;
+    margin: 14px 0;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .legend-bar span {
+    padding: 2px 6px;
+    background: var(--gold-soft);
+  }
+  .legend-bar span.action { background: #ffc4ad; }
+  .legend-bar span.result { background: #b8d4a0; }
+
+  /* === RED FLAG === */
+  .red-flag {
+    background: rgba(176,68,37,0.04);
+    border: 1px solid rgba(176,68,37,0.2);
+    border-left: 4px solid var(--rust-deep);
+    padding: 18px 22px;
+    margin: 14px 0;
+  }
+  .red-flag-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--rust-deep);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .red-flag-quote {
+    font-size: 14px;
+    color: #6a3025;
+    font-style: italic;
+    line-height: 1.7;
+    margin-bottom: 6px;
+  }
+  .red-flag-why {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* === ACTIVITY PROJECTS === */
+  .project-mosaic {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    margin: 28px 0;
+  }
+  .project-tile {
+    background: var(--card);
+    padding: 24px 22px;
+  }
+  .project-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--rust);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+  .project-name {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .project-difficulty {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .project-desc {
+    font-size: 13px;
+    line-height: 1.75;
+    color: #2a2a2a;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .project-desc strong { color: var(--rust); }
+  .project-link {
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--moss);
+    font-style: italic;
+  }
+
+  /* === BOOK RECOMMEND === */
+  .book-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin: 24px 0;
+  }
+  .book-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 22px;
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 14px;
+  }
+  .book-icon {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--rust);
+    text-align: center;
+    line-height: 1;
+  }
+  .book-title {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .book-author {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .book-use {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #333;
+  }
+  .book-use strong { color: var(--rust); }
+
+  /* === ORNAMENT === */
+  .ornament {
+    text-align: center;
+    margin: 44px 0;
+    font-family: 'Bodoni Moda', serif;
+    color: var(--rust);
+    font-size: 22px;
+    letter-spacing: 1em;
+  }
+
+  /* === CHECKLIST === */
+  .check-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 24px 0;
+  }
+  .check-item {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    align-items: start;
+  }
+  .check-box {
+    width: 22px; height: 22px;
+    border: 2px solid var(--ink);
+    margin-top: 1px;
+  }
+  .check-content {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .check-content strong { color: var(--rust); font-weight: 700; }
+  .check-content .check-sub {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 60px 24px;
+    text-align: center;
+  }
+  .footer-title {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .footer-title em { color: var(--gold-soft); font-style: italic; }
+  .footer p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.85;
+    font-weight: 300;
+  }
+  .footer-meta {
+    margin-top: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.15em;
+  }
+
+  /* === MOBILE === */
+  @media (max-width: 600px) {
+    .masthead { padding: 22px 20px 18px; }
+    .container { padding: 0 18px; }
+    .section { padding: 44px 0; }
+    .paradigm-shift { padding: 24px 22px; }
+    .compare-cell { padding: 18px 20px; }
+    .grade-body { padding: 22px 18px; }
+    .grade-header { padding: 18px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ ALERT ═══════════════ -->
+<div class="alert-banner">
+  <span class="em">⚠ 2024학년도부터 자기소개서 폐지</span> · 이제 평가의 <span class="em">유일한 통로는 생활기록부</span>입니다
+</div>
+
+<!-- ═══════════════ MASTHEAD ═══════════════ -->
+<header class="masthead">
+  <div class="masthead-top">
+    <span class="vol">VOL. III · 생기부 설계서</span>
+    <span>고1·고2·고3 학년별 전략</span>
+    <span>SNU CALS · SMSYS</span>
+  </div>
+  <h1>3년의 <span class="accent">생활기록부</span>가<br>당신을 합격으로 <span class="accent">설계</span>한다</h1>
+  <p class="masthead-sub">서울대 학종 3대 평가요소(학업역량·진로역량·공동체역량)와 스마트시스템과학과 인재상을 정밀 교차분석.<br>고1부터 고3까지 학년별·교과별·활동별 전략을 단계적으로 설계합니다.</p>
+</header>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="#paradigm" class="nav-link active">⚡ 패러다임 전환</a>
+    <a href="#elements" class="nav-link">◉ 반영 항목 분석</a>
+    <a href="#competencies" class="nav-link">▤ 3대 평가요소</a>
+    <a href="#timeline" class="nav-link">⌬ 학년별 로드맵</a>
+    <a href="#setuk" class="nav-link">✦ 과목별 세특</a>
+    <a href="#activities" class="nav-link">⚒ 활동·탐구</a>
+    <a href="#books" class="nav-link">📖 추천 도서</a>
+    <a href="#checklist" class="nav-link">✓ 최종 점검</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ═══════════════ OPENER ═══════════════ -->
+  <div class="opener">
+    <div class="kicker">EDITOR'S NOTE · 이 문서를 읽기 전에</div>
+    <p class="opener-body">
+      <span class="drop">생</span>활기록부는 <strong>학생 본인이 직접 작성하는 글이 아닙니다.</strong> 교사가 관찰·평가해 기록하는 문서이며, 그래서 <em>"학생의 자기 PR"</em>이 아니라 <em>"학생의 행동·태도·결과물에 대한 객관적 기록"</em>입니다. 이 본질적 차이를 모르면 모든 전략이 실패합니다. <br><br>
+      이 문서는 <strong>학생이 어떤 행동을 해야 교사가 기록할 거리가 생기는가</strong>에 초점을 맞춥니다. "이렇게 써달라고 부탁하라"가 아닌 <em>"이런 활동을 하면 교사가 자연스럽게 이렇게 쓴다"</em>는 방식입니다. 그리고 그 활동들은 모두 서울대 스마트시스템과학과가 인터뷰에서 직접 밝힌 인재상에 정확히 매칭됩니다. <br><br>
+      <strong>2024학년도부터 자기소개서가 완전히 폐지</strong>되었습니다. 이제 본인을 설명할 통로는 오직 생활기록부 하나입니다. 3년이라는 시간을 어떻게 설계할 것인가—이 문서가 답합니다.
+    </p>
+  </div>
+
+  <!-- ═══════════════ SECTION 1: 패러다임 전환 ═══════════════ -->
+  <section class="section" id="paradigm">
+    <div class="section-num">SECTION 01</div>
+    <h2 class="section-title">먼저 <em>패러다임</em>을<br>전환하세요</h2>
+    <p class="section-lead">대부분의 학생과 학부모가 잘못 알고 있는 것들. 이 7가지 오해를 풀지 않으면 3년이 헛수고입니다.</p>
+
+    <div class="paradigm-shift">
+      <div class="paradigm-label">▶ PARADIGM SHIFT #1 — 가장 큰 오해</div>
+      <div class="paradigm-title">"생활기록부는 교사가 알아서 써준다"는 <em>완전한 착각</em></div>
+      <div class="paradigm-body">
+        교사가 학생을 24시간 관찰하지 않습니다. 한 학급에 30명, 한 과목 교사는 보통 200명 이상을 가르칩니다. <strong>"기록될 만한 행동을 한 학생"만 기록됩니다.</strong> 그래서 생기부 전략의 본질은 <strong>"교사 눈에 띄는 행동을 어떻게 자연스럽게 만들어낼 것인가"</strong>입니다. 부탁이 아니라 행동입니다.
+      </div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-cell old">
+        <h4>OLD — 잘못된 인식</h4>
+        <h5>"내신만 잘 받으면 된다"</h5>
+        <p>자기소개서가 폐지된 지금, 내신은 <strong>최소 조건</strong>일 뿐 충분 조건이 아닙니다. 같은 등급의 학생이 수십 명일 때, 세특·활동 내용이 합격을 결정합니다.</p>
+      </div>
+      <div class="compare-cell new">
+        <h4>NEW — 합격자의 인식</h4>
+        <h5>"세특이 진짜 평가다"</h5>
+        <p>대학은 학생이 <strong>수업 중 어떤 질문을 던졌고, 어떤 탐구를 자발적으로 했는지</strong>를 봅니다. 점수보다 "왜 이 점수가 나왔는가"의 과정이 핵심입니다.</p>
+      </div>
+
+      <div class="compare-cell old">
+        <h4>OLD — 잘못된 인식</h4>
+        <h5>"수상·자격증을 모아야 한다"</h5>
+        <p><strong>수상경력은 2024학년도부터 대입 미반영입니다.</strong> 교내 대회·교외 자격증 모두 평가에 들어가지 않습니다.</p>
+      </div>
+      <div class="compare-cell new">
+        <h4>NEW — 합격자의 인식</h4>
+        <h5>"수업 중 탐구·발표가 핵심"</h5>
+        <p>수상·자격증은 사라졌지만, 그 활동의 <strong>과정과 학습 내용은 세특에 기록</strong>됩니다. 트로피가 아닌 성장 과정을 보여주세요.</p>
+      </div>
+
+      <div class="compare-cell old">
+        <h4>OLD — 잘못된 인식</h4>
+        <h5>"자율동아리, 봉사동아리를 만들어야"</h5>
+        <p><strong>자율동아리는 2024학년도부터 대입 미반영, 개인봉사활동도 미반영입니다.</strong> 정규동아리만 평가됩니다.</p>
+      </div>
+      <div class="compare-cell new">
+        <h4>NEW — 합격자의 인식</h4>
+        <h5>"정규동아리에 깊이 집중"</h5>
+        <p>1개 정규동아리에서 <strong>여러 학기에 걸친 지속적 탐구</strong>가 훨씬 강력합니다. 동아리 갯수가 아닌 깊이입니다.</p>
+      </div>
+
+      <div class="compare-cell old">
+        <h4>OLD — 잘못된 인식</h4>
+        <h5>"독서활동이 중요하다"</h5>
+        <p><strong>독서활동 상황은 2024학년도부터 대입 미반영입니다.</strong> "○○책을 읽었음" 같은 기록은 아무 의미가 없습니다.</p>
+      </div>
+      <div class="compare-cell new">
+        <h4>NEW — 합격자의 인식</h4>
+        <h5>"독서를 세특에 녹여라"</h5>
+        <p>독서 자체는 평가 안 되지만, 책 내용을 <strong>수업 발표·탐구활동·세특에 연결</strong>하면 강력한 무기가 됩니다.</p>
+      </div>
+    </div>
+
+    <div class="paradigm-shift" style="background: var(--moss-deep);">
+      <div class="paradigm-label">▶ PARADIGM SHIFT #2 — 스마트시스템과학과 특화</div>
+      <div class="paradigm-title">"농업 관련 활동만 하라"는 <em>치명적 오해</em></div>
+      <div class="paradigm-body">
+        학과장 김광수 교수가 인터뷰에서 명확히 말했습니다: <strong>"우리는 모든 분야에 다 알거나 잘하는 사람을 바라지 않아요. 데이터 사이언스를 통해서 각 분야 중에 최소한 하나라도 연결할 수 있는 사람들을 찾고 있습니다."</strong><br><br>
+        즉, 생기부 전체를 "스마트팜"이나 "AI 농업"으로 도배하려는 시도는 오히려 역효과. <strong>본인의 진짜 관심 도메인(작물·환경·세포·산림·기후·식품 중 1개) + 그것을 데이터로 풀어내는 사고</strong>가 일관되게 보이면 충분합니다.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 2: 반영 항목 분석 ═══════════════ -->
+  <section class="section" id="elements">
+    <div class="section-num">SECTION 02</div>
+    <h2 class="section-title">생기부 <em>10개 항목</em>—<br>무엇이 평가되고, 무엇이 안 되는가</h2>
+    <p class="section-lead">3년의 시간을 어디에 쏟을 것인가의 출발점. 2024학년도 대입부터 적용된 반영 여부를 정확히 파악하세요.</p>
+
+    <ul class="element-list">
+      <li class="element-item">
+        <div class="element-num">01</div>
+        <div class="element-content">
+          <h4>인적·학적사항</h4>
+          <p>이름, 생년월일, 출신학교 등 기본 정보. 평가에 영향을 주지 않는 행정 기록.</p>
+        </div>
+        <div class="element-status partial">참고만</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">02</div>
+        <div class="element-content">
+          <h4>출결상황</h4>
+          <p>결석·지각·조퇴 횟수와 사유. <strong>미인정 결석이 많으면 성실성·공동체역량에서 감점.</strong> 무조건 출석은 기본 중의 기본.</p>
+        </div>
+        <div class="element-status reflect">반영</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">03</div>
+        <div class="element-content">
+          <h4>수상경력</h4>
+          <p>교내 대회 수상 기록. <strong>2024학년도부터 대입 평가에 일절 반영되지 않음.</strong> 트로피를 모을 필요 없음.</p>
+        </div>
+        <div class="element-status noreflect">미반영</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">04</div>
+        <div class="element-content">
+          <h4>자격증·인증취득상황</h4>
+          <p>외부 기관 자격증·어학 점수. <strong>대입 미반영.</strong> 토익·HSK 등 사교육 결과물은 의미 없음.</p>
+        </div>
+        <div class="element-status noreflect">미반영</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">05</div>
+        <div class="element-content">
+          <h4>창의적 체험활동 — 자율·자치활동</h4>
+          <p>학급·학교 임원, 학교행사 참여, 자치활동. <strong>리더십·공동체역량 평가의 핵심.</strong></p>
+        </div>
+        <div class="element-status reflect">반영</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">06</div>
+        <div class="element-content">
+          <h4>창의적 체험활동 — 동아리활동</h4>
+          <p>정규동아리 활동. <strong>자율동아리는 미반영.</strong> 1개 정규동아리에서 깊이 있는 활동이 핵심.</p>
+        </div>
+        <div class="element-status reflect">정규만</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">07</div>
+        <div class="element-content">
+          <h4>창의적 체험활동 — 진로활동</h4>
+          <p>진로 탐색·진로 관련 활동. <strong>진로역량의 직접적 증거.</strong> 학과 연계 활동을 집중 배치.</p>
+        </div>
+        <div class="element-status reflect">반영</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">08</div>
+        <div class="element-content">
+          <h4>봉사활동</h4>
+          <p>학교 계획 봉사만 반영. <strong>개인 봉사활동은 2024학년도부터 미반영.</strong> 봉사시간 채우기 무의미.</p>
+        </div>
+        <div class="element-status partial">학교만</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">09</div>
+        <div class="element-content">
+          <h4>교과학습발달상황 — 성적</h4>
+          <p>각 과목 등급·원점수. <strong>학업역량의 기본.</strong> 핵심 권장과목(미적분)·권장과목 이수 여부 중요.</p>
+        </div>
+        <div class="element-status reflect">반영</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">10</div>
+        <div class="element-content">
+          <h4>교과학습발달상황 — 세부능력 및 특기사항(세특)</h4>
+          <p>과목 교사가 학기당 과목별 500자씩 작성. <strong>학종에서 가장 중요한 평가 항목.</strong> 모든 전략의 핵심.</p>
+        </div>
+        <div class="element-status reflect">★ 핵심</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">11</div>
+        <div class="element-content">
+          <h4>독서활동상황</h4>
+          <p>읽은 책 목록. <strong>2024학년도부터 대입 미반영.</strong> 단, 책 내용을 세특·탐구에 연결하면 가치 있음.</p>
+        </div>
+        <div class="element-status noreflect">미반영</div>
+      </li>
+      <li class="element-item">
+        <div class="element-num">12</div>
+        <div class="element-content">
+          <h4>행동특성 및 종합의견</h4>
+          <p>담임교사가 1년 동안의 종합 평가를 500자 작성. <strong>공동체역량·인성 평가의 핵심.</strong></p>
+        </div>
+        <div class="element-status reflect">반영</div>
+      </li>
+    </ul>
+
+    <div class="paradigm-shift">
+      <div class="paradigm-label">▶ 결론 — 어디에 시간을 쏟아야 하는가</div>
+      <div class="paradigm-title">우선순위는 <em>딱 5가지</em></div>
+      <div class="paradigm-body">
+        <strong>① 세특 (학기당 모든 과목)</strong> → 가장 중요. 전체 시간의 50% 투입.<br>
+        <strong>② 진로활동</strong> → 학과 연계 핵심 무기. 시간의 20%.<br>
+        <strong>③ 정규동아리</strong> → 깊이 있는 1개 동아리. 시간의 15%.<br>
+        <strong>④ 자율·자치활동</strong> → 리더십·공동체 증거. 시간의 10%.<br>
+        <strong>⑤ 행동특성</strong> → 담임과의 관계, 학급 기여. 시간의 5%.<br><br>
+        나머지(수상·자격증·자율동아리·개인봉사·독서기록)는 <strong>대입 평가에 들어가지 않으므로 시간 투자 금지</strong>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 3: 3대 평가요소 ═══════════════ -->
+  <section class="section" id="competencies">
+    <div class="section-num">SECTION 03</div>
+    <h2 class="section-title">서울대가 보는<br><em>3가지 역량</em></h2>
+    <p class="section-lead">서울대는 2023학년도부터 학종 평가요소를 학업역량·진로역량·공동체역량 3가지로 명시했습니다. 각 역량이 무엇이고, 스마트시스템과학과에서는 어떤 모습으로 드러나야 하는지를 정확히 알아야 합니다.</p>
+
+    <div class="comp-grid">
+      <div class="comp-card academic">
+        <div class="comp-card-tag">FACTOR 01</div>
+        <h3>학업역량</h3>
+        <span class="comp-weight">평가 비중: 가장 큼</span>
+        <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px;">대학 수학에 필요한 지적 기초가 갖춰져 있는가</p>
+        <ul>
+          <li>학업성취도 — 전 교과 충실 이수</li>
+          <li>학업태도 — 자기주도성, 지적 호기심</li>
+          <li>탐구력 — 논리적 사고, 과제수행능력</li>
+        </ul>
+        <div class="smsys-emphasis">
+          <strong>SMSYS에서:</strong> 미적분·통계는 <strong>실제로 활용한 흔적</strong>이 있어야 함. 수학을 '문제 푸는 도구'가 아닌 '현상을 모델링하는 언어'로 다뤘다는 증거가 필요.
+        </div>
+      </div>
+
+      <div class="comp-card career">
+        <div class="comp-card-tag">FACTOR 02</div>
+        <h3>진로역량</h3>
+        <span class="comp-weight">차별화 결정</span>
+        <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px;">전공에 대한 관심과 준비가 일관되게 보이는가</p>
+        <ul>
+          <li>전공 관련 교과 이수노력</li>
+          <li>전공 관련 교과 성취도</li>
+          <li>진로 탐색활동과 경험</li>
+        </ul>
+        <div class="smsys-emphasis">
+          <strong>SMSYS에서:</strong> "데이터 사이언스 + 도메인 1개" 공식이 3년간 일관되게 드러나야 함. 도메인은 <strong>작물·기후·세포·산림·식품 중 1개에 집중</strong>—여러 분야 산만하게 다루면 오히려 감점.
+        </div>
+      </div>
+
+      <div class="comp-card community">
+        <div class="comp-card-tag">FACTOR 03</div>
+        <h3>공동체역량</h3>
+        <span class="comp-weight">필수 기본기</span>
+        <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px;">함께 배우고 성장할 수 있는 사람인가</p>
+        <ul>
+          <li>협업과 소통능력</li>
+          <li>나눔과 배려</li>
+          <li>성실성과 규칙준수</li>
+          <li>리더십</li>
+        </ul>
+        <div class="smsys-emphasis">
+          <strong>SMSYS에서:</strong> 학과장이 직접 언급한 <strong>"개척자·기업가"</strong>는 혼자 잘난 사람이 아닌 <strong>팀을 이끌고 새 길을 내는 사람</strong>. 학급·동아리에서의 협업·주도 경험이 핵심.
+        </div>
+      </div>
+    </div>
+
+    <div class="paradigm-shift" style="background:var(--moss-deep);">
+      <div class="paradigm-label">▶ 결정적 통찰 — 학과장 인터뷰에서 직접 인용</div>
+      <div class="paradigm-title">"데이터 사이언스를 통해서 각 분야 중에 <em>최소한 하나라도</em> 연결할 수 있는 사람"</div>
+      <div class="paradigm-body">
+        이 한 문장이 스마트시스템과학과 인재상의 핵심입니다. 생기부 전체가 이 메시지를 증명해야 합니다:<br><br>
+        <strong>① "데이터로 사고할 줄 안다"</strong> — 수학·통계·코딩 활동의 흔적<br>
+        <strong>② "하나의 도메인에 깊은 호기심이 있다"</strong> — 특정 분야에 대한 일관된 탐구<br>
+        <strong>③ "그 둘을 연결한 경험이 있다"</strong> — 데이터적 사고를 도메인 문제에 적용한 사례<br><br>
+        이 세 가지가 학년이 올라갈수록 점점 정교해지는 것이 가장 이상적입니다.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 4: 학년별 로드맵 ═══════════════ -->
+  <section class="section" id="timeline">
+    <div class="section-num">SECTION 04</div>
+    <h2 class="section-title">3년의 <em>로드맵</em></h2>
+    <p class="section-lead">각 학년마다 미션이 다릅니다. 고1에 고3의 활동을 하면 어색하고, 고3에 고1의 활동을 하면 늦습니다. 학년별로 무엇을 해야 하는지 정확히 설계하세요.</p>
+
+    <div class="timeline">
+
+      <!-- 고1 -->
+      <div class="grade-block">
+        <div class="grade-header g1">
+          <h3><span class="yr">YEAR 01 · 2026</span>고등학교 1학년</h3>
+          <div class="grade-mission">MISSION · 탐색과 기반 다지기</div>
+        </div>
+        <div class="grade-body">
+          <div class="grade-section">
+            <h4>이 학년의 핵심 메시지</h4>
+            <p>"<strong>나는 무엇에 호기심을 느끼는 사람인가</strong>"를 발견하고, 그것을 데이터·과학적으로 접근하는 첫 경험을 만드는 시기. 진로가 확정되지 않았어도 괜찮습니다. 다양한 분야에서 <em>"왜?"</em>를 던지는 모습이 곧 학업태도입니다.</p>
+          </div>
+
+          <div class="grade-section">
+            <h4>학업역량 — 무엇을 할 것인가</h4>
+            <div class="tactic">
+              <strong>통합과학·통합사회에서 발표 1회 이상:</strong> 단순 발표가 아닌 <em>"이 현상을 데이터로 측정한다면 어떻게 할까"</em>라는 질문이 담긴 발표. 예: 학교 텃밭의 식물 생장 데이터화, 미세먼지와 등교율 상관관계 등.
+            </div>
+            <div class="tactic">
+              <strong>수학 — 모든 단원에서 '왜 이 공식이 만들어졌는가' 질문:</strong> 단순 문제풀이가 아닌 개념 이해를 보여주세요. 교사가 그 질문을 세특에 기록합니다.
+            </div>
+            <div class="topic-list">
+              <span class="topic">발표 1회 이상</span>
+              <span class="topic">탐구 보고서</span>
+              <span class="topic">교과서 질문</span>
+              <span class="topic">현상의 정량화</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>진로역량 — 어떤 활동을 만들 것인가</h4>
+            <div class="tactic">
+              <strong>진로활동 시간에 '스마트농업·디지털농업' 진로 탐색 1회:</strong> 농촌진흥청 자료, 농림축산식품부 디지털농업 사례 등을 조사. 다만 <em>이 시점에 학과를 확정할 필요는 없음</em>.
+            </div>
+            <div class="tactic">
+              <strong>관심 분야 1개 발견:</strong> 작물·환경·세포·산림·식품·축산 중 본인이 가장 흥미를 느끼는 것 1개를 자연스럽게 노출. 고2에 본격 심화할 토대.
+            </div>
+            <div class="topic-list">
+              <span class="topic">진로 탐색 보고서</span>
+              <span class="topic">관심 도메인 선택</span>
+              <span class="topic">디지털농업 사례 조사</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>공동체역량 — 어떤 모습을 보일 것인가</h4>
+            <div class="tactic">
+              <strong>학급 1인 1역 적극 수행 + 정규동아리 가입:</strong> 과학·수학·환경 관련 정규동아리 1개에 가입하고, <em>탐구 주제 발의·자료 조사 분담 등 주도적 모습</em>을 만드세요. 회장·부회장이 아니어도 됩니다.
+            </div>
+            <div class="topic-list">
+              <span class="topic">1인 1역</span>
+              <span class="topic">정규동아리 가입</span>
+              <span class="topic">조별과제 협업</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>이 학년에서 절대 하지 말아야 할 것</h4>
+            <div class="tactic" style="border-left-color:var(--rust-deep);background:rgba(176,68,37,0.04);">
+              <strong>금지 1:</strong> 학과를 너무 일찍 확정해서 모든 활동을 "스마트팜"으로 도배 → 부자연스러움, 진정성 의심.<br>
+              <strong>금지 2:</strong> 수상·자격증 모으기에 시간 낭비 → 대입 미반영.<br>
+              <strong>금지 3:</strong> 자율동아리 만들기 → 미반영, 시간 낭비.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 고2 -->
+      <div class="grade-block">
+        <div class="grade-header g2">
+          <h3><span class="yr">YEAR 02 · 2027</span>고등학교 2학년</h3>
+          <div class="grade-mission">MISSION · 심화와 일관성 구축</div>
+        </div>
+        <div class="grade-body">
+          <div class="grade-section">
+            <h4>이 학년의 핵심 메시지</h4>
+            <p>고1에서 발견한 관심을 <strong>구체적 탐구</strong>로 발전시키는 시기. 학종에서 "<em>일관된 진로 관심</em>"이 가장 강하게 평가되는 시점이 고2 생기부입니다. 모든 과목에서 본인의 관심 도메인이 점진적으로 드러나야 합니다.</p>
+          </div>
+
+          <div class="grade-section">
+            <h4>학업역량 — 무엇을 할 것인가</h4>
+            <div class="tactic">
+              <strong>미적분 선택 — 핵심 권장과목:</strong> 학과장이 직접 강조한 과목. 단순 성취도뿐 아니라 <em>미적분 개념을 실생활/데이터에 적용한 탐구 활동</em>이 세특에 들어가야 함. 예: 함수 그래프로 작물 생장 곡선 모델링, 정적분으로 누적 강수량 계산 등.
+            </div>
+            <div class="tactic">
+              <strong>물리Ⅰ / 화학Ⅰ / 생명과학Ⅰ 중 1과목 깊이 학습:</strong> 학과 권장과목. <strong>세 과목 모두 이수하려 하지 마세요.</strong> 학과장이 인터뷰에서 "OR"임을 강조했습니다. 본인 관심 도메인에 맞는 1과목에 집중.
+            </div>
+            <div class="tactic">
+              <strong>확률과 통계 — AI와 연결되는 수학:</strong> 학과장이 "확률과 통계도 인공지능과 연결된다"고 직접 언급. 데이터 분석의 기초.
+            </div>
+            <div class="topic-list">
+              <span class="topic">미적분 ★ 필수</span>
+              <span class="topic">권장과학 1과목</span>
+              <span class="topic">확률과통계</span>
+              <span class="topic">정보 ★</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>진로역량 — 어떤 활동을 만들 것인가</h4>
+            <div class="tactic">
+              <strong>주제 탐구 보고서 — 학기당 1편:</strong> 본인 도메인 + 데이터/AI를 연결한 자율 탐구. 예시: <em>"기상 데이터로 우리 지역 벼 수확량을 예측해보기"</em>, <em>"LED 파장이 식물 성장에 미치는 영향 측정"</em>, <em>"위성 영상에서 한국 산림 변화 추적"</em>. 결과의 완성도보다 <strong>탐구 과정과 시행착오</strong>가 더 중요.
+            </div>
+            <div class="tactic">
+              <strong>정규동아리에서 프로젝트 리딩:</strong> 고1 때 가입한 동아리에서 <em>본인이 주제를 제안하고 팀을 끌고 가는 모습</em>. 학과장이 강조한 '개척자'의 이미지.
+            </div>
+            <div class="topic-list">
+              <span class="topic">자율 탐구 보고서</span>
+              <span class="topic">동아리 프로젝트 리딩</span>
+              <span class="topic">도메인 심화</span>
+              <span class="topic">교과 융합 발표</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>공동체역량 — 어떤 모습을 보일 것인가</h4>
+            <div class="tactic">
+              <strong>학급·동아리 리더십 1회 경험:</strong> 회장·부회장이 아니어도 좋습니다. <em>특정 프로젝트의 리더, 학급 행사 기획, 조 모임 주도</em> 등 구체적 리더 경험. 학과장 표현 "기업가형 인재"의 토대.
+            </div>
+            <div class="tactic">
+              <strong>학습 도우미·또래 멘토링:</strong> 본인이 잘하는 과목에서 친구를 도와준 경험은 강력한 공동체역량 증거. 담임이 행동특성에 기록.
+            </div>
+            <div class="topic-list">
+              <span class="topic">프로젝트 리더</span>
+              <span class="topic">학급 기획</span>
+              <span class="topic">또래 멘토</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>이 학년에서 가장 중요한 것</h4>
+            <div class="tactic">
+              <strong>"고1보다 깊어지고, 연결되고, 확장되었다"</strong>는 인상을 주는 것. 같은 분야를 다루더라도 <em>고1에서 단순 호기심이었던 것이 고2에서는 구체적 탐구 질문으로 발전</em>해야 합니다. 평가자는 학년 간 성장 곡선을 가장 유심히 봅니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 고3 -->
+      <div class="grade-block">
+        <div class="grade-header g3">
+          <h3><span class="yr">YEAR 03 · 2028</span>고등학교 3학년</h3>
+          <div class="grade-mission">MISSION · 완성과 종합</div>
+        </div>
+        <div class="grade-body">
+          <div class="grade-section">
+            <h4>이 학년의 핵심 메시지</h4>
+            <p>지금까지의 모든 활동이 <strong>"하나의 일관된 이야기"</strong>로 수렴되는 시기. 새로운 활동을 벌이기보다 고1·고2의 탐구가 <em>"왜 의미가 있었는지, 어디로 향하는지"</em>를 정교하게 마무리하는 시기. <strong>1학기에 사실상 모든 평가가 끝난다는 점</strong>을 기억하세요(수시 원서 접수 9월).</p>
+          </div>
+
+          <div class="grade-section">
+            <h4>학업역량 — 무엇을 할 것인가</h4>
+            <div class="tactic">
+              <strong>심화수학·AP과목 등 고난도 선택:</strong> 가능하면 <em>"이 학생은 대학 수준의 학습을 감당할 수 있다"</em>는 신호. 학교에 개설된 가장 깊이 있는 수학·과학 과목 선택.
+            </div>
+            <div class="tactic">
+              <strong>모든 과목 세특에서 진로 연결:</strong> 국어·영어·사회·예체능 과목에서도 <em>본인 도메인과 연결된 활동·발표</em>를 하나씩 만드세요. 학종 평가자는 "타 과목에서도 일관된 관심"을 매우 높게 평가.
+            </div>
+            <div class="topic-list">
+              <span class="topic">심화/AP 선택</span>
+              <span class="topic">전 과목 진로 연결</span>
+              <span class="topic">고난도 탐구</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>진로역량 — 어떤 활동을 만들 것인가</h4>
+            <div class="tactic">
+              <strong>종합 탐구 프로젝트 — 3년의 결정판:</strong> 고1·고2의 모든 탐구를 종합하는 마지막 프로젝트. <em>"3년간 ○○에 대한 관심이 △△로 발전했고, 이를 □□로 종합했다"</em>는 서사가 보여야 함. 1편의 묵직한 보고서나 발표.
+            </div>
+            <div class="tactic">
+              <strong>스마트시스템과학과 연계 활동:</strong> 학과 홈페이지 정독, 교수 연구 분야 이해, 학과장 인터뷰 분석 등. 진로활동에 자연스럽게 녹여 기록되게 하세요. <em>학과 이름을 노골적으로 쓰지 말고</em>, "데이터로 농업·생명 문제를 해결하는 분야"라는 표현 권장.
+            </div>
+            <div class="topic-list">
+              <span class="topic">종합 프로젝트</span>
+              <span class="topic">학과 심화 탐색</span>
+              <span class="topic">3년 서사 완성</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>공동체역량 — 어떤 모습을 보일 것인가</h4>
+            <div class="tactic">
+              <strong>후배 멘토링·학급 마무리 기여:</strong> 고3이라고 본인 입시만 챙기는 모습은 감점 요인. 동아리 후배 가이드, 학급 행사 마지막 기여 등 <em>"끝까지 공동체에 책임지는 모습"</em>이 행동특성에 기록되게 하세요.
+            </div>
+            <div class="topic-list">
+              <span class="topic">후배 멘토</span>
+              <span class="topic">학급 마무리</span>
+              <span class="topic">지속적 책임감</span>
+            </div>
+          </div>
+
+          <div class="grade-section">
+            <h4>고3 시기 전략적 주의사항</h4>
+            <div class="tactic">
+              <strong>1학기에 모든 것을 마무리:</strong> 9월 수시 원서 접수 시점에 <em>1학기까지의 생기부만 제출</em>됩니다. 고3 2학기 활동은 평가 대상이 아닙니다. 시간 배분을 정확히.<br><br>
+              <strong>담임·교과교사와의 소통:</strong> 본인이 무엇을 탐구했고 어디에 관심 있는지 자연스럽게 알리는 노력. <em>매수가 아닌 진정성</em>. 교사도 사람이고, 학생을 잘 모르면 형식적인 세특만 쓸 수밖에 없습니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 5: 과목별 세특 전략 ═══════════════ -->
+  <section class="section" id="setuk">
+    <div class="section-num">SECTION 05</div>
+    <h2 class="section-title"><em>세특</em>—과목별<br>전략의 실제</h2>
+    <p class="section-lead">자기소개서가 폐지된 지금, 세특이 학종 평가의 사실상 전부입니다. 과목별로 어떤 활동·발표·탐구를 해야 스마트시스템과학과에 적합한 세특이 나오는지 구체적으로 다룹니다.</p>
+
+    <div class="subject-table">
+      <table>
+        <thead>
+          <tr>
+            <th>과목</th>
+            <th>우선순위</th>
+            <th>이 과목에서 만들어야 할 세특 내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>수학 (미적분)</td>
+            <td><span class="priority high">최우선</span> 학과장이 직접 강조</td>
+            <td>미적분 개념을 현실 데이터에 적용한 탐구. 예: 작물 생장 곡선 미분, 누적 강수량 적분, 함수 모델링 등. <strong>"공식을 외운다"가 아닌 "공식을 어디에 쓸 수 있는가"</strong>의 자세.</td>
+          </tr>
+          <tr>
+            <td>확률과 통계</td>
+            <td><span class="priority high">매우 높음</span> AI 직결</td>
+            <td>실제 데이터셋(공공데이터포털 등) 분석. 가설 검정, 회귀분석 등. <em>"이 분석으로 무엇을 알 수 있는가"</em>를 발표.</td>
+          </tr>
+          <tr>
+            <td>정보</td>
+            <td><span class="priority high">필수</span> 코딩 증거</td>
+            <td>파이썬으로 본인 도메인 데이터 분석 프로젝트. 농업·환경 공공데이터를 가져와 시각화·예측 모델 시도. <strong>완성도보다 시도 자체가 중요.</strong></td>
+          </tr>
+          <tr>
+            <td>생명과학Ⅰ</td>
+            <td><span class="priority med">선택</span> 도메인 매칭 시</td>
+            <td>관심 도메인이 작물·세포·생물이라면 필수. 광합성·세포·유전·생태계 단원에서 <em>데이터적 접근의 가능성</em>을 발표. 김광수·유경록·안태인 교수 연구와 연결.</td>
+          </tr>
+          <tr>
+            <td>화학Ⅰ</td>
+            <td><span class="priority med">선택</span> 도메인 매칭 시</td>
+            <td>관심 도메인이 토양·식품·환경화학이라면 필수. 산-염기·반응속도·열역학을 농업·환경 현상에 연결한 탐구.</td>
+          </tr>
+          <tr>
+            <td>물리학Ⅰ</td>
+            <td><span class="priority med">선택</span> 도메인 매칭 시</td>
+            <td>관심 도메인이 센서·드론·자율시스템이라면 필수. 역학·전자기학·파동을 농업기계·원격탐사 기술과 연결. 김학진·김형석 교수 연구 매칭.</td>
+          </tr>
+          <tr>
+            <td>지구과학Ⅰ</td>
+            <td><span class="priority med">선택</span> 기후·환경 매칭 시</td>
+            <td>기후변화·대기·지구 시스템 단원이 핵심. 기후스마트농업과 연결되는 강력한 무기. 김연욱·한희 교수 연구 매칭.</td>
+          </tr>
+          <tr>
+            <td>통합사회·사회·경제</td>
+            <td><span class="priority low">활용 가능</span></td>
+            <td>식량 안보, SDGs, 농촌 경제, 식품 유통 등을 본인 관점에서 발표·보고서. 최종우 교수 연구(디지털농업 기술경영) 매칭. <strong>이공계 학생이 사회 과목에서 진로 연결하면 매우 강력.</strong></td>
+          </tr>
+          <tr>
+            <td>국어 (독서·작문)</td>
+            <td><span class="priority low">활용 가능</span></td>
+            <td>과학·기술 관련 도서 읽고 발표·작문. <em>비문학 지문에서 과학·환경 주제 골라 심화 탐구</em>로 발전. 독서활동 미반영을 우회하는 가장 좋은 방법.</td>
+          </tr>
+          <tr>
+            <td>영어</td>
+            <td><span class="priority low">활용 가능</span></td>
+            <td>영어 원서·논문 abstract 읽기, 농업·AI 관련 영문 기사 분석 발표. <em>학과장이 강조한 '글로벌 인재'</em> 이미지.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ornament">◆ ◆ ◆</div>
+
+    <h3 style="font-family:'Bodoni Moda',serif;font-size:26px;font-weight:900;margin-bottom:20px;">합격 세특의 해부학</h3>
+    <p style="font-size:14px;color:#444;line-height:1.85;margin-bottom:20px;max-width:760px;">
+      아래 예시들은 스마트시스템과학과에 정확히 매칭되는 세특의 모범 사례입니다. 색칠된 부분의 역할을 확인하고, 본인의 활동을 어떻게 교사가 기록하도록 만들 것인가를 설계하세요.
+    </p>
+
+    <div class="legend-bar">
+      <span>관심 도메인 (작물/환경/세포 등)</span>
+      <span class="action">학생의 능동적 행동</span>
+      <span class="result">결과·성장·확장</span>
+    </div>
+
+    <!-- 세특 예시 1: 미적분 -->
+    <div class="setuk-example">
+      <div class="setuk-subject">미적분 (고2 1학기)</div>
+      <div class="setuk-meta">학업역량 · 진로역량 중점 / 글자 수 약 320자</div>
+      <div class="setuk-body">
+        함수의 극한과 미분 단원에서 <span class="h-action">"실제 자연 현상에서 미분이 어떻게 활용되는가"라는 질문을 스스로 던지고</span>, <span class="h-key">작물의 생장 속도 변화</span>를 미분으로 표현하는 탐구 보고서를 작성함. 공공데이터포털의 농작물 생육 데이터를 활용해 <span class="h-action">시간에 따른 식물 키 변화율을 직접 계산</span>하고, <span class="h-result">로지스틱 함수 형태로 모델링하여 발표</span>함. 발표 후 친구들의 질문에 대해 <span class="h-result">"극한 개념이 데이터의 한계와 추세 예측에 어떻게 적용되는지"를 추가로 설명하며 개념 이해의 깊이를 보여줌</span>. 단순 계산을 넘어 <span class="h-key">현상을 정량적으로 모델링하는 사고력</span>이 돋보임.
+      </div>
+      <div class="setuk-analysis">
+        <strong>이 세특이 강력한 이유:</strong> 학과장이 직접 강조한 미적분의 <em>"활용 능력"</em>이 정확히 드러남. 본인 도메인(작물)이 자연스럽게 등장하면서도 억지스럽지 않음. 발표 → 질문 응대까지 이어지는 <em>학업태도와 의사소통</em>도 함께 평가됨.
+      </div>
+    </div>
+
+    <!-- 세특 예시 2: 정보 -->
+    <div class="setuk-example">
+      <div class="setuk-subject">정보 (고2 2학기)</div>
+      <div class="setuk-meta">학업역량 · 진로역량 중점 / 글자 수 약 350자</div>
+      <div class="setuk-body">
+        파이썬 기초 학습 후 <span class="h-action">기상청 공공데이터 API에서 지역별 5년치 기온·강수량 데이터를 직접 수집</span>하여 분석하는 프로젝트를 자발적으로 진행함. <span class="h-key">지역별 평균기온 상승 추세와 농작물 재해 빈도의 상관관계</span>를 산점도와 선형회귀로 시각화하였으며, <span class="h-action">matplotlib과 pandas 라이브러리를 독학으로 익혀</span> 결과물을 완성함. <span class="h-result">"데이터의 표준화와 결측치 처리 과정에서 통계적 사고가 필수임을 깨달았다"</span>는 성찰을 보고서에 기록함. 프로젝트 마무리 단계에서 <span class="h-result">한계점을 스스로 분석하고, 더 정확한 예측을 위한 머신러닝 기법으로의 확장 가능성을 제시함</span>. 자기주도적 학습 능력과 데이터 사이언스적 사고가 인상적임.
+      </div>
+      <div class="setuk-analysis">
+        <strong>이 세특이 강력한 이유:</strong> "Learning to Learn" (김태형 교수가 강조한 메타학습 능력)이 자연스럽게 드러남. 단순 코딩이 아닌 <em>"왜 이게 어려운지, 어떻게 극복했는지, 다음 단계는 무엇인지"</em>의 사고 과정이 보임. 학과의 핵심 인재상과 완벽 일치.
+      </div>
+    </div>
+
+    <!-- 세특 예시 3: 생명과학 -->
+    <div class="setuk-example">
+      <div class="setuk-subject">생명과학Ⅰ (고2 2학기)</div>
+      <div class="setuk-meta">진로역량 · 탐구력 중점 / 글자 수 약 310자</div>
+      <div class="setuk-body">
+        광합성 단원 학습 중 <span class="h-action">"같은 식물도 환경에 따라 광합성 효율이 달라진다면 이를 정량화할 수 있는가"라는 질문을 제기</span>함. 가정에서 직접 <span class="h-key">상추 두 그룹을 서로 다른 광량 조건에서 4주간 재배</span>하며 매주 잎 면적·무게를 측정하고 데이터를 기록함. <span class="h-action">측정 오차를 줄이기 위해 동일 시각, 동일 도구로 일관되게 관찰</span>하는 과학적 태도를 보임. <span class="h-result">최종 보고서에서 단순 결과 비교를 넘어 "광량과 생장량의 관계가 비선형적"임을 그래프로 제시하고, "추후 인공광 식물공장 연구에 이런 데이터 기반 접근이 필수"라는 자기 견해를 덧붙임</span>. 가설 설정·실험 설계·결과 해석에 이르는 탐구의 전 과정을 주도적으로 수행함.
+      </div>
+      <div class="setuk-analysis">
+        <strong>이 세특이 강력한 이유:</strong> 본인 도메인(식물·작물)이 명확함. 안태인 교수의 식물공장 연구와 자연스럽게 연결됨. 가장 중요한 것: <em>"진짜로 본인이 한 활동"</em>이라는 인상이 강하게 듬. 가공된 활동이 아니라 호기심에서 시작된 진짜 탐구로 보임.
+      </div>
+    </div>
+
+    <!-- 세특 예시 4: 사회/경제 -->
+    <div class="setuk-example">
+      <div class="setuk-subject">통합사회 (고1 2학기)</div>
+      <div class="setuk-meta">진로역량 · 융합사고 중점 / 글자 수 약 290자</div>
+      <div class="setuk-body">
+        '지속가능한 발전' 단원 학습 후 <span class="h-action">SDGs 17개 목표 중 '기아 종식(Zero Hunger)'을 자율 탐구 주제로 선정</span>함. <span class="h-key">기후변화로 인한 식량 위기와 디지털 기술의 역할</span>이라는 주제로 보고서를 작성하며, <span class="h-action">FAO·세계은행 보고서를 직접 인용하고 한국·아프리카의 농업 디지털 격차를 비교</span>함. <span class="h-result">"기술은 평등하지 않다. 데이터가 적은 지역일수록 예측이 어렵고 피해가 크다"</span>는 결론을 도출하며 사회과학적 통찰을 보여줌. 발표 후 친구들과 토론하면서 <span class="h-result">"공학적 해결책과 사회적 형평성을 함께 고민하는 사고"</span>의 가치를 깨달았다고 소감을 기록함.
+      </div>
+      <div class="setuk-analysis">
+        <strong>이 세특이 강력한 이유:</strong> 이공계 진로 학생이 사회과목에서 이런 융합 사고를 보이면 매우 희소한 가치. 학과장이 인터뷰에서 강조한 <em>"개발도상국의 식량 문제"</em>와 정확히 매칭. 단순 농업이 아닌 글로벌 스케일을 보여줌.
+      </div>
+    </div>
+
+    <div class="ornament">◆ ◆ ◆</div>
+
+    <h3 style="font-family:'Bodoni Moda',serif;font-size:22px;font-weight:700;margin-bottom:18px;">이런 세특은 즉시 위험합니다</h3>
+
+    <div class="red-flag">
+      <div class="red-flag-label">✗ DANGER #1 — 형식적 세특</div>
+      <p class="red-flag-quote">"수업에 성실히 참여하며 과제를 잘 수행함. 발표력이 우수하고 친구들과 협력함."</p>
+      <p class="red-flag-why">→ 모든 학생에게 적용 가능한 일반 문장. 학종에서 0점에 가까운 평가. <strong>교사가 학생에 대해 잘 모를 때 나오는 전형적 패턴.</strong> 학생이 적극적으로 자기 활동을 알리지 않으면 이런 세특이 나옵니다.</p>
+    </div>
+
+    <div class="red-flag">
+      <div class="red-flag-label">✗ DANGER #2 — 학과 도배</div>
+      <p class="red-flag-quote">"국어 시간에 스마트팜에 대해 발표함. 영어 시간에 스마트팜 영문 기사 분석. 수학 시간에 스마트팜 데이터 분석. 사회 시간에 스마트팜 경제 발표..."</p>
+      <p class="red-flag-why">→ 모든 과목을 같은 주제로 도배하면 인위적·전략적이라는 인상. 학과는 <strong>"하나의 관심이 자연스럽게 여러 영역으로 확장"</strong>되는 모습을 원하지, 의도적 맞춤은 오히려 감점.</p>
+    </div>
+
+    <div class="red-flag">
+      <div class="red-flag-label">✗ DANGER #3 — 과장된 성취</div>
+      <p class="red-flag-quote">"고2 때 머신러닝 모델을 개발하여 농작물 수확량을 95% 정확도로 예측하는 인공지능을 완성함."</p>
+      <p class="red-flag-why">→ 고등학생 수준에서 너무 완벽한 성취는 의심을 부릅니다. 평가자는 사교육 작품·표절을 의심합니다. <strong>"시도했고, 한계를 만났고, 그래서 무엇을 배웠는가"</strong>가 훨씬 강력합니다.</p>
+    </div>
+
+    <div class="red-flag">
+      <div class="red-flag-label">✗ DANGER #4 — 농사 일변도</div>
+      <p class="red-flag-quote">"스마트팜에서 토마토 재배 자동화에 관심이 많아 본격적인 농업을 공부하고 싶다고 진로 발표함."</p>
+      <p class="red-flag-why">→ 스마트시스템과학과는 농사 가르치는 학과가 아닙니다. <strong>데이터 사이언스 학과</strong>입니다. 농생대 다른 학과(농업생명공학부 등)로 분류될 위험.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 6: 활동 프로젝트 ═══════════════ -->
+  <section class="section" id="activities">
+    <div class="section-num">SECTION 06</div>
+    <h2 class="section-title">실제로 해볼 수 있는<br><em>탐구 프로젝트</em></h2>
+    <p class="section-lead">3년 동안 시도해볼 만한 구체적 탐구 아이디어들. 고등학생 수준에서 가능하면서도 학과 인재상과 정확히 맞는 활동입니다. 본인의 도메인에 맞게 골라 활용하세요.</p>
+
+    <div class="project-mosaic">
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 01 · 작물 · 데이터</div>
+        <div class="project-name">학교 텃밭 생장 데이터화</div>
+        <div class="project-difficulty">난이도: ★☆☆ / 기간: 1학기</div>
+        <div class="project-desc">
+          학교 텃밭에 식물 몇 종을 심고, <strong>매주 잎 면적·키·온도·일조량을 측정·기록</strong>. 데이터를 엑셀이나 구글시트에 정리하여 시각화. 결과로 "환경 변수와 생장의 관계"를 분석. <em>김광수·안태인 교수 매칭.</em>
+        </div>
+        <div class="project-link">→ 생명과학·정보·수학 세특 동시 활용</div>
+      </div>
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 02 · 기후 · 통계</div>
+        <div class="project-name">우리 지역 기후-수확량 분석</div>
+        <div class="project-difficulty">난이도: ★★☆ / 기간: 2개월</div>
+        <div class="project-desc">
+          기상청과 농림축산식품부 공공데이터에서 <strong>본인 지역의 5년치 기온·강수량과 농작물 수확량</strong> 다운로드. 산점도·상관분석으로 관계 도출. 파이썬 또는 엑셀로 가능. <em>김연욱·김광수 교수 매칭.</em>
+        </div>
+        <div class="project-link">→ 확률과통계·정보 세특</div>
+      </div>
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 03 · 환경 · 측정</div>
+        <div class="project-name">아두이노 환경 측정 시스템</div>
+        <div class="project-difficulty">난이도: ★★★ / 기간: 1학기</div>
+        <div class="project-desc">
+          아두이노 키트로 <strong>온도·습도·토양수분 센서</strong> 만들기. 실시간 데이터를 기록하고 시각화. 식물 키우기와 결합 시 강력. <em>김학진 교수 매칭. 메이커형(δ) 학생 추천.</em>
+        </div>
+        <div class="project-link">→ 물리·정보·동아리 활동 통합</div>
+      </div>
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 04 · 영상 · AI</div>
+        <div class="project-name">이미지로 식물 종류 분류하기</div>
+        <div class="project-difficulty">난이도: ★★★ / 기간: 2개월</div>
+        <div class="project-desc">
+          Teachable Machine 같은 무료 도구로 <strong>식물 사진을 모아 머신러닝 모델 학습</strong>. 잎 모양으로 식물 분류하기. AI를 어렵게 코딩하지 않고도 체험 가능. <em>김태형·김형석 교수 매칭.</em>
+        </div>
+        <div class="project-link">→ 정보·과학탐구 세특 강력</div>
+      </div>
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 05 · 위성 · 지리</div>
+        <div class="project-name">위성 영상으로 산림 변화 추적</div>
+        <div class="project-difficulty">난이도: ★★☆ / 기간: 1개월</div>
+        <div class="project-desc">
+          Google Earth Engine 또는 무료 위성영상으로 <strong>한국 산림 면적·도시 확장의 시간적 변화</strong> 시각화. 환경·기후·도시화 관점에서 분석. <em>한희·김형석 교수 매칭.</em>
+        </div>
+        <div class="project-link">→ 지구과학·사회 세특</div>
+      </div>
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 06 · 사회 · 정책</div>
+        <div class="project-name">SDGs 기아종식 분석 보고서</div>
+        <div class="project-difficulty">난이도: ★☆☆ / 기간: 1개월</div>
+        <div class="project-desc">
+          UN SDGs 보고서·FAO 통계로 <strong>전세계 식량 불평등 데이터 분석</strong>. 기술로 해결 가능한 영역과 사회적 영역을 구분. <em>최종우 교수 매칭. 학과장 비전과 직결.</em>
+        </div>
+        <div class="project-link">→ 사회·통합사회·진로 활동</div>
+      </div>
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 07 · 세포 · 미래식량</div>
+        <div class="project-name">배양육·대체단백질 탐구</div>
+        <div class="project-difficulty">난이도: ★★☆ / 기간: 1개월</div>
+        <div class="project-desc">
+          배양육 기술·환경 영향·윤리 논쟁을 조사. <strong>세포배양 기술의 원리와 산업적 가능성</strong>을 발표. <em>유경록 교수 매칭. 생명과학 탐구형(β)에 강력.</em>
+        </div>
+        <div class="project-link">→ 생명과학·화학 세특</div>
+      </div>
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 08 · 통계 · 의사결정</div>
+        <div class="project-name">학교 관련 데이터 분석 프로젝트</div>
+        <div class="project-difficulty">난이도: ★★☆ / 기간: 2개월</div>
+        <div class="project-desc">
+          학교 식당 메뉴-잔반 데이터, 도서관 대출 데이터 등 <strong>실제 학교 데이터로 의사결정 제안서</strong> 작성. 농업이 아니어도 데이터적 사고를 보여주는 강력한 사례.
+        </div>
+        <div class="project-link">→ 자율활동·진로활동·통계 세특</div>
+      </div>
+
+      <div class="project-tile">
+        <div class="project-num">PROJECT 09 · 융합 · 종합</div>
+        <div class="project-name">기후-식량 종합 보고서 (고3)</div>
+        <div class="project-difficulty">난이도: ★★★ / 기간: 6개월</div>
+        <div class="project-desc">
+          고1·고2에서 진행한 모든 탐구를 종합하는 <strong>3년 마무리 프로젝트</strong>. "기후위기 시대의 데이터 기반 농업 솔루션" 등 거시 주제로 통합. 학과장의 식량안보·글로벌 비전과 정확히 일치.
+        </div>
+        <div class="project-link">→ 고3 진로활동의 결정판</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 7: 추천 도서 ═══════════════ -->
+  <section class="section" id="books">
+    <div class="section-num">SECTION 07</div>
+    <h2 class="section-title">독서를 <em>세특에 녹이는</em> 법</h2>
+    <p class="section-lead">독서활동상황 자체는 2024학년도부터 대입 미반영입니다. 그러나 책 내용을 <strong>수업 발표·탐구활동·동아리 활동에 녹여 세특에 기록</strong>하면 강력한 무기가 됩니다. 학과·도메인별 추천 도서입니다.</p>
+
+    <div class="book-list">
+      <div class="book-card">
+        <div class="book-icon">데</div>
+        <div>
+          <div class="book-title">데이터 과학자 어떻게 되었을까?</div>
+          <div class="book-author">박민규 외 / 캠퍼스멘토</div>
+          <div class="book-use"><strong>활용:</strong> 진로활동·정보 세특에서 "데이터 사이언티스트의 현실"을 발표할 때.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">스</div>
+        <div>
+          <div class="book-title">스마트 농업: 4차 산업혁명과 농업의 미래</div>
+          <div class="book-author">남재작 / 책넝쿨</div>
+          <div class="book-use"><strong>활용:</strong> 학과 직접 매칭 도서. 진로 발표·자율 탐구의 출발점.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">팩</div>
+        <div>
+          <div class="book-title">팩트풀니스</div>
+          <div class="book-author">한스 로슬링 / 김영사</div>
+          <div class="book-use"><strong>활용:</strong> 데이터로 세상을 보는 사고. 사회·국어·통계 세특 모두 활용 가능.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">기</div>
+        <div>
+          <div class="book-title">기후변화 충격</div>
+          <div class="book-author">국립환경과학원 외 / 다양</div>
+          <div class="book-use"><strong>활용:</strong> 기후스마트농업·환경 도메인 학생 필독. 지구과학·생명과학·사회 활용.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">총</div>
+        <div>
+          <div class="book-title">총, 균, 쇠</div>
+          <div class="book-author">재레드 다이아몬드 / 문학사상</div>
+          <div class="book-use"><strong>활용:</strong> 농업이 인류 문명에 미친 영향. 사회·역사·진로 활동에서 깊이 있는 통찰 제공.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">파</div>
+        <div>
+          <div class="book-title">파이썬으로 데이터 다루기 입문서 (택1)</div>
+          <div class="book-author">다양 출판</div>
+          <div class="book-use"><strong>활용:</strong> 코딩 실력의 자기주도학습 증거. 정보 세특·동아리 활동.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">식</div>
+        <div>
+          <div class="book-title">식량위기 대한민국</div>
+          <div class="book-author">남재작 / 웨일북</div>
+          <div class="book-use"><strong>활용:</strong> 학과장이 강조한 식량안보 주제와 직결. 사회·진로 활동 강력.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">A</div>
+        <div>
+          <div class="book-title">AI 슈퍼파워</div>
+          <div class="book-author">리카이푸 / 이콘</div>
+          <div class="book-use"><strong>활용:</strong> AI 기술의 사회적 영향. 김태형 교수 관심사와 매칭. 진로·사회 세특.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">사</div>
+        <div>
+          <div class="book-title">사피엔스</div>
+          <div class="book-author">유발 하라리 / 김영사</div>
+          <div class="book-use"><strong>활용:</strong> 농업혁명의 인류학적 의미. 사회·역사 세특에서 깊이를 더하는 도서.</div>
+        </div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-icon">미</div>
+        <div>
+          <div class="book-title">미적분의 쓸모</div>
+          <div class="book-author">한화택 / 더퀘스트</div>
+          <div class="book-use"><strong>활용:</strong> 미적분의 실생활 적용. 학과 핵심 권장과목과 직결. 수학 세특에서 활용.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="paradigm-shift">
+      <div class="paradigm-label">▶ 독서 활용의 황금 규칙</div>
+      <div class="paradigm-title">"책을 읽었다"가 아니라 <em>"책으로 무엇을 했다"</em></div>
+      <div class="paradigm-body">
+        <strong>나쁜 활용:</strong> "<em>『스마트 농업』을 읽고 농업의 미래에 관심을 가지게 됨</em>" (한 줄로 끝나면 의미 없음)<br><br>
+        <strong>좋은 활용:</strong> "『스마트 농업』의 'IoT 센서 기반 수경재배' 장을 읽고 <strong>아두이노로 직접 토양 수분 센서를 만드는 동아리 프로젝트를 제안하여 진행</strong>함. 책에서 본 이론이 실제 구현에서 어떤 한계를 만나는지 데이터로 확인한 후, <strong>다음 단계로 머신러닝 기반 예측 시스템에 관심을 확장</strong>함."<br><br>
+        같은 책이라도 <strong>이후 행동·탐구로 연결되어야</strong> 생기부에 기록될 가치가 생깁니다.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SECTION 8: 최종 체크 ═══════════════ -->
+  <section class="section" id="checklist">
+    <div class="section-num">SECTION 08</div>
+    <h2 class="section-title">최종 <em>점검 체크리스트</em></h2>
+    <p class="section-lead">각 학년 말, 또는 학기 말마다 본인의 생기부 출력본을 받아 아래 항목을 점검하세요. 한 항목이라도 체크되지 않으면 다음 학기 전략을 수정해야 합니다.</p>
+
+    <h3 style="font-family:'Bodoni Moda',serif;font-size:22px;font-weight:700;margin:24px 0 14px;color:var(--grade1);">학업역량 점검</h3>
+    <div class="check-grid">
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>미적분을 이수했거나 이수 예정인가?</strong>
+          <span class="check-sub">학과 핵심 권장과목. 학과장이 인터뷰에서 직접 강조한 필수 과목.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>물리·화학·생명·지구과학 중 1과목 이상에서 깊은 탐구 활동이 있는가?</strong>
+          <span class="check-sub">'OR' 권장과목. 본인 도메인에 맞는 과목을 선택해 집중.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>모든 과목의 세특에 본인의 능동적 활동 흔적이 보이는가?</strong>
+          <span class="check-sub">"성실히 참여함" 같은 형식적 문장만 있는 과목이 있다면 위험 신호.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>수학·통계·정보 과목에서 실제 데이터 분석 경험이 기록되었는가?</strong>
+          <span class="check-sub">데이터 사이언스 학과 진학의 가장 기본적 증거.</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Bodoni Moda',serif;font-size:22px;font-weight:700;margin:28px 0 14px;color:var(--rust);">진로역량 점검</h3>
+    <div class="check-grid">
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>본인의 관심 도메인이 1개로 명확히 좁혀져 있는가?</strong>
+          <span class="check-sub">작물·환경·기후·세포·산림·식품 중 일관되게 등장하는 도메인이 있어야 함.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>학년이 올라갈수록 탐구가 깊어지고 정교해지는가?</strong>
+          <span class="check-sub">고1 단순 호기심 → 고2 구체적 탐구 → 고3 종합. 성장 곡선이 보여야 함.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>데이터·분석·정량화의 흔적이 여러 과목에서 일관되게 보이는가?</strong>
+          <span class="check-sub">"감"이 아닌 "수치"로 사고한다는 증거.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>3년간 만들어낸 결과물(보고서·발표·프로젝트)이 있는가?</strong>
+          <span class="check-sub">학과장이 강조한 '개척자·기업가' 인재상의 증거.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>한국을 넘어 글로벌 식량·기후 문제로 시야가 확장된 흔적이 있는가?</strong>
+          <span class="check-sub">학과장이 마지막 메시지로 강조한 인류애적 비전.</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Bodoni Moda',serif;font-size:22px;font-weight:700;margin:28px 0 14px;color:var(--moss);">공동체역량 점검</h3>
+    <div class="check-grid">
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>출결이 깨끗한가?</strong>
+          <span class="check-sub">미인정 결석·지각이 많으면 성실성에서 감점. 무조건 출석은 기본.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>정규동아리 1개에서 지속적·주도적 활동 기록이 있는가?</strong>
+          <span class="check-sub">자율동아리는 미반영. 정규동아리 1개에 깊이 집중.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>학급·동아리·조별과제에서 협업·기여 사례가 있는가?</strong>
+          <span class="check-sub">행동특성 및 종합의견에 구체적 사례가 기록되도록.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>리더십 경험이 1회 이상 있는가? (직위 아님)</strong>
+          <span class="check-sub">회장·부회장이 아니어도, 특정 프로젝트의 리더·기획자 경험이면 충분.</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Bodoni Moda',serif;font-size:22px;font-weight:700;margin:28px 0 14px;color:var(--ink);">전체 일관성 점검</h3>
+    <div class="check-grid">
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>생기부 전체를 처음부터 끝까지 읽었을 때 "한 명의 일관된 사람"이 보이는가?</strong>
+          <span class="check-sub">분절된 활동들의 나열이 아닌, 하나의 서사가 있어야 함.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>특정 과목·활동을 "스마트팜"으로 인위적으로 도배하지 않았는가?</strong>
+          <span class="check-sub">자연스러운 확장이지, 의도적 맞춤은 역효과.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>"데이터로 사고하는 학생"이라는 인상이 생기부 전체에서 드러나는가?</strong>
+          <span class="check-sub">학과의 핵심 정체성이 본인을 통해 증명되어야 함.</span>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <strong>본인이 만든 결과물(발표·보고서·프로젝트)이 시간 순으로 정리되는가?</strong>
+          <span class="check-sub">3년간의 성장이 한눈에 보이는 포트폴리오를 만들어두면 면접에서도 강력.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="footer-title">3년의 <em>모든 순간</em>이<br>당신을 합격으로 이끕니다</div>
+  <p>이 문서는 서울대 공식 평가요소, 학과장 직접 인터뷰, 2024학년도 학종 변경사항, 교수진 연구 분야를 종합 분석한 결과입니다.<br>매 학기 출력본을 점검하며 부족한 부분을 보완하세요. 3년은 길지만, 한 번 지나가면 돌이킬 수 없습니다.</p>
+  <div class="footer-meta">SNU CALS · DEPT. OF SMART SYSTEMS · ADMISSION STRATEGY DOC</div>
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 120;
+      if (window.scrollY >= sectionTop) {
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  });
+
+  // Checkbox toggle
+  document.querySelectorAll('.check-box').forEach(box => {
+    box.addEventListener('click', () => {
+      box.style.background = box.style.background === 'rgb(176, 68, 37)' ? 'transparent' : 'rgb(176, 68, 37)';
+    });
+  });
+</script>
+
+</body>
+</html>
