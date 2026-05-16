@@ -24,6 +24,7 @@ const NAV_LINKS = [
   { href: '/stocks',   label: '증시지수' },
   { href: '/',         label: '할 일' },
   { href: '/photos',   label: '사진' },
+  { href: '/민준입시.html', label: '민준입시' },
 ]
 
 export default function RootLayout({
