@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNU 스마트시스템과학과 — 최신 뉴스 모음</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: #f0f7ff;
+    color: #1a2a3a;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+    color: white;
+    text-align: center;
+    padding: 48px 24px 36px;
+  }
+  .back { display: inline-block; margin-bottom: 16px; font-size: 13px; color: rgba(255,255,255,0.75); text-decoration: none; }
+  .back:hover { color: white; }
+  header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .update-info { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 8px; }
+
+  main { max-width: 720px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #0369a1;
+  }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid #bae6fd;
+    border-top-color: #0369a1;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .spinner.active { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .card-grid { display: flex; flex-direction: column; gap: 10px; }
+
+  .card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: white;
+    border: 1px solid #bae6fd;
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(3,105,161,0.12); transform: translateY(-1px); }
+
+  .card-num {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0ea5e9;
+    width: 22px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .card-body { flex: 1; }
+  .card-title { font-size: 14px; font-weight: 600; color: #1a2a3a; margin-bottom: 4px; line-height: 1.5; }
+  .card-meta { font-size: 11px; color: #94a3b8; }
+
+  .empty { text-align: center; color: #94a3b8; font-size: 14px; padding: 40px 0; }
+
+  .error-box {
+    background: #fff0f0; border: 1px solid #fcc;
+    border-radius: 10px; padding: 14px 18px;
+    font-size: 13px; color: #c00; display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="민준입시.html" class="back">← 민준입시로</a>
+  <h1>📰 SNU 스마트시스템과학과<br>최신 뉴스 모음</h1>
+  <div class="update-info" id="updateInfo">페이지 접속 시 자동으로 최신 뉴스를 가져옵니다.</div>
+</header>
+
+<main>
+  <div class="status-bar">
+    <div class="spinner active" id="spinner"></div>
+    <span id="statusText">뉴스를 검색하는 중...</span>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+  <div class="card-grid" id="newsGrid"></div>
+</main>
+
+<script>
+  async function loadNews() {
+    const spinner  = document.getElementById('spinner')
+    const status   = document.getElementById('statusText')
+    const grid     = document.getElementById('newsGrid')
+    const errorBox = document.getElementById('errorBox')
+    const updateInfo = document.getElementById('updateInfo')
+
+    try {
+      const res  = await fetch('/api/snu-news')
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      const items = data.items || []
+
+      spinner.classList.remove('active')
+
+      if (items.length === 0) {
+        status.textContent = '검색된 뉴스가 없습니다.'
+        grid.innerHTML = '<div class="empty">관련 뉴스를 찾을 수 없습니다.</div>'
+        return
+      }
+
+      const updated = new Date(data.updatedAt).toLocaleString('ko-KR')
+      status.textContent = `${items.length}개 뉴스 업데이트 완료`
+      updateInfo.textContent = `마지막 업데이트: ${updated}`
+
+      grid.innerHTML = items.map((item, i) => `
+        <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="card">
+          <div class="card-num">${i + 1}</div>
+          <div class="card-body">
+            <div class="card-title">${item.title}</div>
+            <div class="card-meta">${item.source ? item.source + ' · ' : ''}${item.pubDate ? new Date(item.pubDate).toLocaleDateString('ko-KR') : ''}</div>
+          </div>
+        </a>
+      `).join('')
+
+    } catch (e) {
+      spinner.classList.remove('active')
+      status.textContent = '뉴스 로드 실패'
+      errorBox.style.display = 'block'
+      errorBox.textContent = '뉴스를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'
+    }
+  }
+
+  loadNews()
+</script>
+
+</body>
+</html>
