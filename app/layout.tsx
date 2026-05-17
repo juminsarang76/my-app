@@ -24,8 +24,10 @@ const NAV_LINKS = [
   { href: '/stocks',   label: '증시지수' },
   { href: '/',         label: '할 일' },
   { href: '/photos',   label: '사진' },
+  { href: '/battery',  label: '배터리' },
   { href: '/민준입시.html', label: '민준입시' },
   { href: '/강의.html',    label: '강의' },
+  { href: '/진주',         label: '진주' },
 ]
 
 export default function RootLayout({
