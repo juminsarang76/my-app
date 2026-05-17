@@ -235,54 +235,79 @@ export default function BatteryPage() {
             </div>
 
             {/* 스텝 타임라인 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 0 }}>
               {DEFS.map((def, idx) => {
                 const isDone    = doneSet.has(def.n)
                 const isError   = errorSet.has(def.n)
                 const isCurrent = def.n === currentN
                 const isPending = !isDone && !isError && !isCurrent
+                const stepData  = steps.find(s => s.step === def.n)
 
-                const circleBg  = isError   ? '#dc2626'
-                                : isDone    ? '#0369a1'
-                                : isCurrent ? '#f59e0b'
-                                : '#e2e8f0'
+                const circleBg    = isError ? '#dc2626' : isDone ? '#0369a1' : isCurrent ? '#f59e0b' : '#e2e8f0'
                 const circleColor = isPending ? '#94a3b8' : 'white'
-
-                const lineFill = isDone || (isCurrent && idx > 0) ? '#0369a1' : '#e2e8f0'
+                const labelColor  = isError ? '#dc2626' : isDone ? '#0369a1' : isCurrent ? '#b45309' : '#94a3b8'
+                const lineFill    = isDone ? '#0369a1' : '#e2e8f0'
 
                 return (
-                  <div key={def.n} style={{ display: 'flex', alignItems: 'center', flex: idx < 5 ? '1' : 'none' }}>
-                    {/* 원형 노드 */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                  <div key={def.n} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
+
+                    {/* 원 + 연결선 행 */}
+                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 8 }}>
+                      {/* 왼쪽 연결선 */}
+                      {idx > 0 && (
+                        <div style={{ flex: 1, height: 3, borderRadius: 2, background: doneSet.has(def.n - 1) ? '#0369a1' : '#e2e8f0', transition: 'background 0.4s' }} />
+                      )}
+                      {/* 원 */}
                       <div style={{
-                        width: 44, height: 44, borderRadius: '50%',
-                        background: circleBg,
+                        width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+                        background: circleBg, color: circleColor,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: isDone || isError ? 18 : 20,
-                        color: circleColor,
-                        fontWeight: 700,
+                        fontSize: isDone || isError ? 18 : 20, fontWeight: 700,
                         transition: 'background 0.3s',
                         animation: isCurrent ? 'pulse-ring 1.4s ease-out infinite' : 'none',
-                        position: 'relative',
                       }}>
-                        {isError   ? '✗'
-                          : isDone ? '✓'
-                          : isCurrent
-                            ? <span style={{ display: 'inline-block', animation: 'spin-step 1s linear infinite' }}>⟳</span>
-                            : def.icon}
+                        {isError ? '✗' : isDone ? '✓'
+                          : isCurrent ? <span style={{ display: 'inline-block', animation: 'spin-step 1s linear infinite' }}>⟳</span>
+                          : def.icon}
                       </div>
-                      <span style={{
-                        fontSize: 10, marginTop: 6, textAlign: 'center', maxWidth: 64,
-                        color: isError ? '#dc2626' : isDone ? '#0369a1' : isCurrent ? '#f59e0b' : '#94a3b8',
-                        fontWeight: isCurrent ? 700 : 500,
-                        lineHeight: 1.3,
-                      }}>{def.label}</span>
+                      {/* 오른쪽 연결선 */}
+                      {idx < 5 && (
+                        <div style={{ flex: 1, height: 3, borderRadius: 2, background: lineFill, transition: 'background 0.4s' }} />
+                      )}
                     </div>
 
-                    {/* 연결선 */}
-                    {idx < 5 && (
-                      <div style={{ flex: 1, height: 3, margin: '0 4px', marginBottom: 20, borderRadius: 2,
-                        background: lineFill, transition: 'background 0.4s' }} />
+                    {/* 레이블 */}
+                    <span style={{ fontSize: 11, fontWeight: 700, color: labelColor, textAlign: 'center', marginBottom: 6 }}>
+                      {def.label}
+                    </span>
+
+                    {/* 진행 방법 */}
+                    {(isDone || isError) && stepData?.request && (
+                      <div style={{
+                        fontSize: 9, color: '#64748b', textAlign: 'center',
+                        lineHeight: 1.4, padding: '0 2px', marginBottom: 4,
+                        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                      }}>
+                        {stepData.request}
+                      </div>
+                    )}
+                    {isCurrent && (
+                      <div style={{ fontSize: 9, color: '#f59e0b', textAlign: 'center', lineHeight: 1.4 }}>
+                        처리 중…
+                      </div>
+                    )}
+
+                    {/* 결과 */}
+                    {(isDone || isError) && stepData?.received && (
+                      <div style={{
+                        fontSize: 9, textAlign: 'center', lineHeight: 1.4, padding: '3px 4px',
+                        background: isError ? '#fef2f2' : '#eff8ff',
+                        border: `1px solid ${isError ? '#fecaca' : '#bae6fd'}`,
+                        borderRadius: 6, color: isError ? '#dc2626' : '#0369a1',
+                        display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                      }}>
+                        {stepData.received}
+                      </div>
                     )}
                   </div>
                 )
