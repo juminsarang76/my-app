@@ -234,8 +234,8 @@ export default function BatteryPage() {
               )}
             </div>
 
-            {/* 스텝 타임라인 */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 0 }}>
+            {/* 스텝 타임라인 — vertical */}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               {DEFS.map((def, idx) => {
                 const isDone    = doneSet.has(def.n)
                 const isError   = errorSet.has(def.n)
@@ -246,69 +246,72 @@ export default function BatteryPage() {
                 const circleBg    = isError ? '#dc2626' : isDone ? '#0369a1' : isCurrent ? '#f59e0b' : '#e2e8f0'
                 const circleColor = isPending ? '#94a3b8' : 'white'
                 const labelColor  = isError ? '#dc2626' : isDone ? '#0369a1' : isCurrent ? '#b45309' : '#94a3b8'
-                const lineFill    = isDone ? '#0369a1' : '#e2e8f0'
 
                 return (
-                  <div key={def.n} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
+                  <div key={def.n} style={{ display: 'flex', gap: 0 }}>
 
-                    {/* 원 + 연결선 행 */}
-                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 8 }}>
-                      {/* 왼쪽 연결선 */}
-                      {idx > 0 && (
-                        <div style={{ flex: 1, height: 3, borderRadius: 2, background: doneSet.has(def.n - 1) ? '#0369a1' : '#e2e8f0', transition: 'background 0.4s' }} />
-                      )}
+                    {/* 왼쪽: 원 + 수직 연결선 */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 44 }}>
                       {/* 원 */}
                       <div style={{
-                        width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+                        width: 44, height: 44, borderRadius: '50%',
                         background: circleBg, color: circleColor,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: isDone || isError ? 18 : 20, fontWeight: 700,
+                        fontSize: isDone || isError ? 20 : 22, fontWeight: 700,
+                        flexShrink: 0,
                         transition: 'background 0.3s',
                         animation: isCurrent ? 'pulse-ring 1.4s ease-out infinite' : 'none',
                       }}>
                         {isError ? '✗' : isDone ? '✓'
-                          : isCurrent ? <span style={{ display: 'inline-block', animation: 'spin-step 1s linear infinite' }}>⟳</span>
-                          : def.icon}
+                          : isCurrent
+                            ? <span style={{ display: 'inline-block', animation: 'spin-step 1s linear infinite' }}>⟳</span>
+                            : def.icon}
                       </div>
-                      {/* 오른쪽 연결선 */}
+                      {/* 수직 연결선 */}
                       {idx < 5 && (
-                        <div style={{ flex: 1, height: 3, borderRadius: 2, background: lineFill, transition: 'background 0.4s' }} />
+                        <div style={{
+                          width: 3, flex: 1, minHeight: 16,
+                          background: isDone ? '#0369a1' : '#e2e8f0',
+                          borderRadius: 2, transition: 'background 0.4s',
+                        }} />
                       )}
                     </div>
 
-                    {/* 레이블 */}
-                    <span style={{ fontSize: 11, fontWeight: 700, color: labelColor, textAlign: 'center', marginBottom: 6 }}>
-                      {def.label}
-                    </span>
+                    {/* 오른쪽: 정보 */}
+                    <div style={{ flex: 1, paddingLeft: 16, paddingBottom: idx < 5 ? 20 : 0, paddingTop: 2, minWidth: 0 }}>
+                      {/* 레이블 */}
+                      <div style={{ fontSize: 13, fontWeight: 700, color: labelColor, marginBottom: 6, lineHeight: 1.3 }}>
+                        {def.label}
+                        {isCurrent && (
+                          <span style={{ marginLeft: 8, fontSize: 11, color: '#f59e0b', fontWeight: 500 }}>처리 중…</span>
+                        )}
+                      </div>
 
-                    {/* 진행 방법 */}
-                    {(isDone || isError) && stepData?.request && (
-                      <div style={{
-                        fontSize: 9, color: '#64748b', textAlign: 'center',
-                        lineHeight: 1.4, padding: '0 2px', marginBottom: 4,
-                        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                      }}>
-                        {stepData.request}
-                      </div>
-                    )}
-                    {isCurrent && (
-                      <div style={{ fontSize: 9, color: '#f59e0b', textAlign: 'center', lineHeight: 1.4 }}>
-                        처리 중…
-                      </div>
-                    )}
+                      {/* 진행 방법 */}
+                      {(isDone || isError) && stepData?.request && (
+                        <div style={{
+                          fontSize: 11, color: '#64748b', lineHeight: 1.55,
+                          marginBottom: 6,
+                        }}>
+                          {stepData.request}
+                        </div>
+                      )}
 
-                    {/* 결과 */}
-                    {(isDone || isError) && stepData?.received && (
-                      <div style={{
-                        fontSize: 9, textAlign: 'center', lineHeight: 1.4, padding: '3px 4px',
-                        background: isError ? '#fef2f2' : '#eff8ff',
-                        border: `1px solid ${isError ? '#fecaca' : '#bae6fd'}`,
-                        borderRadius: 6, color: isError ? '#dc2626' : '#0369a1',
-                        display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                      }}>
-                        {stepData.received}
-                      </div>
-                    )}
+                      {/* 결과 */}
+                      {(isDone || isError) && stepData?.received && (
+                        <div style={{
+                          fontSize: 11, lineHeight: 1.55,
+                          padding: '7px 12px',
+                          background: isError ? '#fef2f2' : '#eff8ff',
+                          border: `1px solid ${isError ? '#fecaca' : '#bae6fd'}`,
+                          borderRadius: 8,
+                          color: isError ? '#dc2626' : '#0369a1',
+                        }}>
+                          {stepData.received}
+                        </div>
+                      )}
+                    </div>
+
                   </div>
                 )
               })}
