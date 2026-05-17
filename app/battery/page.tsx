@@ -434,7 +434,7 @@ export default function BatteryPage() {
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={rainHist} margin={{ top: 20, right: 4, bottom: 0, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                  <XAxis dataKey="x" tick={{ fontSize: 8 }} interval={2} />
+                  <XAxis dataKey="x" tick={{ fontSize: 8 }} interval={0} />
                   <YAxis tick={{ fontSize: 8 }} />
                   <Tooltip formatter={(v:number,_,p) => [`${v}일 (${p.payload.pct}%)`, '강수']} />
                   <Bar dataKey="y" name="강수일수" fill="#1d4ed8">
