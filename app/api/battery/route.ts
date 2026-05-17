@@ -2,9 +2,6 @@ import { NextResponse } from 'next/server'
 import type { StepDetail, TrainingInfo, TrainingSample, LossCurve, WeightSet } from '../../battery/types'
 
 // ── 상수 ──────────────────────────────────────────────────
-const KMA_API_KEY      = process.env.KMA_API_KEY ?? ''
-const NX               = 64
-const NY               = 119
 const LATITUDE         = 37.24
 const LONGITUDE        = 127.18
 const REF_W_TEMP       = 0.5
@@ -160,63 +157,35 @@ function toWeightSet(w: number[]): WeightSet {
 export async function GET() {
   const steps: StepDetail[] = []
 
-  // ── Step 1: 현재 날씨 API 연결 ────────────────────────
+  // ── Step 1: 현재 날씨 — Open-Meteo (API 키 불필요) ───
   const { base_date: ud, base_time: ut } = getUltraSrtBaseTime()
-  let currentRaw: Record<string, string> = {}
-  let weatherError: string | null = null
+  let curTemp = 20, curHumidity = 60, curRainfall = 0
 
   try {
-    const p   = new URLSearchParams({
-      serviceKey: KMA_API_KEY, numOfRows: '10', pageNo: '1',
-      dataType: 'JSON', base_date: ud, base_time: ut,
-      nx: String(NX), ny: String(NY),
+    const p = new URLSearchParams({
+      latitude: String(LATITUDE), longitude: String(LONGITUDE),
+      current: 'temperature_2m,relative_humidity_2m,precipitation',
+      timezone: 'Asia/Seoul',
     })
-    const res = await fetch(
-      `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?${p}`,
-      { next: { revalidate: 0 } }
-    )
-    if (!res.ok) {
-      weatherError = `HTTP ${res.status}`
-      steps.push({ step: 1, label: '현재 날씨 API 연결', status: 'error', message: weatherError,
-        request: '기상청 초단기실황(getUltraSrtNcst) 호출', received: `오류 — HTTP ${res.status}`,
-        functions: ['fetch()'], method: 'HTTP GET + 상태코드 확인',
-        constants: [`NX=${NX}`, `NY=${NY}`, `base_date=${ud}`, `base_time=${ut}`] })
-    } else {
-      const json = await res.json()
-      const code: string = json?.response?.header?.resultCode ?? '99'
-      const msg:  string = json?.response?.header?.resultMsg  ?? '알 수 없는 오류'
-      if (code !== '00') {
-        weatherError = `[${code}] ${msg}`
-        steps.push({ step: 1, label: '현재 날씨 API 연결', status: 'error', message: weatherError,
-          request: '기상청 초단기실황 API 연결', received: `API 오류 — 코드 ${code}: ${msg}`,
-          functions: ['fetch()', 'response.json()'], method: 'HTTP GET + resultCode 확인',
-          constants: [`NX=${NX}`, `NY=${NY}`] })
-      } else {
-        const items: { category: string; obsrValue: string }[] = json?.response?.body?.items?.item ?? []
-        items.forEach(({ category, obsrValue }) => { currentRaw[category] = obsrValue })
-        const t = parseFloat(currentRaw['T1H'] ?? 'NaN')
-        const h = parseFloat(currentRaw['REH'] ?? 'NaN')
-        const r = parseFloat(currentRaw['RN1'] ?? 'NaN')
-        steps.push({ step: 1, label: '현재 날씨 API 연결 + 수신', status: 'ok',
-          request: '기상청 초단기실황(getUltraSrtNcst) 호출',
-          received: `HTTP 200 OK — 기온 ${t}°C / 습도 ${h}% / 강수량 ${r}mm`,
-          functions: ['fetch()', 'response.json()', 'parseFloat()'],
-          method: 'HTTP GET + resultCode 확인 + T1H·REH·RN1 카테고리 매핑',
-          constants: [`NX=${NX}`, `NY=${NY}`, `base_date=${ud}`, `base_time=${ut}`, 'T1H·REH·RN1'] })
-      }
-    }
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?${p}`, { next: { revalidate: 0 } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const json = await res.json()
+    curTemp     = json.current?.temperature_2m        ?? 20
+    curHumidity = json.current?.relative_humidity_2m  ?? 60
+    curRainfall = json.current?.precipitation         ?? 0
+    steps.push({ step: 1, label: '현재 날씨 수신', status: 'ok',
+      request: `Open-Meteo Forecast API — 위도 ${LATITUDE}, 경도 ${LONGITUDE}`,
+      received: `기온 ${curTemp}°C / 습도 ${curHumidity}% / 강수량 ${curRainfall}mm`,
+      functions: ['fetch()', 'response.json()'],
+      method: 'HTTP GET — current: temperature_2m, relative_humidity_2m, precipitation',
+      constants: [`위도=${LATITUDE}`, `경도=${LONGITUDE}`, `base_date=${ud}`, `base_time=${ut}`] })
   } catch (e) {
-    weatherError = e instanceof Error ? e.message : '연결 실패'
-    steps.push({ step: 1, label: '현재 날씨 API 연결', status: 'error', message: weatherError,
-      request: '기상청 초단기실황 API 연결', received: `네트워크 오류 — ${weatherError}`,
-      functions: ['fetch()'], method: 'HTTP GET', constants: [`NX=${NX}`, `NY=${NY}`] })
+    const msg = e instanceof Error ? e.message : '연결 실패'
+    steps.push({ step: 1, label: '현재 날씨 수신', status: 'error', message: msg,
+      request: 'Open-Meteo Forecast API', received: `오류 — ${msg}`,
+      functions: ['fetch()'], method: 'HTTP GET', constants: [] })
+    return NextResponse.json({ steps, error: msg }, { status: 502 })
   }
-
-  if (weatherError) return NextResponse.json({ steps, error: weatherError }, { status: 502 })
-
-  const curTemp     = parseFloat(currentRaw['T1H'] ?? 'NaN')
-  const curHumidity = parseFloat(currentRaw['REH'] ?? 'NaN')
-  const curRainfall = parseFloat(currentRaw['RN1'] ?? 'NaN')
 
   // ── Step 2: 2024년 Training Set 수집 ─────────────────
   let trainX: number[][] = [], trainY: number[] = [], trainDates: string[] = []
