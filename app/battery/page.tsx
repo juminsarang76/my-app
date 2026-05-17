@@ -422,15 +422,7 @@ export default function BatteryPage() {
             </Card>
 
             <Card>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                <ChartTitle>강수량 분포 (강수일만)</ChartTitle>
-                <span style={{
-                  fontSize: 11, background: '#eff6ff', border: '1px solid #bfdbfe',
-                  borderRadius: 6, padding: '2px 10px', color: '#1e40af', fontWeight: 600,
-                }}>
-                  0 강수일 {rainZeroDays}일 ({rainZeroPct}%)
-                </span>
-              </div>
+              <ChartTitle>강수량 분포 (강수일만)</ChartTitle>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={rainHist} margin={{ top: 20, right: 4, bottom: 0, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
