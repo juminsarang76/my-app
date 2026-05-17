@@ -6,7 +6,7 @@ import {
   LineChart, Line, BarChart, Bar,
   ScatterChart, Scatter, ZAxis,
   XAxis, YAxis, CartesianGrid,
-  Tooltip, ReferenceLine, ResponsiveContainer, Legend, Cell,
+  Tooltip, ReferenceLine, ResponsiveContainer, Legend, Cell, LabelList,
 } from 'recharts'
 import type { ApiResult, StepDetail } from './types'
 
@@ -134,8 +134,31 @@ export default function BatteryPage() {
   useEffect(() => { load() }, [])
 
   // ── 차트 데이터 사전 계산 ─────────────────────────────
-  const tempHist     = data ? histogram(data.trainSamples.map(s => s.temp), 20) : []
-  const rainHist     = data ? histogram(data.trainSamples.filter(s => s.rainfall > 0).map(s => s.rainfall), 15) : []
+  // 기온 분포: 1°C 단위 빈
+  const tempHist = data ? (() => {
+    const total = data.trainSamples.length
+    const bins: Record<number, number> = {}
+    data.trainSamples.forEach(s => {
+      const b = Math.floor(s.temp)
+      bins[b] = (bins[b] || 0) + 1
+    })
+    const minB = -20, maxB = 45
+    return Array.from({ length: maxB - minB + 1 }, (_, i) => {
+      const t = minB + i
+      const y = bins[t] || 0
+      return { x: String(t), y, pct: total > 0 ? +((y / total) * 100).toFixed(1) : 0 }
+    })
+  })() : []
+
+  const rainTotal = data?.trainSamples.length ?? 0
+  const rainZeroDays = data ? data.trainSamples.filter(s => s.rainfall === 0).length : 0
+  const rainZeroPct  = rainTotal > 0 ? +((rainZeroDays / rainTotal) * 100).toFixed(1) : 0
+  const rainHist = data ? (() => {
+    const rainy = data.trainSamples.filter(s => s.rainfall > 0)
+    return histogram(rainy.map(s => s.rainfall), 15).map(b => ({
+      ...b, pct: rainTotal > 0 ? +((b.y / rainTotal) * 100).toFixed(1) : 0,
+    }))
+  })() : []
   const tempScatter  = data ? data.trainSamples.filter((_,i) => i%2===0).map(s => ({ x: s.temp, y: s.label, z: s.humidity })) : []
   const trainScat    = data ? data.trainSamples.filter((_,i) => i%3===0).map(s => ({ x: s.temp, y: s.label })) : []
   const testScat     = data ? data.testSamples.filter((_,i)  => i%3===0).map(s => ({ x: s.temp, y: s.label })) : []
@@ -379,25 +402,49 @@ export default function BatteryPage() {
           {/* 분포 차트 3열 */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12, marginBottom: 12 }}>
             <Card>
-              <ChartTitle>기온 분포</ChartTitle>
-              <ResponsiveContainer width="100%" height={160}>
-                <BarChart data={tempHist} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+              <ChartTitle>기온 분포 (1°C 단위)</ChartTitle>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={tempHist} margin={{ top: 20, right: 4, bottom: 0, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                   <XAxis dataKey="x" tick={{ fontSize: 8 }} interval={4} />
                   <YAxis tick={{ fontSize: 8 }} />
-                  <Tooltip formatter={(v:number) => [v, '일수']} />
-                  <Bar dataKey="y" name="일수" fill="#ef4444" opacity={0.8} />
+                  <Tooltip formatter={(v:number,_,p) => [`${v}일 (${p.payload.pct}%)`, '기온']} />
+                  <Bar dataKey="y" name="일수" fill="#b91c1c">
+                    <LabelList
+                      dataKey="pct"
+                      position="top"
+                      style={{ fontSize: 7, fill: '#7f1d1d' }}
+                      formatter={(v:number) => v >= 1 ? `${v}%` : ''}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </Card>
 
             <Card>
-              <ChartTitle>강수량 분포 (강수일만)</ChartTitle>
-              <ResponsiveContainer width="100%" height={160}>
-                <BarChart data={rainHist} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
-                  <XAxis dataKey="x" tick={{ fontSize: 8 }} interval={3} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <ChartTitle>강수량 분포 (강수일만)</ChartTitle>
+                <span style={{
+                  fontSize: 11, background: '#eff6ff', border: '1px solid #bfdbfe',
+                  borderRadius: 6, padding: '2px 10px', color: '#1e40af', fontWeight: 600,
+                }}>
+                  무강수일 {rainZeroDays}일 ({rainZeroPct}%)
+                </span>
+              </div>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={rainHist} margin={{ top: 20, right: 4, bottom: 0, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="x" tick={{ fontSize: 8 }} interval={2} />
                   <YAxis tick={{ fontSize: 8 }} />
-                  <Tooltip formatter={(v:number) => [v, '일수']} />
-                  <Bar dataKey="y" name="일수" fill="#3b82f6" opacity={0.8} />
+                  <Tooltip formatter={(v:number,_,p) => [`${v}일 (${p.payload.pct}%)`, '강수']} />
+                  <Bar dataKey="y" name="강수일수" fill="#1d4ed8">
+                    <LabelList
+                      dataKey="pct"
+                      position="top"
+                      style={{ fontSize: 7, fill: '#1e3a8a' }}
+                      formatter={(v:number) => v >= 0.5 ? `${v}%` : ''}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </Card>
