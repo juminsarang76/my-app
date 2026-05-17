@@ -255,17 +255,29 @@ export default function BatteryPage() {
                       {/* 원 */}
                       <div style={{
                         width: 44, height: 44, borderRadius: '50%',
-                        background: circleBg, color: circleColor,
+                        background: circleBg,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: isDone || isError ? 20 : 22, fontWeight: 700,
-                        flexShrink: 0,
+                        fontSize: 22, flexShrink: 0, position: 'relative',
                         transition: 'background 0.3s',
                         animation: isCurrent ? 'pulse-ring 1.4s ease-out infinite' : 'none',
                       }}>
-                        {isError ? '✗' : isDone ? '✓'
-                          : isCurrent
-                            ? <span style={{ display: 'inline-block', animation: 'spin-step 1s linear infinite' }}>⟳</span>
-                            : def.icon}
+                        {/* 항상 표시되는 아이콘 */}
+                        <span>{def.icon}</span>
+                        {/* 상태 배지 (우측 하단 오버레이) */}
+                        {(isDone || isError || isCurrent) && (
+                          <span style={{
+                            position: 'absolute', bottom: -2, right: -2,
+                            width: 18, height: 18, borderRadius: '50%',
+                            background: isError ? '#dc2626' : isCurrent ? '#f59e0b' : '#16a34a',
+                            border: '2px solid white',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 9, color: 'white', fontWeight: 800, lineHeight: 1,
+                          }}>
+                            {isError ? '✗' : isCurrent
+                              ? <span style={{ display: 'inline-block', animation: 'spin-step 1s linear infinite' }}>⟳</span>
+                              : '✓'}
+                          </span>
+                        )}
                       </div>
                       {/* 수직 연결선 */}
                       {idx < 5 && (
