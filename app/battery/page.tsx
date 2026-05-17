@@ -423,20 +423,38 @@ export default function BatteryPage() {
           <Card>
             <ChartTitle>일별 날씨 추이</ChartTitle>
             {(['temp','humidity','rainfall'] as const).map((key, idx) => {
-              const colors  = ['#ef4444','#0369a1','#6366f1']
+              const colors  = ['#b91c1c','#1d4ed8','#4338ca']
               const ylabels = ['기온 (°C)','습도 (%)','강수 (mm)']
-              const domains: [number|string,number|string][] = [['auto','auto'],[0,105],['auto','auto']]
+              const humMin  = idx === 1 ? Math.floor(Math.min(...data.trainSamples.map(s=>s.humidity)) / 5) * 5 : 0
+              const domains: [number|string,number|string][] = [
+                [-20, 45],
+                [humMin, 105],
+                ['auto','auto'],
+              ]
+              // x축: 연도만, 매년 1월1일 근처 데이터 포인트 간격
+              const yearInterval = Math.floor(data.trainSamples.length / 15)
               return (
-                <div key={key} style={{ marginBottom: idx < 2 ? 2 : 0 }}>
+                <div key={key} style={{ marginBottom: idx < 2 ? 8 : 0 }}>
                   <p style={{ fontSize: 10, color: '#94a3b8', margin: '4px 0 1px' }}>{ylabels[idx]}</p>
                   <ResponsiveContainer width="100%" height={144}>
-                    <BarChart data={data.trainSamples} syncId="timeseries" margin={{ top: 2, right: 8, bottom: 0, left: 32 }}>
-                      <CartesianGrid strokeDasharray="2 2" stroke="#f1f5f9" />
-                      <XAxis dataKey="date" hide={idx < 2}
-                        tickFormatter={(v:string) => v.slice(5,7)+'월'} interval={29} tick={{ fontSize: 8 }} />
-                      <YAxis domain={domains[idx]} tick={{ fontSize: 8 }} width={28} />
+                    <BarChart data={data.trainSamples} syncId="timeseries" margin={{ top: 2, right: 8, bottom: idx === 2 ? 16 : 2, left: 8 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        hide={idx < 2}
+                        tickFormatter={(v:string) => v.slice(0,4)}
+                        interval={yearInterval}
+                        tick={{ fontSize: 9 }}
+                      />
+                      <YAxis
+                        domain={domains[idx]}
+                        tick={{ fontSize: 9 }}
+                        width={36}
+                        tickLine={false}
+                        axisLine={false}
+                      />
                       <Tooltip labelFormatter={l => String(l)} formatter={(v:number) => [`${v}`, ylabels[idx]]} />
-                      <Bar dataKey={key} fill={colors[idx]} opacity={0.8} maxBarSize={4} isAnimationActive={false} />
+                      <Bar dataKey={key} fill={colors[idx]} maxBarSize={3} isAnimationActive={false} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
