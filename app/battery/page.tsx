@@ -191,20 +191,119 @@ export default function BatteryPage() {
         }}>{loading ? '조회 중…' : '새로고침'}</button>
       </div>
 
-      {/* ══ 진행 단계 ═══════════════════════════════════ */}
-      <div style={{ marginBottom: 32 }}>
-        <SectionTitle title="진행 단계" />
-        {steps.map(s => <StepCard key={s.step} step={s} />)}
-        {loading && steps.length < 6 && (
-          <div style={{ padding: '10px 14px', borderRadius: 10, background: '#f8fafc',
-            border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ width: 24, height: 24, borderRadius: '50%', background: '#cbd5e1',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: 'white' }}>
-              {steps.length + 1}
-            </span>
-            <span style={{ fontSize: 13, color: '#94a3b8' }}>처리 중…</span>
+      {/* ══ 진행 단계 — 동적 프로그레스 바 ════════════ */}
+      {(() => {
+        const DEFS = [
+          { n: 1, icon: '⛅', label: '날씨 수신' },
+          { n: 2, icon: '📊', label: '데이터 수집' },
+          { n: 3, icon: '🧮', label: '가중치 학습' },
+          { n: 4, icon: '🔬', label: '모델 검증' },
+          { n: 5, icon: '🎯', label: '효율 예측' },
+          { n: 6, icon: '⚡', label: '충전 방식' },
+        ]
+        const doneSet  = new Set(steps.filter(s => s.status === 'ok').map(s => s.step))
+        const errorSet = new Set(steps.filter(s => s.status === 'error').map(s => s.step))
+        const currentN = loading ? steps.length + 1 : null
+        const allDone  = !loading && steps.length === 6
+
+        return (
+          <div style={{
+            background: allDone ? '#f0fdf4' : '#f8fafc',
+            border: `1px solid ${allDone ? '#86efac' : '#e2e8f0'}`,
+            borderRadius: 16, padding: '20px 24px', marginBottom: 32,
+            transition: 'background 0.4s, border-color 0.4s',
+          }}>
+            <style>{`
+              @keyframes pulse-ring {
+                0%   { box-shadow: 0 0 0 0 rgba(3,105,161,0.5); }
+                70%  { box-shadow: 0 0 0 8px rgba(3,105,161,0); }
+                100% { box-shadow: 0 0 0 0 rgba(3,105,161,0); }
+              }
+              @keyframes spin-step { to { transform: rotate(360deg) } }
+            `}</style>
+
+            {/* 헤더 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#475569' }}>
+                {loading ? `처리 중… (${steps.length}/6단계)` : allDone ? '✅ 모든 단계 완료' : '대기 중'}
+              </span>
+              {loading && (
+                <span style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>
+                  {DEFS[steps.length]?.label} 진행 중
+                </span>
+              )}
+            </div>
+
+            {/* 스텝 타임라인 */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+              {DEFS.map((def, idx) => {
+                const isDone    = doneSet.has(def.n)
+                const isError   = errorSet.has(def.n)
+                const isCurrent = def.n === currentN
+                const isPending = !isDone && !isError && !isCurrent
+
+                const circleBg  = isError   ? '#dc2626'
+                                : isDone    ? '#0369a1'
+                                : isCurrent ? '#f59e0b'
+                                : '#e2e8f0'
+                const circleColor = isPending ? '#94a3b8' : 'white'
+
+                const lineFill = isDone || (isCurrent && idx > 0) ? '#0369a1' : '#e2e8f0'
+
+                return (
+                  <div key={def.n} style={{ display: 'flex', alignItems: 'center', flex: idx < 5 ? '1' : 'none' }}>
+                    {/* 원형 노드 */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                      <div style={{
+                        width: 44, height: 44, borderRadius: '50%',
+                        background: circleBg,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: isDone || isError ? 18 : 20,
+                        color: circleColor,
+                        fontWeight: 700,
+                        transition: 'background 0.3s',
+                        animation: isCurrent ? 'pulse-ring 1.4s ease-out infinite' : 'none',
+                        position: 'relative',
+                      }}>
+                        {isError   ? '✗'
+                          : isDone ? '✓'
+                          : isCurrent
+                            ? <span style={{ display: 'inline-block', animation: 'spin-step 1s linear infinite' }}>⟳</span>
+                            : def.icon}
+                      </div>
+                      <span style={{
+                        fontSize: 10, marginTop: 6, textAlign: 'center', maxWidth: 64,
+                        color: isError ? '#dc2626' : isDone ? '#0369a1' : isCurrent ? '#f59e0b' : '#94a3b8',
+                        fontWeight: isCurrent ? 700 : 500,
+                        lineHeight: 1.3,
+                      }}>{def.label}</span>
+                    </div>
+
+                    {/* 연결선 */}
+                    {idx < 5 && (
+                      <div style={{ flex: 1, height: 3, margin: '0 4px', marginBottom: 20, borderRadius: 2,
+                        background: lineFill, transition: 'background 0.4s' }} />
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* 에러 메시지 */}
+            {steps.some(s => s.status === 'error') && (
+              <div style={{ marginTop: 14, padding: '8px 14px', background: '#fef2f2',
+                border: '1px solid #fecaca', borderRadius: 8, fontSize: 12, color: '#dc2626' }}>
+                {steps.find(s => s.status === 'error')?.message}
+              </div>
+            )}
           </div>
-        )}
+        )
+      })()}
+
+      {/* ══ 상세 단계 카드 (기존) ════════════════════════ */}
+      <div style={{ marginBottom: 32 }}>
+        <SectionTitle title="단계별 상세" />
+        {steps.map(s => <StepCard key={s.step} step={s} />)}
       </div>
 
       {data && !data.error && (<>
