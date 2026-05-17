@@ -428,7 +428,7 @@ export default function BatteryPage() {
                   fontSize: 11, background: '#eff6ff', border: '1px solid #bfdbfe',
                   borderRadius: 6, padding: '2px 10px', color: '#1e40af', fontWeight: 600,
                 }}>
-                  무강수일 {rainZeroDays}일 ({rainZeroPct}%)
+                  0 강수일 {rainZeroDays}일 ({rainZeroPct}%)
                 </span>
               </div>
               <ResponsiveContainer width="100%" height={200}>
