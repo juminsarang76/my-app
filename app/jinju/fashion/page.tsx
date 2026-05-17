@@ -11,10 +11,7 @@ const PROFILE = [
   { label: '체형', value: '마른 편' },
 ]
 
-const SOURCE_LINKS: Record<string, string> = {
-  '에이블리': 'https://m.a-bly.com/search?q=',
-  '무신사': 'https://www.musinsa.com/search/musinsa/goods?q=',
-}
+const NAVER_SEARCH = 'https://search.shopping.naver.com/search/all?query='
 
 type FashionItem = {
   아이템: string
@@ -36,6 +33,7 @@ type ApiResult = {
   summary: string
   categories: Category[]
   provider?: string
+  replaced?: number
   generatedAt: string
   cached?: boolean
   error?: string
@@ -66,13 +64,20 @@ function FashionImage({ src, alt, width, height, style }: {
 export default function FashionPage() {
   const [data, setData] = useState<ApiResult | null>(null)
   const [loading, setLoading] = useState(false)
+  const [loadStep, setLoadStep] = useState(0)
   const [error, setError] = useState('')
   const [hasSearched, setHasSearched] = useState(false)
 
   const fetch조사 = useCallback(async () => {
     setLoading(true)
+    setLoadStep(1)
     setError('')
     setData(null)
+
+    // 단계별 메시지 타이머 (서버 처리 시간 근사치)
+    const t1 = setTimeout(() => setLoadStep(2), 7000)   // ~7s: 검증 단계
+    const t2 = setTimeout(() => setLoadStep(3), 14000)  // ~14s: 이미지 검색
+
     try {
       const res = await fetch('/api/fashion')
       const json = await res.json()
@@ -82,7 +87,10 @@ export default function FashionPage() {
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : '조사 실패')
     } finally {
+      clearTimeout(t1)
+      clearTimeout(t2)
       setLoading(false)
+      setLoadStep(0)
     }
   }, [])
 
@@ -141,11 +149,37 @@ export default function FashionPage() {
 
       {/* 로딩 */}
       {loading && (
-        <div style={{ textAlign: 'center', padding: '80px 0', color: '#64748b' }}>
+        <div style={{ textAlign: 'center', padding: '60px 0', color: '#64748b' }}>
           <div style={{ fontSize: 36, marginBottom: 16, display: 'inline-block', animation: 'spin2 1s linear infinite' }}>👗</div>
-          <p style={{ fontSize: 15 }}>에이블리 · 무신사 트렌드 조사 중…</p>
-          <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6 }}>AI가 최신 패션을 분석하고 있어요</p>
           <style>{`@keyframes spin2 { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }`}</style>
+
+          {/* 단계 표시 */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
+            {[
+              { n: 1, label: '아이템 생성' },
+              { n: 2, label: '적합성 검토' },
+              { n: 3, label: '이미지 검색' },
+            ].map(({ n, label }) => (
+              <div key={n} style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '5px 12px', borderRadius: 20,
+                background: loadStep === n ? '#0369A1' : loadStep > n ? '#d1fae5' : '#f1f5f9',
+                color: loadStep === n ? 'white' : loadStep > n ? '#065f46' : '#94a3b8',
+                fontSize: 12, fontWeight: loadStep === n ? 700 : 400,
+                transition: 'all 0.3s',
+              }}>
+                <span style={{ fontWeight: 700 }}>{loadStep > n ? '✓' : n}</span>
+                {label}
+                {loadStep === n && <span style={{ animation: 'spin2 1s linear infinite', display: 'inline-block', fontSize: 10 }}>⟳</span>}
+              </div>
+            ))}
+          </div>
+
+          <p style={{ fontSize: 14, fontWeight: 600, color: '#0369A1' }}>
+            {loadStep === 1 && 'AI가 패션 아이템을 생성하고 있어요'}
+            {loadStep === 2 && '중학생에게 적합한지 검토하고 있어요'}
+            {loadStep === 3 && '네이버 쇼핑에서 상품 이미지를 찾고 있어요'}
+          </p>
         </div>
       )}
 
@@ -176,6 +210,11 @@ export default function FashionPage() {
                 {data.provider && (
                   <span style={{ background: '#dbeafe', color: '#1d4ed8', borderRadius: 4, padding: '1px 7px', fontWeight: 600 }}>
                     {data.provider}
+                  </span>
+                )}
+                {typeof data.replaced === 'number' && data.replaced > 0 && (
+                  <span style={{ background: '#fef9c3', color: '#854d0e', borderRadius: 4, padding: '1px 7px' }}>
+                    부적합 {data.replaced}개 교체됨
                   </span>
                 )}
                 {data.cached && <span style={{ background: '#fef9c3', color: '#854d0e', borderRadius: 4, padding: '1px 7px' }}>캐시</span>}
@@ -232,9 +271,7 @@ export default function FashionPage() {
                   <tbody>
                     {section.items?.map((item, ii) => {
                       const link = item.productUrl
-                        || (SOURCE_LINKS[item.출처]
-                          ? `${SOURCE_LINKS[item.출처]}${encodeURIComponent(item.검색어)}`
-                          : null)
+                        || (NAVER_SEARCH + encodeURIComponent(item.검색어))
                       return (
                         <tr key={ii} id={`item-${ci}-${ii}`} style={{ background: ii % 2 === 0 ? 'white' : '#f8fbff' }}>
                           <td style={{ ...td, color: '#0ea5e9', fontWeight: 700, width: 28 }}>{ii + 1}</td>

@@ -16,15 +16,15 @@ class AIError extends Error {
   constructor(public status: number, message: string) { super(message) }
 }
 
-// OpenAI 호환 형식(Groq, Cerebras) 공통 호출
-async function callOpenAICompat(url: string, apiKey: string, model: string): Promise<string> {
+// OpenAI 호환 형식(Groq, Cerebras) 공통 호출 — prompt 파라미터로 분리
+async function callOpenAICompat(url: string, apiKey: string, model: string, prompt: string): Promise<string> {
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model,
-      messages: [{ role: 'user', content: PROMPT }],
-      temperature: 0.85,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
       max_tokens: 4096,
     }),
   })
@@ -33,24 +33,25 @@ async function callOpenAICompat(url: string, apiKey: string, model: string): Pro
   return (data.choices?.[0]?.message?.content ?? '').trim()
 }
 
-async function callGroq(): Promise<string> {
+async function callGroq(prompt: string): Promise<string> {
   return callOpenAICompat(
     'https://api.groq.com/openai/v1/chat/completions',
     process.env.GROQ_API_KEY ?? '',
     'llama-3.3-70b-versatile',
+    prompt,
   )
 }
 
-async function callGemini(): Promise<string> {
+async function callGemini(prompt: string): Promise<string> {
   const res = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: PROMPT }] }],
+        contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
-          temperature: 0.85,
+          temperature: 0.7,
           maxOutputTokens: 4096,
           responseMimeType: 'application/json',
           thinkingConfig: { thinkingBudget: 0 },
@@ -67,17 +68,18 @@ async function callGemini(): Promise<string> {
   return text
 }
 
-async function callCerebras(): Promise<string> {
+async function callCerebras(prompt: string): Promise<string> {
   return callOpenAICompat(
     'https://api.cerebras.ai/v1/chat/completions',
     process.env.CEREBRAS_API_KEY ?? '',
-    'qwen-3-235b-a22b-instruct-2507',  // 한국어 품질 최강
+    'qwen-3-235b-a22b-instruct-2507',
+    prompt,
   )
 }
 
 // 순서대로 시도, 429/503 → 다음 프로바이더
-async function callAIWithFallback(): Promise<{ text: string; provider: string }> {
-  const providers: [string, () => Promise<string>][] = [
+async function callAI(prompt: string): Promise<{ text: string; provider: string }> {
+  const providers: [string, (p: string) => Promise<string>][] = [
     ['Groq', callGroq],
     ['Gemini', callGemini],
     ['Cerebras', callCerebras],
@@ -85,13 +87,13 @@ async function callAIWithFallback(): Promise<{ text: string; provider: string }>
   const errors: string[] = []
   for (const [name, fn] of providers) {
     try {
-      const text = await fn()
+      const text = await fn(prompt)
       return { text, provider: name }
     } catch (e) {
       const status = e instanceof AIError ? e.status : 0
       errors.push(`${name}(${status})`)
       if (status === 429 || status === 503 || status === 0) continue
-      break // 인증 오류 등은 계속 시도해도 무의미
+      break
     }
   }
   throw new Error(`모든 AI 서비스 한도 초과: ${errors.join(' → ')}`)
@@ -114,50 +116,156 @@ function extractJSON(raw: string): unknown {
   return JSON.parse(cleaned.slice(start, end + 1))
 }
 
-const SOURCE_SEARCH: Record<string, string> = {
-  '에이블리': 'https://m.a-bly.com/search?q=',
-  '무신사': 'https://www.musinsa.com/search/musinsa/goods?q=',
+// ── 중간 검증: 부적합 아이템 교체 ────────────────────────
+type Item = { 아이템: string; 사진설명: string; 설명: string; 출처: string; 검색어: string }
+type Cat  = { category: string; icon: string; items: Item[] }
+
+async function validateAndReplace(categories: Cat[]): Promise<{ categories: Cat[]; replaced: number }> {
+  // 아이템 이름만 전달해서 토큰 절약
+  const list = categories.flatMap((c, ci) =>
+    c.items.map((item, ii) => `[${ci}${ii}] ${item.아이템}`)
+  ).join(', ')
+
+  const checkPrompt = `다음은 14살 중학교 여학생 패션 아이템 목록이다.
+미성년자에게 부적합한 아이템(과도한 신체 노출, 성인 전용, 클럽·파티 전용, 지나치게 짧거나 섹시한 스타일)의 코드를 반환하라.
+없으면 빈 배열. JSON만 반환: {"remove":["코드",...]}
+
+목록: ${list}`
+
+  let removeIds: string[] = []
+  try {
+    const { text } = await callAI(checkPrompt)
+    const cleaned = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '')
+    const s = cleaned.indexOf('{'); const e = cleaned.lastIndexOf('}')
+    if (s !== -1 && e !== -1) {
+      const parsed = JSON.parse(cleaned.slice(s, e + 1)) as { remove?: string[] }
+      removeIds = parsed.remove ?? []
+    }
+  } catch { return { categories, replaced: 0 } }
+
+  if (!removeIds.length) return { categories, replaced: 0 }
+
+  // 부적합 항목 교체 요청
+  const badItems = removeIds.map(id => {
+    const ci = parseInt(id[0]); const ii = parseInt(id[1])
+    return `[${id}] ${categories[ci]?.items[ii]?.아이템 ?? ''} (${categories[ci]?.category})`
+  }).join(', ')
+
+  const replacePrompt = `다음 아이템들이 14살 중학교 여학생에게 부적합하다고 판단됐다: ${badItems}
+같은 카테고리·같은 형식으로 적합한 대체 아이템을 제공하라.
+반드시 한글/영어만. JSON만 반환: {"replacements":[{"id":"코드","아이템":"","사진설명":"","설명":"","출처":"에이블리 또는 무신사","검색어":""}]}`
+
+  try {
+    const { text } = await callAI(replacePrompt)
+    const cleaned = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '')
+    const s = cleaned.indexOf('{'); const e = cleaned.lastIndexOf('}')
+    if (s === -1 || e === -1) return { categories, replaced: 0 }
+    const parsed = JSON.parse(cleaned.slice(s, e + 1)) as { replacements?: (Item & { id: string })[] }
+
+    const updated = categories.map((cat, ci) => ({
+      ...cat,
+      items: cat.items.map((item, ii) => {
+        const rep = parsed.replacements?.find(r => r.id === `${ci}${ii}`)
+        if (!rep) return item
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _, ...newItem } = rep
+        return newItem as Item
+      }),
+    }))
+    return { categories: updated, replaced: removeIds.length }
+  } catch { return { categories, replaced: 0 } }
 }
 
-const SHOP_DOMAINS = ['msscdn', 'ably', 'a-bly', 'zigzag', 'shop', 'product', 'item', 'goods']
+const NAVER_SEARCH_FALLBACK = 'https://search.shopping.naver.com/search/all?query='
 
-async function kakaoSearch(query: string): Promise<string | null> {
+type NaverResult = { imageUrl: string | null; productUrl: string | null }
+
+type NaverItem = { title: string; link: string; image: string; mallName: string }
+
+async function naverShoppingSearch(query: string, preferMall?: string): Promise<NaverResult> {
   try {
     const res = await fetch(
-      `https://dapi.kakao.com/v2/search/image?query=${encodeURIComponent(query)}&size=3&sort=accuracy`,
-      { headers: { Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}` } }
+      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(query)}&display=10&sort=sim`,
+      {
+        headers: {
+          'X-Naver-Client-Id': process.env.NAVER_CLIENT_ID ?? '',
+          'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET ?? '',
+        },
+      }
     )
-    if (!res.ok) return null
+    if (!res.ok) return { imageUrl: null, productUrl: null }
     const data = await res.json()
-    const docs: { thumbnail_url: string; image_url: string; doc_url: string }[] = data.documents || []
-    if (!docs.length) return null
-    const best = docs.find(d => SHOP_DOMAINS.some(s => d.image_url?.includes(s) || d.doc_url?.includes(s))) || docs[0]
-    return best?.thumbnail_url || best?.image_url || null
-  } catch { return null }
+    const items: NaverItem[] = data.items ?? []
+    if (!items.length) return { imageUrl: null, productUrl: null }
+
+    // 쇼핑몰명 필터 (무신사/에이블리 우선)
+    const MALL_ALIASES: Record<string, string[]> = {
+      '무신사': ['무신사', 'musinsa'],
+      '에이블리': ['에이블리', 'ably'],
+    }
+    const aliases = preferMall ? (MALL_ALIASES[preferMall] ?? []) : []
+    const matched = aliases.length
+      ? items.find(i => aliases.some(a => i.mallName?.toLowerCase().includes(a.toLowerCase())))
+      : null
+    const item = matched ?? items[0]
+
+    return { imageUrl: item.image || null, productUrl: item.link || null }
+  } catch { return { imageUrl: null, productUrl: null } }
 }
 
-async function kakaoImageSearch(source: string, keyword: string): Promise<string | null> {
-  // 1차: 출처 + 전체 검색어
-  const full = await kakaoSearch(`${source} ${keyword}`)
-  if (full) return full
+const ABLY_SEARCH = (kw: string) =>
+  `https://m.a-bly.com/search?screen_name=SEARCH_RESULT&keyword=${encodeURIComponent(kw)}&search_type=DIRECT`
 
-  // 2차: 출처 + 마지막 명사(핵심 단어)
-  const words = keyword.split(/\s+/).filter(Boolean)
-  if (words.length > 1) {
-    const short = await kakaoSearch(`${source} ${words[words.length - 1]}`)
-    if (short) return short
+// 에이블리: Naver에서 이미지만 가져오고 링크는 에이블리 모바일웹으로
+// 무신사: Naver에서 이미지 + 실제 상품 직링크
+async function naverSearch(source: string, keyword: string): Promise<NaverResult> {
+  const isAbly = source === '에이블리'
+  const mallFilter = isAbly ? undefined : source  // 에이블리는 필터 없이 이미지만
+
+  // 1차: 쇼핑몰명 포함 검색
+  const withMall = await naverShoppingSearch(`${source} ${keyword}`, mallFilter)
+  if (withMall.imageUrl) {
+    return {
+      imageUrl: withMall.imageUrl,
+      productUrl: isAbly ? ABLY_SEARCH(keyword) : withMall.productUrl,
+    }
   }
 
-  // 3차: 출처 없이 검색어만
-  return kakaoSearch(keyword)
+  // 2차: 검색어만
+  const noMall = await naverShoppingSearch(keyword, mallFilter)
+  if (noMall.imageUrl) {
+    return {
+      imageUrl: noMall.imageUrl,
+      productUrl: isAbly ? ABLY_SEARCH(keyword) : noMall.productUrl,
+    }
+  }
+
+  // 3차: 핵심 단어만
+  const words = keyword.split(/\s+/).filter(Boolean)
+  if (words.length > 1) {
+    const short = await naverShoppingSearch(words[words.length - 1], mallFilter)
+    if (short.imageUrl) {
+      return {
+        imageUrl: short.imageUrl,
+        productUrl: isAbly ? ABLY_SEARCH(keyword) : short.productUrl,
+      }
+    }
+  }
+
+  return {
+    imageUrl: null,
+    productUrl: isAbly
+      ? ABLY_SEARCH(keyword)
+      : NAVER_SEARCH_FALLBACK + encodeURIComponent(`${source} ${keyword}`),
+  }
 }
 
-// 배열을 n개씩 묶어 순차 실행 (Kakao rate-limit 방지)
-async function batchedImageSearch(pairs: [string, string][], batchSize = 3, delayMs = 250): Promise<(string | null)[]> {
-  const results: (string | null)[] = []
+// 5개씩 배치 처리 (Naver API 10 RPS 한도 대응)
+async function batchedNaverSearch(pairs: [string, string][], batchSize = 5, delayMs = 150): Promise<NaverResult[]> {
+  const results: NaverResult[] = []
   for (let i = 0; i < pairs.length; i += batchSize) {
     const batch = pairs.slice(i, i + batchSize)
-    const batchResults = await Promise.all(batch.map(([src, kw]) => kakaoImageSearch(src, kw)))
+    const batchResults = await Promise.all(batch.map(([src, kw]) => naverSearch(src, kw)))
     results.push(...batchResults)
     if (i + batchSize < pairs.length) await new Promise(r => setTimeout(r, delayMs))
   }
@@ -174,7 +282,8 @@ export async function GET() {
   }
 
   try {
-    const { text, provider } = await callAIWithFallback()
+    // ① AI 아이템 생성
+    const { text, provider } = await callAI(PROMPT)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const parsed = stripChinese(extractJSON(text)) as any
@@ -183,13 +292,14 @@ export async function GET() {
       '상의': '👕', '하의': '👖', '악세사리': '✨', '신발': '👟', '모자': '🧢', '기타': '🌟',
     }
 
-    type Item = { 아이템: string; 사진설명: string; 설명: string; 출처: string; 검색어: string }
-    type Cat  = { category: string; icon: string; items: Item[] }
-
-    const categories: Cat[] = (parsed.categories || []).map((c: Cat) => ({
+    let categories: Cat[] = (parsed.categories || []).map((c: Cat) => ({
       ...c,
       icon: c.icon || ICONS[c.category] || '🛍️',
     }))
+
+    // ② 중간 검증: 부적합 아이템 감지 및 교체
+    const { categories: validated, replaced } = await validateAndReplace(categories)
+    categories = validated
 
     const pairs: [string, string][] = categories.flatMap((cat: Cat) =>
       cat.items.map((item: Item): [string, string] => [
@@ -197,24 +307,28 @@ export async function GET() {
         item.검색어.replace(/^(에이블리|무신사)\s*/i, ''),
       ])
     )
-    const imageUrls = await batchedImageSearch(pairs)
+    const naverResults = await batchedNaverSearch(pairs)
 
     let idx = 0
     const enrichedCategories = categories.map((cat: Cat) => ({
       ...cat,
-      items: cat.items.map((item: Item) => ({
-        ...item,
-        imageUrl: imageUrls[idx++],
-        productUrl: (SOURCE_SEARCH[item.출처] ?? '') + encodeURIComponent(
-          item.검색어.replace(/^(에이블리|무신사)\s*/i, '')
-        ),
-      })),
+      items: cat.items.map((item: Item) => {
+        const { imageUrl, productUrl } = naverResults[idx++]
+        return {
+          ...item,
+          imageUrl,
+          productUrl: productUrl ?? NAVER_SEARCH_FALLBACK + encodeURIComponent(
+            item.검색어.replace(/^(에이블리|무신사)\s*/i, '')
+          ),
+        }
+      }),
     }))
 
     const result = {
       summary: parsed.summary || '',
       categories: enrichedCategories,
-      provider,  // 어떤 AI가 응답했는지 표시
+      provider,
+      replaced,   // 교체된 부적합 아이템 수
       generatedAt: new Date().toISOString(),
     }
 
