@@ -187,11 +187,11 @@ export async function GET() {
     return NextResponse.json({ steps, error: msg }, { status: 502 })
   }
 
-  // ── Step 2: 2024년 Training Set 수집 ─────────────────
+  // ── Step 2: 2010~2024년 Training Set 수집 (10년) ──────
   let trainX: number[][] = [], trainY: number[] = [], trainDates: string[] = []
 
   try {
-    const { times, temps, humidities, rainfalls } = await fetchOpenMeteo('2024-01-01', '2024-12-31')
+    const { times, temps, humidities, rainfalls } = await fetchOpenMeteo('2010-01-01', '2024-12-31')
     const built = buildSamples(times, temps, humidities, rainfalls)
     trainX = built.X; trainY = built.y; trainDates = built.dates
 
@@ -200,8 +200,8 @@ export async function GET() {
     const tMax = Math.max(...trainX.map(r => r[1])).toFixed(1)
     const rMax = Math.max(...trainX.map(r => r[3])).toFixed(1)
 
-    steps.push({ step: 2, label: '2024년 Training Set 수집', status: 'ok',
-      request: 'Open-Meteo Archive API — 2024-01-01 ~ 2024-12-31 일별 날씨',
+    steps.push({ step: 2, label: '2010~2024년 Training Set 수집 (10년)', status: 'ok',
+      request: 'Open-Meteo Archive API — 2010-01-01 ~ 2024-12-31 일별 날씨',
       received: `${trainX.length}일 샘플 — 기온 ${tMin}~${tMax}°C / 강수 있는 날 ${rainyDays}일 / 최대 ${rMax}mm`,
       functions: ['fetchOpenMeteo()', 'buildSamples()', 'randn() — Box-Muller'],
       model: '선형 모델 y = θ0 + θ1·T + θ2·H + θ3·R + ε',
@@ -210,8 +210,8 @@ export async function GET() {
                   `ε ~ N(0, ${NOISE_STD}²)`, `위도=${LATITUDE}, 경도=${LONGITUDE}`] })
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Open-Meteo 오류'
-    steps.push({ step: 2, label: '2024년 Training Set 수집', status: 'error', message: msg,
-      request: 'Open-Meteo Archive 2024', received: msg, functions: ['fetchOpenMeteo()'],
+    steps.push({ step: 2, label: '2010~2024년 Training Set 수집', status: 'error', message: msg,
+      request: 'Open-Meteo Archive 2010-2024', received: msg, functions: ['fetchOpenMeteo()'],
       method: 'HTTP GET', constants: [] })
     return NextResponse.json({ steps, error: msg }, { status: 502 })
   }
