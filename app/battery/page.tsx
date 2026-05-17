@@ -238,7 +238,7 @@ export default function BatteryPage() {
           />
 
           {/* 분포 차트 3열 */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12, marginBottom: 12 }}>
             <Card>
               <ChartTitle>기온 분포</ChartTitle>
               <ResponsiveContainer width="100%" height={160}>
@@ -291,14 +291,14 @@ export default function BatteryPage() {
                 <div key={key} style={{ marginBottom: idx < 2 ? 2 : 0 }}>
                   <p style={{ fontSize: 10, color: '#94a3b8', margin: '4px 0 1px' }}>{ylabels[idx]}</p>
                   <ResponsiveContainer width="100%" height={72}>
-                    <LineChart data={data.trainSamples} syncId="timeseries" margin={{ top: 2, right: 8, bottom: 0, left: 32 }}>
+                    <BarChart data={data.trainSamples} syncId="timeseries" margin={{ top: 2, right: 8, bottom: 0, left: 32 }}>
                       <CartesianGrid strokeDasharray="2 2" stroke="#f1f5f9" />
                       <XAxis dataKey="date" hide={idx < 2}
                         tickFormatter={(v:string) => v.slice(5,7)+'월'} interval={29} tick={{ fontSize: 8 }} />
                       <YAxis domain={domains[idx]} tick={{ fontSize: 8 }} width={28} />
                       <Tooltip labelFormatter={l => String(l)} formatter={(v:number) => [`${v}`, ylabels[idx]]} />
-                      <Line type="monotone" dataKey={key} stroke={colors[idx]} strokeWidth={1} dot={false} isAnimationActive={false} />
-                    </LineChart>
+                      <Bar dataKey={key} fill={colors[idx]} opacity={0.8} maxBarSize={4} isAnimationActive={false} />
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               )
@@ -335,7 +335,7 @@ export default function BatteryPage() {
             title="Step 3B — 경사하강법 비교"
             sub={`θ := θ − α∇MSE | 표준화(z-score) 후 적용 | GD Train MSE = ${data.training.gdTrainMSE.toFixed(3)}`}
           />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
 
             <Card>
               <ChartTitle>학습률별 손실(MSE) 곡선</ChartTitle>
@@ -395,7 +395,7 @@ export default function BatteryPage() {
             title="Step 4 — 2025년 Test Set 검증"
             sub={`${data.testSamples.length}일 샘플 | Train MSE ${data.training.trainMSE.toFixed(3)} / Test MSE ${data.training.testMSE.toFixed(3)} | RMSE ${testRMSE}%`}
           />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
             <Card>
               <ChartTitle>2025년 월별 평균 효율 — 예측 vs 실제</ChartTitle>
               <ResponsiveContainer width="100%" height={200}>
@@ -433,30 +433,69 @@ export default function BatteryPage() {
         <div style={{ marginBottom: 32 }}>
           <SectionTitle title="Step 5/6 — 오늘 배터리 효율 예측 + 충전 방식 결정" />
 
-          {/* 예측 결과 카드 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
-            <Card style={{ textAlign: 'center', background: '#eff8ff', border: '1px solid #bae6fd' }}>
-              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600, marginBottom: 4 }}>예측 배터리 효율</div>
-              <div style={{ fontSize: 48, fontWeight: 800, color: '#0369a1', lineHeight: 1 }}>{data.efficiency}%</div>
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6, fontFamily: 'monospace' }}>
-                {data.training.learnedWeights.intercept.toFixed(2)}
-                {' + '}({data.training.learnedWeights.temp.toFixed(4)})×{data.weather.temp}
-                {' + '}({data.training.learnedWeights.humidity.toFixed(4)})×{data.weather.humidity}
-              </div>
-            </Card>
-            <Card style={{ textAlign: 'center', background: `${ac}10`, border: `1px solid ${ac}44` }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: ac, marginBottom: 4 }}>충전 방식</div>
-              <div style={{ fontSize: 30, fontWeight: 800, color: ac }}>{data.action}</div>
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>
-                {data.efficiency >= 80 ? '효율 80% 이상 → 일반 충전'
-                  : data.efficiency >= 70 ? '효율 70~79% → 절전 충전'
-                  : '효율 70% 미만 → 보호 모드'}
-              </div>
-            </Card>
-          </div>
+          {/* 예측 결과 통합 카드 */}
+          <Card style={{ marginBottom: 16, border: `1px solid ${ac}44` }}>
+            <div style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
 
-          {/* 종합 6개 차트 2×3 */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+              {/* 왼쪽: 예측 배터리 효율 + 오늘 예측 요약 */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', borderRight: '1px solid #e2e8f0' }}>
+
+                {/* 예측 배터리 효율 */}
+                <div style={{ textAlign: 'center', padding: '16px 28px', borderBottom: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: 11, color: '#0369a1', fontWeight: 600, marginBottom: 6 }}>예측 배터리 효율</div>
+                  <div style={{ fontSize: 52, fontWeight: 800, color: '#0369a1', lineHeight: 1 }}>{data.efficiency}%</div>
+                  <div style={{ fontSize: 10, color: '#64748b', marginTop: 8, fontFamily: 'monospace', lineHeight: 1.5 }}>
+                    {data.training.learnedWeights.intercept.toFixed(2)}<br />
+                    + ({data.training.learnedWeights.temp.toFixed(4)})×{data.weather.temp}<br />
+                    + ({data.training.learnedWeights.humidity.toFixed(4)})×{data.weather.humidity}
+                  </div>
+                </div>
+
+                {/* 오늘 예측 요약 */}
+                <div style={{ padding: '12px 20px', flex: 1 }}>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: '#0f172a', marginBottom: 10 }}>오늘 예측 요약</div>
+                  {[
+                    ['기온',        `${data.weather.temp} °C`],
+                    ['습도',        `${data.weather.humidity} %`],
+                    ['강수량',      `${data.weather.rainfall} mm`],
+                    ['예측 효율',   `${data.efficiency} %`],
+                    ['충전 방식',   data.action],
+                    ['학습 데이터', `2024년 ${data.trainSamples.length}일`],
+                    ['검증 데이터', `2025년 ${data.testSamples.length}일`],
+                    ['훈련 RMSE',  `${trainRMSE} %`],
+                    ['테스트 RMSE', `${testRMSE} %`],
+                  ].map(([k, v]) => (
+                    <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+                      <span style={{ fontSize: 10, color: '#64748b' }}>{k}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700,
+                        color: k === '예측 효율' || k === '충전 방식' ? ac : '#0f172a' }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+
+              {/* 오른쪽: 충전 방식 */}
+              <div style={{ flex: '0 0 auto', textAlign: 'center', padding: '12px 28px',
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                background: `${ac}08` }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: ac, marginBottom: 6 }}>충전 방식</div>
+                <div style={{ fontSize: 26, fontWeight: 800, color: ac, lineHeight: 1.2 }}>{data.action}</div>
+                <div style={{ fontSize: 10, color: '#64748b', marginTop: 8, lineHeight: 1.5 }}>
+                  {data.efficiency >= 80 ? '효율 80% 이상'
+                    : data.efficiency >= 70 ? '효율 70~79%'
+                    : '효율 70% 미만'}<br />
+                  {data.efficiency >= 80 ? '→ 일반 충전'
+                    : data.efficiency >= 70 ? '→ 절전 충전'
+                    : '→ 보호 모드'}
+                </div>
+              </div>
+
+            </div>
+          </Card>
+
+          {/* 종합 6개 차트 1열 */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
 
             {/* 1) 기온 변화 → 효율 */}
             <Card>
@@ -465,7 +504,7 @@ export default function BatteryPage() {
                 <LineChart data={data.chartData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="label" tick={{ fontSize: 8 }} />
-                  <YAxis domain={[0,100]} tick={{ fontSize: 8 }} unit="%" />
+                  <YAxis domain={[50,100]} tick={{ fontSize: 8 }} unit="%" />
                   <Tooltip formatter={(v:number,n:string) => [`${v}%`, n==='learned'?'학습':'기준']} />
                   <Legend wrapperStyle={{ fontSize: 8 }} formatter={v => v==='learned'?'학습 모델':'기준 모델'} />
                   <ReferenceLine y={80} stroke="#16a34a" strokeDasharray="3 2" />
@@ -483,7 +522,7 @@ export default function BatteryPage() {
                 <ScatterChart margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="x" name="기온" unit="°C" tick={{ fontSize: 8 }} type="number" domain={['auto','auto']} />
-                  <YAxis dataKey="y" name="효율" unit="%" tick={{ fontSize: 8 }} domain={[0,100]} />
+                  <YAxis dataKey="y" name="효율" unit="%" tick={{ fontSize: 8 }} domain={[50,100]} />
                   <Tooltip formatter={(v:number,n:string) => [n==='효율'?`${v}%`:`${v}°C`,n]} />
                   <Legend wrapperStyle={{ fontSize: 8 }} />
                   <ReferenceLine y={80} stroke="#16a34a" strokeDasharray="3 2" />
@@ -544,29 +583,6 @@ export default function BatteryPage() {
               </ResponsiveContainer>
             </Card>
 
-            {/* 6) 오늘 요약 */}
-            <Card style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', marginBottom: 10, textAlign: 'center' }}>
-                오늘 예측 요약
-              </p>
-              {[
-                ['기온',        `${data.weather.temp} °C`],
-                ['습도',        `${data.weather.humidity} %`],
-                ['강수량',      `${data.weather.rainfall} mm`],
-                ['예측 효율',   `${data.efficiency} %`],
-                ['충전 방식',   data.action],
-                ['학습 데이터', `2024년 ${data.trainSamples.length}일`],
-                ['검증 데이터', `2025년 ${data.testSamples.length}일`],
-                ['훈련 RMSE',  `${trainRMSE} %`],
-                ['테스트 RMSE', `${testRMSE} %`],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={{ fontSize: 10, color: '#64748b' }}>{k}</span>
-                  <span style={{ fontSize: 10, fontWeight: 700,
-                    color: k === '예측 효율' || k === '충전 방식' ? ac : '#0f172a' }}>{v}</span>
-                </div>
-              ))}
-            </Card>
           </div>
         </div>
 
