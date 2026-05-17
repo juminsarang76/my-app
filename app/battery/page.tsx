@@ -290,7 +290,7 @@ export default function BatteryPage() {
               return (
                 <div key={key} style={{ marginBottom: idx < 2 ? 2 : 0 }}>
                   <p style={{ fontSize: 10, color: '#94a3b8', margin: '4px 0 1px' }}>{ylabels[idx]}</p>
-                  <ResponsiveContainer width="100%" height={72}>
+                  <ResponsiveContainer width="100%" height={144}>
                     <BarChart data={data.trainSamples} syncId="timeseries" margin={{ top: 2, right: 8, bottom: 0, left: 32 }}>
                       <CartesianGrid strokeDasharray="2 2" stroke="#f1f5f9" />
                       <XAxis dataKey="date" hide={idx < 2}
