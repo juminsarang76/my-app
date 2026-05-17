@@ -65,35 +65,26 @@ function FashionImage({ src, alt, width, height, style }: {
 
 export default function FashionPage() {
   const [data, setData] = useState<ApiResult | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [retryIn, setRetryIn] = useState(0)
+  const [hasSearched, setHasSearched] = useState(false)
 
   const fetch조사 = useCallback(async () => {
     setLoading(true)
     setError('')
     setData(null)
-    setRetryIn(0)
     try {
       const res = await fetch('/api/fashion')
       const json = await res.json()
       if (json.error) throw new Error(json.error)
       setData(json)
+      setHasSearched(true)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : '조사 실패')
     } finally {
       setLoading(false)
     }
   }, [])
-
-  // 카운트다운 (현재 미사용, 보류)
-  useEffect(() => {
-    if (retryIn <= 0) return
-    const t = setTimeout(() => setRetryIn(r => r - 1), 1000)
-    return () => clearTimeout(t)
-  }, [retryIn])
-
-  useEffect(() => { fetch조사() }, [fetch조사])
 
   const th: React.CSSProperties = {
     padding: '10px 14px', background: '#0369A1', color: 'white',
@@ -125,7 +116,7 @@ export default function FashionPage() {
           borderRadius: 8, padding: '8px 18px', fontSize: 13, fontWeight: 600,
           cursor: loading ? 'default' : 'pointer',
         }}>
-          {loading ? '조사 중…' : '다시 조사하기'}
+          {loading ? '조사 중…' : hasSearched ? '다시 조사하기' : '조사하기'}
         </button>
       </div>
 
@@ -138,6 +129,15 @@ export default function FashionPage() {
           </div>
         ))}
       </div>
+
+      {/* 미조사 상태 */}
+      {!loading && !hasSearched && !error && (
+        <div style={{ textAlign: 'center', padding: '80px 0', color: '#64748b' }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>👗</div>
+          <p style={{ fontSize: 15, marginBottom: 6 }}>에이블리 · 무신사 최신 패션 트렌드를 조사합니다</p>
+          <p style={{ fontSize: 13, color: '#94a3b8' }}>위의 조사하기 버튼을 눌러주세요</p>
+        </div>
+      )}
 
       {/* 로딩 */}
       {loading && (
