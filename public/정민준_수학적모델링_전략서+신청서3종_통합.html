@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정민준 — 수학적 모델링 탐구 전략서 + 참가신청서 3종</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   DESIGN SYSTEM
+   Aesthetic: Editorial academic × dark strategy
+═══════════════════════════════════════ */
+:root {
+  --bg:     #f5f2ec;
+  --paper:  #fffcf7;
+  --ink:    #1a1510;
+  --muted:  #7a7165;
+  --border: #ddd6c8;
+  --border2:#c4bdb0;
+
+  --c1:     #1a4a6e;   /* 파랑  — 주제1 */
+  --c1-bg:  #edf4fb;
+  --c1-bd:  #90bde0;
+
+  --c2:     #8f4a0a;   /* 주황  — 주제2 */
+  --c2-bg:  #fdf3e0;
+  --c2-bd:  #e8c07a;
+
+  --c3:     #1a4a1a;   /* 초록  — 주제3 */
+  --c3-bg:  #e8f6e8;
+  --c3-bd:  #80c880;
+
+  --forest: #1e3a2a;
+  --gold:   #c9973a;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Serif KR', serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* ─── PRINT: 신청서 영역만 ─── */
+@media print {
+  .strategy-wrap { display: none !important; }
+  .print-target  { display: block !important; }
+  .page-break    { page-break-before: always; }
+  .form-page     {
+    background: white;
+    padding: 36px 44px;
+    box-shadow: none;
+    max-width: 100%;
+  }
+  #print-select  { display: none !important; }
+  body { background: white; }
+}
+.print-target { display: none; }
+
+/* ═══ STICKY NAV ═══ */
+.top-nav {
+  background: var(--forest);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 2px solid var(--gold);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.top-nav::-webkit-scrollbar { display: none; }
+.top-nav-inner {
+  display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  white-space: nowrap;
+}
+.top-nav a {
+  padding: 13px 18px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.55);
+  text-decoration: none;
+  text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all .2s;
+  display: inline-block;
+}
+.top-nav a:hover { color: rgba(255,255,255,.9); }
+.top-nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ═══ HERO ═══ */
+.hero {
+  background: var(--forest);
+  padding: 56px 40px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0, rgba(255,255,255,.012) 1px, transparent 1px, transparent 52px),
+    repeating-linear-gradient(0deg,  rgba(255,255,255,.012) 0, rgba(255,255,255,.012) 1px, transparent 1px, transparent 52px);
+  pointer-events: none;
+}
+.hero-inner { max-width: 1100px; margin: 0 auto; position: relative; }
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: .28em;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.hero h1 {
+  font-family: 'Gowun Batang', serif;
+  font-size: clamp(30px, 4.5vw, 50px);
+  font-weight: 700; color: #fff;
+  line-height: 1.1; letter-spacing: -.02em;
+  margin-bottom: 14px;
+}
+.hero h1 span { color: var(--gold); }
+.hero-desc {
+  font-size: 14px; color: rgba(255,255,255,.6);
+  max-width: 600px; line-height: 1.85;
+}
+.hero-chips {
+  display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap;
+}
+.hchip {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  padding: 4px 13px;
+  border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.65);
+  border-radius: 20px;
+}
+.hchip.t1 { border-color: var(--c1-bd); color: #90bde0; }
+.hchip.t2 { border-color: var(--c2-bd); color: #e8c07a; }
+.hchip.t3 { border-color: var(--c3-bd); color: #80c880; }
+
+/* ═══ WRAPPER ═══ */
+.strategy-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* ═══ SECTION ═══ */
+.section { padding-top: 56px; }
+.sec-hd {
+  display: flex; align-items: baseline; gap: 12px;
+  margin-bottom: 22px; padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+.sec-num {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: .15em; color: var(--muted);
+}
+.sec-title {
+  font-family: 'Gowun Batang', serif; font-size: 23px; font-weight: 700;
+  color: var(--ink); letter-spacing: -.01em;
+}
+.sec-title em { font-style: normal; color: var(--gold); }
+
+/* ═══ TOPIC HERO CARDS ═══ */
+.topic-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; background: var(--ink);
+  border: 2px solid var(--ink); margin-bottom: 28px;
+}
+.topic-card {
+  padding: 26px 22px;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.topic-card::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 4px;
+  transition: height .25s;
+}
+.topic-card:hover::before { height: 8px; }
+.topic-card:hover { transform: translateY(-3px); }
+.tc1 { background: #fff; } .tc1::before { background: var(--c1); }
+.tc2 { background: #fff; } .tc2::before { background: var(--c2); }
+.tc3 { background: #fff; } .tc3::before { background: var(--c3); }
+.topic-card .t-num {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .2em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.tc1 .t-num { color: var(--c1); }
+.tc2 .t-num { color: var(--c2); }
+.tc3 .t-num { color: var(--c3); }
+.topic-card .t-concept {
+  font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;
+  line-height: 1.3; margin-bottom: 6px;
+}
+.topic-card .t-domain {
+  font-size: 13px; color: var(--muted); margin-bottom: 12px;
+}
+.topic-card .t-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.t-tag {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  padding: 2px 8px; border-radius: 20px; border: 1px solid;
+}
+.tc1 .t-tag { background: var(--c1-bg); border-color: var(--c1-bd); color: var(--c1); }
+.tc2 .t-tag { background: var(--c2-bg); border-color: var(--c2-bd); color: var(--c2); }
+.tc3 .t-tag { background: var(--c3-bg); border-color: var(--c3-bd); color: var(--c3); }
+
+/* ═══ FEATURE CARD ═══ */
+.feature-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px; margin-bottom: 20px;
+}
+.feat-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 20px;
+}
+.feat-card .f-lbl {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .18em; text-transform: uppercase;
+  font-weight: 500; margin-bottom: 8px;
+}
+.feat-card .f-val { font-size: 13px; line-height: 1.72; }
+.feat-card.c1 { background: var(--c1-bg); border-color: var(--c1-bd); } .feat-card.c1 .f-lbl { color: var(--c1); }
+.feat-card.c2 { background: var(--c2-bg); border-color: var(--c2-bd); } .feat-card.c2 .f-lbl { color: var(--c2); }
+.feat-card.c3 { background: var(--c3-bg); border-color: var(--c3-bd); } .feat-card.c3 .f-lbl { color: var(--c3); }
+.feat-card.dark { background: var(--forest); color: #fff; border-color: transparent; }
+.feat-card.dark .f-lbl { color: var(--gold); }
+.feat-card.dark .f-val { color: rgba(255,255,255,.85); }
+
+/* ═══ BIG COMPARE TABLE ═══ */
+.cmp-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  margin-bottom: 20px;
+  background: #fff; border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cmp-table thead th {
+  background: var(--forest); color: rgba(255,255,255,.85);
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 12px 14px; text-align: left; font-weight: 500;
+}
+.cmp-table thead th:nth-child(2) { color: #90bde0; }
+.cmp-table thead th:nth-child(3) { color: #e8c07a; }
+.cmp-table thead th:nth-child(4) { color: #80c880; }
+.cmp-table tbody td {
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+  vertical-align: top; line-height: 1.65;
+}
+.cmp-table tbody tr:last-child td { border-bottom: none; }
+.cmp-table tbody tr:hover td { background: #f9f6f1; }
+.cmp-table td:first-child { font-weight: 600; color: var(--forest); min-width: 110px; }
+.cmp-table td.best { font-weight: 700; }
+.cmp-table td.best.c1 { color: var(--c1); }
+.cmp-table td.best.c2 { color: var(--c2); }
+.cmp-table td.best.c3 { color: var(--c3); }
+
+/* ═══ BADGE ═══ */
+.bdg {
+  display: inline-block; padding: 2px 9px; border-radius: 20px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  font-weight: 600; border: 1px solid;
+}
+.bdg.g { background: var(--c3-bg); border-color: var(--c3-bd); color: var(--c3); }
+.bdg.y { background: var(--c2-bg); border-color: var(--c2-bd); color: var(--c2); }
+.bdg.b { background: var(--c1-bg); border-color: var(--c1-bd); color: var(--c1); }
+
+/* ═══ ALERT ═══ */
+.alert {
+  border-radius: 12px; padding: 14px 18px;
+  margin-bottom: 14px; border: 1px solid; font-size: 14px; line-height: 1.78;
+}
+.alert strong { font-weight: 700; }
+.alert.ok   { background: var(--c3-bg); border-color: var(--c3-bd); color: #0a2a0a; }
+.alert.ok   strong { color: var(--c3); }
+.alert.info { background: var(--c1-bg); border-color: var(--c1-bd); color: #0a2040; }
+.alert.info strong { color: var(--c1); }
+.alert.warn { background: var(--c2-bg); border-color: var(--c2-bd); color: #5a3806; }
+.alert.warn strong { color: var(--c2); }
+.alert.dark { background: var(--forest); color: rgba(255,255,255,.88); border-color: transparent; }
+.alert.dark strong { color: var(--gold); }
+
+/* ═══ DEPTH CARDS (면접 대비) ═══ */
+.depth-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+.depth-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 18px 16px;
+  border-top: 4px solid;
+}
+.depth-card.dc1 { border-top-color: var(--c1); }
+.depth-card.dc2 { border-top-color: var(--c2); }
+.depth-card.dc3 { border-top-color: var(--c3); }
+.depth-card .d-tag {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .18em; text-transform: uppercase; font-weight: 600;
+  margin-bottom: 10px;
+}
+.dc1 .d-tag { color: var(--c1); }
+.dc2 .d-tag { color: var(--c2); }
+.dc3 .d-tag { color: var(--c3); }
+.depth-card h4 {
+  font-family: 'Gowun Batang', serif; font-size: 16px; font-weight: 700;
+  margin-bottom: 10px; line-height: 1.3;
+}
+.depth-card ul { list-style: none; padding: 0; }
+.depth-card ul li {
+  font-size: 13px; line-height: 1.72;
+  padding: 3px 0 3px 14px; position: relative;
+}
+.depth-card ul li::before {
+  content: 'Q.'; position: absolute; left: 0;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  font-weight: 700; top: 5px;
+}
+.dc1 ul li::before { color: var(--c1); }
+.dc2 ul li::before { color: var(--c2); }
+.dc3 ul li::before { color: var(--c3); }
+
+/* ═══ COMBO RECOMMEND ═══ */
+.combo-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+.combo-card {
+  border-radius: 14px; padding: 18px;
+  border: 1px solid; position: relative;
+}
+.combo-card .combo-lbl {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .18em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;
+}
+.combo-card h4 {
+  font-family: 'Gowun Batang', serif; font-size: 16px; font-weight: 700;
+  margin-bottom: 8px;
+}
+.combo-card p { font-size: 13px; line-height: 1.7; color: #333; }
+.combo-card.star {
+  background: var(--forest); color: #fff; border-color: var(--gold);
+  box-shadow: 0 4px 20px rgba(30,58,42,.2);
+}
+.combo-card.star .combo-lbl { color: var(--gold); }
+.combo-card.star h4 { color: #fff; }
+.combo-card.star p { color: rgba(255,255,255,.78); }
+.combo-card.a { background: var(--c1-bg); border-color: var(--c1-bd); }
+.combo-card.a .combo-lbl { color: var(--c1); }
+.combo-card.b { background: var(--c2-bg); border-color: var(--c2-bd); }
+.combo-card.b .combo-lbl { color: var(--c2); }
+.star-badge {
+  position: absolute; top: -10px; right: 14px;
+  background: var(--gold); color: var(--ink);
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; letter-spacing: .1em;
+}
+
+/* ═══ PRINT BUTTON ═══ */
+.print-bar {
+  background: var(--forest); padding: 20px 24px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  border-radius: 14px; margin-bottom: 14px;
+}
+.print-bar p { font-size: 14px; color: rgba(255,255,255,.8); flex: 1; }
+.print-bar p strong { color: var(--gold); }
+.pBtn {
+  padding: 10px 22px; border: none; border-radius: 8px;
+  font-family: 'Noto Serif KR', serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.pBtn.all  { background: var(--gold); color: var(--ink); }
+.pBtn.all:hover { background: #e8b040; }
+.pBtn.sel  { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+.pBtn.sel:hover { background: rgba(255,255,255,.25); }
+#which-select {
+  padding: 8px 14px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.1);
+  color: #fff; font-family: 'Noto Serif KR', serif; font-size: 14px;
+}
+#which-select option { color: var(--ink); background: #fff; }
+
+/* ─── DIVIDER ─── */
+.dvd { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+/* ─── SCROLL TOP ─── */
+#stt {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 38px; height: 38px;
+  background: var(--forest); color: #fff; border: none; border-radius: 50%;
+  font-size: 15px; cursor: pointer; opacity: 0;
+  transition: opacity .28s, transform .2s; z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+}
+#stt.v { opacity: 1; }
+#stt:hover { transform: translateY(-2px); background: var(--gold); color: var(--ink); }
+
+/* ═══════════════════════════════════════
+   신청서 (뒤 배치)
+═══════════════════════════════════════ */
+.forms-wrap {
+  background: var(--bg);
+  padding: 60px 24px 80px;
+  border-top: 4px double var(--border2);
+  margin-top: 60px;
+}
+.forms-inner { max-width: 820px; margin: 0 auto; }
+.forms-title {
+  font-family: 'Gowun Batang', serif; font-size: 28px; font-weight: 700;
+  text-align: center; margin-bottom: 6px; color: var(--ink);
+}
+.forms-sub {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+  text-align: center; margin-bottom: 40px;
+}
+
+.form-page {
+  background: #fff;
+  padding: 44px 50px;
+  margin-bottom: 60px;
+  box-shadow: 0 2px 24px rgba(26,21,16,.1);
+  border-top: 6px solid;
+}
+.form-page.fp1 { border-top-color: var(--c1); }
+.form-page.fp2 { border-top-color: var(--c2); }
+.form-page.fp3 { border-top-color: var(--c3); }
+
+.form-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .22em; text-transform: uppercase; font-weight: 600;
+  margin-bottom: 8px;
+}
+.fp1 .form-badge { color: var(--c1); }
+.fp2 .form-badge { color: var(--c2); }
+.fp3 .form-badge { color: var(--c3); }
+
+.form-headline {
+  font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;
+  margin-bottom: 24px; line-height: 1.3; color: var(--ink);
+}
+
+/* 신청서 테이블 */
+.ft { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ft th, .ft td { border: 1px solid #666; padding: 9px 12px; vertical-align: top; }
+.ft th {
+  background: #d6e4f7; font-weight: 600;
+  text-align: center; white-space: nowrap; vertical-align: middle;
+}
+.ft .lc {
+  background: #d6e4f7; font-weight: 600; text-align: center;
+  width: 100px; vertical-align: middle; font-size: 12px; line-height: 1.5;
+}
+.ft .cc { font-size: 13px; line-height: 1.8; }
+.ft .cc strong { font-weight: 700; }
+.ft .cc .k { font-weight: 700; }
+.ft .cc .m { font-family: 'Noto Serif KR', serif; font-weight: 700; }
+.ft .cc .h { background: linear-gradient(transparent 55%, #fffbb0 55%); padding: 0 2px; }
+.fp1 .ft .cc .k { color: var(--c1); }
+.fp1 .ft .cc .m { color: var(--c1); }
+.fp2 .ft .cc .k { color: var(--c2); }
+.fp2 .ft .cc .m { color: var(--c2); }
+.fp3 .ft .cc .k { color: var(--c3); }
+.fp3 .ft .cc .m { color: var(--c3); }
+.gt { font-size: 11px; color: #777; margin-bottom: 6px; font-style: italic; }
+.sb { font-weight: 700; margin: 12px 0 5px; font-size: 13px; }
+.sb:first-child { margin-top: 3px; }
+.ind { padding-left: 16px; margin: 2px 0; font-size: 13px; line-height: 1.75; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .topic-grid { grid-template-columns: 1fr; }
+  .depth-grid { grid-template-columns: 1fr; }
+  .combo-grid { grid-template-columns: 1fr; }
+  .hero { padding: 40px 22px 34px; }
+  .strategy-wrap { padding: 0 16px 60px; }
+  .form-page { padding: 28px 20px; }
+  .forms-wrap { padding: 40px 14px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="#s0" class="active">개요</a>
+    <a href="#s1">주제 비교</a>
+    <a href="#s2">전략 분석</a>
+    <a href="#s3">면접 대비</a>
+    <a href="#s4">제출 추천</a>
+    <a href="#forms">신청서 3종 ↓</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<header class="hero" id="s0">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">수학적 모델링 탐구 전략서 · 정민준 · 2026-1학기</div>
+    <h1>세 가지 <span>탐구 주제</span><br>전략 선택 가이드</h1>
+    <p class="hero-desc">미적분 3개 단원(이계도함수·합성함수 미분·정적분)을 각각 활용한 주제 후보 분석. 어떤 것을 제출할지, 어떻게 준비할지, 면접에서 어떻게 설명할지를 한눈에 정리했습니다.</p>
+    <div class="hero-chips">
+      <div class="hchip t1">주제 1 — 로지스틱·이계도함수</div>
+      <div class="hchip t2">주제 2 — 합성함수·극값</div>
+      <div class="hchip t3">주제 3 — 정적분·탄소</div>
+    </div>
+  </div>
+</header>
+
+<div class="strategy-wrap">
+
+<!-- ══ S1: 주제 비교 ══ -->
+<section class="section" id="s1">
+  <div class="sec-hd"><span class="sec-num">01</span><h2 class="sec-title">세 주제 <em>한눈에 비교</em></h2></div>
+
+  <div class="topic-grid">
+    <div class="topic-card tc1">
+      <div class="t-num">주제 1 · 미적분 이계도함수</div>
+      <div class="t-concept">로지스틱 성장 함수의<br>최적 수확 시점 도출</div>
+      <div class="t-domain">🌱 스마트팜 · 작물 생장</div>
+      <div class="t-tags">
+        <span class="t-tag">이계도함수</span>
+        <span class="t-tag">변곡점</span>
+        <span class="t-tag">P''(t)=0</span>
+        <span class="t-tag">스마트팜</span>
+      </div>
+    </div>
+    <div class="topic-card tc2">
+      <div class="t-num">주제 2 · 미적분 합성함수 미분</div>
+      <div class="t-concept">태양광 발전량의<br>최대 발전 시점 도출</div>
+      <div class="t-domain">☀️ 태양광 · ESS · 에너지</div>
+      <div class="t-tags">
+        <span class="t-tag">연쇄법칙</span>
+        <span class="t-tag">극값</span>
+        <span class="t-tag">P'(t)=0</span>
+        <span class="t-tag">인버터 제어</span>
+      </div>
+    </div>
+    <div class="topic-card tc3">
+      <div class="t-num">주제 3 · 미적분 적분의 활용</div>
+      <div class="t-concept">탄소 누적 배출량 모델링 및<br>탄소중립 달성 검증</div>
+      <div class="t-domain">🌍 탄소중립 · 기후변화 · IPCC</div>
+      <div class="t-tags">
+        <span class="t-tag">정적분</span>
+        <span class="t-tag">누적량</span>
+        <span class="t-tag">∫C(t)dt</span>
+        <span class="t-tag">탄소예산</span>
+      </div>
+    </div>
+  </div>
+
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th>비교 항목</th>
+        <th>주제 1 — 이계도함수</th>
+        <th>주제 2 — 합성함수 미분</th>
+        <th>주제 3 — 정적분 ★</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>핵심 미적분 개념</td>
+        <td>이계도함수, 변곡점 t*</td>
+        <td>연쇄법칙, 극값 t*</td>
+        <td class="best c3">정적분, 누적량 ∫C(t)dt</td>
+      </tr>
+      <tr>
+        <td>수능 미적분 단원</td>
+        <td>도함수의 활용</td>
+        <td>여러 가지 함수의 미분</td>
+        <td class="best c3">적분의 활용 — 수능과 100% 겹침</td>
+      </tr>
+      <tr>
+        <td>프로그램 목적 부합</td>
+        <td>보통</td>
+        <td>보통</td>
+        <td class="best c3">최강 — 기사 비판 후 수학으로 검증</td>
+      </tr>
+      <tr>
+        <td>면접 설명 난이도</td>
+        <td><span class="bdg g">쉬움</span> — 변곡점 직관적</td>
+        <td><span class="bdg y">중간</span> — 연쇄법칙 도출</td>
+        <td><span class="bdg g">쉬움</span> — "넓이=누적량" 직관적</td>
+      </tr>
+      <tr>
+        <td>1·2학년 탐구 연결</td>
+        <td>스마트팜 ICT (1학년)</td>
+        <td class="best c2">태양광·ESS (2학년) 강함</td>
+        <td class="best c3">탄소·기후 더 클래식 (2학년)</td>
+      </tr>
+      <tr>
+        <td>교수 연결</td>
+        <td>김광수·안태인 교수</td>
+        <td>김형석·김학진 교수</td>
+        <td class="best c3">김연욱 교수 (기후스마트농업)</td>
+      </tr>
+      <tr>
+        <td>입시상담사 의견 부합</td>
+        <td>스마트팜 — 농대 색채</td>
+        <td class="best c2">에너지·데이터 — 강함</td>
+        <td class="best c3">환경·글로벌 — 강함</td>
+      </tr>
+      <tr>
+        <td>담임 교사 의견 부합</td>
+        <td class="best c1">학과 타겟팅 — 가장 명확</td>
+        <td>태양광 연결</td>
+        <td>글로벌 환경 연결</td>
+      </tr>
+      <tr>
+        <td>발표 임팩트</td>
+        <td>안정적·명확</td>
+        <td class="best c2">"정오 통념 뒤집기" — 강함</td>
+        <td class="best c3">"목표 달성 가능?" 검증 — 강함</td>
+      </tr>
+      <tr>
+        <td>수능 후 7일 면접 대비</td>
+        <td><span class="bdg g">용이</span></td>
+        <td><span class="bdg y">중간</span> — 연쇄법칙 손 계산</td>
+        <td><span class="bdg g">용이</span> — 적분 계산 명확</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="dvd">
+
+<!-- ══ S2: 전략 분석 ══ -->
+<section class="section" id="s2">
+  <div class="sec-hd"><span class="sec-num">02</span><h2 class="sec-title">주제별 <em>전략 분석</em></h2></div>
+
+  <div class="feature-grid">
+    <div class="feat-card c1">
+      <div class="f-lbl">주제 1 — 이계도함수</div>
+      <div class="f-val">
+        <strong>강점:</strong> 담임 교사가 원하는 학과 타겟팅이 가장 명확. 이계도함수→변곡점→수확 시점의 논리가 한 줄로 설명됨.<br><br>
+        <strong>약점:</strong> "스마트팜·농업" 색채가 강해 입시상담사 우려 지점. 1학년 ICT 탐구와의 연결이 2학년보다 약함.
+      </div>
+    </div>
+    <div class="feat-card c2">
+      <div class="f-lbl">주제 2 — 합성함수 미분</div>
+      <div class="f-val">
+        <strong>강점:</strong> 2학년 태양광·ESS 탐구와 완벽 연결. "정오에 최대라는 상식이 틀렸다"는 발표 임팩트. 입시상담사 에너지 키워드 부합.<br><br>
+        <strong>약점:</strong> 연쇄법칙 손 계산을 완전히 이해해야 면접 통과. 삼각함수 미분 포함.
+      </div>
+    </div>
+    <div class="feat-card c3">
+      <div class="f-lbl">주제 3 — 정적분</div>
+      <div class="f-val">
+        <strong>강점:</strong> 프로그램 목적("기사 비판적 분석")에 가장 부합. IPCC·환경부 보도자료를 수학으로 검증하는 구조. 글로벌 스케일.<br><br>
+        <strong>약점:</strong> 탄소예산 한국 몫 배분 기준에 대한 추가 논리 필요.
+      </div>
+    </div>
+    <div class="feat-card dark">
+      <div class="f-lbl">⚠️ 공통 주의 사항</div>
+      <div class="f-val">
+        세 주제 모두 <strong>"이해 없이 형식만 갖추면 면접에서 역효과"</strong>. 핵심 개념(이계도함수 / 연쇄법칙 / 정적분)을 손으로 직접 계산하고 설명할 수 있어야 함. 파이썬 시각화 코드도 한 줄씩 설명 가능해야 함.
+      </div>
+    </div>
+  </div>
+
+  <div class="alert info">
+    <strong>두 조언자 의견 균형점:</strong>
+    입시상담사(에너지·데이터 키워드 유지) × 담임교사(학과 타겟팅)를
+    동시에 만족하는 최적 조합은 <strong>주제 1 + 주제 3</strong>입니다.
+    주제 1은 농업(학과 타겟팅), 주제 3은 환경·기후(글로벌 데이터)를 커버하며
+    미적분 개념도 겹치지 않습니다.
+  </div>
+</section>
+
+<hr class="dvd">
+
+<!-- ══ S3: 면접 대비 ══ -->
+<section class="section" id="s3">
+  <div class="sec-hd"><span class="sec-num">03</span><h2 class="sec-title">주제별 <em>면접 예상 질문</em></h2></div>
+
+  <div class="alert warn" style="margin-bottom:20px">
+    <strong>수능 후 7일 벼락치기 원칙:</strong>
+    전체 내용을 재탐구하는 것은 불가능합니다. 각 주제당 핵심 질문 3개만 완벽하게 준비하세요.
+    이것이 7일의 전부여야 합니다.
+  </div>
+
+  <div class="depth-grid">
+    <div class="depth-card dc1">
+      <div class="d-tag">주제 1 — 이계도함수</div>
+      <h4>로지스틱·스마트팜<br>예상 질문 3가지</h4>
+      <ul>
+        <li>이계도함수 P''(t)=0이 왜 수확 시점이 되는가? 오목·볼록과 어떻게 연결되는가?</li>
+        <li>로지스틱 함수를 선택한 이유는? 지수함수나 다항함수는 왜 안 되는가?</li>
+        <li>이 모델의 한계는 무엇인가? 온도·광량이 달라지면 모델을 어떻게 수정해야 하는가?</li>
+      </ul>
+    </div>
+    <div class="depth-card dc2">
+      <div class="d-tag">주제 2 — 합성함수 미분</div>
+      <h4>태양광·극값<br>예상 질문 3가지</h4>
+      <ul>
+        <li>연쇄법칙을 어떻게 적용했는가? P'(t)의 두 항이 각각 무엇을 의미하는가?</li>
+        <li>η'(α) &lt; 0인 이유는? 온도가 오를수록 왜 효율이 떨어지는가?</li>
+        <li>t*가 정오보다 앞인 이유를 η'(α) 항으로 수식 없이 설명할 수 있는가?</li>
+      </ul>
+    </div>
+    <div class="depth-card dc3">
+      <div class="d-tag">주제 3 — 정적분</div>
+      <h4>탄소·누적량<br>예상 질문 3가지</h4>
+      <ul>
+        <li>∫₀ᵀ C(t)dt가 "누적 탄소 배출량"이 되는 수학적 이유를 리만합 없이 설명하면?</li>
+        <li>지수 감소와 선형 감소 중 실제에 가까운 모델은? 근거는?</li>
+        <li>탄소예산 400Gt를 한국 몫으로 어떻게 배분했는가? 그 기준이 공정한가?</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert dark">
+    <strong>핵심 원칙:</strong> "억지·AI 돌린 느낌"은 수준이 높아서가 아닙니다.
+    이해 없이 형식만 갖췄을 때 납니다. 위 질문 3개에 자신 있게 답할 수 있다면
+    — 면접관은 오히려 더 깊이 파고 들어올 것이고, 그게 좋은 신호입니다.
+  </div>
+</section>
+
+<hr class="dvd">
+
+<!-- ══ S4: 제출 추천 ══ -->
+<section class="section" id="s4">
+  <div class="sec-hd"><span class="sec-num">04</span><h2 class="sec-title">제출 <em>조합 추천</em></h2></div>
+
+  <div class="combo-grid">
+    <div class="combo-card star">
+      <span class="star-badge">★ 최우선 추천</span>
+      <div class="combo-lbl">개인 1개 제출</div>
+      <h4>주제 3<br>정적분 × 탄소중립</h4>
+      <p>프로그램 목적(기사 비판) 최부합. 글로벌 스케일. 면접 설명 쉬움. 2학년 더 클래식 활동 완결. 수능 적분 단원과 완전 연동.</p>
+    </div>
+    <div class="combo-card a">
+      <div class="combo-lbl">2인 팀 추천</div>
+      <h4>주제 1 + 주제 3</h4>
+      <p>미적분 개념 겹치지 않음. 농업(스마트팜) + 환경(탄소) 두 도메인 커버. 담임 교사·입시상담사 의견 동시 충족.</p>
+    </div>
+    <div class="combo-card b">
+      <div class="combo-lbl">3인 팀 추천</div>
+      <h4>주제 1 + 2 + 3 전부</h4>
+      <p>미적분 세 단원(이계도함수·합성함수미분·정적분)을 분담. 세 도메인(농업·에너지·환경) 모두 커버. 각자 자기 파트 면접 준비.</p>
+    </div>
+  </div>
+
+  <div class="alert ok">
+    <strong>✅ 지금 당장 해야 할 것:</strong>
+    신청서 마감이 <strong>5월 22일(금)</strong>까지입니다. 오늘이 5월 17일(일) — 남은 시간은 5일.
+    ① 개인 or 팀 결정 → ② 주제 결정 → ③ 아래 신청서 인쇄 → ④ 2층 제1교무실 제출.
+    기사 제목·출처는 실제 기사로 교체하고, 핸드폰 번호 기입 후 제출하세요.
+  </div>
+
+  <!-- 인쇄 버튼 -->
+  <div class="print-bar">
+    <p><strong>아래 신청서 인쇄하기:</strong> 원하는 신청서를 선택하거나 전체를 인쇄하세요.</p>
+    <select id="which-select">
+      <option value="all">전체 3종</option>
+      <option value="f1">주제 1만</option>
+      <option value="f2">주제 2만</option>
+      <option value="f3">주제 3만</option>
+    </select>
+    <button class="pBtn sel" onclick="printSelected()">🖨️ 선택 인쇄</button>
+    <button class="pBtn all" onclick="printAll()">🖨️ 전체 인쇄</button>
+  </div>
+</section>
+
+</div><!-- /strategy-wrap -->
+
+<!-- ══════════════════════════════════════
+     신청서 3종 (뒤 배치)
+══════════════════════════════════════ -->
+<div class="forms-wrap" id="forms">
+  <div class="forms-inner">
+
+    <div class="forms-title">참가신청서 3종</div>
+    <div class="forms-sub">아래에서 해당 신청서를 인쇄하여 제출하세요</div>
+
+    <!-- ── 신청서 1: 로지스틱·이계도함수 ── -->
+    <div class="form-page fp1" id="f1">
+      <div class="form-badge">주제 1 · 미적분 — 이계도함수 · 스마트팜</div>
+      <div class="form-headline">로지스틱 성장 함수의 미분 및 이계도함수 분석을 통한 스마트팜 작물 최적 수확 시점 도출</div>
+
+      <table class="ft">
+        <tr>
+          <th style="width:70px">학번</th><td style="width:140px">30123</td>
+          <th style="width:50px">이름</th><td style="width:100px">정민준</td>
+          <th style="width:90px">핸드폰 번호</th><td></td>
+        </tr>
+        <tr>
+          <td class="lc">지원동기</td>
+          <td class="cc" colspan="5">
+            AI·빅데이터가 빠르게 확산되는 현 시대에, 수학이 단순한 계산 도구가 아닌 <span class="h">현실의 복잡한 문제를 모델링하고 예측하는 언어</span>임을 체감해왔습니다. 특히 고등학교 2학년 때 기상 데이터와 에너지 저장 시스템(ESS)의 관계를 분석하는 탐구를 진행하면서, 데이터를 단순히 수집하는 것에 그치지 않고 <strong>수학적 모델로 정량화하고 예측에 활용하는 역량</strong>이 필요함을 절감했습니다.<br><br>
+            이 프로그램을 통해 실제 사회 현상을 담은 뉴스 기사에서 수학적 문제를 직접 발굴하고, 고등학교 과정에서 배운 <strong>미적분(로지스틱 함수, 이계도함수)</strong> 개념을 활용하여 스마트팜의 최적 작물 수확 시점을 정량적으로 도출하는 모델링 과정을 완성하고 싶습니다.
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">선정 기사<br>제목 및 출처</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+            <strong>제목:</strong> "스마트팜 혁신 가속 … AI·데이터 기반 정밀농업으로 작물 수확량 예측 정확도 높인다"<br>
+            <strong>출처:</strong> 농민신문 / 농촌진흥청 공식 보도자료
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+            <p class="sb">【포착한 현상】</p>
+            스마트팜에서 작물 수확 시점 결정은 여전히 경험적 판단에 의존합니다. 작물 생장은 초기에 빠르다가 일정 시점 이후 증가 속도가 줄어드는 패턴을 따릅니다. 이를 수학적으로 모델링하면 <span class="h">수확 시점을 정량적 수치로 결정</span>하는 것이 가능합니다.
+            <p class="sb">【설정한 수학적 질문】</p>
+            <p class="ind">① 로지스틱 함수 <span class="m">P(t) = K/(1+Ae^(−rt))</span>의 이계도함수 <span class="k">P''(t) = 0이 되는 변곡점</span>은 어떤 농업적 의미를 가지며, 최적 수확 시점 기준이 될 수 있는가?</p>
+            <p class="ind">② 온도·광량 변수가 성장률 <span class="m">r</span>값을 바꿀 때 최적 수확 시점 t*는 어떻게 이동하는가?</p>
+            <p class="ind">③ 이 모델이 실제 공공 데이터(작물 생장 실험)와 얼마나 일치하는가?</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">연계 교과<br>및 단원</td>
+          <td class="cc" colspan="5">
+            <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c1)">미적분(✓)</strong> 확률과 통계(  ) 기하(  )<br><br>
+            <strong>[단원명]</strong><br>
+            <p class="ind">· <strong>미적분 — 미분법:</strong> P'(t) 도출, 생장 속도 극값 분석</p>
+            <p class="ind">· <strong>미적분 — 도함수의 활용:</strong> 이계도함수 P''(t), 변곡점 계산으로 최적 수확 시점 도출</p>
+            <p class="ind">· <strong>(보조) 수학Ⅱ — 함수의 극한:</strong> 생장 함수의 수렴 거동 분석</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">탐구 주제</td>
+          <td class="cc" colspan="5">
+            <strong>로지스틱 성장 함수의 미분 및 이계도함수 분석을 통한 스마트팜 작물의 <span class="k">최적 수확 시점 도출</span></strong><br>
+            <em style="color:#666">— 공공 생장 데이터를 활용한 파라미터 추정 및 환경 변수 변화 분석 포함</em>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">수학적<br>모델링 및<br>탐구 계획</td>
+          <td class="cc" colspan="5">
+            <p class="sb">▶ STEP 1. 모델 설정 (6월 1주)</p>
+            <span class="m">P(t) = K/(1+Ae^(−rt))</span> 도입. 농촌진흥청 공공 데이터로 파라미터 K, r, A 추정.
+            <p class="sb">▶ STEP 2. 1계 도함수 분석 (6월 2주)</p>
+            <span class="m">P'(t) = rKAe^(−rt)/(1+Ae^(−rt))²</span> 도출. 생장 속도 최댓값 계산. matplotlib으로 시각화.
+            <p class="sb">▶ STEP 3. 이계도함수 → 최적 수확 시점 (6월 3주)</p>
+            <span class="k">P''(t) = 0인 변곡점 t* = ln(A)/r</span> 계산. 변곡점 전후 오목·볼록 확인. t*가 최적 수확 신호임을 증명.
+            <p class="sb">▶ STEP 4. 환경 변수 변화 분석 (6월 4주)</p>
+            고온(r↑) → t* 앞당겨짐, 저광량(r↓) → t* 늦어짐. <span class="k">스마트팜 환경 제어가 r값을 관리하여 t*를 조절하는 것임을 수학적으로 증명.</span>
+            <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1주)</p>
+            단일 변수 모델 한계 → 다변수 모델 필요 → 데이터 사이언스가 필요한 수학적 이유.
+            <p class="sb">▶ STEP 6. 보고서 및 발표 준비 (7월 2주)</p>
+            보고서(A4 5매+) + 발표 PPT(10슬라이드+).
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">결과물<br>도출 및<br>기대효과</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+            <p class="sb">【도출 결과물】</p>
+            <p class="ind">① 공공 데이터에 피팅된 파라미터(K, r, A) 수치 결과</p>
+            <p class="ind">② 이계도함수로 계산된 최적 수확 시점 t* 수학적 도출 과정</p>
+            <p class="ind">③ P(t)·P'(t)·P''(t) 시각화 그래프 및 변곡점 표시</p>
+            <p class="ind">④ 온도·광량 변화에 따른 t* 이동 시뮬레이션</p>
+            <p class="sb">【기대 효과】</p>
+            <p class="ind">· <strong>수학적 측면:</strong> 이계도함수·변곡점 개념이 실제 농업 의사결정의 정량적 도구가 될 수 있음을 체험.</p>
+            <p class="ind">· <strong>공학적 측면:</strong> 단일 모델 한계를 확인하여 스마트시스템(다변수 데이터 통합)의 필요성을 수학적으로 이해.</p>
+            <p class="ind">· <strong>탐구 역량:</strong> 수학→시각화→데이터 검증→한계 분석→확장 방향 제시의 전 과정 수행.</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- ── 신청서 2: 합성함수·극값 ── -->
+    <div class="form-page fp2 page-break" id="f2">
+      <div class="form-badge">주제 2 · 미적분 — 합성함수 미분 · 태양광 ESS</div>
+      <div class="form-headline">합성함수 미분(연쇄법칙)을 활용한 태양광 발전량 함수의 최대 발전 시점 도출 및 스마트 인버터 제어 모델 설계</div>
+
+      <table class="ft">
+        <tr>
+          <th style="width:70px">학번</th><td style="width:140px">30123</td>
+          <th style="width:50px">이름</th><td style="width:100px">정민준</td>
+          <th style="width:90px">핸드폰 번호</th><td></td>
+        </tr>
+        <tr>
+          <td class="lc">지원동기</td>
+          <td class="cc" colspan="5">
+            고등학교 2학년 때 태양광 발전량의 날씨별 변동성과 ESS 충방전 최적화를 탐구하면서, "<span class="h">태양광 패널이 하루 중 언제 가장 많은 전력을 생산하는가</span>"라는 핵심 질문에 부딪혔습니다. 당시에는 데이터로 경향성을 파악하는 수준에서 탐구를 마무리했지만, 이를 수학적으로 정확하게 답하는 도구가 <strong>미분(극값, 합성함수 미분)</strong>임을 이후 수업에서 깨달았습니다.<br><br>
+            이 프로그램을 통해 태양의 고도각과 패널 효율 함수를 합성하여 발전량 함수 P(t)를 구성하고, <span class="k">P'(t) = 0이 되는 극값으로 최대 발전 시점을 수학적으로 도출</span>하여 2학년까지의 에너지 탐구를 미적분으로 완결 짓고자 지원합니다.
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">선정 기사<br>제목 및 출처</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+            <strong>제목:</strong> "태양광 발전량, 시간대별 편차 크다 … 인버터 제어 최적화가 에너지 손실 줄이는 핵심"<br>
+            <strong>출처:</strong> 전기신문 / 한국에너지공단 보도자료
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+            <p class="sb">【포착한 현상】</p>
+            패널 온도가 올라갈수록 발전 효율이 감소하는 역관계가 있어, <span class="h">최대 발전량을 내는 시점은 "태양 고도가 가장 높은 순간(정오)"이 아닐 수 있습니다.</span> 이 합성 관계를 수학적으로 모델링하면 인버터 제어의 수학적 근거가 마련됩니다.
+            <p class="sb">【설정한 수학적 질문】</p>
+            <p class="ind">① 고도각 α(t)와 효율 η(α)를 합성하여 <span class="m">P(t) = η(α(t))·I₀·sin(α(t))·A</span>로 표현할 때, <span class="k">연쇄법칙으로 P'(t)</span>는 어떻게 도출되는가?</p>
+            <p class="ind">② P'(t) = 0인 t*가 정오와 다른 이유가 <span class="k">η'(α) &lt; 0</span> 항으로 수학적으로 설명되는가?</p>
+            <p class="ind">③ 계절별(하지·동지) t*는 어떻게 이동하며, 스마트 인버터가 이를 어떻게 반영해야 하는가?</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">연계 교과<br>및 단원</td>
+          <td class="cc" colspan="5">
+            <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c2)">미적분(✓)</strong> 확률과 통계(  ) 기하(  )<br><br>
+            <strong>[단원명]</strong><br>
+            <p class="ind">· <strong>미적분 — 미분법:</strong> 합성함수의 미분(연쇄법칙) 적용</p>
+            <p class="ind">· <strong>미적분 — 도함수의 활용:</strong> P'(t)=0 극값 도출, P''(t)&lt;0으로 극대 확인</p>
+            <p class="ind">· <strong>미적분 — 여러 가지 함수의 미분:</strong> 삼각함수 미분 α(t) = A·sin(ωt+φ) 적용</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">탐구 주제</td>
+          <td class="cc" colspan="5">
+            <strong>합성함수 미분(연쇄법칙)을 활용한 태양광 발전량 함수의 <span class="k">최대 발전 시점 도출</span> 및 스마트 인버터 제어 모델 설계</strong><br>
+            <em style="color:#666">— 태양 고도각·패널 효율 합성함수의 극값 분석 및 계절별 t* 변화 비교</em>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">수학적<br>모델링 및<br>탐구 계획</td>
+          <td class="cc" colspan="5">
+            <p class="sb">▶ STEP 1. 함수 설정 (6월 1주)</p>
+            <span class="m">α(t) = A·sin(ωt+φ)</span>, <span class="m">η(α) = η₀ − k·(T(α)−T_ref)</span>, <span class="m">P(t) = η(α(t))·I₀·sin(α(t))·A_panel</span> 설정.
+            <p class="sb">▶ STEP 2. 연쇄법칙 적용 (6월 2주)</p>
+            <span class="m">P'(t) = η'(α(t))·α'(t)·I₀·A_panel + η(α(t))·I₀·cos(α(t))·α'(t)·A_panel</span> 도출. η'(α) 항이 음수임을 확인.
+            <p class="sb">▶ STEP 3. 극값 도출 및 이계도함수 확인 (6월 3주)</p>
+            P'(t)=0 → t* 수치해석으로 계산. <span class="k">P''(t*) &lt; 0 → 극대 확인.</span> "t*가 정오보다 10~40분 앞선다" 구체 수치 도출.
+            <p class="sb">▶ STEP 4. 계절별 t* 비교 (6월 4주)</p>
+            하지·동지 파라미터 각각 대입. t* 이동 양상 비교. 스마트 인버터 계절별 제어 근거 수립.
+            <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1주)</p>
+            구름·강수·오염 등 돌발 변수 → 실시간 센서 데이터 결합 필요 → 스마트시스템의 수학적 이유.
+            <p class="sb">▶ STEP 6. 보고서 및 발표 (7월 2주)</p>
+            보고서(A4 5매+) + PPT(10슬라이드+).
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">결과물<br>도출 및<br>기대효과</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+            <p class="sb">【도출 결과물】</p>
+            <p class="ind">① P(t) 합성함수 수식 및 연쇄법칙 적용 전 과정</p>
+            <p class="ind">② P'(t)=0의 수치해 t* 계산 결과 및 이계도함수 극대 확인</p>
+            <p class="ind">③ P(t)·P'(t)·P''(t) 동시 시각화 그래프 (하지·동지 비교)</p>
+            <p class="ind">④ 계절별 t* 비교표 및 스마트 인버터 제어 전략 방향 정리</p>
+            <p class="sb">【기대 효과】</p>
+            <p class="ind">· <strong>수학적 측면:</strong> "정오에 발전량 최대"라는 통념이 틀렸음을 수학으로 증명. 비판적 수학 사고력 함양.</p>
+            <p class="ind">· <strong>탐구 일관성:</strong> 2학년 태양광·ESS 에너지 탐구를 미적분으로 완결 짓는 3년 성장 서사 완성.</p>
+            <p class="ind">· <strong>공학적 측면:</strong> 스마트시스템(실시간 데이터)이 수학 모델과 결합할 때 실용적 제어 가능함 이해.</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- ── 신청서 3: 정적분·탄소 ── -->
+    <div class="form-page fp3 page-break" id="f3">
+      <div class="form-badge">주제 3 · 미적분 — 정적분의 활용 · 탄소중립 검증</div>
+      <div class="form-headline">정적분을 활용한 탄소 누적 배출량 모델링 및 탄소예산 소진 시점·탄소중립 달성 가능성 정량 검증</div>
+
+      <table class="ft">
+        <tr>
+          <th style="width:70px">학번</th><td style="width:140px">30123</td>
+          <th style="width:50px">이름</th><td style="width:100px">정민준</td>
+          <th style="width:90px">핸드폰 번호</th><td></td>
+        </tr>
+        <tr>
+          <td class="lc">지원동기</td>
+          <td class="cc" colspan="5">
+            고등학교 2학년 때 '더 클래식' 활동에서 탄소 배출량 감소와 기후변화 대응을 탐구하면서, 뉴스에서 자주 등장하는 "2050 탄소중립" 목표가 <span class="h">실제로 달성 가능한 수치인지 수학적으로 검증한 연구를 본 적이 없다</span>는 점이 의문이었습니다. 기사들은 "탄소 배출을 X% 줄여야 한다"고 보도하지만, 감소 추세가 지속될 때 누적 배출량이 탄소예산 한도 이내에서 수렴하는지를 수학적으로 계산한 내용은 찾기 어려웠습니다.<br><br>
+            이 프로그램을 통해 탄소 배출량 감소 함수를 설정하고, <span class="k">적분으로 특정 기간의 누적 탄소 배출량을 계산</span>하여 탄소중립 목표 달성 가능성을 정량적으로 검증하고자 지원합니다.
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">선정 기사<br>제목 및 출처</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+            <strong>제목:</strong> "IPCC 보고서 경고 — 현재 감축 속도론 1.5°C 목표 달성 불가 … 남은 탄소예산은 단 400Gt"<br>
+            <strong>출처:</strong> 경향신문 / IPCC AR6 보고서 (2023)<br><br>
+            <strong>보조 기사:</strong> "한국 2030 온실가스 40% 감축 목표 — 연도별 감축 경로가 핵심"<br>
+            <strong>출처:</strong> 환경부 보도자료 / 탄소중립녹색성장위원회
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+            <p class="sb">【포착한 현상】</p>
+            IPCC 보고서는 남은 탄소예산이 약 400Gt이라고 경고하지만, <span class="h">감축 속도를 수학적으로 모델링하고 누적 배출량을 적분으로 계산하여 탄소예산 한도와 비교하는 정량적 분석</span>은 제시하지 않습니다. 탄소 배출량 감소를 지수함수 또는 선형함수로 모델링하면, 정적분으로 누적 배출량을 계산하여 탄소예산 소진 시점을 예측할 수 있습니다.
+            <p class="sb">【설정한 수학적 질문】</p>
+            <p class="ind">① 감소 함수 <span class="m">C(t) = C₀·e^(−rt)</span>일 때, <span class="k">∫₀ᵀ C(t)dt</span>는 얼마이며 탄소예산 400Gt를 초과하지 않으려면 r은 최소 얼마인가?</p>
+            <p class="ind">② <span class="k">∫₀ᵀ C(t)dt = B_KR이 되는 T(탄소예산 소진 시점)</span>를 적분 방정식으로 역산하면 몇 년도인가?</p>
+            <p class="ind">③ 한국 2030년 40% 감축 목표를 선형 모델에 대입할 때, 누적 배출량 정적분이 탄소예산 이내인가? 달성 가능한가?</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">연계 교과<br>및 단원</td>
+          <td class="cc" colspan="5">
+            <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c3)">미적분(✓)</strong> 확률과 통계(  ) 기하(  )<br><br>
+            <strong>[단원명]</strong><br>
+            <p class="ind">· <strong>미적분 — 적분법:</strong> 지수함수·다항함수 부정적분, 정적분 계산</p>
+            <p class="ind">· <strong>미적분 — 적분의 활용:</strong> 정적분 = 곡선 아래 넓이 = 누적량, 탄소 누적 배출량 계산</p>
+            <p class="ind">· <strong>(보조) 수학Ⅰ — 지수함수:</strong> C(t) = C₀·e^(−rt) 지수 감소 모델 설정</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">탐구 주제</td>
+          <td class="cc" colspan="5">
+            <strong>정적분을 활용한 탄소 누적 배출량 모델링 및 <span class="k">탄소예산 소진 시점·탄소중립 달성 가능성 정량 검증</span></strong><br>
+            <em style="color:#666">— 지수 감소·선형 감소 두 모델 비교 및 감소율 시나리오별 시뮬레이션</em>
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">수학적<br>모델링 및<br>탐구 계획</td>
+          <td class="cc" colspan="5">
+            <p class="sb">▶ STEP 1. 기준 데이터 설정 (6월 1주)</p>
+            C₀ = 한국 2023년 배출량 ≈ 6.5억 tCO₂eq. 탄소예산 B_KR = 400Gt × 한국 비중(~1.7%). 지수 감소 <span class="m">C(t)=C₀·e^(−rt)</span> / 선형 감소 <span class="m">C(t)=C₀−at</span> 두 모델 설정.
+            <p class="sb">▶ STEP 2. 정적분으로 누적 배출량 계산 (6월 2주)</p>
+            지수: <span class="m">∫₀ᵀ C₀e^(−rt)dt = (C₀/r)·(1−e^(−rT))</span>. 선형: <span class="m">∫₀ᵀ (C₀−at)dt = C₀T−(a/2)T²</span>. 두 수식을 B_KR과 같다고 놓고 <span class="k">탄소예산 소진 시점 T 역산.</span>
+            <p class="sb">▶ STEP 3. 감소율 시나리오 비교 (6월 3주)</p>
+            시나리오 A(현 추세 r≈2%), B(NDC 목표 r≈6%), C(급진적 r≈10%)별 T 계산. <span class="k">matplotlib으로 C(t) 곡선과 누적 배출량(넓이) 색칠 시각화.</span>
+            <p class="sb">▶ STEP 4. 한국 NDC 달성 가능성 검증 (6월 4주)</p>
+            2030년 40% 감축 선형 모델 대입 → <span class="k">2050년까지 누적 배출량 정적분 계산 → B_KR 초과 여부 판단.</span>
+            <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1주)</p>
+            실제 배출량은 비정형 변화 → 실시간 데이터 수집·모델 갱신 스마트시스템 필요. 김연욱 교수(기후스마트농업·온실가스 감축) 연구와 연결.
+            <p class="sb">▶ STEP 6. 보고서 및 발표 (7월 2주)</p>
+            보고서(A4 5매+) + PPT(10슬라이드+).
+          </td>
+        </tr>
+        <tr>
+          <td class="lc">결과물<br>도출 및<br>기대효과</td>
+          <td class="cc" colspan="5">
+            <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+            <p class="sb">【도출 결과물】</p>
+            <p class="ind">① 지수·선형 두 모델의 정적분 수식 도출 및 손 계산 결과</p>
+            <p class="ind">② 감소율 시나리오 3가지별 탄소예산 소진 시점 T와 탄소중립 도달 연도 비교표</p>
+            <p class="ind">③ C(t) 곡선 + 누적 배출량(그래프 아래 넓이 색칠) 시각화 3종</p>
+            <p class="ind">④ 한국 NDC 2030 목표 달성 시 탄소예산 충족 여부 정량 검증 결론</p>
+            <p class="sb">【기대 효과】</p>
+            <p class="ind">· <strong>수학적 측면:</strong> "정적분 = 곡선 아래 넓이 = 누적 탄소 배출량"이라는 현실 수치와의 완벽한 대응 체험.</p>
+            <p class="ind">· <strong>비판적 사고:</strong> 뉴스 기사의 탄소중립 주장을 수학 모델로 직접 검증하고 결론 도출. 데이터 기반 사고 훈련.</p>
+            <p class="ind">· <strong>전공 연결:</strong> 실시간 배출 데이터 수집·모델 갱신이 필요하다는 결론 → 스마트시스템과학과 "데이터 기반 의사결정" 인재상과 직결.</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div><!-- /forms-wrap -->
+
+<button id="stt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+/* NAV */
+const navLinks = document.querySelectorAll('.top-nav a');
+const sections = ['s0','s1','s2','s3','s4','forms'];
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 80;
+  let cur = sections[0];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop <= y) cur = id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+  });
+  document.getElementById('stt').classList.toggle('v', window.scrollY > 350);
+});
+
+/* PRINT */
+function printAll() {
+  document.querySelectorAll('.form-page').forEach(f => f.style.display = '');
+  window.print();
+}
+
+function printSelected() {
+  const val = document.getElementById('which-select').value;
+  const all = ['f1','f2','f3'];
+  if (val === 'all') { printAll(); return; }
+  all.forEach(id => {
+    document.getElementById(id).style.display = (id === val) ? '' : 'none';
+  });
+  window.print();
+  all.forEach(id => { document.getElementById(id).style.display = ''; });
+}
+</script>
+</body>
+</html>
