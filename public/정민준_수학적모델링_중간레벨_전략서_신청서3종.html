@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정민준 — 수학적 모델링 중간 레벨 전략서 + 참가신청서 3종</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f2ec;--paper:#fffcf8;--ink:#1a1510;--muted:#7a7165;
+  --border:#ddd6c8;--border2:#c4bdb0;
+  --c1:#1a4a6e;--c1b:#edf4fb;--c1d:#90bde0;
+  --c2:#6b3a08;--c2b:#fdf3e0;--c2d:#e8c07a;
+  --c3:#1a4a1a;--c3b:#e8f6e8;--c3d:#80c880;
+  --forest:#1e3a2a;--gold:#c9973a;
+  --mid:#6b2d8e;--midb:#f4effe;--midd:#c0a0e8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Serif KR',serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75}
+@media print{
+  .sw{display:none!important}
+  .pb{page-break-before:always}
+  .fp{background:white;padding:32px 40px;box-shadow:none;max-width:100%}
+  .print-bar,.pBtn,#wsel{display:none!important}
+  body{background:white}
+  .forms-wrap{border-top:none;margin-top:0;padding:20px}
+}
+/* NAV */
+.nav{background:var(--mid);position:sticky;top:0;z-index:200;border-bottom:2px solid var(--gold);overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-i{display:flex;max-width:1100px;margin:0 auto;padding:0 24px;white-space:nowrap}
+.nav a{padding:13px 17px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;color:rgba(255,255,255,.52);text-decoration:none;text-transform:uppercase;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s;display:inline-block}
+.nav a:hover{color:rgba(255,255,255,.88)}
+.nav a.on{color:var(--gold);border-bottom-color:var(--gold)}
+/* HERO */
+.hero{background:var(--mid);padding:54px 40px 46px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.01) 0,rgba(255,255,255,.01) 1px,transparent 1px,transparent 52px),repeating-linear-gradient(0deg,rgba(255,255,255,.01) 0,rgba(255,255,255,.01) 1px,transparent 1px,transparent 52px);pointer-events:none}
+.hi{max-width:1100px;margin:0 auto;position:relative}
+.ey{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
+.hero h1{font-family:'Gowun Batang',serif;font-size:clamp(28px,4.5vw,48px);font-weight:700;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px}
+.hero h1 span{color:var(--gold)}
+.hd{font-size:14px;color:rgba(255,255,255,.6);max-width:640px;line-height:1.85}
+.hcs{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
+.hc{font-family:'DM Mono',monospace;font-size:11px;padding:4px 13px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.65);border-radius:20px}
+.hc.t1{border-color:var(--c1d);color:#90bde0}
+.hc.t2{border-color:var(--c2d);color:#e8c07a}
+.hc.t3{border-color:var(--c3d);color:#80c880}
+/* WRAP */
+.sw{max-width:1100px;margin:0 auto;padding:0 24px 80px}
+.sec{padding-top:56px}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid var(--border)}
+.sn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted)}
+.st{font-family:'Gowun Batang',serif;font-size:23px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.st em{font-style:normal;color:var(--mid)}
+.dvd{border:none;border-top:1px solid var(--border);margin:26px 0}
+/* LEVEL LADDER */
+.ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--ink);border:2px solid var(--ink);margin-bottom:28px}
+.rung{padding:20px 18px;background:#fff;position:relative;border-bottom:4px solid}
+.rung.basic{border-bottom-color:#90bde0}
+.rung.mid{border-bottom-color:var(--mid)}
+.rung.adv{border-bottom-color:var(--c3)}
+.rung .rl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
+.rung.basic .rl{color:var(--c1)}.rung.mid .rl{color:var(--mid)}.rung.adv .rl{color:var(--c3)}
+.rung h4{font-family:'Gowun Batang',serif;font-size:16px;font-weight:700;margin-bottom:8px;line-height:1.35}
+.rung ul{list-style:none;padding:0}
+.rung ul li{font-size:13px;line-height:1.7;padding:2px 0 2px 13px;position:relative;color:var(--muted)}
+.rung ul li::before{content:'·';position:absolute;left:3px;font-weight:700;font-size:15px;top:1px}
+.rung.basic ul li::before{color:var(--c1)}.rung.mid ul li::before{color:var(--mid)}.rung.adv ul li::before{color:var(--c3)}
+/* TOPIC GRID */
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--ink);border:2px solid var(--ink);margin-bottom:28px}
+.tc{padding:22px 18px;background:#fff;position:relative;overflow:hidden;transition:transform .18s}
+.tc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;transition:height .2s}
+.tc:hover{transform:translateY(-2px)}.tc:hover::after{height:7px}
+.tc1::after{background:var(--c1)}.tc2::after{background:var(--c2)}.tc3::after{background:var(--c3)}
+.tn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:7px}
+.tc1 .tn{color:var(--c1)}.tc2 .tn{color:var(--c2)}.tc3 .tn{color:var(--c3)}
+.tc-concept{font-family:'Gowun Batang',serif;font-size:16px;font-weight:700;line-height:1.35;margin-bottom:6px}
+.tc-domain{font-size:13px;color:var(--muted);margin-bottom:9px}
+.tc-diff{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid;font-weight:600;margin-bottom:8px}
+.tc1 .tc-diff{background:var(--c1b);border-color:var(--c1d);color:var(--c1)}
+.tc2 .tc-diff{background:var(--c2b);border-color:var(--c2d);color:var(--c2)}
+.tc3 .tc-diff{background:var(--c3b);border-color:var(--c3d);color:var(--c3)}
+.tc-tags{display:flex;flex-wrap:wrap;gap:5px}
+.tt{font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid}
+.tc1 .tt{background:var(--c1b);border-color:var(--c1d);color:var(--c1)}
+.tc2 .tt{background:var(--c2b);border-color:var(--c2d);color:var(--c2)}
+.tc3 .tt{background:var(--c3b);border-color:var(--c3d);color:var(--c3)}
+/* TABLE */
+.ct{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.ct thead th{background:var(--mid);color:rgba(255,255,255,.88);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:11px 14px;text-align:left;font-weight:500}
+.ct thead th:nth-child(2){color:#b8d8f8}.ct thead th:nth-child(3){color:#f0d898}.ct thead th:nth-child(4){color:#a0e0a0}
+.ct tbody td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.65}
+.ct tbody tr:last-child td{border-bottom:none}.ct tbody tr:hover td{background:#f9f6f1}
+.ct td:first-child{font-weight:600;color:var(--mid);min-width:90px}
+.b1{font-weight:700;color:var(--c1)}.b2{font-weight:700;color:var(--c2)}.b3{font-weight:700;color:var(--c3)}
+/* DEPTH CARDS */
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.dc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:17px 17px 15px;border-top:4px solid}
+.dc1{border-top-color:var(--c1)}.dc2{border-top-color:var(--c2)}.dc3{border-top-color:var(--c3)}
+.dc .dt{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:7px}
+.dc1 .dt{color:var(--c1)}.dc2 .dt{color:var(--c2)}.dc3 .dt{color:var(--c3)}
+.dc h4{font-family:'Gowun Batang',serif;font-size:15px;font-weight:700;margin-bottom:8px;line-height:1.3}
+.dc ul{list-style:none;padding:0}
+.dc ul li{font-size:13px;line-height:1.7;padding:3px 0 3px 14px;position:relative}
+.dc ul li::before{content:'·';position:absolute;left:3px;font-weight:700;font-size:16px;top:1px}
+.dc1 ul li::before{color:var(--c1)}.dc2 ul li::before{color:var(--c2)}.dc3 ul li::before{color:var(--c3)}
+.study-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:12px;line-height:1.7;color:var(--muted)}
+.study-box strong{color:var(--ink)}
+/* COMPARE VS TABLE */
+.vs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.vs-card{border-radius:14px;padding:16px 17px;border:1px solid}
+.vs-card .vc-top{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.vs-card h4{font-family:'Gowun Batang',serif;font-size:15px;font-weight:700;margin-bottom:6px}
+.vs-card p{font-size:12.5px;line-height:1.68;color:var(--muted)}
+.vs-card.basic{background:var(--c1b);border-color:var(--c1d)}.vs-card.basic .vc-top{color:var(--c1)}
+.vs-card.mid{background:var(--midb);border-color:var(--midd)}.vs-card.mid .vc-top{color:var(--mid)}
+.vs-card.adv{background:var(--c3b);border-color:var(--c3d)}.vs-card.adv .vc-top{color:var(--c3)}
+/* SMALL CARDS */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:15px 17px}
+.card .cl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;margin-bottom:6px}
+.card .cv{font-size:13px;line-height:1.7}
+.card.c1{background:var(--c1b);border-color:var(--c1d)}.card.c1 .cl{color:var(--c1)}
+.card.c2{background:var(--c2b);border-color:var(--c2d)}.card.c2 .cl{color:var(--c2)}
+.card.c3{background:var(--c3b);border-color:var(--c3d)}.card.c3 .cl{color:var(--c3)}
+.card.mid{background:var(--midb);border-color:var(--midd)}.card.mid .cl{color:var(--mid)}
+.card.dark{background:var(--mid);color:#fff;border-color:transparent}.card.dark .cl{color:var(--gold)}.card.dark .cv{color:rgba(255,255,255,.85)}
+/* COMBO */
+.combo-g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.combo{border-radius:14px;padding:17px;border:1px solid;position:relative}
+.combo .clbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.17em;text-transform:uppercase;font-weight:600;margin-bottom:7px}
+.combo h4{font-family:'Gowun Batang',serif;font-size:15px;font-weight:700;margin-bottom:7px}
+.combo p{font-size:13px;line-height:1.68;color:#333}
+.combo.star{background:var(--mid);color:#fff;border-color:var(--gold);box-shadow:0 3px 18px rgba(107,45,142,.2)}
+.combo.star .clbl{color:var(--gold)}.combo.star h4{color:#fff}.combo.star p{color:rgba(255,255,255,.78)}
+.combo.a{background:var(--c1b);border-color:var(--c1d)}.combo.a .clbl{color:var(--c1)}
+.combo.b{background:var(--c2b);border-color:var(--c2d)}.combo.b .clbl{color:var(--c2)}
+.sbadge{position:absolute;top:-10px;right:14px;background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.08em}
+/* ALERT */
+.al{border-radius:12px;padding:13px 17px;margin-bottom:13px;border:1px solid;font-size:14px;line-height:1.78}
+.al strong{font-weight:700}
+.al.ok{background:var(--c3b);border-color:var(--c3d);color:#0a2a0a}.al.ok strong{color:var(--c3)}
+.al.info{background:var(--midb);border-color:var(--midd);color:#2a0a4a}.al.info strong{color:var(--mid)}
+.al.warn{background:var(--c2b);border-color:var(--c2d);color:#5a3806}.al.warn strong{color:var(--c2)}
+.al.dark{background:var(--mid);color:rgba(255,255,255,.88);border-color:transparent}.al.dark strong{color:var(--gold)}
+/* PRINT BAR */
+.print-bar{background:var(--mid);padding:17px 20px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;border-radius:14px;margin-bottom:13px}
+.print-bar p{font-size:14px;color:rgba(255,255,255,.8);flex:1;min-width:180px}.print-bar p strong{color:var(--gold)}
+.pBtn{padding:9px 18px;border:none;border-radius:8px;font-family:'Noto Serif KR',serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .16s;white-space:nowrap}
+.pBtn.all{background:var(--gold);color:var(--ink)}.pBtn.all:hover{background:#e0a840}
+.pBtn.sel{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.28)}.pBtn.sel:hover{background:rgba(255,255,255,.25)}
+#wsel{padding:7px 11px;border-radius:8px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font-size:13px}
+#wsel option{color:var(--ink);background:#fff}
+/* SCROLL TOP */
+#stt{position:fixed;bottom:22px;right:22px;width:38px;height:38px;background:var(--mid);color:#fff;border:none;border-radius:50%;font-size:15px;cursor:pointer;opacity:0;transition:opacity .25s,transform .16s;z-index:300;display:flex;align-items:center;justify-content:center}
+#stt.v{opacity:1}#stt:hover{transform:translateY(-2px);background:var(--gold);color:var(--ink)}
+/* FORMS */
+.forms-wrap{background:var(--bg);padding:52px 24px 80px;border-top:4px double var(--border2);margin-top:52px}
+.fi{max-width:800px;margin:0 auto}
+.forms-title{font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;text-align:center;margin-bottom:5px}
+.forms-sub{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:36px}
+.fp{background:#fff;padding:40px 46px;margin-bottom:52px;box-shadow:0 2px 20px rgba(26,21,16,.1);border-top:6px solid}
+.fp1{border-top-color:var(--c1)}.fp2{border-top-color:var(--c2)}.fp3{border-top-color:var(--c3)}
+.fbadge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.19em;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.fp1 .fbadge{color:var(--c1)}.fp2 .fbadge{color:var(--c2)}.fp3 .fbadge{color:var(--c3)}
+.fhead{font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;margin-bottom:20px;line-height:1.35;color:var(--ink)}
+.flevel{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;padding:3px 11px;border-radius:20px;border:1px solid;font-weight:600;margin-bottom:15px;background:var(--midb);border-color:var(--midd);color:var(--mid)}
+/* FORM TABLE */
+.ft{width:100%;border-collapse:collapse;font-size:13px}
+.ft th,.ft td{border:1px solid #666;padding:8px 11px;vertical-align:top}
+.ft th{background:#d6e4f7;font-weight:600;text-align:center;white-space:nowrap;vertical-align:middle}
+.ft .lc{background:#d6e4f7;font-weight:600;text-align:center;width:96px;vertical-align:middle;font-size:12px;line-height:1.5}
+.ft .cc{font-size:13px;line-height:1.82}
+.ft .cc strong{font-weight:700}
+.ft .cc .k{font-weight:700}
+.fp1 .ft .cc .k{color:var(--c1)}.fp1 .ft .cc .m{color:var(--c1);font-family:'Noto Serif KR',serif;font-weight:700}
+.fp2 .ft .cc .k{color:var(--c2)}.fp2 .ft .cc .m{color:var(--c2);font-family:'Noto Serif KR',serif;font-weight:700}
+.fp3 .ft .cc .k{color:var(--c3)}.fp3 .ft .cc .m{color:var(--c3);font-family:'Noto Serif KR',serif;font-weight:700}
+.ft .cc .h{background:linear-gradient(transparent 55%,#fffbb0 55%);padding:0 2px}
+.gt{font-size:11px;color:#777;margin-bottom:6px;font-style:italic}
+.sb{font-weight:700;margin:11px 0 4px;font-size:13px}.sb:first-child{margin-top:3px}
+.ind{padding-left:14px;margin:2px 0;font-size:13px;line-height:1.75}
+@media(max-width:860px){
+  .tg,.dg,.combo-g,.vs-grid,.ladder{grid-template-columns:1fr}
+  .cg{grid-template-columns:1fr}
+  .hero,.sw{padding-left:18px;padding-right:18px}
+  .fp{padding:24px 16px}
+  .forms-wrap{padding:32px 12px 60px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-i">
+  <a href="#s0" class="on">레벨 위치</a>
+  <a href="#s1">주제 비교</a>
+  <a href="#s2">여름방학 계획</a>
+  <a href="#s3">면접 대비</a>
+  <a href="#s4">제출 추천</a>
+  <a href="#forms">신청서 3종 ↓</a>
+</div></nav>
+
+<header class="hero" id="s0"><div class="hi">
+  <div class="ey">중간 레벨 전략서 · 여름방학 2~3주 준비 · 정민준 · 2026-1학기</div>
+  <h1>기초와 심화 사이 —<br><span>중간 레벨</span> 탐구 주제 3종</h1>
+  <p class="hd">수능 미적분 개념을 완전히 이해한 후 실제 데이터 피팅·수치적분 오차·민감도 분석으로 한 단계만 확장합니다. 여름방학 2~3주 투자로 달성 가능하며, 면접에서 "왜?"를 1~2단계 더 답할 수 있는 깊이입니다.</p>
+  <div class="hcs">
+    <div class="hc t1">주제 1 — 로지스틱 파라미터 피팅 × 다품종 비교</div>
+    <div class="hc t2">주제 2 — 태양광 수치적분 × 리만합 오차 분석</div>
+    <div class="hc t3">주제 3 — 탄소예산 민감도 × dT/dr 분석</div>
+  </div>
+</div></header>
+
+<div class="sw">
+
+<!-- S0: 레벨 위치 -->
+<section class="sec" id="s0b">
+  <div class="sh"><span class="sn">00</span><h2 class="st">세 레벨 중 <em>어디에 위치하는가</em></h2></div>
+  <div class="ladder">
+    <div class="rung basic">
+      <div class="rl">기초 레벨</div>
+      <h4>수능 수준<br>자동 대비</h4>
+      <ul>
+        <li>로지스틱 이계도함수·변곡점</li>
+        <li>합성함수 미분·극값</li>
+        <li>정적분 누적량</li>
+        <li>수능 공부로 커버 가능</li>
+        <li>별도 여름방학 투자 불필요</li>
+      </ul>
+    </div>
+    <div class="rung mid">
+      <div class="rl">★ 중간 레벨 (이 파일)</div>
+      <h4>수능+α<br>여름방학 2~3주</h4>
+      <ul>
+        <li>로지스틱 파라미터 피팅 (최소제곱법)</li>
+        <li>수치적분·리만합 오차 분석</li>
+        <li>dT/dr 민감도 분석 (미분 응용)</li>
+        <li>파이썬으로 실제 데이터 처리</li>
+        <li>면접 1~2단계 더 깊이 답변 가능</li>
+      </ul>
+    </div>
+    <div class="rung adv">
+      <div class="rl">심화 레벨</div>
+      <h4>교과서 밖<br>여름방학 3~5주</h4>
+      <ul>
+        <li>SIR 연립 미분방정식</li>
+        <li>편미분·경사하강법</li>
+        <li>적분방정식 수치 역산(이분법)</li>
+        <li>고교 교과서 범위 초과</li>
+        <li>별도 집중 학습 필수</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cg">
+    <div class="card mid">
+      <div class="cl">중간 레벨의 핵심</div>
+      <div class="cv">수능 미적분 개념은 그대로. 그것을 <strong>실제 데이터에 적용</strong>하는 것이 전부. "개념을 안다"에서 "데이터로 검증한다"로 한 단계 올라가는 것.</div>
+    </div>
+    <div class="card c1">
+      <div class="cl">기초 대비 추가 내용</div>
+      <div class="cv">scipy.optimize.curve_fit (파라미터 피팅) / 리만합 수치 오차 계산 / dT/dr 편미분 해석적 도출 — 모두 2~3일이면 이해 가능.</div>
+    </div>
+    <div class="card c3">
+      <div class="cl">심화 대비 차이</div>
+      <div class="cv">연립 미분방정식·편미분·이분법 없음. 수능 범위를 벗어나지 않으면서 실제 계산을 수행하는 것이 목표.</div>
+    </div>
+    <div class="card dark">
+      <div class="cl">면접에서의 차이</div>
+      <div class="cv">기초: "변곡점이 수확 시점이다" → 중간: "실제 데이터로 파라미터를 피팅했더니 R²= 0.97이 나왔고 한계는 이것이다"</div>
+    </div>
+  </div>
+
+  <div class="al info"><strong>중간 레벨을 선택해야 하는 경우:</strong> 기초 버전이 면접에서 너무 단순해 보일 것 같고, 심화 버전은 여름방학 시간이 부담스럽다면 중간 레벨이 최적입니다. 수능 성적을 크게 희생하지 않으면서도 "진짜 데이터로 탐구한 학생"이라는 인상을 줄 수 있습니다.</div>
+</section>
+<div class="dvd"></div>
+
+<!-- S1: 주제 비교 -->
+<section class="sec" id="s1">
+  <div class="sh"><span class="sn">01</span><h2 class="st">중간 레벨 주제 3종 <em>비교</em></h2></div>
+  <div class="tg">
+    <div class="tc tc1">
+      <div class="tn">주제 1 · 미적분 응용</div>
+      <div class="tc-diff">중간 ★★☆</div>
+      <div class="tc-concept">로지스틱 성장 함수<br>파라미터 피팅 + 다품종<br>작물 비교 분석</div>
+      <div class="tc-domain">🌱 스마트팜 × 작물 데이터 × 이계도함수</div>
+      <div class="tc-tags">
+        <span class="tt">최소제곱법 피팅</span>
+        <span class="tt">R² 적합도</span>
+        <span class="tt">품종별 r·K 비교</span>
+        <span class="tt">scipy.curve_fit</span>
+      </div>
+    </div>
+    <div class="tc tc2">
+      <div class="tn">주제 2 · 미적분 응용</div>
+      <div class="tc-diff">중간 ★★☆</div>
+      <div class="tc-concept">태양광 발전량 정적분<br>+ 리만합 수치적분<br>오차 분석</div>
+      <div class="tc-domain">☀️ 태양광 × 수치적분 × ESS 누적 에너지</div>
+      <div class="tc-tags">
+        <span class="tt">리만합</span>
+        <span class="tt">사다리꼴·심프슨</span>
+        <span class="tt">수치 오차</span>
+        <span class="tt">scipy.integrate</span>
+      </div>
+    </div>
+    <div class="tc tc3">
+      <div class="tn">주제 3 · 미적분 응용</div>
+      <div class="tc-diff">중간 ★★☆</div>
+      <div class="tc-concept">탄소예산 소진 시점의<br>감소율 민감도 분석<br>dT/dr 도출</div>
+      <div class="tc-domain">🌍 탄소중립 × 민감도 × 정책 판단</div>
+      <div class="tc-tags">
+        <span class="tt">dT/dr 해석적 미분</span>
+        <span class="tt">민감도 분석</span>
+        <span class="tt">시나리오 비교</span>
+        <span class="tt">matplotlib</span>
+      </div>
+    </div>
+  </div>
+
+  <table class="ct">
+    <thead>
+      <tr><th>항목</th><th>주제 1 — 파라미터 피팅</th><th>주제 2 — 수치적분</th><th>주제 3 — 민감도 분석</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>기초 대비 추가 개념</td><td class="b1">최소제곱법·R² 적합도·다품종 비교</td><td class="b2">리만합 수렴·수치 오차·적분법 비교</td><td class="b3">dT/dr 해석적 미분·민감도 곡선</td></tr>
+      <tr><td>여름방학 공부량</td><td>2주</td><td>2주</td><td class="b3">1~2주 — 3개 중 가장 적음</td></tr>
+      <tr><td>파이썬 구현</td><td>scipy.optimize.curve_fit</td><td>numpy 리만합 + scipy.integrate</td><td class="b3">matplotlib 민감도 곡선 시각화</td></tr>
+      <tr><td>수능 범위 이탈</td><td><span style="color:var(--c3);font-weight:700">없음</span></td><td><span style="color:var(--c3);font-weight:700">없음</span></td><td><span style="color:var(--c3);font-weight:700">없음</span></td></tr>
+      <tr><td>면접 심화 질문 대응</td><td>"R²가 낮으면 어떤 의미인가?"</td><td>"분할 수 n이 커질수록 오차가 줄어드는 이유는?"</td><td class="b3">"dT/dr이 양수인 이유를 물리적으로 설명하면?" (r 증가 → T 연장)</td></tr>
+      <tr><td>1·2학년 연결</td><td class="b1">스마트팜 ICT 탐구 (1학년)</td><td>태양광·ESS 탐구 (2학년)</td><td>탄소·기후 더 클래식 (2학년)</td></tr>
+      <tr><td>교수 연결</td><td class="b1">김광수·안태인 교수</td><td>김형석·김학진 교수</td><td>김연욱 교수</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 세 레벨 비교 -->
+  <p style="font-size:14px;font-weight:700;color:var(--mid);margin:24px 0 14px">중간 레벨이 기초·심화와 어떻게 다른가 — 주제 1 예시</p>
+  <div class="vs-grid">
+    <div class="vs-card basic">
+      <div class="vc-top">기초 레벨</div>
+      <h4>로지스틱 이계도함수</h4>
+      <p>P(t)=K/(1+Ae⁻ʳᵗ) 수식을 주어진 파라미터로 계산하고, 이계도함수 P''(t)=0인 변곡점 t*=ln(A)/r을 도출. 파이썬으로 곡선 그리기.</p>
+    </div>
+    <div class="vs-card mid">
+      <div class="vc-top">★ 중간 레벨 (이 파일)</div>
+      <h4>파라미터 피팅 + 다품종 비교</h4>
+      <p>실제 상추·토마토 생장 공공 데이터에 curve_fit으로 K, r, A를 피팅. 품종마다 r값이 다른 것을 비교. R² 적합도로 모델 신뢰도 정량화.</p>
+    </div>
+    <div class="vs-card adv">
+      <div class="vc-top">심화 레벨</div>
+      <h4>SIR 연립 미분방정식</h4>
+      <p>dS/dt=-βSI, dI/dt=βSI-γI 연립 방정식 구성. scipy.odeint로 수치해. 실제 역학 데이터로 β·γ 역산 피팅. R₀=β/γ 수식 도출.</p>
+    </div>
+  </div>
+</section>
+<div class="dvd"></div>
+
+<!-- S2: 여름방학 계획 -->
+<section class="sec" id="s2">
+  <div class="sh"><span class="sn">02</span><h2 class="st">여름방학 <em>공부 로드맵</em></h2></div>
+  <div class="dg">
+    <div class="dc dc1">
+      <div class="dt">주제 1 — 파라미터 피팅</div>
+      <h4>최소제곱법 피팅<br>2주 계획</h4>
+      <ul>
+        <li><strong>1주:</strong> 최소제곱법 개념 — "데이터와 모델의 차이(잔차)의 제곱합을 최소화한다"는 아이디어. scipy.optimize.curve_fit 사용법</li>
+        <li><strong>2주:</strong> 실제 데이터 적용 — 농촌진흥청 공공 데이터에서 상추·토마토·시금치 3품종 생장 데이터 수집. 품종별 r값 비교표 작성. R² 계산 및 해석</li>
+      </ul>
+      <div class="study-box"><strong>참고:</strong> SciPy curve_fit 공식 문서 → 농촌진흥청 농업기술포털 (품종별 생장 데이터) → numpy polyfit 비교</div>
+    </div>
+    <div class="dc dc2">
+      <div class="dt">주제 2 — 수치적분</div>
+      <h4>리만합 오차 분석<br>2주 계획</h4>
+      <ul>
+        <li><strong>1주:</strong> 리만합 원리 — n등분 분할, 좌·우·중점 리만합. 분할 수 n이 커질수록 오차가 줄어드는 이유 (수열의 극한과 연결). 사다리꼴 법칙과 심프슨 법칙 비교</li>
+        <li><strong>2주:</strong> 파이썬 구현 — 실제 태양광 발전량 시계열 데이터로 일별 누적 발전량을 각 방법으로 계산. 분할 수 n에 따른 오차 수렴 그래프 시각화</li>
+      </ul>
+      <div class="study-box"><strong>참고:</strong> Khan Academy "Riemann Sums" → SciPy integrate.trapezoid / simps 문서 → 기상청 공공데이터 태양광 발전량</div>
+    </div>
+    <div class="dc dc3">
+      <div class="dt">주제 3 — 민감도 분석</div>
+      <h4>dT/dr 해석적 미분<br>1~2주 계획</h4>
+      <ul>
+        <li><strong>1주:</strong> 지수 감소 모델에서 T를 r의 함수로 표현하고 dT/dr을 해석적으로 미분. "감소율 r이 1% 증가하면 탄소예산 소진 시점 T가 몇 년 연장되는가"를 수식으로 계산</li>
+        <li><strong>2주:</strong> 민감도 곡선 시각화 — r에 따른 T 변화 그래프. 현재 감축 속도 r₀ 주변에서 민감도가 특히 높은 이유 분석. NDC 목표값 r_NDC에서의 dT/dr 수치 계산</li>
+      </ul>
+      <div class="study-box"><strong>참고:</strong> 미적분 교과서 도함수 단원 → IPCC AR6 Technical Summary → matplotlib 그래프 공식 문서</div>
+    </div>
+  </div>
+</section>
+<div class="dvd"></div>
+
+<!-- S3: 면접 대비 -->
+<section class="sec" id="s3">
+  <div class="sh"><span class="sn">03</span><h2 class="st">중간 레벨 <em>면접 예상 질문</em></h2></div>
+  <div class="al warn"><strong>중간 레벨 면접의 특징:</strong> 기초보다 한 단계 깊은 질문이 나옵니다. "왜 이 파라미터인가?", "오차가 얼마인가?", "수치가 달라지면 결론이 달라지는가?" — 이 세 유형이 핵심입니다.</div>
+  <div class="dg">
+    <div class="dc dc1">
+      <div class="dt">주제 1 — 파라미터 피팅</div>
+      <h4>예상 면접 질문</h4>
+      <ul>
+        <li>R²=0.97이 나왔다면, 나머지 3%는 무엇이 설명하지 못하는 오차인가?</li>
+        <li>상추와 토마토의 r값이 다른데, 어떤 품종이 스마트팜에서 더 유리한가? 왜?</li>
+        <li>curve_fit이 최적 파라미터를 찾는 원리는? 최소제곱법이 왜 "제곱"을 쓰는가?</li>
+        <li>피팅한 변곡점 t*가 실제 수확 시점과 얼마나 일치했는가?</li>
+      </ul>
+    </div>
+    <div class="dc dc2">
+      <div class="dt">주제 2 — 수치적분</div>
+      <h4>예상 면접 질문</h4>
+      <ul>
+        <li>분할 수 n이 2배 늘면 사다리꼴 오차는 몇 배 줄어드는가? 수식으로 설명하면?</li>
+        <li>심프슨 법칙이 사다리꼴보다 정확한 이유는 수학적으로 무엇인가?</li>
+        <li>ESS에서 누적 발전량 계산이 왜 중요한가? 오차가 크면 충방전 전략에 어떤 영향을 미치는가?</li>
+        <li>실제 태양광 데이터에서 발전량이 0인 구간(야간)을 어떻게 처리했는가?</li>
+      </ul>
+    </div>
+    <div class="dc dc3">
+      <div class="dt">주제 3 — 민감도 분석</div>
+      <h4>예상 면접 질문</h4>
+      <ul>
+        <li>dT/dr을 계산하면 양수가 나오는데, 그 물리적 의미는 무엇인가? (감소율 r이 클수록 탄소예산 소진 시점 T가 늦어짐)</li>
+        <li>현재 감축 속도 r₀에서 dT/dr의 절댓값이 크다면, 정책적으로 어떤 의미인가?</li>
+        <li>지수 감소 모델에서 r이 두 배가 되면 T는 어떻게 변하는가? 비례 관계인가?</li>
+        <li>민감도 분석이 "정책 결정에 왜 유용한가"를 한 문장으로 설명하면?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al dark"><strong>수능 후 7일:</strong> 각 주제당 핵심 수치(R² / 오차율 / dT/dr 계산값)를 암기해두세요. 면접에서 구체적인 숫자를 말하는 것이 "진짜 탐구한 학생"의 가장 강한 증거입니다.</div>
+</section>
+<div class="dvd"></div>
+
+<!-- S4: 제출 추천 -->
+<section class="sec" id="s4">
+  <div class="sh"><span class="sn">04</span><h2 class="st">제출 <em>조합 추천</em></h2></div>
+  <div class="combo-g">
+    <div class="combo star">
+      <span class="sbadge">★ 최우선</span>
+      <div class="clbl">개인 1개 제출</div>
+      <h4>주제 3<br>민감도 분석 × 탄소예산</h4>
+      <p>여름방학 공부량 가장 적음 (1~2주). IPCC 기사를 수학으로 검증하는 구조. dT/dr 해석적 미분이 수능 미적분과 정확히 연동. 수능 후 7일 면접 대비 최효율.</p>
+    </div>
+    <div class="combo a">
+      <div class="clbl">2인 팀 추천</div>
+      <h4>주제 1 + 주제 3</h4>
+      <p>미적분 개념 겹치지 않음 (이계도함수+피팅 vs 적분+민감도). 농업+환경 두 도메인 커버. 담임 교사·입시상담사 의견 동시 충족.</p>
+    </div>
+    <div class="combo b">
+      <div class="clbl">3인 팀 추천</div>
+      <h4>주제 1 + 2 + 3 전부</h4>
+      <p>미적분의 세 단원(이계도함수·합성함수+적분·적분 미분)을 실제 데이터로 검증. 각자 여름방학 1~2주 공부로 충분히 준비 가능.</p>
+    </div>
+  </div>
+  <div class="al ok"><strong>✅ 마감 5월 22일(금)까지:</strong> 중간 레벨은 "수능 수준을 완전히 이해한 후 실제 데이터로 검증했다"는 것이 핵심 메시지입니다. 신청서에서 이 점을 명확히 보여주세요.</div>
+  <div class="print-bar">
+    <p><strong>신청서 인쇄:</strong> 원하는 버전을 선택 후 인쇄하세요.</p>
+    <select id="wsel"><option value="all">전체 3종</option><option value="f1">주제 1만</option><option value="f2">주제 2만</option><option value="f3">주제 3만</option></select>
+    <button class="pBtn sel" onclick="printSel()">🖨️ 선택 인쇄</button>
+    <button class="pBtn all" onclick="printAll()">🖨️ 전체 인쇄</button>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════ 신청서 3종 ══════════════ -->
+<div class="forms-wrap" id="forms"><div class="fi">
+  <div class="forms-title">참가신청서 3종 — 중간 레벨</div>
+  <div class="forms-sub">수능 미적분 범위 + 실제 데이터 검증 · 여름방학 1~2주 준비</div>
+
+  <!-- ── 신청서 1: 파라미터 피팅 ── -->
+  <div class="fp fp1" id="f1">
+    <div class="fbadge">주제 1 · 미적분 응용 — 이계도함수 + 파라미터 피팅 · 스마트팜 다품종 비교</div>
+    <div class="flevel">중간 ★★☆ — 여름방학 2주 준비</div>
+    <div class="fhead">로지스틱 성장 함수의 파라미터 피팅을 통한 스마트팜 작물 품종별 성장률 비교 — 이계도함수 변곡점 분석과 최소제곱법 적합도 검증</div>
+    <table class="ft">
+      <tr><th style="width:66px">학번</th><td style="width:126px">30123</td><th style="width:48px">이름</th><td style="width:96px">정민준</td><th style="width:88px">핸드폰 번호</th><td></td></tr>
+      <tr>
+        <td class="lc">지원동기</td>
+        <td class="cc" colspan="5">
+          고등학교 1학년 때 스마트팜 ICT 플랫폼 탐구에서 "작물 생장을 데이터로 예측할 수 있다"는 아이디어를 접했습니다. 그 후 로지스틱 성장 함수와 이계도함수로 최적 수확 시점을 수학적으로 도출하는 탐구를 진행했지만, <span class="h">이론상의 파라미터(K, r, A)가 실제 품종별 데이터와 얼마나 일치하는지, 그리고 품종마다 성장률 r값이 얼마나 다른지</span>는 검증하지 못했습니다.<br><br>
+          이 프로그램을 통해 농촌진흥청 공공 생장 데이터에 scipy.optimize.curve_fit으로 파라미터를 피팅하고, <span class="k">품종별 r값 비교와 R² 적합도로 모델의 실제 신뢰도를 정량화</span>하고 싶습니다. "이계도함수로 계산한 변곡점 t*가 실제 수확 적기와 일치하는가"를 데이터로 직접 검증하는 탐구를 수행하고자 지원합니다.
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">선정 기사<br>제목 및 출처</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+          <strong>제목:</strong> "스마트팜 AI, 작물 생장 데이터로 수확 시점 자동 예측 — 품종별 최적화가 핵심"<br>
+          <strong>출처:</strong> 농민신문 / 농촌진흥청 스마트팜 연구 보고서
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+          <p class="sb">【포착한 현상】</p>
+          기사는 스마트팜 AI가 품종별 생장 데이터로 수확 시점을 자동 예측한다고 보도하지만, <span class="h">그 예측 모델이 얼마나 정확한지(적합도), 그리고 품종마다 성장 속도가 얼마나 다른지(파라미터 비교)</span>에 대한 정량적 분석은 없습니다. 로지스틱 모델이 실제 데이터를 잘 설명하는지는 R²로 검증할 수 있고, 품종별 r값 비교로 "어떤 품종이 얼마나 빠르게 자라는가"를 수량화할 수 있습니다.
+          <p class="sb">【설정한 수학적 질문】</p>
+          <p class="ind">① 상추·토마토·시금치 3품종의 실제 생장 데이터에 <span class="m">P(t) = K/(1+Ae^(−rt))</span>를 피팅할 때, <span class="k">최소제곱법으로 추정된 품종별 K·r·A 파라미터는 얼마이며, R² 적합도는 어떻게 다른가?</span></p>
+          <p class="ind">② 피팅된 파라미터로 계산한 <span class="k">이계도함수 변곡점 t* = ln(A)/r</span>이 실제 수확 적기(농촌진흥청 권장 시점)와 얼마나 일치하는가?</p>
+          <p class="ind">③ 성장률 r값이 큰 품종이 스마트팜 효율 측면에서 유리한 이유를 이계도함수 분석으로 설명하면?</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">연계 교과<br>및 단원</td>
+        <td class="cc" colspan="5">
+          <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c1)">미적분(✓)</strong> 확률과통계(  ) 기하(  )<br><br>
+          <strong>[단원명]</strong><br>
+          <p class="ind">· <strong>미적분 — 미분법:</strong> 로지스틱 함수 P(t)의 1계·2계 도함수 도출</p>
+          <p class="ind">· <strong>미적분 — 도함수의 활용:</strong> 이계도함수 P''(t) = 0인 변곡점 t* = ln(A)/r 계산, 오목·볼록 분석</p>
+          <p class="ind">· <strong>(확장) 최소제곱법:</strong> 잔차 제곱합 최소화로 파라미터 추정, R² = 1 − SS_res/SS_tot 계산</p>
+          <p class="ind">· <strong>(보조) 확률과 통계:</strong> 잔차 분포 분석, 모델 적합도 통계적 해석</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">탐구 주제</td>
+        <td class="cc" colspan="5">
+          <strong>스마트팜 작물 3품종의 로지스틱 성장 함수 파라미터 피팅 및 <span class="k">이계도함수 변곡점 t*의 실제 수확 적기 일치 검증</span></strong><br>
+          <em style="color:#666">— 최소제곱법 curve_fit 적용, R² 적합도 비교, 품종별 성장률 r값 정량 분석</em>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">수학적<br>모델링 및<br>탐구 계획<br>(구체적으로<br>작성)</td>
+        <td class="cc" colspan="5">
+          <p class="sb">▶ STEP 1. 공공 생장 데이터 수집 (6월 1주)</p>
+          <p class="ind">· 농촌진흥청 농업기술포털에서 상추·토마토·시금치 품종별 주별 생중량 데이터 수집</p>
+          <p class="ind">· pandas로 데이터 정제, 결측값 처리, 생장 곡선 초기 시각화</p>
+          <p class="sb">▶ STEP 2. 최소제곱법 파라미터 피팅 (여름방학 1주)</p>
+          <p class="ind">· scipy.optimize.curve_fit(로지스틱, t_data, P_data) → K, r, A 최적 파라미터 추정</p>
+          <p class="ind">· <span class="k">R² = 1 − Σ(P_data − P_model)²/Σ(P_data − P̄)² 계산 → 모델 신뢰도 정량화</span></p>
+          <p class="ind">· 3품종 파라미터 비교표: 상추 r=?, 토마토 r=?, 시금치 r=? → "어느 품종이 더 빠르게 성장하는가"</p>
+          <p class="sb">▶ STEP 3. 이계도함수로 변곡점 계산 및 실제 수확 적기 비교 (여름방학 2주)</p>
+          <p class="ind">· 피팅된 K, r, A 대입 → <span class="k">t* = ln(A)/r 계산 (품종별)</span></p>
+          <p class="ind">· 농촌진흥청 권장 수확 시점과 비교 → 오차 계산 (일수 단위)</p>
+          <p class="ind">· P(t)·P'(t)·P''(t) 3개 곡선 동시 시각화 + 변곡점 t* 표시</p>
+          <p class="sb">▶ STEP 4. 성장률 r값의 스마트팜 활용 의미 분석 (7월 1주)</p>
+          <p class="ind">· <span class="k">r이 클수록 t*가 빨리 오고 회전율이 높아짐 → 단위 면적당 수확 횟수 증가</span></p>
+          <p class="ind">· 온도·광량이 r값을 바꾼다는 것을 데이터로 확인 → 스마트팜 환경 제어의 수학적 근거</p>
+          <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1~2주)</p>
+          <p class="ind">· R² &lt; 0.95인 품종: 로지스틱 모델이 맞지 않는 이유 분석 (생장 패턴이 비대칭인 경우)</p>
+          <p class="ind">· 3가지 변수(K, r, A)만으로는 설명 못하는 환경 변수 → 다변수 모델 필요 → 스마트시스템의 수학적 이유</p>
+          <p class="sb">▶ STEP 6. 보고서 및 발표 (7월 2주)</p>
+          <p class="ind">· 보고서(A4 5매+) + PPT(10슬라이드+). 파라미터 피팅 과정 및 R² 계산 표 포함.</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">결과물<br>도출 및<br>기대효과</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+          <p class="sb">【도출 결과물】</p>
+          <p class="ind">① 3품종 로지스틱 파라미터(K, r, A) 피팅 결과 및 R² 적합도 비교표</p>
+          <p class="ind">② 이계도함수로 계산한 t* vs 실제 수확 적기 비교표 (오차 일수)</p>
+          <p class="ind">③ P(t)·P'(t)·P''(t) 동시 시각화 그래프 (품종별 3종)</p>
+          <p class="ind">④ 성장률 r값에 따른 스마트팜 회전율 최적화 방향 제안</p>
+          <p class="sb">【기대 효과】</p>
+          <p class="ind">· <strong>수학적 측면:</strong> 이계도함수·변곡점이라는 추상 개념이 실제 데이터와 얼마나 잘 맞는지를 R²로 정량화. "이론 vs 현실"을 직접 검증하는 과학적 사고 훈련.</p>
+          <p class="ind">· <strong>데이터 역량:</strong> 공공 데이터 수집 → pandas 정제 → scipy 피팅 → 결과 해석의 완전한 데이터 파이프라인 경험.</p>
+          <p class="ind">· <strong>전공 연결:</strong> 김광수 교수(작물 모델링)·안태인 교수(식물공장 재배)의 연구와 같은 방법론을 고등학교 수준에서 직접 수행.</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ── 신청서 2: 수치적분 오차 분석 ── -->
+  <div class="fp fp2 pb" id="f2">
+    <div class="fbadge">주제 2 · 미적분 응용 — 정적분 + 수치적분 오차 · 태양광 누적 에너지</div>
+    <div class="flevel">중간 ★★☆ — 여름방학 2주 준비</div>
+    <div class="fhead">태양광 발전량의 수치적분 방법 비교 — 리만합·사다리꼴·심프슨 법칙의 오차 분석으로 ESS 충방전 최적화를 위한 누적 에너지 계산 정밀도 검증</div>
+    <table class="ft">
+      <tr><th style="width:66px">학번</th><td style="width:126px">30123</td><th style="width:48px">이름</th><td style="width:96px">정민준</td><th style="width:88px">핸드폰 번호</th><td></td></tr>
+      <tr>
+        <td class="lc">지원동기</td>
+        <td class="cc" colspan="5">
+          고등학교 2학년 때 태양광 발전량 변동성과 ESS 충방전 최적화를 탐구하면서, "하루 동안 태양광 패널이 생산하는 총 에너지는 발전량 함수의 정적분이다"라는 것을 파악했습니다. 그러나 <span class="h">실제 데이터는 이산적(시간별 측정값)이어서 해석적 적분이 불가능하고, 수치적분(리만합)으로 근사할 수밖에 없는데 — 이 근사 오차가 ESS 충방전 전략에 얼마나 영향을 미치는가</span>는 분석하지 못했습니다.<br><br>
+          이 프로그램을 통해 같은 태양광 발전량 데이터에 좌·우·중점 리만합, 사다리꼴 법칙, 심프슨 법칙을 각각 적용하여 <span class="k">분할 수 n에 따른 오차 수렴 속도를 비교하고, 어떤 방법이 ESS 제어에 충분한 정밀도를 제공하는가</span>를 수학적으로 검증하고자 지원합니다.
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">선정 기사<br>제목 및 출처</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+          <strong>제목:</strong> "태양광 발전량 예측 오차가 ESS 효율을 낮춘다 — 10분 단위 데이터 수집이 해법"<br>
+          <strong>출처:</strong> 전기신문 / 한국에너지공단 보도자료
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+          <p class="sb">【포착한 현상】</p>
+          기사는 태양광 발전량 예측 오차가 ESS 효율을 낮추며 10분 단위 세밀한 데이터 수집이 해법이라고 보도합니다. 이는 수학적으로 <span class="h">분할 수 n이 커질수록(데이터 수집 간격이 좁을수록) 수치적분 오차가 줄어든다</span>는 원리와 직결됩니다. 그러나 기사는 "데이터를 많이 수집해야 한다"는 결론만 말할 뿐, 어떤 수치적분 방법이 가장 빠르게 수렴하며 오차 감소가 어떤 수학적 패턴을 따르는지는 설명하지 않습니다.
+          <p class="sb">【설정한 수학적 질문】</p>
+          <p class="ind">① n등분 리만합(좌·우·중점)의 오차가 <span class="k">O(1/n)</span> 수준임에 비해, 사다리꼴 법칙의 오차는 <span class="k">O(1/n²)</span>이고 심프슨 법칙은 <span class="k">O(1/n⁴)</span>임을 실제 태양광 데이터로 수치 확인하면?</p>
+          <p class="ind">② ESS 충방전 결정에 허용 오차 ε = 1%를 설정할 때, 각 방법별로 <span class="k">필요한 최소 분할 수 n*</span>은 얼마인가? 10분 vs 1시간 데이터 수집의 차이가 오차에 얼마나 영향을 미치는가?</p>
+          <p class="ind">③ 발전량이 급변하는 구간(구름에 의한 순간 변동)에서 각 방법의 오차가 어떻게 달라지는가?</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">연계 교과<br>및 단원</td>
+        <td class="cc" colspan="5">
+          <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c2)">미적분(✓)</strong> 확률과통계(  ) 기하(  )<br><br>
+          <strong>[단원명]</strong><br>
+          <p class="ind">· <strong>미적분 — 적분법:</strong> 정적분의 정의 (리만합의 극한), ∫P(t)dt = 누적 발전량</p>
+          <p class="ind">· <strong>미적분 — 적분의 활용:</strong> 넓이 = 누적량 해석, 수치적분 근사값의 의미</p>
+          <p class="ind">· <strong>(확장) 수치적분:</strong> 사다리꼴 법칙·심프슨 법칙의 오차 O(1/n²)·O(1/n⁴) 패턴</p>
+          <p class="ind">· <strong>(보조) 수학Ⅱ — 수열의 극한:</strong> 리만합이 n→∞일 때 정적분으로 수렴하는 과정</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">탐구 주제</td>
+        <td class="cc" colspan="5">
+          <strong>태양광 발전량 이산 데이터의 수치적분 방법 비교 — <span class="k">리만합·사다리꼴·심프슨 법칙의 오차 수렴 패턴 분석</span>으로 ESS 제어 최적 데이터 수집 간격 도출</strong><br>
+          <em style="color:#666">— 실제 기상청 발전량 데이터로 n별 오차 수렴 곡선 시각화 및 허용 오차 기준 n* 계산</em>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">수학적<br>모델링 및<br>탐구 계획<br>(구체적으로<br>작성)</td>
+        <td class="cc" colspan="5">
+          <p class="sb">▶ STEP 1. 태양광 발전량 데이터 수집 및 기준값 설정 (6월 1주)</p>
+          <p class="ind">· 기상청 공공데이터 API에서 경기 지역 시간별 태양광 일사량 데이터(1분 간격) 수집</p>
+          <p class="ind">· scipy.integrate.quad로 고해상도 데이터의 정확한 적분값 I_true 계산 (기준값)</p>
+          <p class="sb">▶ STEP 2. 세 가지 수치적분 방법 구현 (여름방학 1주)</p>
+          <p class="ind">· <strong>리만합(중점):</strong> I_n = Σ P(t_i + Δt/2) · Δt, Δt = T/n</p>
+          <p class="ind">· <strong>사다리꼴 법칙:</strong> I_n = (Δt/2) · [P(t₀) + 2·ΣP(tᵢ) + P(tₙ)]</p>
+          <p class="ind">· <strong>심프슨 법칙:</strong> I_n = (Δt/3) · [P(t₀) + 4·ΣP(t₂ᵢ₋₁) + 2·ΣP(t₂ᵢ) + P(tₙ)]</p>
+          <p class="ind">· 각 방법별 n = 6, 12, 24, 48, 144에 대해 오차 |I_n − I_true|/I_true 계산</p>
+          <p class="sb">▶ STEP 3. 오차 수렴 패턴 분석 및 시각화 (여름방학 2주)</p>
+          <p class="ind">· log(n)–log(오차) 그래프: <span class="k">기울기가 리만합 −1, 사다리꼴 −2, 심프슨 −4</span>임을 수치로 확인</p>
+          <p class="ind">· 허용 오차 ε = 1% 기준에서 각 방법별 <span class="k">최소 분할 수 n*</span> 계산 → "10분 vs 1시간 데이터로 충분한가" 결론</p>
+          <p class="ind">· 급변 구간(구름 통과) vs 안정 구간에서 오차 패턴 비교</p>
+          <p class="sb">▶ STEP 4. ESS 충방전 전략 연결 (7월 1주)</p>
+          <p class="ind">· 수치 오차가 ±X kWh 이면 ESS 충방전 판단이 틀릴 수 있는 확률 계산</p>
+          <p class="ind">· "심프슨 법칙 + 10분 간격 데이터"가 ESS 제어에 충분한 정밀도 제공함을 수치로 결론</p>
+          <p class="sb">▶ STEP 5. 한계 분석 (7월 2주)</p>
+          <p class="ind">· 발전량이 불연속인 경우(갑작스런 일조량 변화) → 수치적분 이론 오차 보장이 깨짐</p>
+          <p class="ind">· 실시간 적응 데이터 수집이 필요 → 스마트시스템의 수학적 이유</p>
+          <p class="sb">▶ STEP 6. 보고서 및 발표 (7월 2주)</p>
+          <p class="ind">· 보고서(A4 5매+) + PPT(10슬라이드+). log-log 오차 수렴 그래프 포함.</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">결과물<br>도출 및<br>기대효과</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+          <p class="sb">【도출 결과물】</p>
+          <p class="ind">① n별 세 가지 수치적분 오차 비교표 (리만합·사다리꼴·심프슨)</p>
+          <p class="ind">② log(n)–log(오차) 그래프 — 기울기 −1, −2, −4 수치 확인 시각화</p>
+          <p class="ind">③ 허용 오차 1% 기준 최소 분할 수 n* (방법별 비교)</p>
+          <p class="ind">④ ESS 충방전 전략에서 수치 오차의 실용적 허용 범위 결론</p>
+          <p class="sb">【기대 효과】</p>
+          <p class="ind">· <strong>수학적 측면:</strong> 리만합이 n→∞일 때 정적분으로 수렴한다는 개념이, 실제 데이터에서 오차 수렴 속도로 구체화됨을 체험. 수치해석의 기초 원리를 직접 검증.</p>
+          <p class="ind">· <strong>공학적 측면:</strong> 데이터 수집 간격(샘플링 주기)과 계산 정밀도의 관계 — 이것이 스마트그리드·ESS 제어 시스템 설계의 핵심 고려 사항임을 이해.</p>
+          <p class="ind">· <strong>탐구 완결:</strong> 2학년 태양광·ESS 탐구에서 남아있던 "누적 에너지를 얼마나 정확히 계산하는가" 문제를 수학적으로 완결.</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ── 신청서 3: 민감도 분석 ── -->
+  <div class="fp fp3 pb" id="f3">
+    <div class="fbadge">주제 3 · 미적분 응용 — 정적분 + 도함수 민감도 · 탄소예산 정책 분석</div>
+    <div class="flevel">중간 ★★☆ — 여름방학 1~2주 준비 (3개 중 가장 적음)</div>
+    <div class="fhead">탄소예산 소진 시점의 감소율 민감도 분석 — dT/dr의 해석적 미분으로 NDC 목표 달성 가능성과 감축 정책의 수학적 효과를 정량화</div>
+    <table class="ft">
+      <tr><th style="width:66px">학번</th><td style="width:126px">30123</td><th style="width:48px">이름</th><td style="width:96px">정민준</td><th style="width:88px">핸드폰 번호</th><td></td></tr>
+      <tr>
+        <td class="lc">지원동기</td>
+        <td class="cc" colspan="5">
+          고등학교 2학년 때 '더 클래식' 활동에서 탄소 배출량 감소와 기후변화 대응을 탐구하고, 지수 감소 모델의 정적분으로 탄소예산 소진 시점 T를 계산했습니다. 그러나 "감소율 r이 조금 달라지면 T가 얼마나 달라지는가?"라는 <span class="h">민감도 질문에는 답하지 못했습니다. 이 질문은 dT/dr — 즉 T를 r의 함수로 보고 미분하는 것</span>으로 해결할 수 있으며, 이는 정적분과 미분을 결합하는 탐구입니다.<br><br>
+          이 프로그램을 통해 <span class="k">T(r)를 r의 함수로 표현하고 dT/dr을 해석적으로 미분</span>하여 "현재 감축 속도에서 감축률 1% 포인트 상승이 탄소예산 소진을 몇 년 연장하는가"를 정량화하고, 이를 NDC 목표 달성 가능성 판단에 적용하고자 지원합니다.
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">선정 기사<br>제목 및 출처</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+          <strong>제목:</strong> "IPCC 경고 — 탄소 감축 속도 1% 높이면 온도 상승 0.1°C 차이 … 작은 차이가 크게 다르다"<br>
+          <strong>출처:</strong> 경향신문 / IPCC AR6 Summary for Policymakers (2023)
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+          <p class="sb">【포착한 현상】</p>
+          기사는 탄소 감축 속도가 조금만 달라져도 기온 상승 결과가 크게 달라진다고 경고하지만, <span class="h">"감소율 r이 1% 포인트 달라질 때 탄소예산 소진 시점 T가 정확히 몇 년 달라지는가"를 수학적으로 계산한 내용은 없습니다.</span> 지수 감소 모델에서 T(r)은 r의 함수로 표현할 수 있고, 이를 미분하면 dT/dr이 도출됩니다. 이 민감도 계수가 크면 "감축 속도 조금만 달라져도 T가 크게 변한다"는 기사의 주장이 수학적으로 증명됩니다.
+          <p class="sb">【설정한 수학적 질문】</p>
+          <p class="ind">① 지수 감소 모델에서 T(r)을 r의 함수로 표현하면? <span class="m">∫₀^T(r) C₀e^(−rt)dt = B</span>를 T에 대해 정리하면 <span class="k">T(r) = −(1/r)·ln(1 − Br/C₀)</span>이 되는데, 이를 <span class="k">r에 대해 미분하여 dT/dr을 해석적으로 도출</span>하면?</p>
+          <p class="ind">② 현재 한국 감축 속도 r₀ ≈ 2%/년에서 dT/dr 값은 얼마인가? "r이 1% 포인트 증가할 때 T가 몇 년 연장되는가"를 수치로 표현하면?</p>
+          <p class="ind">③ NDC 목표 r_NDC ≈ 6%/년에서 dT/dr은 얼마이며, r₀에서의 민감도와 어떻게 다른가? 감축 속도가 높을수록 민감도가 달라지는 이유는?</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">연계 교과<br>및 단원</td>
+        <td class="cc" colspan="5">
+          <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c3)">미적분(✓)</strong> 확률과통계(  ) 기하(  )<br><br>
+          <strong>[단원명]</strong><br>
+          <p class="ind">· <strong>미적분 — 적분법:</strong> 지수함수 정적분, F(T) = ∫₀ᵀ C₀e^(−rt)dt = (C₀/r)(1 − e^(−rT)) 계산</p>
+          <p class="ind">· <strong>미적분 — 미분법:</strong> T(r) = −(1/r)·ln(1 − Br/C₀)를 r에 대해 미분 → dT/dr 도출 (연쇄법칙, 로그함수 미분)</p>
+          <p class="ind">· <strong>미적분 — 도함수의 활용:</strong> 민감도 계수 dT/dr의 부호·크기·r에 따른 변화 해석</p>
+          <p class="ind">· <strong>(보조) 수학Ⅰ — 지수·로그:</strong> e^(−rT) 형태의 지수함수, ln 함수의 미분</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">탐구 주제</td>
+        <td class="cc" colspan="5">
+          <strong>탄소 배출 감소율 r에 대한 탄소예산 소진 시점 T의 민감도 — <span class="k">T(r)의 해석적 미분 dT/dr로 NDC 정책 효과를 정량화</span></strong><br>
+          <em style="color:#666">— 현재 감축 속도·NDC 목표·급진적 감축 세 시나리오별 민감도 비교 및 시각화</em>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">수학적<br>모델링 및<br>탐구 계획<br>(구체적으로<br>작성)</td>
+        <td class="cc" colspan="5">
+          <p class="sb">▶ STEP 1. T(r) 함수 도출 (6월 1주 + 여름방학 1주)</p>
+          <p class="ind">· C₀ = 6.5억 tCO₂eq (한국 2023년), B_KR = 400Gt × 1.7% ≈ 6.8Gt <em style="color:#888;font-size:12px">(※ IPCC AR6 400Gt는 2020년 기준; 탐구에서 보수적 상한 6.8Gt 사용)</em></p>
+          <p class="ind">· <span class="m">∫₀^T C₀e^(−rt)dt = B → (C₀/r)(1 − e^(−rT)) = B</span></p>
+          <p class="ind">· 정리하면: <span class="k">T(r) = −(1/r) · ln(1 − Br/C₀)</span></p>
+          <p class="ind">· 이것이 "r을 주면 T가 나오는 함수"임을 파이썬으로 확인 (r값 바꿔가며 T 계산)</p>
+          <p class="sb">▶ STEP 2. dT/dr 해석적 미분 (여름방학 1주)</p>
+          <p class="ind">· T(r) = −(1/r)·ln(1 − Br/C₀)를 r에 대해 미분</p>
+          <p class="ind">· 몫의 법칙 + 연쇄법칙 + 로그함수 미분 적용</p>
+          <p class="ind">· 결과: <span class="k">dT/dr = (1/r²)·ln(1 − Br/C₀) + B/(C₀ − Br) · (−1/r)</span></p>
+          <p class="ind">· Python sympy로 검증 — 손 계산과 일치하는지 확인</p>
+          <p class="sb">▶ STEP 3. 세 시나리오에서 dT/dr 수치 계산 (여름방학 2주)</p>
+          <p class="ind">· r₀ = 0.02 (현재 추세): dT/dr = ? → "r이 1% 포인트 오르면 T가 몇 년 연장?"</p>
+          <p class="ind">· r_NDC = 0.06 (NDC 목표): dT/dr = ? → NDC 달성 시 민감도 비교</p>
+          <p class="ind">· r_adv = 0.10 (급진적): dT/dr = ? → 고감축 속도에서 민감도 변화</p>
+          <p class="ind">· <span class="k">T(r) 곡선과 각 점에서 접선(민감도) 시각화 — matplotlib으로 3개 접선 표시</span></p>
+          <p class="sb">▶ STEP 4. 정책적 해석 및 기사 검증 (7월 1주)</p>
+          <p class="ind">· "작은 감축 속도 차이가 큰 결과 차이를 낳는다"는 기사 주장을 dT/dr 수치로 정량 증명</p>
+          <p class="ind">· <span class="k">r이 낮은 구간(현재 추세)에서 dT/dr의 절댓값이 큰 이유 — "지금 감축 속도를 높이는 것이 나중보다 훨씬 효과적"임을 수학적으로 증명</span></p>
+          <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1~2주)</p>
+          <p class="ind">· 한계: 지수 감소 모델만 분석 — 계단형·선형 모델에서 dT/dr은 형태가 다름</p>
+          <p class="ind">· <span class="k">실시간으로 r을 추정하고 dT/dr을 갱신하는 정책 모니터링 시스템 → 스마트시스템(데이터 + 수학 모델 결합)의 필요성</span></p>
+          <p class="sb">▶ STEP 6. 보고서 및 발표 (7월 2주)</p>
+          <p class="ind">· 보고서(A4 5매+) + PPT(10슬라이드+). T(r) 곡선 + 접선(민감도) 그래프 핵심 포함.</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">결과물<br>도출 및<br>기대효과</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+          <p class="sb">【도출 결과물】</p>
+          <p class="ind">① T(r) = −(1/r)·ln(1 − Br/C₀) 도출 과정 및 dT/dr 해석적 미분 전 과정</p>
+          <p class="ind">② r₀, r_NDC, r_adv 세 시나리오에서 dT/dr 수치 및 "r 1% 포인트 상승 시 T 연장 연수" 비교표</p>
+          <p class="ind">③ T(r) 곡선과 세 점에서의 접선(민감도) 시각화 그래프</p>
+          <p class="ind">④ "저감축 속도에서 민감도가 높은 이유 — 지금 행동이 더 효과적"이라는 정책 결론</p>
+          <p class="sb">【기대 효과】</p>
+          <p class="ind">· <strong>수학적 측면:</strong> 적분으로 구한 T(r)을 다시 r에 대해 미분하는 "적분과 미분의 결합"이 현실 문제(정책 민감도)에 어떻게 쓰이는지를 직접 체험.</p>
+          <p class="ind">· <strong>비판적 사고:</strong> "작은 차이가 크게 다르다"는 기사 주장을 dT/dr 수치로 증명. 막연한 주장이 수학 수식으로 정확한 수치가 됨.</p>
+          <p class="ind">· <strong>전공 연결:</strong> 실시간 r 추정·dT/dr 갱신·정책 모니터링 → 김연욱 교수(기후스마트농업)의 온실가스 감축 모니터링 연구와 같은 방법론. 스마트시스템과학과 "데이터 기반 의사결정" 인재상과 직결.</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div></div>
+
+<button id="stt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const navAs=document.querySelectorAll('.nav a');
+const secs=['s0','s1','s2','s3','s4','forms'];
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY+80;
+  let cur=secs[0];
+  secs.forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetTop<=y)cur=id;});
+  navAs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
+  document.getElementById('stt').classList.toggle('v',window.scrollY>320);
+});
+function printAll(){['f1','f2','f3'].forEach(id=>document.getElementById(id).style.display='');window.print();}
+function printSel(){
+  const v=document.getElementById('wsel').value;
+  if(v==='all'){printAll();return;}
+  ['f1','f2','f3'].forEach(id=>{document.getElementById(id).style.display=(id===v)?'':'none';});
+  window.print();
+  ['f1','f2','f3'].forEach(id=>document.getElementById(id).style.display='');
+}
+</script>
+</body>
+</html>

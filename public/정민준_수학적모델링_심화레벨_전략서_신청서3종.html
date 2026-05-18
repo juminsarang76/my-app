@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정민준 — 수학적 모델링 심화 전략서 + 참가신청서 3종</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f2ec;--paper:#fffcf8;--ink:#1a1510;--muted:#7a7165;
+  --border:#ddd6c8;--border2:#c4bdb0;
+  --c1:#1a4a6e;--c1b:#edf4fb;--c1d:#90bde0;
+  --c2:#7a3a08;--c2b:#fdf3e0;--c2d:#e8c07a;
+  --c3:#1a4a1a;--c3b:#e8f6e8;--c3d:#80c880;
+  --forest:#1e3a2a;--gold:#c9973a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Serif KR',serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75}
+
+@media print{
+  .sw{display:none!important}
+  .pb{page-break-before:always}
+  .fp{background:white;padding:32px 40px;box-shadow:none;max-width:100%}
+  .print-bar,.pBtn,#wsel{display:none!important}
+  body{background:white}
+  .forms-wrap{border-top:none;margin-top:0;padding:20px}
+}
+
+/* NAV */
+.nav{background:var(--forest);position:sticky;top:0;z-index:200;border-bottom:2px solid var(--gold);overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-i{display:flex;max-width:1100px;margin:0 auto;padding:0 24px;white-space:nowrap}
+.nav a{padding:13px 17px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;color:rgba(255,255,255,.52);text-decoration:none;text-transform:uppercase;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s;display:inline-block}
+.nav a:hover{color:rgba(255,255,255,.88)}
+.nav a.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* HERO */
+.hero{background:var(--forest);padding:54px 40px 46px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.01) 0,rgba(255,255,255,.01) 1px,transparent 1px,transparent 52px),repeating-linear-gradient(0deg,rgba(255,255,255,.01) 0,rgba(255,255,255,.01) 1px,transparent 1px,transparent 52px);pointer-events:none}
+.hi{max-width:1100px;margin:0 auto;position:relative}
+.ey{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
+.hero h1{font-family:'Gowun Batang',serif;font-size:clamp(28px,4.5vw,48px);font-weight:700;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px}
+.hero h1 span{color:var(--gold)}
+.hd{font-size:14px;color:rgba(255,255,255,.6);max-width:640px;line-height:1.85}
+.hcs{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
+.hc{font-family:'DM Mono',monospace;font-size:11px;padding:4px 13px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.65);border-radius:20px}
+.hc.t1{border-color:var(--c1d);color:#90bde0}
+.hc.t2{border-color:var(--c2d);color:#e8c07a}
+.hc.t3{border-color:var(--c3d);color:#80c880}
+
+/* WRAP */
+.sw{max-width:1100px;margin:0 auto;padding:0 24px 80px}
+.sec{padding-top:56px}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid var(--border)}
+.sn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted)}
+.st{font-family:'Gowun Batang',serif;font-size:23px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.st em{font-style:normal;color:var(--gold)}
+.dvd{border:none;border-top:1px solid var(--border);margin:26px 0}
+
+/* TOPIC GRID */
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--ink);border:2px solid var(--ink);margin-bottom:28px}
+.tc{padding:22px 18px;background:#fff;position:relative;overflow:hidden;transition:transform .18s}
+.tc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;transition:height .2s}
+.tc:hover{transform:translateY(-2px)}.tc:hover::after{height:7px}
+.tc1::after{background:var(--c1)}.tc2::after{background:var(--c2)}.tc3::after{background:var(--c3)}
+.tn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:7px}
+.tc1 .tn{color:var(--c1)}.tc2 .tn{color:var(--c2)}.tc3 .tn{color:var(--c3)}
+.tc-concept{font-family:'Gowun Batang',serif;font-size:16px;font-weight:700;line-height:1.35;margin-bottom:6px}
+.tc-domain{font-size:13px;color:var(--muted);margin-bottom:9px}
+.tc-level{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid;font-weight:600;margin-bottom:9px}
+.tc1 .tc-level{background:var(--c1b);border-color:var(--c1d);color:var(--c1)}
+.tc2 .tc-level{background:var(--c2b);border-color:var(--c2d);color:var(--c2)}
+.tc3 .tc-level{background:var(--c3b);border-color:var(--c3d);color:var(--c3)}
+.tc-tags{display:flex;flex-wrap:wrap;gap:5px}
+.tt{font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid}
+.tc1 .tt{background:var(--c1b);border-color:var(--c1d);color:var(--c1)}
+.tc2 .tt{background:var(--c2b);border-color:var(--c2d);color:var(--c2)}
+.tc3 .tt{background:var(--c3b);border-color:var(--c3d);color:var(--c3)}
+
+/* TABLE */
+.ct{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.ct thead th{background:var(--forest);color:rgba(255,255,255,.82);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:11px 14px;text-align:left;font-weight:500}
+.ct thead th:nth-child(2){color:#90bde0}.ct thead th:nth-child(3){color:#e8c07a}.ct thead th:nth-child(4){color:#80c880}
+.ct tbody td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.65}
+.ct tbody tr:last-child td{border-bottom:none}.ct tbody tr:hover td{background:#f9f6f1}
+.ct td:first-child{font-weight:600;color:var(--forest);min-width:90px}
+.b1{font-weight:700;color:var(--c1)}.b2{font-weight:700;color:var(--c2)}.b3{font-weight:700;color:var(--c3)}
+
+/* DEPTH CARDS */
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.dc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:17px 17px 15px;border-top:4px solid}
+.dc1{border-top-color:var(--c1)}.dc2{border-top-color:var(--c2)}.dc3{border-top-color:var(--c3)}
+.dc .dt{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:7px}
+.dc1 .dt{color:var(--c1)}.dc2 .dt{color:var(--c2)}.dc3 .dt{color:var(--c3)}
+.dc h4{font-family:'Gowun Batang',serif;font-size:15px;font-weight:700;margin-bottom:8px;line-height:1.3}
+.dc ul{list-style:none;padding:0}
+.dc ul li{font-size:13px;line-height:1.7;padding:3px 0 3px 14px;position:relative}
+.dc ul li::before{content:'·';position:absolute;left:3px;font-weight:700;font-size:16px;top:1px}
+.dc1 ul li::before{color:var(--c1)}.dc2 ul li::before{color:var(--c2)}.dc3 ul li::before{color:var(--c3)}
+.study-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:12px;line-height:1.7;color:var(--muted)}
+.study-box strong{color:var(--ink)}
+
+/* SMALL CARDS */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:15px 17px}
+.card .cl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;margin-bottom:6px}
+.card .cv{font-size:13px;line-height:1.7}
+.card.c1{background:var(--c1b);border-color:var(--c1d)}.card.c1 .cl{color:var(--c1)}
+.card.c2{background:var(--c2b);border-color:var(--c2d)}.card.c2 .cl{color:var(--c2)}
+.card.c3{background:var(--c3b);border-color:var(--c3d)}.card.c3 .cl{color:var(--c3)}
+.card.dark{background:var(--forest);color:#fff;border-color:transparent}.card.dark .cl{color:var(--gold)}.card.dark .cv{color:rgba(255,255,255,.85)}
+
+/* COMBO */
+.combo-g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.combo{border-radius:14px;padding:17px;border:1px solid;position:relative}
+.combo .clbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.17em;text-transform:uppercase;font-weight:600;margin-bottom:7px}
+.combo h4{font-family:'Gowun Batang',serif;font-size:15px;font-weight:700;margin-bottom:7px}
+.combo p{font-size:13px;line-height:1.68;color:#333}
+.combo.star{background:var(--forest);color:#fff;border-color:var(--gold);box-shadow:0 3px 18px rgba(30,58,42,.18)}
+.combo.star .clbl{color:var(--gold)}.combo.star h4{color:#fff}.combo.star p{color:rgba(255,255,255,.78)}
+.combo.a{background:var(--c1b);border-color:var(--c1d)}.combo.a .clbl{color:var(--c1)}
+.combo.b{background:var(--c2b);border-color:var(--c2d)}.combo.b .clbl{color:var(--c2)}
+.sbadge{position:absolute;top:-10px;right:14px;background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.08em}
+
+/* ALERT */
+.al{border-radius:12px;padding:13px 17px;margin-bottom:13px;border:1px solid;font-size:14px;line-height:1.78}
+.al strong{font-weight:700}
+.al.ok{background:var(--c3b);border-color:var(--c3d);color:#0a2a0a}.al.ok strong{color:var(--c3)}
+.al.info{background:var(--c1b);border-color:var(--c1d);color:#0a2040}.al.info strong{color:var(--c1)}
+.al.warn{background:var(--c2b);border-color:var(--c2d);color:#5a3806}.al.warn strong{color:var(--c2)}
+.al.dark{background:var(--forest);color:rgba(255,255,255,.88);border-color:transparent}.al.dark strong{color:var(--gold)}
+
+/* PRINT BAR */
+.print-bar{background:var(--forest);padding:17px 20px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;border-radius:14px;margin-bottom:13px}
+.print-bar p{font-size:14px;color:rgba(255,255,255,.8);flex:1;min-width:180px}.print-bar p strong{color:var(--gold)}
+.pBtn{padding:9px 18px;border:none;border-radius:8px;font-family:'Noto Serif KR',serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .16s;white-space:nowrap}
+.pBtn.all{background:var(--gold);color:var(--ink)}.pBtn.all:hover{background:#e0a840}
+.pBtn.sel{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.28)}.pBtn.sel:hover{background:rgba(255,255,255,.25)}
+#wsel{padding:7px 11px;border-radius:8px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font-size:13px}
+#wsel option{color:var(--ink);background:#fff}
+
+/* SCROLL TOP */
+#stt{position:fixed;bottom:22px;right:22px;width:38px;height:38px;background:var(--forest);color:#fff;border:none;border-radius:50%;font-size:15px;cursor:pointer;opacity:0;transition:opacity .25s,transform .16s;z-index:300;display:flex;align-items:center;justify-content:center}
+#stt.v{opacity:1}#stt:hover{transform:translateY(-2px);background:var(--gold);color:var(--ink)}
+
+/* FORMS */
+.forms-wrap{background:var(--bg);padding:52px 24px 80px;border-top:4px double var(--border2);margin-top:52px}
+.fi{max-width:800px;margin:0 auto}
+.forms-title{font-family:'Gowun Batang',serif;font-size:26px;font-weight:700;text-align:center;margin-bottom:5px}
+.forms-sub{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:36px}
+.fp{background:#fff;padding:40px 46px;margin-bottom:52px;box-shadow:0 2px 20px rgba(26,21,16,.1);border-top:6px solid}
+.fp1{border-top-color:var(--c1)}.fp2{border-top-color:var(--c2)}.fp3{border-top-color:var(--c3)}
+.fbadge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.19em;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.fp1 .fbadge{color:var(--c1)}.fp2 .fbadge{color:var(--c2)}.fp3 .fbadge{color:var(--c3)}
+.fhead{font-family:'Gowun Batang',serif;font-size:18px;font-weight:700;margin-bottom:20px;line-height:1.35;color:var(--ink)}
+.flevel{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;padding:3px 11px;border-radius:20px;border:1px solid;font-weight:600;margin-bottom:15px}
+.fp1 .flevel{background:var(--c1b);border-color:var(--c1d);color:var(--c1)}
+.fp2 .flevel{background:var(--c2b);border-color:var(--c2d);color:var(--c2)}
+.fp3 .flevel{background:var(--c3b);border-color:var(--c3d);color:var(--c3)}
+
+/* FORM TABLE */
+.ft{width:100%;border-collapse:collapse;font-size:13px}
+.ft th,.ft td{border:1px solid #666;padding:8px 11px;vertical-align:top}
+.ft th{background:#d6e4f7;font-weight:600;text-align:center;white-space:nowrap;vertical-align:middle}
+.ft .lc{background:#d6e4f7;font-weight:600;text-align:center;width:96px;vertical-align:middle;font-size:12px;line-height:1.5}
+.ft .cc{font-size:13px;line-height:1.82}
+.ft .cc strong{font-weight:700}
+.ft .cc .k{font-weight:700}
+.fp1 .ft .cc .k{color:var(--c1)}.fp1 .ft .cc .m{color:var(--c1);font-family:'Noto Serif KR',serif;font-weight:700}
+.fp2 .ft .cc .k{color:var(--c2)}.fp2 .ft .cc .m{color:var(--c2);font-family:'Noto Serif KR',serif;font-weight:700}
+.fp3 .ft .cc .k{color:var(--c3)}.fp3 .ft .cc .m{color:var(--c3);font-family:'Noto Serif KR',serif;font-weight:700}
+.ft .cc .h{background:linear-gradient(transparent 55%,#fffbb0 55%);padding:0 2px}
+.gt{font-size:11px;color:#777;margin-bottom:6px;font-style:italic}
+.sb{font-weight:700;margin:11px 0 4px;font-size:13px}.sb:first-child{margin-top:3px}
+.ind{padding-left:14px;margin:2px 0;font-size:13px;line-height:1.75}
+
+@media(max-width:860px){
+  .tg,.dg,.combo-g{grid-template-columns:1fr}
+  .cg{grid-template-columns:1fr}
+  .hero,.sw{padding-left:18px;padding-right:18px}
+  .fp{padding:24px 16px}
+  .forms-wrap{padding:32px 12px 60px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-i">
+  <a href="#s0" class="on">개요</a>
+  <a href="#s1">주제 비교</a>
+  <a href="#s2">여름방학 계획</a>
+  <a href="#s3">면접 대비</a>
+  <a href="#s4">제출 추천</a>
+  <a href="#forms">신청서 3종 ↓</a>
+</div></nav>
+
+<header class="hero" id="s0"><div class="hi">
+  <div class="ey">심화 전략서 · 여름방학 준비 기준 · 정민준 · 2026-1학기</div>
+  <h1>여름방학부터 준비하는<br><span>심화 탐구 주제</span> 3종</h1>
+  <p class="hd">기초 버전(수능 수준)과 달리, 여름방학 6~8주 실제 공부를 전제로 설계했습니다. 연립 미분방정식·편미분·수치해석 이분법까지 확장하되, 이해한 만큼만 쓰고 쓴 만큼 면접에서 설명하는 것이 원칙입니다.</p>
+  <div class="hcs">
+    <div class="hc t1">주제 1 — SIR 전염병 모델 × 연립 미분방정식</div>
+    <div class="hc t2">주제 2 — 태양광 다변수 최적화 × 경사하강법</div>
+    <div class="hc t3">주제 3 — 탄소예산 역산 × 수치해석 이분법</div>
+  </div>
+</div></header>
+
+<div class="sw">
+
+<!-- S0: 기초 vs 심화 -->
+<section class="sec" id="s0b">
+  <div class="sh"><span class="sn">00</span><h2 class="st">기초 버전과 <em>무엇이 다른가</em></h2></div>
+  <div class="cg">
+    <div class="card dark">
+      <div class="cl">기초 버전 수준</div>
+      <div class="cv">로지스틱 이계도함수 / 합성함수 극값 / 정적분 누적량 — 모두 수능 미적분 단원. 수능 공부하면 자동으로 대비 가능.</div>
+    </div>
+    <div class="card c3">
+      <div class="cl">심화 버전 수준</div>
+      <div class="cv">SIR 연립 미분방정식 / 2변수 편미분·경사하강법 / 적분방정식 수치 역산 — 고교 교과서 밖이지만 여름방학 2~5주면 이해 가능.</div>
+    </div>
+    <div class="card c2">
+      <div class="cl">핵심 차이</div>
+      <div class="cv">"수능 공부로 커버"에서 "별도로 공부해야 함"으로 바뀜. 대신 면접에서 훨씬 깊이 있는 답변 가능. 억지 느낌 대신 진짜 탐구한 느낌.</div>
+    </div>
+    <div class="card c1">
+      <div class="cl">공통 원칙</div>
+      <div class="cv">이해한 내용만 쓴다. 파이썬으로 직접 구현한다. 한계점을 솔직하게 쓴다. "다음 단계"를 명확히 제시한다.</div>
+    </div>
+  </div>
+  <div class="al warn"><strong>⚠️ 수능 성적과의 균형:</strong> 여름방학 탐구 공부는 매일 <strong>1~1.5시간 이내</strong>로 제한하세요. 수능 후 7일 동안 면접에서 설명할 핵심 내용만 집중 정리하면 됩니다.</div>
+</section>
+<div class="dvd"></div>
+
+<!-- S1: 주제 비교 -->
+<section class="sec" id="s1">
+  <div class="sh"><span class="sn">01</span><h2 class="st">심화 주제 3종 <em>비교</em></h2></div>
+  <div class="tg">
+    <div class="tc tc1">
+      <div class="tn">주제 1 · 미적분 응용</div>
+      <div class="tc-level">심화 ★★★</div>
+      <div class="tc-concept">SIR 전염병 전파 모델 —<br>연립 미분방정식으로<br>감염 정점·R₀ 도출</div>
+      <div class="tc-domain">🦠 공중보건 × 수학 모델링 × 농업 방역</div>
+      <div class="tc-tags">
+        <span class="tt">dS/dt·dI/dt</span>
+        <span class="tt">연립 미분방정식</span>
+        <span class="tt">R₀=β/γ</span>
+        <span class="tt">scipy.odeint</span>
+      </div>
+    </div>
+    <div class="tc tc2">
+      <div class="tn">주제 2 · 미적분 응용</div>
+      <div class="tc-level">심화 ★★★</div>
+      <div class="tc-concept">태양광 발전량 다변수<br>최적화 — 경사하강법으로<br>최적 각도·시각 동시 탐색</div>
+      <div class="tc-domain">☀️ 에너지 × 최적화 이론 × 스마트그리드</div>
+      <div class="tc-tags">
+        <span class="tt">편미분 ∂P/∂θ·∂P/∂t</span>
+        <span class="tt">경사하강법</span>
+        <span class="tt">2변수 최적화</span>
+        <span class="tt">numpy 구현</span>
+      </div>
+    </div>
+    <div class="tc tc3">
+      <div class="tn">주제 3 · 미적분 응용</div>
+      <div class="tc-level">심화 ★★★</div>
+      <div class="tc-concept">탄소예산 역산 —<br>이분법으로 NDC 목표<br>달성 경계 조건 수치 도출</div>
+      <div class="tc-domain">🌍 기후정책 × 수학 검증 × SDGs</div>
+      <div class="tc-tags">
+        <span class="tt">적분방정식 역산</span>
+        <span class="tt">이분법</span>
+        <span class="tt">brentq</span>
+        <span class="tt">경계 감소율 r*</span>
+      </div>
+    </div>
+  </div>
+  <table class="ct">
+    <thead>
+      <tr><th>항목</th><th>주제 1 — SIR 모델</th><th>주제 2 — 다변수 최적화</th><th>주제 3 — 적분방정식</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>새로운 수학 개념</td><td class="b1">연립 미분방정식 구조·R₀ 도출</td><td class="b2">편미분 개념·경사하강법 알고리즘</td><td class="b3">적분방정식 역산·이분법 수치해</td></tr>
+      <tr><td>여름방학 공부량</td><td>4~5주</td><td>3~4주</td><td class="b3">2~3주 — 3개 중 가장 적음</td></tr>
+      <tr><td>파이썬 구현</td><td>scipy.integrate.odeint</td><td>numpy 경사하강법 루프 직접</td><td class="b3">scipy.optimize.brentq</td></tr>
+      <tr><td>프로그램 목적 부합</td><td class="b1">최강 — SIR 뉴스 기사 직접 검증</td><td>강함 — 인버터 최적화 검증</td><td>강함 — IPCC 탄소예산 검증</td></tr>
+      <tr><td>1·2학년 연결</td><td>기후위기·방역 (2학년 더 클래식)</td><td class="b2">태양광·ESS 탐구 (2학년) 직결</td><td>탄소·기후 더 클래식 (2학년)</td></tr>
+      <tr><td>교수 연결</td><td>김광수·김연욱 교수</td><td class="b2">김학진·김형석·안태인 교수</td><td>김연욱 교수 (기후스마트농업)</td></tr>
+      <tr><td>면접 설명 난이도</td><td>중간 — R₀·SIR 구조</td><td>중간 — 경사하강법 직관</td><td class="b3">낮음 — 이분법 논리 직관적</td></tr>
+    </tbody>
+  </table>
+</section>
+<div class="dvd"></div>
+
+<!-- S2: 여름방학 계획 -->
+<section class="sec" id="s2">
+  <div class="sh"><span class="sn">02</span><h2 class="st">여름방학 <em>공부 로드맵</em></h2></div>
+  <div class="dg">
+    <div class="dc dc1">
+      <div class="dt">주제 1 — SIR 모델</div>
+      <h4>연립 미분방정식<br>4~5주 계획</h4>
+      <ul>
+        <li><strong>1주:</strong> 미분방정식 기초 — dy/dt=ky 변수분리법, 지수 성장·감소 해 도출</li>
+        <li><strong>2주:</strong> SIR 구조 — dS/dt·dI/dt·dR/dt 의미, β·γ·R₀=β/γ 개념</li>
+        <li><strong>3주:</strong> 파이썬 — scipy.odeint 수치해, S·I·R 곡선 matplotlib 시각화</li>
+        <li><strong>4주:</strong> 데이터 피팅 — 질병관리청 COVID-19 자료로 β·γ 추정</li>
+        <li><strong>5주:</strong> 농작물 적용 탐구·보고서 완성</li>
+      </ul>
+      <div class="study-box"><strong>참고:</strong> 3Blue1Brown SIR 유튜브 → SciPy odeint 공식 문서 → 질병관리청 역학조사 보고서</div>
+    </div>
+    <div class="dc dc2">
+      <div class="dt">주제 2 — 다변수 최적화</div>
+      <h4>편미분·경사하강법<br>3~4주 계획</h4>
+      <ul>
+        <li><strong>1주:</strong> 2변수 함수 — f(x,y) 3D 기하학 의미, ∂f/∂x 직관("x방향만 미분")</li>
+        <li><strong>2주:</strong> 경사하강법 — 기울기 벡터 ∇f, θ_new = θ_old − α·∇f 업데이트 규칙</li>
+        <li><strong>3주:</strong> 파이썬 — numpy 수치 편미분, 경사하강법 루프, 등고선 시각화</li>
+        <li><strong>4주:</strong> 계절별 비교 분석·보고서 완성</li>
+      </ul>
+      <div class="study-box"><strong>참고:</strong> Khan Academy Multivariable Calculus → Andrew Ng ML 강의 경사하강법 파트 → NumPy 공식 문서</div>
+    </div>
+    <div class="dc dc3">
+      <div class="dt">주제 3 — 적분방정식</div>
+      <h4>수치해석 이분법<br>2~3주 계획</h4>
+      <ul>
+        <li><strong>1주:</strong> 적분 정리 + 방정식 역산 개념 — F(T)=∫C(t)dt=B에서 T를 구하는 것이 왜 방정식 풀기인가</li>
+        <li><strong>2주:</strong> 이분법 — [T_lo, T_hi]에서 이진 탐색, scipy.optimize.brentq 사용법</li>
+        <li><strong>3주:</strong> 3가지 시나리오 비교·보고서 완성</li>
+      </ul>
+      <div class="study-box"><strong>참고:</strong> SciPy optimize 공식 문서 → IPCC AR6 Technical Summary → 환경부 온실가스 인벤토리</div>
+    </div>
+  </div>
+</section>
+<div class="dvd"></div>
+
+<!-- S3: 면접 대비 -->
+<section class="sec" id="s3">
+  <div class="sh"><span class="sn">03</span><h2 class="st">심화 주제 <em>면접 예상 질문</em></h2></div>
+  <div class="al warn"><strong>수능 후 7일 집중 포인트:</strong> 각 주제당 "내가 직접 구현한 코드 핵심 로직" + "모델의 가장 큰 한계 1가지" + "다음 단계로 뭘 하고 싶은가"를 3분 안에 말할 수 있으면 됩니다.</div>
+  <div class="dg">
+    <div class="dc dc1">
+      <div class="dt">주제 1 — SIR 모델</div>
+      <h4>예상 심층 질문 4가지</h4>
+      <ul>
+        <li>dI/dt=0 조건에서 S*=γ/β=1/R₀ 도출 과정을 수식으로 보여라</li>
+        <li>실제 데이터에서 β와 γ를 어떻게 추정했는가? 오차는 얼마나 됐는가?</li>
+        <li>SIR이 농작물 병해충에 적용될 때 인체 전파와 다른 점은 무엇인가?</li>
+        <li>R₀=1 경계에서 정확히 어떤 일이 일어나는가?</li>
+      </ul>
+    </div>
+    <div class="dc dc2">
+      <div class="dt">주제 2 — 다변수 최적화</div>
+      <h4>예상 심층 질문 4가지</h4>
+      <ul>
+        <li>경사하강법이 항상 전역 최대를 찾는가? 지역 최대에 빠졌을 때 어떻게 대처했는가?</li>
+        <li>학습률 α를 어떻게 결정했는가? 너무 크면 무슨 일이 일어나는가?</li>
+        <li>∂P/∂θ의 물리적 의미를 수식 없이 설명하면?</li>
+        <li>이 결과를 ESS 충방전 전략과 어떻게 연결했는가?</li>
+      </ul>
+    </div>
+    <div class="dc dc3">
+      <div class="dt">주제 3 — 적분방정식</div>
+      <h4>예상 심층 질문 4가지</h4>
+      <ul>
+        <li>이분법으로 T를 찾는 알고리즘 순서를 수렴 조건 포함해 설명하면?</li>
+        <li>지수·선형·계단형 중 실제에 가장 가까운 모델은? 근거는?</li>
+        <li>경계 감소율 r*=C₀/B_KR을 해석적으로 도출하는 과정은? (지수 감소의 무한 적분 C₀/r = B_KR → r* = C₀/B_KR ≈ 9.56%)</li>
+        <li>불완전한 모델이 정책 판단에 어떻게 기여할 수 있는가?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al dark"><strong>핵심 원칙:</strong> "억지·AI 돌린 느낌"은 수준이 높아서가 아닙니다. 이해 없이 형식만 갖췄을 때 납니다. 위 질문에 자신 있게 답할 수 있다면 면접관이 더 깊이 파고 드는 게 좋은 신호입니다.</div>
+</section>
+<div class="dvd"></div>
+
+<!-- S4: 제출 추천 -->
+<section class="sec" id="s4">
+  <div class="sh"><span class="sn">04</span><h2 class="st">제출 <em>조합 추천</em></h2></div>
+  <div class="combo-g">
+    <div class="combo star">
+      <span class="sbadge">★ 최우선</span>
+      <div class="clbl">개인 1개 제출</div>
+      <h4>주제 3<br>적분방정식 × 탄소예산</h4>
+      <p>여름방학 공부량 가장 적음. IPCC 기사를 수학으로 검증하는 구조가 프로그램 목적과 최부합. 면접 설명도 가장 명확. 수능 후 7일 대비 효율 최고.</p>
+    </div>
+    <div class="combo a">
+      <div class="clbl">2인 팀 추천</div>
+      <h4>주제 1 + 주제 3</h4>
+      <p>미적분 개념 겹치지 않음 (미분방정식 vs 적분방정식). 방역·공중보건 + 기후·탄소 두 사회적 문제 커버. 공부 분야 분담 가능.</p>
+    </div>
+    <div class="combo b">
+      <div class="clbl">3인 팀 추천</div>
+      <h4>주제 1 + 2 + 3 전부</h4>
+      <p>미적분 응용의 3가지 방향(미분방정식·최적화·역산)을 동시에 탐구. 파이썬 경험 가장 많은 사람이 주제 2 담당 권장.</p>
+    </div>
+  </div>
+  <div class="al ok"><strong>✅ 마감 5월 22일(금)까지:</strong> 신청서를 제출하고 여름방학 첫 주부터 공부를 시작하세요. 신청서에 적힌 심화 탐구 계획이 포부와 준비 의지를 보여줍니다.</div>
+  <div class="print-bar">
+    <p><strong>신청서 인쇄:</strong> 원하는 버전을 선택 후 인쇄하세요.</p>
+    <select id="wsel"><option value="all">전체 3종</option><option value="f1">주제 1만</option><option value="f2">주제 2만</option><option value="f3">주제 3만</option></select>
+    <button class="pBtn sel" onclick="printSel()">🖨️ 선택 인쇄</button>
+    <button class="pBtn all" onclick="printAll()">🖨️ 전체 인쇄</button>
+  </div>
+</section>
+</div><!-- /sw -->
+
+<!-- ═══════════ 신청서 3종 ═══════════ -->
+<div class="forms-wrap" id="forms"><div class="fi">
+  <div class="forms-title">참가신청서 3종 — 심화 버전</div>
+  <div class="forms-sub">여름방학부터 준비 · 수능 후 면접 대비 기준으로 작성</div>
+
+  <!-- ── 신청서 1: SIR 모델 ── -->
+  <div class="fp fp1" id="f1">
+    <div class="fbadge">주제 1 · 미적분 응용 — 연립 미분방정식 · SIR 전염병 전파 모델</div>
+    <div class="flevel">심화 ★★★ — 여름방학 4~5주 준비</div>
+    <div class="fhead">SIR 전염병 전파 모델의 연립 미분방정식 분석 및 감염 정점 시점 예측 — 기초감염재생산지수 R₀의 수학적 도출과 농업 방역 적용</div>
+    <table class="ft">
+      <tr><th style="width:66px">학번</th><td style="width:126px">30123</td><th style="width:48px">이름</th><td style="width:96px">정민준</td><th style="width:88px">핸드폰 번호</th><td></td></tr>
+      <tr>
+        <td class="lc">지원동기</td>
+        <td class="cc" colspan="5">
+          고등학교 2학년 때 기후변화·탄소 배출·농업의 지속가능성을 탐구하면서, "식물 병해충도 전파 모델로 분석할 수 있지 않을까?"라는 질문을 품게 되었습니다. 뉴스에서는 코로나19 확산을 예측할 때 <span class="h">SIR 모델이라는 수학 모델이 쓰였다고 보도하지만, 그 모델이 실제로 어떤 연립 미분방정식으로 구성되며 감염 정점 시점이 수학적으로 어떤 조건에서 결정되는가</span>는 설명하지 않습니다.<br><br>
+          이 프로그램을 통해 SIR 모델의 연립 미분방정식을 구성하고, <span class="k">감염자 수 I(t)가 정점에 달하는 조건 dI/dt = 0을 수식으로 유도하여 기초감염재생산지수 R₀ = β/γ의 수학적 의미를 증명</span>하고 싶습니다. 나아가 이 모델을 농작물 병해충 전파 분석에 적용하는 가능성을 탐구하여, 수학 모델이 스마트농업 방역 시스템의 토대가 될 수 있음을 보여주고자 지원합니다.
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">선정 기사<br>제목 및 출처</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+          <strong>제목:</strong> "코로나19 재유행 예측 모델 한계 지적 — 실제 확산과 SIR 모델의 괴리, 왜 발생하는가"<br>
+          <strong>출처:</strong> 한겨레 / 질병관리청 역학 보고서
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+          <p class="sb">【포착한 현상】</p>
+          기사는 SIR 모델이 감염병 확산 예측에 쓰이지만 실제 유행 곡선과 괴리가 생기는 이유로 "파라미터 추정의 어려움"을 언급합니다. 그러나 <span class="h">SIR 모델의 연립 미분방정식이 무엇이며, 감염 정점 시점이 수학적으로 어떤 조건에서 결정되는가</span>에 대한 설명은 없습니다. 감염자 I(t)가 최대가 되는 순간은 dI/dt = 0인 시점이며, 이를 분석하면 R₀의 의미가 자연스럽게 도출됩니다.
+          <p class="sb">【설정한 수학적 질문】</p>
+          <p class="ind">① SIR 연립 미분방정식 <span class="m">dS/dt = −βSI,&nbsp; dI/dt = βSI − γI,&nbsp; dR/dt = γI</span>에서, <span class="k">dI/dt = 0을 만족하는 S*= γ/β = 1/R₀ 임을 수식으로 유도</span>하면?</p>
+          <p class="ind">② 파이썬 scipy.integrate.odeint로 수치해를 구할 때, β와 γ를 질병관리청 데이터에서 추정하는 방법은? 추정 파라미터의 불확실도는 얼마나 되는가?</p>
+          <p class="ind">③ 이 모델을 농작물 병해충(흰가루병·잿빛곰팡이) 전파에 적용할 때 어떤 수정이 필요한가? 스마트팜 환경 제어가 R₀ &lt; 1을 유지하는 방역 전략임을 수학적으로 표현할 수 있는가?</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">연계 교과<br>및 단원</td>
+        <td class="cc" colspan="5">
+          <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c1)">미적분(✓)</strong> 확률과통계(  ) 기하(  )<br><br>
+          <strong>[단원명]</strong><br>
+          <p class="ind">· <strong>미적분 — 미분법:</strong> dy/dt = f(y) 미분방정식 개념, 변수분리법으로 해 구조 이해</p>
+          <p class="ind">· <strong>미적분 — 도함수의 활용:</strong> dI/dt = 0 조건으로 I(t) 극대 분석, R₀ = β/γ 도출</p>
+          <p class="ind">· <strong>미적분 — 적분의 활용:</strong> S+I+R = N (보존량) 성질 확인, 수치 적분 면적 해석</p>
+          <p class="ind">· <strong>(보조) 확률과 통계:</strong> 파라미터 추정의 통계적 불확실도 분석</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">탐구 주제</td>
+        <td class="cc" colspan="5">
+          <strong>SIR 전염병 전파 모델의 연립 미분방정식 분석 — <span class="k">dI/dt = 0 조건으로 기초감염재생산지수 R₀ 도출</span> 및 농작물 병해충 전파 적용 가능성 탐구</strong><br>
+          <em style="color:#666">— 실제 역학 데이터 파라미터 피팅 및 scipy.odeint 수치해 비교 포함</em>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">수학적<br>모델링 및<br>탐구 계획<br>(구체적으로<br>작성)</td>
+        <td class="cc" colspan="5">
+          <p class="sb">▶ STEP 1. SIR 모델 구조 설정 (6월 1주 + 여름방학 1~2주)</p>
+          <p class="ind">· S(t): 감수성 개체, I(t): 감염자, R(t): 회복자 / S+I+R = N (보존 법칙)</p>
+          <p class="ind">· <span class="m">dS/dt = −βSI,&nbsp; dI/dt = βSI − γI,&nbsp; dR/dt = γI</span></p>
+          <p class="ind">· β(단위 시간당 전파율)·γ(단위 시간당 회복률)·R₀ = β/γ 개념 이해</p>
+          <p class="sb">▶ STEP 2. R₀ 수식 도출 (여름방학 2~3주)</p>
+          <p class="ind">· dI/dt = I(βS − γ) = 0 → S* = γ/β = 1/R₀ 유도 전 과정 손 계산 완성</p>
+          <p class="ind">· <span class="k">R₀ &gt; 1이면 전파 확산, &lt; 1이면 소멸 — 이 경계의 수학적 이유를 위상 평면으로 시각화</span></p>
+          <p class="sb">▶ STEP 3. 파이썬 수치해 및 데이터 피팅 (여름방학 3~4주)</p>
+          <p class="ind">· scipy.integrate.odeint로 S(t)·I(t)·R(t) 수치해 계산·시각화</p>
+          <p class="ind">· 질병관리청 코로나19 주간 확진자 데이터에서 β·γ 역산 추정 → 모델 vs 실제 오차 계산</p>
+          <p class="sb">▶ STEP 4. 농작물 병해충 전파 적용 탐구 (여름방학 5주)</p>
+          <p class="ind">· 건전(S)·이병(I)·고사(R) 작물 구분. 기온·습도가 β값 변화시킴</p>
+          <p class="ind">· <span class="k">스마트팜 환경 제어(온습도)가 R₀ &lt; 1을 유지하는 방역 전략임을 수학적으로 표현</span></p>
+          <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1주)</p>
+          <p class="ind">· 균질 혼합 가정·면역 소실 미반영 한계 → SEIR·SIRS 확장 모델 소개</p>
+          <p class="ind">· 실시간 파라미터 갱신 필요성 → IoT + 데이터 분석 스마트시스템의 수학적 이유</p>
+          <p class="sb">▶ STEP 6. 보고서 및 발표 (7월 2주)</p>
+          <p class="ind">· 보고서(A4 6매+) + PPT(12슬라이드+). 손 계산 과정 사진 첨부.</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">결과물<br>도출 및<br>기대효과</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+          <p class="sb">【도출 결과물】</p>
+          <p class="ind">① dI/dt = 0에서 R₀ = β/γ 도출까지 손 계산 전 과정</p>
+          <p class="ind">② 실제 COVID-19 데이터로 추정한 β·γ 파라미터와 R₀ 계산값</p>
+          <p class="ind">③ scipy.odeint로 구현한 S·I·R 곡선 vs 실제 확진자 비교 그래프</p>
+          <p class="ind">④ 농작물 병해충 SIR 적용 모델 설계안 및 스마트팜 방역 연결 보고서</p>
+          <p class="sb">【기대 효과】</p>
+          <p class="ind">· <strong>수학적 측면:</strong> 연립 미분방정식이 실제 사회 현상(전염병 확산)을 기술하는 언어임을 체험. dI/dt = 0이라는 단순 조건에서 정책 판단의 핵심 지표 R₀가 도출됨을 증명.</p>
+          <p class="ind">· <strong>공학적 측면:</strong> SIR이 스마트팜 방역 시스템에 적용될 때, 실시간 환경 데이터로 β값을 갱신하는 스마트시스템의 필요성을 수학적으로 논증.</p>
+          <p class="ind">· <strong>비판적 사고:</strong> 뉴스가 SIR 모델의 "한계"를 지적하지만, 어떤 가정이 틀렸는지를 수식 수준에서 분석하여 기사를 넘어서는 탐구 수행.</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ── 신청서 2: 다변수 최적화 ── -->
+  <div class="fp fp2 pb" id="f2">
+    <div class="fbadge">주제 2 · 미적분 응용 — 편미분·경사하강법 · 태양광 다변수 최적화</div>
+    <div class="flevel">심화 ★★★ — 여름방학 3~4주 준비</div>
+    <div class="fhead">태양광 발전량 함수의 다변수 최적화 — 경사하강법으로 최적 패널 각도·운영 시각을 동시에 탐색하는 스마트 인버터 제어 모델</div>
+    <table class="ft">
+      <tr><th style="width:66px">학번</th><td style="width:126px">30123</td><th style="width:48px">이름</th><td style="width:96px">정민준</td><th style="width:88px">핸드폰 번호</th><td></td></tr>
+      <tr>
+        <td class="lc">지원동기</td>
+        <td class="cc" colspan="5">
+          고등학교 2학년 때 태양광 발전량 변동성과 ESS 최적화를 탐구하면서, "발전량이 최대가 되는 패널 각도와 시각을 동시에 최적화하는 방법은 무엇인가?"라는 질문이 남아 있었습니다. 1변수 미분으로 구한 최적 시각 t*는 <span class="h">패널 각도 θ를 고정한 상태에서의 답일 뿐, 두 변수를 동시에 최적화하는 진짜 문제는 다변수 함수의 최적화</span>임을 공부하면서 깨달았습니다.<br><br>
+          이 프로그램을 통해 발전량 P(θ, t)를 2변수 함수로 모델링하고, <span class="k">경사하강법으로 ∂P/∂θ와 ∂P/∂t를 동시에 업데이트하며 최적점 (θ*, t*)을 수치적으로 탐색</span>하는 알고리즘을 직접 구현하고자 지원합니다.
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">선정 기사<br>제목 및 출처</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+          <strong>제목:</strong> "AI가 태양광 패널 각도를 실시간으로 최적화 — 발전 효율 12% 향상 달성"<br>
+          <strong>출처:</strong> 전기신문 / 에너지경제연구원 보도자료
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+          <p class="sb">【포착한 현상】</p>
+          기사는 AI가 태양광 패널 각도를 실시간 최적화한다고 보도하지만, <span class="h">그 AI가 어떤 최적화 알고리즘을 쓰며 패널 각도 θ와 운영 시각 t라는 두 변수를 어떻게 동시에 최적화하는가</span>는 설명하지 않습니다. 발전량 P는 θ와 t 두 변수에 동시에 의존하는 2변수 함수이며, 이를 최대화하는 것은 다변수 최적화 문제입니다.
+          <p class="sb">【설정한 수학적 질문】</p>
+          <p class="ind">① 발전량 함수를 <span class="m">P(θ, t) = η(θ, T(t)) · I₀ · cos(α(t) − θ) · A</span>로 모델링할 때, <span class="k">∂P/∂θ와 ∂P/∂t (편미분)의 물리적 의미</span>는 무엇인가?</p>
+          <p class="ind">② 경사하강법 업데이트 <span class="m">θ_new = θ + α·∂P/∂θ,&nbsp; t_new = t + α·∂P/∂t</span>로 반복 갱신할 때, <span class="k">최적점 (θ*, t*)으로 수렴하는 과정</span>을 파이썬으로 구현하면?</p>
+          <p class="ind">③ 경사하강법이 지역 최대(local maximum)에 갇히는 경우와 탈출 방법(학습률 스케줄·다중 출발점)은 무엇인가?</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">연계 교과<br>및 단원</td>
+        <td class="cc" colspan="5">
+          <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c2)">미적분(✓)</strong> 확률과통계(  ) 기하(  )<br><br>
+          <strong>[단원명]</strong><br>
+          <p class="ind">· <strong>미적분 — 미분법:</strong> 편미분 개념 도입 (∂P/∂θ = "θ 방향으로만 미분"), 연쇄법칙 응용</p>
+          <p class="ind">· <strong>미적분 — 도함수의 활용:</strong> 극값 조건 ∂P/∂θ = 0, ∂P/∂t = 0 → 최적점 판별</p>
+          <p class="ind">· <strong>미적분 — 여러 가지 함수의 미분:</strong> 삼각함수·지수함수 편미분 적용</p>
+          <p class="ind">· <strong>(보조) 수학Ⅱ — 함수:</strong> 2변수 함수 f(x,y)의 기하학적 의미 (3D 곡면, 등고선)</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">탐구 주제</td>
+        <td class="cc" colspan="5">
+          <strong>2변수 발전량 함수 P(θ, t)의 편미분과 경사하강법을 활용한 <span class="k">최적 패널 각도·운영 시각의 동시 탐색</span> 및 스마트 인버터 제어 모델 설계</strong><br>
+          <em style="color:#666">— 수치 최적화 수렴 과정 등고선 시각화 및 지역 최대 탈출 전략 분석 포함</em>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">수학적<br>모델링 및<br>탐구 계획<br>(구체적으로<br>작성)</td>
+        <td class="cc" colspan="5">
+          <p class="sb">▶ STEP 1. 2변수 발전량 함수 설정 (6월 1주 + 여름방학 1주)</p>
+          <p class="ind">· <span class="m">P(θ, t) = [η₀ − k·(T(α(t)) − T_ref)] · I₀ · cos(α(t) − θ) · A</span></p>
+          <p class="ind">· numpy로 θ-t 격자에서 P 값 계산 → 3D 등고선(contourf) 시각화</p>
+          <p class="sb">▶ STEP 2. 편미분 개념 및 기울기 벡터 계산 (여름방학 2주)</p>
+          <p class="ind">· <span class="k">∂P/∂θ = "θ만 변할 때 P의 변화율",&nbsp; ∂P/∂t = "t만 변할 때 P의 변화율"</span></p>
+          <p class="ind">· 기울기 벡터 ∇P = (∂P/∂θ, ∂P/∂t): P가 가장 빠르게 증가하는 방향</p>
+          <p class="ind">· numpy 수치 편미분: ∂P/∂θ ≈ (P(θ+Δθ, t) − P(θ, t)) / Δθ</p>
+          <p class="sb">▶ STEP 3. 경사하강법 알고리즘 직접 구현 (여름방학 3주)</p>
+          <p class="ind">· 최대화 문제 → 음수 변환 후 최소화: −P(θ, t)에 경사하강법 적용</p>
+          <p class="ind">· 수렴 조건: |∇P| &lt; ε. <span class="k">수렴 궤적을 등고선 위에 점으로 시각화</span></p>
+          <p class="sb">▶ STEP 4. 학습률 분석 및 계절별 비교 (여름방학 4주)</p>
+          <p class="ind">· α 너무 크면 진동·발산, 너무 작으면 느린 수렴 → 시각화로 확인</p>
+          <p class="ind">· <span class="k">하지·동지 파라미터 각각 대입해 (θ*, t*)가 계절마다 이동하는 양상 비교</span></p>
+          <p class="sb">▶ STEP 5. ESS 연결 및 스마트 인버터 설계 (7월 1주)</p>
+          <p class="ind">· 계절별 (θ*, t*) 스케줄 → 스마트 인버터 자동 반영 제어 알고리즘 설계안</p>
+          <p class="ind">· 한계: 구름·강수 등 돌발 변수 → 실시간 기상 데이터 반영 필요 → 스마트시스템의 수학적 이유</p>
+          <p class="sb">▶ STEP 6. 보고서 및 발표 (7월 2주)</p>
+          <p class="ind">· 보고서(A4 6매+) + PPT(12슬라이드+). 파이썬 코드 핵심 부분 포함.</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">결과물<br>도출 및<br>기대효과</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+          <p class="sb">【도출 결과물】</p>
+          <p class="ind">① P(θ, t) 함수의 3D 등고선 그래프 및 최적점 위치 시각화</p>
+          <p class="ind">② 경사하강법 수렴 궤적이 등고선 위에 표시된 시각화</p>
+          <p class="ind">③ 학습률 α별 수렴 속도·안정성 비교표</p>
+          <p class="ind">④ 계절별(하지·동지) (θ*, t*) 비교 및 스마트 인버터 제어 스케줄 설계안</p>
+          <p class="sb">【기대 효과】</p>
+          <p class="ind">· <strong>수학적 측면:</strong> 편미분이 AI·머신러닝 경사하강법의 수학적 토대임을 직접 구현으로 체험. 추상 개념이 실제 코드로 작동하는 순간의 통찰 획득.</p>
+          <p class="ind">· <strong>AI 연결:</strong> 경사하강법은 딥러닝 가중치 갱신 원리와 동일. 스마트시스템과학과에서 배울 AI 기초를 선행 이해.</p>
+          <p class="ind">· <strong>탐구 완결:</strong> 2학년 태양광·ESS → 1변수 극값(기초) → 2변수 경사하강법(이 탐구). 3단계 수학적 정교화 과정이 생기부에서 명확히 드러남.</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ── 신청서 3: 적분방정식 역산 ── -->
+  <div class="fp fp3 pb" id="f3">
+    <div class="fbadge">주제 3 · 미적분 응용 — 적분방정식 역산 · 탄소예산 검증</div>
+    <div class="flevel">심화 ★★★ — 여름방학 2~3주 준비 (3개 중 가장 접근 쉬움)</div>
+    <div class="fhead">탄소예산 소진 시점의 적분방정식 역산 — 수치해석 이분법으로 NDC 목표 달성의 수학적 경계 조건을 도출하고 세 가지 감소 시나리오를 비교 검증</div>
+    <table class="ft">
+      <tr><th style="width:66px">학번</th><td style="width:126px">30123</td><th style="width:48px">이름</th><td style="width:96px">정민준</td><th style="width:88px">핸드폰 번호</th><td></td></tr>
+      <tr>
+        <td class="lc">지원동기</td>
+        <td class="cc" colspan="5">
+          고등학교 2학년 때 '더 클래식' 활동에서 탄소 배출량 감소와 기후변화 대응을 탐구하면서, "한국의 2030 온실가스 40% 감축 목표가 1.5°C 이내를 수학적으로 보장하는가?"라는 질문이 생겼습니다. 기사들은 "현재 감축 속도로는 부족하다"고 보도하지만, <span class="h">정확히 어떤 감축 경로가 탄소예산 한도를 넘지 않는 경계 조건인가를 수학적으로 역산한 분석은 찾을 수 없었습니다.</span><br><br>
+          이 프로그램을 통해 탄소 배출량 감소 시나리오를 세 가지 함수로 모델링하고, <span class="k">∫₀ᵀ C(t)dt = B라는 적분방정식을 수치해석 이분법으로 풀어 탄소예산 소진 시점 T와 경계 감소율 r*를 역산</span>하여, 기사의 주장을 수학으로 직접 검증하고자 지원합니다.
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">선정 기사<br>제목 및 출처</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 뉴스 기사 제목 및 출처(발행처)를 기재하세요.</p>
+          <strong>제목:</strong> "IPCC 경고 — 남은 탄소예산 400Gt, 현재 속도론 2030년대 초 소진"<br>
+          <strong>출처:</strong> 경향신문 / IPCC AR6 Summary for Policymakers (2023)<br><br>
+          <strong>보조 기사:</strong> "한국 NDC 상향 — 2030년까지 40% 감축, 경로 설계가 관건"<br>
+          <strong>출처:</strong> 환경부 보도자료 / 탄소중립녹색성장위원회
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">기사 속<br>수학적<br>문제 인식</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 기사에서 포착한 사회적·과학적 현상을 기술하고, 이를 해결하기 위해 설정한 수학적 질문을 구체적으로 작성하세요.</p>
+          <p class="sb">【포착한 현상】</p>
+          IPCC 보고서는 "남은 탄소예산 400Gt, 현재 속도면 2030년대 초 소진"이라고 경고하지만, <span class="h">어떤 감축 함수를 가정하고 적분하면 400Gt에 도달하는 T가 2030년대 초인지 수학적으로 어떻게 계산하는가</span>는 제시하지 않습니다. 이 문제는 <span class="k">∫₀ᵀ C(t)dt = B를 T에 대해 푸는 적분방정식</span>이며, 해석적 역산이 어려우므로 수치해석 이분법이 필요합니다.
+          <p class="sb">【설정한 수학적 질문】</p>
+          <p class="ind">① 지수 감소 <span class="m">C(t)=C₀e^(−rt)</span>, 선형 감소 <span class="m">C(t)=C₀−at</span>, 계단형 감소 세 모델 각각에서 <span class="k">∫₀ᵀ C(t)dt = B_KR를 만족하는 T를 이분법으로</span> 구하면?</p>
+          <p class="ind">② <span class="k">탄소예산 한도를 초과하지 않으려면 감소율 r이 최소 얼마 이상이어야 하는가?</span> 경계 조건 r* = C₀/B를 해석적으로 도출하고 수치해와 비교하면?</p>
+          <p class="ind">③ 한국 NDC 2030 40% 감축 목표를 각 모델에 대입할 때, 탄소중립 도달 시점과 탄소예산 준수 여부는?</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">연계 교과<br>및 단원</td>
+        <td class="cc" colspan="5">
+          <strong>[선택]</strong> 수학Ⅰ(  ) 수학Ⅱ(  ) <strong style="color:var(--c3)">미적분(✓)</strong> 확률과통계(  ) 기하(  )<br><br>
+          <strong>[단원명]</strong><br>
+          <p class="ind">· <strong>미적분 — 적분법:</strong> 지수함수·다항함수 정적분 계산 및 수식 도출</p>
+          <p class="ind">· <strong>미적분 — 적분의 활용:</strong> 정적분 = 누적량 해석, F(T) = ∫₀ᵀC(t)dt 설정</p>
+          <p class="ind">· <strong>미적분 응용 — 방정식 역산:</strong> F(T) = B인 T를 이분법(수치해석)으로 풀기</p>
+          <p class="ind">· <strong>(보조) 수학Ⅰ — 지수함수:</strong> C(t) = C₀e^(−rt), 탄소중립 시점 해석적 계산</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">탐구 주제</td>
+        <td class="cc" colspan="5">
+          <strong>탄소 배출량 감소 시나리오의 적분방정식 역산 — <span class="k">이분법으로 탄소예산 소진 시점 T와 경계 감소율 r*를 수학적으로 도출</span></strong><br>
+          <em style="color:#666">— 지수·선형·계단형 세 모델 비교 및 scipy.optimize.brentq 수치해 구현</em>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">수학적<br>모델링 및<br>탐구 계획<br>(구체적으로<br>작성)</td>
+        <td class="cc" colspan="5">
+          <p class="sb">▶ STEP 1. 기준 데이터 및 세 가지 감소 함수 설정 (6월 1주 + 여름방학 1주)</p>
+          <p class="ind">· C₀ = 6.5억 tCO₂eq (한국 2023년 배출량, 환경부 자료)</p>
+          <p class="ind">· B_KR = 400Gt × 1.7% ≈ 6.8Gt (한국 몫, 현재 배출량 비중 기준 <em style="color:#888">※ 인구 비중 0.63%, GDP 비중 1.6%, 현재 배출량 비중 1.76% 중 현재 배출량 기준 채택. IPCC 400Gt는 2020년 기준값.</em>)</p>
+          <p class="ind">· 모델 A: <span class="m">C_A(t) = C₀·e^(−rt)</span> / 모델 B: <span class="m">C_B(t) = max(C₀−at, 0)</span> / 모델 C: NDC 반영 계단형</p>
+          <p class="sb">▶ STEP 2. 정적분 수식 도출 (여름방학 1~2주)</p>
+          <p class="ind">· <span class="m">F_A(T) = (C₀/r)(1 − e^(−rT))</span>,&nbsp; <span class="m">F_B(T) = C₀T_n − (a/2)T_n²</span></p>
+          <p class="ind">· 각 수식 손 계산 도출 → Python sympy로 검증</p>
+          <p class="sb">▶ STEP 3. 이분법으로 T와 경계 감소율 r* 역산 (여름방학 2주)</p>
+          <p class="ind">· <span class="k">이분법: g(T) = F(T) − B = 0인 T를 [T_lo, T_hi]에서 이진 탐색. 수렴 조건 |g(T_mid)| &lt; 10⁻⁶</span></p>
+          <p class="ind">· scipy.optimize.brentq(g, T_lo, T_hi) 적용. 수렴 과정 단계별 표 작성</p>
+          <p class="ind">· <span class="k">경계 감소율 r*: C₀/r − B = 0 → r* = C₀/B 해석적 도출 후 수치해와 비교</span></p>
+          <p class="sb">▶ STEP 4. 시나리오별 결과 비교 및 시각화 (여름방학 3주)</p>
+          <p class="ind">· 세 모델별 T(탄소예산 소진), T_n(탄소중립), r* 비교표 작성</p>
+          <p class="ind">· <span class="k">matplotlib으로 C(t) 곡선 + 그래프 아래 누적 면적 색칠 시각화 3종</span></p>
+          <p class="ind">· NDC 목표 달성 시 탄소예산 내 수렴 여부 정량 결론 도출</p>
+          <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1주)</p>
+          <p class="ind">· 세 모델 모두 매끄러운 감소 가정 → 실제는 경기 변동·정책 변화로 비단조적</p>
+          <p class="ind">· <span class="k">실시간 배출 데이터로 적분 모델을 주기적 갱신 → 스마트시스템(데이터 파이프라인 + 적분 자동화)의 수학적 이유</span></p>
+          <p class="ind">· 김연욱 교수(기후스마트농업·온실가스 감축) 연구와 연결</p>
+          <p class="sb">▶ STEP 6. 보고서 및 발표 (7월 2주)</p>
+          <p class="ind">· 보고서(A4 6매+) + PPT(12슬라이드+). 이분법 수렴 과정 단계별 표 포함.</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="lc">결과물<br>도출 및<br>기대효과</td>
+        <td class="cc" colspan="5">
+          <p class="gt">※ 본 탐구 활동을 통해 도출하고자 하는 결과물이나 기대하는 변화를 기술하세요.</p>
+          <p class="sb">【도출 결과물】</p>
+          <p class="ind">① 지수·선형·계단형 세 모델의 정적분 수식 손 계산 및 sympy 검증</p>
+          <p class="ind">② 이분법 수렴 과정 단계별 표 (T 범위가 좁혀지는 과정)</p>
+          <p class="ind">③ 세 시나리오별 T(탄소예산 소진)·T_n(탄소중립)·r*(경계 감소율) 비교표</p>
+          <p class="ind">④ C(t) 곡선 + 누적 배출량 그래프 아래 넓이 색칠 시각화 3종</p>
+          <p class="ind">⑤ "NDC 40% 목표가 탄소예산을 수학적으로 준수하는가"에 대한 정량 검증 결론</p>
+          <p class="sb">【기대 효과】</p>
+          <p class="ind">· <strong>수학적 측면:</strong> 정적분이 방정식의 일부가 될 때 수치해석으로 푸는 발상이 고교 수학의 확장임을 체험. 이분법이라는 단순 알고리즘으로 복잡한 적분방정식을 컴퓨터가 푸는 원리 이해.</p>
+          <p class="ind">· <strong>비판적 사고:</strong> IPCC·환경부 보도자료의 수치를 직접 재계산하여 검증. 과학 보도를 비판적으로 소비하는 능력 함양.</p>
+          <p class="ind">· <strong>전공 연결:</strong> 실시간 배출 데이터로 적분 모델을 자동 갱신하는 시스템 → 스마트시스템과학과 "데이터 기반 의사결정" 인재상과 완벽히 일치. 기후스마트농업(김연욱 교수)의 온실가스 감축 연구와 같은 방법론.</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div></div><!-- /forms-wrap -->
+
+<button id="stt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const navAs=document.querySelectorAll('.nav a');
+const secs=['s0','s1','s2','s3','s4','forms'];
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY+80;
+  let cur=secs[0];
+  secs.forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetTop<=y)cur=id;});
+  navAs.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
+  document.getElementById('stt').classList.toggle('v',window.scrollY>320);
+});
+function printAll(){['f1','f2','f3'].forEach(id=>document.getElementById(id).style.display='');window.print();}
+function printSel(){
+  const v=document.getElementById('wsel').value;
+  if(v==='all'){printAll();return;}
+  ['f1','f2','f3'].forEach(id=>{document.getElementById(id).style.display=(id===v)?'':'none';});
+  window.print();
+  ['f1','f2','f3'].forEach(id=>document.getElementById(id).style.display='');
+}
+</script>
+</body>
+</html>

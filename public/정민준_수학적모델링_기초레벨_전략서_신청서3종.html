@@ -931,7 +931,7 @@ body {
             <p class="sb">▶ STEP 2. 연쇄법칙 적용 (6월 2주)</p>
             <span class="m">P'(t) = η'(α(t))·α'(t)·I₀·A_panel + η(α(t))·I₀·cos(α(t))·α'(t)·A_panel</span> 도출. η'(α) 항이 음수임을 확인.
             <p class="sb">▶ STEP 3. 극값 도출 및 이계도함수 확인 (6월 3주)</p>
-            P'(t)=0 → t* 수치해석으로 계산. <span class="k">P''(t*) &lt; 0 → 극대 확인.</span> "t*가 정오보다 10~40분 앞선다" 구체 수치 도출.
+            P'(t)=0 → t* 수치해석으로 계산. <span class="k">P''(t*) &lt; 0 → 극대 확인.</span> η'(α)&lt;0 항 때문에 t*가 정오보다 앞당겨지는 구체 수치(파라미터 η₀·k·A 대입) 도출.
             <p class="sb">▶ STEP 4. 계절별 t* 비교 (6월 4주)</p>
             하지·동지 파라미터 각각 대입. t* 이동 양상 비교. 스마트 인버터 계절별 제어 근거 수립.
             <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1주)</p>
@@ -1019,11 +1019,11 @@ body {
           <td class="lc">수학적<br>모델링 및<br>탐구 계획</td>
           <td class="cc" colspan="5">
             <p class="sb">▶ STEP 1. 기준 데이터 설정 (6월 1주)</p>
-            C₀ = 한국 2023년 배출량 ≈ 6.5억 tCO₂eq. 탄소예산 B_KR = 400Gt × 한국 비중(~1.7%). 지수 감소 <span class="m">C(t)=C₀·e^(−rt)</span> / 선형 감소 <span class="m">C(t)=C₀−at</span> 두 모델 설정.
+            C₀ = 한국 2023년 배출량 ≈ 6.5억 tCO₂eq. 탄소예산 B_KR = 400Gt × 한국 비중(~1.7%, 현재 배출량 기준). <em style="color:#888;font-size:12px">※ IPCC AR6 400Gt는 2020년 기준값. 2023년 기준 실질 여유는 약 4.9 Gt이나, 탐구에서는 보수적 상한선 6.8 Gt 사용.</em> 지수 감소 <span class="m">C(t)=C₀·e^(−rt)</span> / 선형 감소 <span class="m">C(t)=C₀−at</span> 두 모델 설정.
             <p class="sb">▶ STEP 2. 정적분으로 누적 배출량 계산 (6월 2주)</p>
             지수: <span class="m">∫₀ᵀ C₀e^(−rt)dt = (C₀/r)·(1−e^(−rT))</span>. 선형: <span class="m">∫₀ᵀ (C₀−at)dt = C₀T−(a/2)T²</span>. 두 수식을 B_KR과 같다고 놓고 <span class="k">탄소예산 소진 시점 T 역산.</span>
             <p class="sb">▶ STEP 3. 감소율 시나리오 비교 (6월 3주)</p>
-            시나리오 A(현 추세 r≈2%), B(NDC 목표 r≈6%), C(급진적 r≈10%)별 T 계산. <span class="k">matplotlib으로 C(t) 곡선과 누적 배출량(넓이) 색칠 시각화.</span>
+            시나리오 A(현 추세 r≈2%), B(NDC 목표 r≈6%), C(급진적 r≈10%)별 분석. <span class="k">r≈10%이면 무한 감소 시 총 배출량 C₀/r = 6.5 Gt &lt; B_KR = 6.8 Gt → 탄소예산 내 수렴(소진 없음)임을 수식으로 증명. matplotlib으로 C(t) 곡선과 누적 배출량(넓이) 색칠 시각화.</span>
             <p class="sb">▶ STEP 4. 한국 NDC 달성 가능성 검증 (6월 4주)</p>
             2030년 40% 감축 선형 모델 대입 → <span class="k">2050년까지 누적 배출량 정적분 계산 → B_KR 초과 여부 판단.</span>
             <p class="sb">▶ STEP 5. 한계 분석 및 스마트시스템 연결 (7월 1주)</p>
