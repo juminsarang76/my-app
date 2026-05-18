@@ -147,11 +147,103 @@ td{padding:14px;vertical-align:top;font-size:12.5px;line-height:1.65;border-bott
 /* tooltip */
 .tl-tooltip{position:fixed;background:var(--bg-card3);border:.5px solid var(--border2);border-radius:8px;padding:7px 11px;font-size:11px;line-height:1.5;color:var(--text);pointer-events:none;z-index:9999;max-width:200px;opacity:0;transition:opacity .12s;font-family:'Noto Sans KR',sans-serif}
 
-@media(max-width:700px){
-  .header{padding:28px 16px 22px}
-  td{padding:10px 8px;font-size:11.5px}
-  .prepare-cell{font-size:11px}
+/* ═══════════════════════════════
+   MOBILE
+═══════════════════════════════ */
+@media(max-width:680px){
+  /* ── Header ── */
+  .header{padding:22px 14px 16px}
+  .header h1{font-size:18px;line-height:1.4}
+  .header-badge{font-size:11px;padding:4px 10px}
+  .header-sub{font-size:12.5px;line-height:1.7}
+  .school-banner{padding:10px 12px;gap:8px}
+  .school-icon{font-size:18px}
+  .school-banner-text{font-size:12.5px;line-height:1.65}
+  .header-stats{flex-direction:column;gap:6px;margin-top:10px}
+  .stat-pill{font-size:12.5px;padding:7px 14px;width:100%}
+  .header-notice{font-size:12.5px;padding:8px 12px;line-height:1.65}
+
+  /* ── Layout padding ── */
   .tl-wrapper,.table-section{padding-left:12px;padding-right:12px}
+  .tl-head,.section-head{font-size:12.5px}
+
+  /* ── SVG 타임라인: 모바일에서 숨김 (텍스트 너무 작음) ── */
+  #tl-container,.tl-legend{display:none}
+
+  /* ── 참고 출처 바 ── */
+  .source-bar{gap:6px}
+  .source-badge{font-size:12px;padding:5px 10px}
+  .source-label{font-size:12px}
+
+  /* ── TABLE → CARD 레이아웃 ── */
+  table,thead,tbody,tr,td,th{display:block}
+  thead{display:none}
+
+  /* 데스크톱 border-radius 리셋 */
+  tbody tr td:first-child,tbody tr td:last-child{border-radius:0}
+
+  tbody tr{
+    background:var(--bg-card);
+    border:1px solid var(--border2);
+    border-radius:16px;
+    margin-bottom:20px;
+    overflow:hidden;
+    transform:none!important;
+  }
+  tbody tr:hover{transform:none!important;background:var(--bg-card)}
+
+  /* 월 헤더 바 */
+  .month-cell{
+    width:100%;min-width:unset;
+    padding:13px 16px;
+    display:flex!important;
+    align-items:center;gap:10px;
+    background:var(--bg-card3);
+    border-bottom:1px solid var(--border);
+    vertical-align:middle;
+  }
+  .month-pill{
+    display:inline-flex!important;
+    flex-direction:row!important;
+    align-items:center;gap:8px;
+    background:transparent!important;
+    min-width:unset;padding:0;opacity:1;
+  }
+  .month-pill .month-num{font-size:26px;font-weight:900}
+  .month-pill .month-text{font-size:13px;margin-top:0;color:rgba(255,255,255,.65)}
+
+  /* 월별 카드 헤더 색상 */
+  .m5  .month-cell{background:#1a3d6e}
+  .m6  .month-cell{background:#0d4a43}
+  .m7  .month-cell{background:#5a2a10}
+  .m8  .month-cell{background:#4a3400}
+  .m9  .month-cell{background:#2d1a5e}
+  .m10 .month-cell{background:#5a1010}
+  .m11 .month-cell{background:#1d3557}
+  .m12 .month-cell{background:#0d2028}
+  .m127 .month-cell{background:#0d2e1a}
+
+  /* 이벤트 셀 */
+  td{padding:14px 16px;font-size:13px;line-height:1.7}
+  .event-cell{width:100%;border-bottom:1px solid var(--border)}
+  .prepare-cell{width:100%}
+
+  /* 텍스트 크기 */
+  .slogan-tag{font-size:11.5px;padding:3px 10px;margin-bottom:10px}
+  .school-block{padding:10px 12px;margin-top:8px}
+  .school-block-title{font-size:11.5px}
+  .school-block-body{font-size:13px;line-height:1.8}
+  .key-event{font-size:13px;margin-bottom:6px}
+  .event-dot{margin-top:5px}
+  .date-badge{font-size:11.5px;padding:2px 8px}
+  .highlight{font-size:14px}
+  .prepare-cell li{font-size:13px;line-height:1.75;padding:8px 0 8px 22px}
+  .prepare-cell li::before{top:9px}
+  .info-box{font-size:12.5px;line-height:1.7;margin-top:10px}
+  .src-tag{font-size:10px}
+
+  /* 푸터 */
+  .footer{font-size:12.5px;padding:20px 14px 32px;line-height:2}
 }
 </style>
 </head>
@@ -375,7 +467,7 @@ td{padding:14px;vertical-align:top;font-size:12.5px;line-height:1.65;border-bott
       </tr>
 
       <!-- 11월 -->
-      <tr>
+      <tr class="m11">
         <td class="month-cell"><div class="month-pill" style="background:#1d3557"><span class="month-num">11</span><span class="month-text">월</span></div></td>
         <td class="event-cell">
           <div class="slogan-tag">🔥 끝날 때까지 끝난 게 아니다</div>
