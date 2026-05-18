@@ -167,8 +167,10 @@ td{padding:14px;vertical-align:top;font-size:12.5px;line-height:1.65;border-bott
   .tl-wrapper,.table-section{padding-left:12px;padding-right:12px}
   .tl-head,.section-head{font-size:12.5px}
 
-  /* ── SVG 타임라인: 모바일에서 숨김 (텍스트 너무 작음) ── */
-  #tl-container,.tl-legend{display:none}
+  /* ── SVG 타임라인: 가로 스크롤로 표시 ── */
+  .tl-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #tl-container svg{width:720px;min-width:720px}
+  .tl-legend{min-width:720px}
 
   /* ── 참고 출처 바 ── */
   .source-bar{gap:6px}
