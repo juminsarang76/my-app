@@ -375,7 +375,7 @@ export default function BatteryPage() {
         <div style={{ marginBottom: 32 }}>
           <SectionTitle
             title="Step 1 — 오늘 실시간 날씨"
-            sub={`${data.base_date.slice(0,4)}.${data.base_date.slice(4,6)}.${data.base_date.slice(6)} ${data.base_time.slice(0,2)}시 기준 · 기상청 초단기실황 (T1H·REH·RN1)`}
+            sub={`${data.base_date.slice(0,4)}.${data.base_date.slice(4,6)}.${data.base_date.slice(6)} ${data.base_time.slice(0,2)}시 기준 · Open-Meteo Forecast API`}
           />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
             {[
@@ -395,7 +395,7 @@ export default function BatteryPage() {
         {/* ══ Step 2: Training Set 시각화 ════════════════ */}
         <div style={{ marginBottom: 32 }}>
           <SectionTitle
-            title="Step 2 — 2024년 Training Set"
+            title="Step 2 — 2010~2024년 Training Set (10년)"
             sub={`Open-Meteo Archive · ${data.trainSamples.length}일 샘플 · 강수일 ${data.trainSamples.filter(s=>s.rainfall>0).length}일 포함`}
           />
 
