@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 대기업 채용 변화 분석 보고서</title>
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --border: rgba(255,255,255,.08);
+    --border2: rgba(255,255,255,.14);
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --blue: #3b82f6;
+    --teal: #14b8a6;
+    --gold: #f59e0b;
+    --red: #ef4444;
+    --green: #22c55e;
+    --purple: #a855f7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+
+  .hero{background:linear-gradient(135deg,#0a0f1e 0%,#0f1d38 50%,#0d2240 100%);padding:60px 24px 48px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--border2)}
+  .hero::before{content:'';position:absolute;top:-120px;right:-120px;width:500px;height:500px;border-radius:50%;background:rgba(59,130,246,.06);pointer-events:none}
+  .hero::after{content:'';position:absolute;bottom:-80px;left:-60px;width:320px;height:320px;border-radius:50%;background:rgba(245,158,11,.05);pointer-events:none}
+  .hero-badge{display:inline-block;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.35);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:2px;padding:5px 14px;border-radius:20px;margin-bottom:16px}
+  .hero h1{font-size:clamp(22px,4vw,36px);font-weight:900;color:#f0f6ff;margin-bottom:10px;line-height:1.3}
+  .hero h1 span{color:var(--gold)}
+  .hero-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px}
+  .expert-tag{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:10px 20px;border-radius:40px;font-size:13px}
+  .expert-tag .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#0ea5e9);display:flex;align-items:center;justify-content:center;font-size:18px}
+  .expert-tag .info{text-align:left}
+  .expert-tag .name{font-weight:700;color:#e2e8f0;font-size:13px}
+  .expert-tag .role{font-size:11px;color:var(--muted)}
+
+  .container{max-width:1060px;margin:0 auto;padding:0 20px}
+  .section{padding:48px 0 32px}
+  .section-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+  .section-title{font-size:clamp(18px,3vw,24px);font-weight:800;color:#f0f6ff;margin-bottom:8px}
+  .section-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.7}
+
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px;background:var(--bg2);padding:6px;border-radius:12px;border:1px solid var(--border)}
+  .tab-btn{padding:8px 18px;border:none;border-radius:8px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit}
+  .tab-btn.active{background:var(--blue);color:white}
+  .tab-btn:hover:not(.active){background:rgba(255,255,255,.06);color:var(--text)}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:14px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:var(--border2);transform:translateY(-1px)}
+  .card-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .card-title{font-size:15px;font-weight:700;color:#f0f6ff}
+  .card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px 22px;text-align:center;position:relative;overflow:hidden}
+  .stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-from,.06),transparent);pointer-events:none}
+  .stat-num{font-size:36px;font-weight:900;line-height:1;margin-bottom:6px}
+  .stat-label{font-size:12px;color:var(--muted);line-height:1.5}
+  .stat-change{display:inline-block;margin-top:8px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+  .up{background:rgba(34,197,94,.15);color:#4ade80}
+  .down{background:rgba(239,68,68,.15);color:#f87171}
+
+  .compare-table{width:100%;border-collapse:separate;border-spacing:0 6px}
+  .compare-table th{background:var(--bg3);color:var(--muted);font-size:11px;font-weight:700;padding:10px 16px;letter-spacing:.5px;text-align:left}
+  .compare-table th:first-child{border-radius:8px 0 0 8px}
+  .compare-table th:last-child{border-radius:0 8px 8px 0}
+  .compare-table td{background:var(--bg2);padding:13px 16px;font-size:13px;color:var(--text);border-bottom:none;vertical-align:top}
+  .compare-table tr td:first-child{border-radius:8px 0 0 8px}
+  .compare-table tr td:last-child{border-radius:0 8px 8px 0}
+  .compare-table tr:hover td{background:var(--bg3)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700}
+  .badge-blue{background:rgba(59,130,246,.15);color:#93c5fd}
+  .badge-gold{background:rgba(245,158,11,.15);color:#fcd34d}
+  .badge-red{background:rgba(239,68,68,.15);color:#fca5a5}
+  .badge-green{background:rgba(34,197,94,.15);color:#86efac}
+  .badge-purple{background:rgba(168,85,247,.15);color:#d8b4fe}
+  .badge-teal{background:rgba(20,184,166,.15);color:#5eead4}
+
+  .timeline{position:relative;padding-left:32px}
+  .timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--blue),var(--teal))}
+  .tl-item{position:relative;margin-bottom:24px}
+  .tl-dot{position:absolute;left:-28px;top:4px;width:16px;height:16px;border-radius:50%;border:2px solid var(--blue);background:var(--bg);transition:background .2s}
+  .tl-item:hover .tl-dot{background:var(--blue)}
+  .tl-title{font-size:14px;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+  .tl-body{font-size:12.5px;color:var(--muted);line-height:1.7}
+
+  .progress-wrap{margin-bottom:14px}
+  .progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+  .progress-label .name{color:var(--text);font-weight:600}
+  .progress-label .val{color:var(--gold);font-weight:700}
+  .progress-bar{height:8px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:10px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+
+  .company-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .company-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s,border-color .2s}
+  .company-card:hover{transform:translateY(-2px);border-color:var(--border2)}
+  .company-header{padding:16px 20px;display:flex;align-items:center;gap:12px}
+  .company-logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .company-name{font-size:15px;font-weight:800;color:#f0f6ff}
+  .company-sys{font-size:11px;color:var(--muted);margin-top:2px}
+  .company-body{padding:0 20px 18px}
+  .company-item{padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
+  .company-item:last-child{border-bottom:none}
+  .company-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:7px}
+
+  .insight{background:rgba(59,130,246,.08);border-left:3px solid var(--blue);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:13px;color:#bfdbfe;line-height:1.75}
+  .insight.gold{background:rgba(245,158,11,.08);border-color:var(--gold);color:#fde68a}
+  .insight.red{background:rgba(239,68,68,.08);border-color:var(--red);color:#fecaca}
+  .insight.green{background:rgba(34,197,94,.08);border-color:var(--green);color:#bbf7d0}
+  .insight.purple{background:rgba(168,85,247,.08);border-color:var(--purple);color:#e9d5ff}
+
+  .checklist{list-style:none}
+  .checklist li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
+  .checklist li:last-child{border-bottom:none}
+  .checklist li .ck{width:20px;height:20px;border-radius:5px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;font-size:11px;color:#4ade80;flex-shrink:0;margin-top:1px}
+
+  .interview-box{background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:18px 20px;margin-bottom:12px}
+  .interview-q{font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:8px;display:flex;gap:8px}
+  .interview-a{font-size:12.5px;color:var(--muted);line-height:1.7;padding-left:24px}
+  .qmark{background:rgba(59,130,246,.2);color:#93c5fd;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+
+  .conclusion{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(20,184,166,.08));border:1px solid rgba(59,130,246,.2);border-radius:16px;padding:32px;margin:32px 0;text-align:center}
+  .conclusion h3{font-size:20px;font-weight:800;color:#f0f6ff;margin-bottom:12px}
+  .conclusion p{font-size:14px;color:var(--muted);line-height:1.8;max-width:680px;margin:0 auto}
+
+  @media(max-width:640px){
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .tabs{gap:4px}
+    .tab-btn{padding:7px 12px;font-size:12px}
+    .compare-table{font-size:12px}
+    .hero{padding:40px 16px 32px}
+  }
+
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .fade-in{animation:fadeInUp .5s ease both}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">CONFIDENTIAL REPORT · 2026.05</div>
+  <h1>2026년 대기업 채용 변화<br><span>서류·면접 심층 분석 보고서</span></h1>
+  <div class="hero-sub">2025 vs 2026 전형 구조 변화 · 그룹별 AI 심사 분석 · 합격 전략 가이드</div>
+  <div class="expert-tag">
+    <div class="avatar">👔</div>
+    <div class="info">
+      <div class="name">대기업 인사 전문가 (30년 경력)</div>
+      <div class="role">前 삼성·현대차·SK 채용 총괄 · 現 HR 컨설턴트</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <div class="section-label">Executive Summary</div>
+    <div class="section-title">2026 채용 시장 핵심 지표</div>
+    <div class="section-sub">2025년 대비 채용 심리와 구조 모두 뚜렷한 회복세. 단, 심사 기준은 근본적으로 변화했다.</div>
+
+    <div class="stat-grid">
+      <div class="stat-card" style="--accent-from:rgba(59,130,246,.06)">
+        <div class="stat-num" style="color:#60a5fa" data-target="87.3">0</div>
+        <div class="stat-label">대기업 채용 확정률 (%)</div>
+        <div class="stat-change up">▲ 전년比 +33.3%p</div>
+      </div>
+      <div class="stat-card" style="--accent-from:rgba(245,158,11,.06)">
+        <div class="stat-num" style="color:#fcd34d" data-target="68.5">0</div>
+        <div class="stat-label">정기 공채 비율 (%)</div>
+        <div class="stat-change up">▲ 전년比 +22.2%p</div>
+      </div>
+      <div class="stat-card" style="--accent-from:rgba(34,197,94,.06)">
+        <div class="stat-num" style="color:#4ade80" data-target="73.4">0</div>
+        <div class="stat-label">전체 기업 신입 채용 계획 (%)</div>
+        <div class="stat-change up">▲ 전년比 +7.9%p</div>
+      </div>
+      <div class="stat-card" style="--accent-from:rgba(239,68,68,.06)">
+        <div class="stat-num" style="color:#f87171" data-target="64.4">0</div>
+        <div class="stat-label">AI 작성 추정 자소서 비율 (%)</div>
+        <div class="stat-change down">⚠ 탐지 리스크 급증</div>
+      </div>
+    </div>
+
+    <div class="insight gold">
+      💡 <b>전문가 코멘트:</b> 30년 채용 현장에서 이렇게 빠른 구조 전환은 처음이다. 2022~2024년 위축됐던 대기업 채용이 2026년 들어 정기공채 부활과 함께 일제히 열렸지만, 지원자가 준비해야 할 '무기'는 완전히 달라졌다. 학벌·어학 스펙이 아닌 AI 활용 역량과 수치화된 실무 경험이 당락을 결정한다.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">상세 분석</div>
+    <div class="section-title">전형 단계별 변화 분석</div>
+
+    <div class="tabs" id="mainTabs">
+      <button class="tab-btn active" data-tab="doc">📄 서류전형 변화</button>
+      <button class="tab-btn" data-tab="interview">🎤 면접 변화</button>
+      <button class="tab-btn" data-tab="company">🏢 그룹별 비교</button>
+      <button class="tab-btn" data-tab="global">🌏 해외 vs 국내</button>
+      <button class="tab-btn" data-tab="strategy">🎯 합격 전략</button>
+    </div>
+
+    <!-- 서류전형 변화 -->
+    <div class="tab-panel active" id="tab-doc">
+      <div class="section-sub">2025 → 2026 서류전형의 구조적 변화. 인간 심사에서 AI 1차 필터링으로의 전환이 핵심이다.</div>
+
+      <table class="compare-table" style="width:100%">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>2025년 방식</th>
+            <th>2026년 방식</th>
+            <th>변화 강도</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>1차 심사 주체</b></td>
+            <td>HR 담당자 직접 검토</td>
+            <td>AI 자동 스크리닝 → 임계점 이상만 HR 전달</td>
+            <td><span class="badge badge-red">근본 변화</span></td>
+          </tr>
+          <tr>
+            <td><b>평가 기준</b></td>
+            <td>학벌·학점·어학 스펙 우선</td>
+            <td>직무 키워드 일치율 + 수치화 경험</td>
+            <td><span class="badge badge-red">근본 변화</span></td>
+          </tr>
+          <tr>
+            <td><b>표절 탐지</b></td>
+            <td>담당자 육안 확인 (형식적)</td>
+            <td>AI 유사도 10~30% 초과 시 자동 탈락</td>
+            <td><span class="badge badge-red">근본 변화</span></td>
+          </tr>
+          <tr>
+            <td><b>AI 작성 감지</b></td>
+            <td>거의 없음</td>
+            <td>SK 에이브릴 등 생성형AI 문체 자동 탐지</td>
+            <td><span class="badge badge-gold">신규 도입</span></td>
+          </tr>
+          <tr>
+            <td><b>자소서 구조</b></td>
+            <td>성장배경·지원동기·포부</td>
+            <td>직무 에세이 + 전공이수 + 직무관련 활동 경험</td>
+            <td><span class="badge badge-blue">일부 변화</span></td>
+          </tr>
+          <tr>
+            <td><b>포트폴리오</b></td>
+            <td>선택 제출 (디자인직 한정)</td>
+            <td>개발·마케팅·기획직 전반으로 요구 확산</td>
+            <td><span class="badge badge-gold">신규 확산</span></td>
+          </tr>
+          <tr>
+            <td><b>블라인드 채용</b></td>
+            <td>일부 대기업 시행</td>
+            <td>AI 심사로 사실상 블라인드화 (이름·학교 후순위)</td>
+            <td><span class="badge badge-teal">심화</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="insight" style="margin-top:20px">
+        🔍 <b>핵심 원칙:</b> ATS(지원자 추적 시스템)는 채용공고의 키워드와 서류의 키워드를 매칭해 점수를 산출한다. 현재 지원자 평균 점수는 100점 만점에 <b>48점</b>. 최적화만 해도 +17점이 올라간다. Fortune 500 기업의 97%가 ATS를 사용하고, 국내 대기업도 빠르게 따라가고 있다.
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="section-title" style="font-size:17px;margin-bottom:16px">AI가 보는 서류 평가 흐름</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-title">① 파싱 (Parsing)</div>
+            <div class="tl-body">OCR + NLP로 텍스트 추출. <b>표·이미지 속 텍스트는 읽지 못함</b> → 2단 컬럼 레이아웃, 텍스트박스 사용 금지.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-title">② 키워드 매칭 (Keyword Matching)</div>
+            <div class="tl-body">채용공고의 핵심 키워드 15~25개를 서류에서 탐색. <b>채용공고와 동일한 표기 사용 필수</b> ("React.js" ≠ "리액트"). 목표 커버율 65~75%.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-title">③ 스코어링 & 순위화</div>
+            <div class="tl-body">키워드 밀도, 문장 논리 흐름, 직무 연관성 종합 채점. 임계점 이하는 담당자에게 전달조차 되지 않음.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-title">④ 표절·AI 작성 탐지</div>
+            <div class="tl-body">동기 지원자 간 유사도 비교 + 과거 DB + 온라인 합격 자소서 비교. <b>유사도 20% 주의 / 30% 이상 탈락</b>. SK는 ChatGPT 문체 자동 감지.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="border-color:var(--gold)"></div>
+            <div class="tl-title">⑤ HR 담당자 정성 평가 (최종)</div>
+            <div class="tl-body">AI를 통과한 상위 서류만 사람이 확인. <b>이 단계에서는 진정성·스토리라인·직무열의</b>를 본다. AI가 못 하는 영역.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px">
+        <div class="section-title" style="font-size:17px;margin-bottom:16px">직군별 AI 평가 키워드 (필수 포함)</div>
+        <div class="card">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px">💻 SW·개발</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <span class="badge badge-blue">알고리즘</span><span class="badge badge-blue">자료구조</span><span class="badge badge-blue">Python</span><span class="badge badge-blue">GitHub</span><span class="badge badge-blue">코드리뷰</span><span class="badge badge-blue">협업</span><span class="badge badge-blue">트러블슈팅</span><span class="badge badge-blue">REST API</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:8px">📊 마케팅·기획</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <span class="badge badge-teal">소비자 인사이트</span><span class="badge badge-teal">데이터 분석</span><span class="badge badge-teal">A/B테스트</span><span class="badge badge-teal">KPI</span><span class="badge badge-teal">ROI</span><span class="badge badge-teal">전략기획</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px">🔩 생산·제조</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <span class="badge badge-gold">공정 개선</span><span class="badge badge-gold">불량률</span><span class="badge badge-gold">6시그마</span><span class="badge badge-gold">품질관리</span><span class="badge badge-gold">원가절감</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:8px">🔬 연구개발</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <span class="badge badge-purple">논문</span><span class="badge badge-purple">특허</span><span class="badge badge-purple">실험 설계</span><span class="badge badge-purple">데이터 검증</span><span class="badge badge-purple">프로토타입</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 면접 변화 -->
+    <div class="tab-panel" id="tab-interview">
+      <div class="section-sub">2026년 면접은 "AI 시대에 어떻게 일할 것인가"를 직접 검증하는 방향으로 전환됐다.</div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>전형</th><th>2025년</th><th>2026년 변화</th><th>해당 그룹</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>인적성검사</b></td>
+            <td>GSAT·HMAT·LG Way Fit Test 유지</td>
+            <td>삼성 SW직군: <b>GSAT → SW 실기로 완전 대체</b></td>
+            <td><span class="badge badge-blue">삼성</span></td>
+          </tr>
+          <tr>
+            <td><b>1차 면접</b></td>
+            <td>직무 지식 + 경험 확인</td>
+            <td><b>AI 도구 활용 경험 질문 정식 추가</b><br>"Copilot 써봤나요? 어떤 상황에 썼나요?"</td>
+            <td><span class="badge badge-gold">전 그룹</span></td>
+          </tr>
+          <tr>
+            <td><b>과제 전형</b></td>
+            <td>일부 직군만 (디자인·개발)</td>
+            <td>마케팅·기획·데이터 직군으로 확산<br>30~60분 실무 과제 현장 수행</td>
+            <td><span class="badge badge-teal">확산 중</span></td>
+          </tr>
+          <tr>
+            <td><b>포트폴리오 발표</b></td>
+            <td>디자인직 한정</td>
+            <td>개발·데이터·기획직 전반으로 확대<br>GitHub 링크·배포 URL 사전 제출 요구</td>
+            <td><span class="badge badge-purple">확산 중</span></td>
+          </tr>
+          <tr>
+            <td><b>AI 면접</b></td>
+            <td>LG 뷰인터, 일부 기업 시범</td>
+            <td>현대백화점 AI역량검사 확대<br>일본 JCB식 1차 면접 AI 대체 확산</td>
+            <td><span class="badge badge-red">신규</span></td>
+          </tr>
+          <tr>
+            <td><b>임원 면접 기준</b></td>
+            <td>인성·조직 적합성 중심</td>
+            <td>AI 시대 비전·조직 기여 방향 추가<br>"AI로 우리 사업을 어떻게 바꾸겠나?"</td>
+            <td><span class="badge badge-gold">전 그룹</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:24px">
+        <div class="section-title" style="font-size:17px;margin-bottom:16px">2026 실제 면접 질문 패턴 (그룹별)</div>
+
+        <div class="interview-box">
+          <div class="interview-q"><div class="qmark">Q</div><div style="color:#93c5fd">삼성 — SW직군 실기 면접</div></div>
+          <div class="interview-a">
+            "주어진 데이터셋에서 이상값을 탐지하는 알고리즘을 30분 내에 구현하고, 시간복잡도를 설명하세요."<br>
+            "AI 코딩 도구를 사용해도 됩니다. 단, 왜 이 방식을 선택했는지 설명할 수 있어야 합니다."
+            <div style="margin-top:8px"><span class="badge badge-blue">핵심: 도구보다 판단력 평가</span></div>
+          </div>
+        </div>
+
+        <div class="interview-box">
+          <div class="interview-q"><div class="qmark">Q</div><div style="color:#fcd34d">현대차 — 직무 면접</div></div>
+          <div class="interview-a">
+            "SDV(소프트웨어 정의 차량) 전환에서 귀하의 직무가 어떤 역할을 해야 한다고 생각합니까?"<br>
+            "전기차·UAM 사업 중 본인이 기여할 수 있는 부분을 구체적 경험과 연결해 설명하세요."
+            <div style="margin-top:8px"><span class="badge badge-gold">핵심: 산업 이해도 + 직무 연결</span></div>
+          </div>
+        </div>
+
+        <div class="interview-box">
+          <div class="interview-q"><div class="qmark">Q</div><div style="color:#86efac">SK — 행동면접 (STAR 기반)</div></div>
+          <div class="interview-a">
+            "AI 도구를 활용해 업무 효율을 높인 경험이 있나요? 어떤 문제를, 어떤 도구로, 어떤 결과를 냈나요?"<br>
+            "본인이 만든 가장 의미 있는 결과물의 GitHub 링크를 지금 보여주세요."
+            <div style="margin-top:8px"><span class="badge badge-green">핵심: 실증 가능한 성과 요구</span></div>
+          </div>
+        </div>
+
+        <div class="interview-box">
+          <div class="interview-q"><div class="qmark">Q</div><div style="color:#d8b4fe">LG — AI 역량 검증 (뷰인터HR 이후)</div></div>
+          <div class="interview-a">
+            "AI 면접에서 측정한 역량 지표를 보면 [창의성 지수 높음, 스트레스 내성 중간]인데, 본인은 어떻게 생각하나요?"<br>
+            "ChatGPT로 자소서를 쓴 것 같은데, 이 문장이 본인 경험에서 나온 것임을 증명해주세요."
+            <div style="margin-top:8px"><span class="badge badge-purple">핵심: AI 작성 의심 시 현장 재검증</span></div>
+          </div>
+        </div>
+
+        <div class="interview-box">
+          <div class="interview-q"><div class="qmark">Q</div><div style="color:#5eead4">롯데·한화·포스코 — 신설 AI 역량 문항</div></div>
+          <div class="interview-a">
+            "지원 직무에서 AI를 활용한다면 어떤 업무에 어떻게 적용하겠습니까?"<br>
+            "최근 6개월간 사용해본 AI 도구와 그 결과를 하나만 구체적으로 말해보세요."
+            <div style="margin-top:8px"><span class="badge badge-teal">핵심: AI 도입 의지와 실행력 동시 검증</span></div>
+          </div>
+        </div>
+
+        <div class="insight red" style="margin-top:16px">
+          ⚠️ <b>주의:</b> 2026년 면접의 가장 큰 변화는 "AI를 쓴다"는 전제 하에 "왜 이 상황에 AI를 썼/안 썼나"를 물어보는 것이다. AI를 쓴 것 자체는 문제가 아니지만, 설명하지 못하면 탈락이다.
+        </div>
+
+        <div style="margin-top:24px">
+          <div class="section-title" style="font-size:17px;margin-bottom:16px">면접 유형별 2026 변화 심화 분석</div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:rgba(59,130,246,.15)">🤖</div>
+              <div><div class="card-title">AI 면접 (비디오 면접) 대응법</div><div class="card-sub">LG 뷰인터HR, 현대백화점, 일부 중견기업 확산</div></div>
+            </div>
+            <div class="timeline" style="font-size:13px">
+              <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-title">표정·음성·언어 3가지 동시 분석</div>
+                <div class="tl-body">카메라를 응시하되 자연스럽게. 억양의 단조로움은 감점. 명확한 발음과 적절한 말 속도(분당 120~150자) 유지.</div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-title">답변 구조 : PREP 방식 권장</div>
+                <div class="tl-body">Point(결론) → Reason(이유) → Example(사례) → Point(재강조). AI는 구조화된 답변에 높은 점수를 준다.</div>
+              </div>
+              <div class="tl-item" style="margin-bottom:0">
+                <div class="tl-dot" style="border-color:var(--gold)"></div>
+                <div class="tl-title">AI 면접 결과는 후속 대면 면접의 검증 재료</div>
+                <div class="tl-body">면접관이 AI 분석 결과를 사전 확인 후 심층 질문. 자신의 강·약점을 예상하고 대비해야 한다.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:rgba(245,158,11,.15)">📋</div>
+              <div><div class="card-title">실무 과제 면접 (30~60분)</div><div class="card-sub">삼성SW·현대차·SK·마케팅직군 전반 확산</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;font-size:13px">
+              <div style="background:var(--bg3);padding:14px;border-radius:10px">
+                <div style="font-weight:700;color:#fcd34d;margin-bottom:6px">개발직</div>
+                <div style="color:var(--muted)">코딩 테스트 + 설계 설명. AI 도구 허용 전제로 "왜 이 구조를 선택했나" 구술 평가.</div>
+              </div>
+              <div style="background:var(--bg3);padding:14px;border-radius:10px">
+                <div style="font-weight:700;color:#5eead4;margin-bottom:6px">마케팅·기획직</div>
+                <div style="color:var(--muted)">30분 내 시장 분석 + 전략 발표. 데이터 인사이트 도출 능력 집중 평가.</div>
+              </div>
+              <div style="background:var(--bg3);padding:14px;border-radius:10px">
+                <div style="font-weight:700;color:#d8b4fe;margin-bottom:6px">데이터 분석직</div>
+                <div style="color:var(--muted)">Python/Excel 실시간 분석. 가설 설정 → 검증 → 시각화 전 과정 평가.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 그룹별 비교 -->
+    <div class="tab-panel" id="tab-company">
+      <div class="section-sub">5대 그룹의 서류·면접 전형 방식과 AI 도입 현황을 비교 분석했다.</div>
+
+      <div class="company-grid">
+        <div class="company-card">
+          <div class="company-header" style="background:rgba(30,95,168,.15);border-bottom:1px solid var(--border)">
+            <div class="company-logo" style="background:rgba(30,95,168,.25)">🔵</div>
+            <div>
+              <div class="company-name">삼성그룹</div>
+              <div class="company-sys">자체 AI 심사 시스템 (2022~)</div>
+            </div>
+          </div>
+          <div class="company-body">
+            <div class="company-item"><div class="dot" style="background:#60a5fa"></div><b>서류:</b> 직무적합성평가. AI가 직무키워드·표절·성실성 3가지 스캔</div>
+            <div class="company-item"><div class="dot" style="background:#60a5fa"></div><b>필기:</b> GSAT (일반직) / SW 실기 (개발직) / 포트폴리오 (디자인직)</div>
+            <div class="company-item"><div class="dot" style="background:#60a5fa"></div><b>면접:</b> 직무면접 + CJAT + 임원면접</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>2026 변화:</b> SW직군 GSAT 완전 폐지, 실기로 대체. AI 코딩 도구 활용 허용</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>채용규모:</b> 연 1.2만명 (전년比 +20%)</div>
+            <div class="company-item"><div class="dot" style="background:#4ade80"></div><b>합격 TIP:</b> 직무 에세이에 "삼성의 미래 사업과 나의 역할" 연결 필수</div>
+          </div>
+        </div>
+
+        <div class="company-card">
+          <div class="company-header" style="background:rgba(90,10,10,.2);border-bottom:1px solid var(--border)">
+            <div class="company-logo" style="background:rgba(200,30,30,.2)">🔴</div>
+            <div>
+              <div class="company-name">현대차그룹</div>
+              <div class="company-sys">AI 역량검사 + HR 복합 심사</div>
+            </div>
+          </div>
+          <div class="company-body">
+            <div class="company-item"><div class="dot" style="background:#f87171"></div><b>서류:</b> AI 1차 → HR 정성 평가. 합격률 10~20%</div>
+            <div class="company-item"><div class="dot" style="background:#f87171"></div><b>필기:</b> HMAT (현대차 인적성)</div>
+            <div class="company-item"><div class="dot" style="background:#f87171"></div><b>면접:</b> 직무면접 → 종합면접 → 채용검진</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>2026 변화:</b> 전기차·SDV·UAM 산업 이해도 면접 비중 급증</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>채용규모:</b> 상반기 공고 171개, 규모 확대 기조</div>
+            <div class="company-item"><div class="dot" style="background:#4ade80"></div><b>합격 TIP:</b> HMG 저널·현대차 IR 자료로 산업 전환 방향 숙지 필수</div>
+          </div>
+        </div>
+
+        <div class="company-card">
+          <div class="company-header" style="background:rgba(245,158,11,.1);border-bottom:1px solid var(--border)">
+            <div class="company-logo" style="background:rgba(245,158,11,.2)">🟡</div>
+            <div>
+              <div class="company-name">SK그룹</div>
+              <div class="company-sys">SK 에이브릴(APRIL) 전 계열사 표준화</div>
+            </div>
+          </div>
+          <div class="company-body">
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>서류:</b> 에이브릴 AI 분석 — 직무연관성·논리흐름·AI작성 탐지</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>특이사항:</b> 생성형AI 자소서 공식 탐지 선언</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>채용방식:</b> 수시채용 중심 (정기공채 없음)</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>면접:</b> STAR 기반 행동 면접 + AI 활용 경험 검증 강화</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>2026 변화:</b> AI 작성 자소서 탐지 정확도 고도화</div>
+            <div class="company-item"><div class="dot" style="background:#4ade80"></div><b>합격 TIP:</b> 본인 언어로 재작성된 경험담 + 수치 증거 조합이 핵심</div>
+          </div>
+        </div>
+
+        <div class="company-card">
+          <div class="company-header" style="background:rgba(168,85,247,.1);border-bottom:1px solid var(--border)">
+            <div class="company-logo" style="background:rgba(168,85,247,.2)">🟣</div>
+            <div>
+              <div class="company-name">LG그룹</div>
+              <div class="company-sys">뷰인터HR (AI 면접 솔루션)</div>
+            </div>
+          </div>
+          <div class="company-body">
+            <div class="company-item"><div class="dot" style="background:#d8b4fe"></div><b>서류:</b> 수시채용 중심, 직무 포트폴리오 요구 확산</div>
+            <div class="company-item"><div class="dot" style="background:#d8b4fe"></div><b>AI 면접:</b> 뷰인터HR — 표정·음성·내용 종합 분석</div>
+            <div class="company-item"><div class="dot" style="background:#d8b4fe"></div><b>채용계획:</b> 3년간 1만명 (신입 7천명)</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>2026 변화:</b> AI 면접 결과를 면접관에게 사전 공유 후 검증 면접</div>
+            <div class="company-item"><div class="dot" style="background:#d8b4fe"></div><b>계열사:</b> LG전자, LG에너지솔루션, LG CNS 등</div>
+            <div class="company-item"><div class="dot" style="background:#4ade80"></div><b>합격 TIP:</b> AI 면접 예행연습 필수. 자신의 약점 미리 파악 후 대면 면접 준비</div>
+          </div>
+        </div>
+
+        <div class="company-card">
+          <div class="company-header" style="background:rgba(20,184,166,.1);border-bottom:1px solid var(--border)">
+            <div class="company-logo" style="background:rgba(20,184,166,.2)">🟢</div>
+            <div>
+              <div class="company-name">롯데·한화·포스코</div>
+              <div class="company-sys">외부 AI 솔루션 도입 확산</div>
+            </div>
+          </div>
+          <div class="company-body">
+            <div class="company-item"><div class="dot" style="background:#5eead4"></div><b>롯데:</b> AI 서류 분석 도입, 롯데백화점 MD·마케팅 포트폴리오 요구</div>
+            <div class="company-item"><div class="dot" style="background:#5eead4"></div><b>한화:</b> 하반기 3,500명 규모, AI 역량 우대 명시</div>
+            <div class="company-item"><div class="dot" style="background:#5eead4"></div><b>포스코:</b> 연 3,000명, 안전·AI·R&D 분야 채용 확대</div>
+            <div class="company-item"><div class="dot" style="background:#fcd34d"></div><b>공통 변화:</b> 2025년 대비 채용 규모 유지~확대 기조</div>
+            <div class="company-item"><div class="dot" style="background:#4ade80"></div><b>합격 TIP:</b> 각 그룹 핵심 사업(탈탄소·에너지·안전) 연관 경험 강조</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="section-title" style="font-size:16px;margin-bottom:14px">그룹별 필기·심사 방식 비교</div>
+        <div style="overflow-x:auto">
+          <table class="compare-table" style="min-width:600px">
+            <thead>
+              <tr><th>그룹</th><th>필기 방식</th><th>AI 서류 시스템</th><th>면접 특이사항</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><b>삼성</b></td><td>GSAT / SW실기 / 포트폴리오 심사</td><td>자체 개발 AI</td><td>직군별 완전 분리 전형</td></tr>
+              <tr><td><b>현대차</b></td><td>HMAT</td><td>AI + HR 복합</td><td>산업전환 이해도 배점 증가</td></tr>
+              <tr><td><b>SK</b></td><td>SKCT</td><td>SK 에이브릴</td><td>AI 작성 자소서 탐지 강화</td></tr>
+              <tr><td><b>LG</b></td><td>LG Way Fit Test</td><td>외부 솔루션</td><td>AI 면접(뷰인터HR) 선행</td></tr>
+              <tr><td><b>롯데</b></td><td>L-TAB</td><td>외부 솔루션</td><td>직무 포트폴리오 확산</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 해외 vs 국내 -->
+    <div class="tab-panel" id="tab-global">
+      <div class="section-sub">글로벌 빅테크의 기준이 2~3년 시차로 국내 대기업에 전파된다. 지금 해외 흐름이 한국의 미래다.</div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:24px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:rgba(59,130,246,.15)">🇺🇸</div>
+            <div><div class="card-title">Google · Meta · Amazon</div><div class="card-sub">AI 활용 = 채용 1순위 기준</div></div>
+          </div>
+          <ul class="checklist">
+            <li><div class="ck">✓</div>소프트웨어 엔지니어 성과 리뷰에 AI 도구 활용 빈도 포함</li>
+            <li><div class="ck">✓</div>Meta: AI가 작성한 코드 라인 수 추적, 면접 질문으로 연동</li>
+            <li><div class="ck">✓</div>Amazon: 30~60분 잡 시뮬레이션으로 즉시 투입 역량 검증</li>
+            <li><div class="ck">✓</div>포트폴리오 없이 인증서만 있으면 "의미 없음" 공식화</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:rgba(20,184,166,.15)">🇯🇵</div>
+            <div><div class="card-title">일본 대기업</div><div class="card-sub">2026년 4월 AI 채용 공식 도입 시작</div></div>
+          </div>
+          <ul class="checklist">
+            <li><div class="ck">✓</div>JCB — 2026년 4월 신졸 채용에 AI 공식 도입 첫 사례</li>
+            <li><div class="ck">✓</div>AI가 1차 면접 질문 자동 생성 → HR에 전달 (Carv 패턴)</li>
+            <li><div class="ck">✓</div>신졸 공채는 유지, 단 AI 스킬 검증 단계 삽입</li>
+            <li><div class="ck">✓</div>한국과 가장 유사, 한국보다 6~12개월 늦음</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:rgba(168,85,247,.15)">🇪🇺</div>
+            <div><div class="card-title">유럽</div><div class="card-sub">규제 + 스킬기반 채용 동시 진행</div></div>
+          </div>
+          <ul class="checklist">
+            <li><div class="ck">✓</div>EU AI 채용 도구 편향 감사 의무화 추진 중</li>
+            <li><div class="ck">✓</div>학위보다 오픈소스·배포 프로젝트 링크 요구</li>
+            <li><div class="ck">✓</div>비기술직도 AI 도구 결과물 포트폴리오 일반화</li>
+            <li><div class="ck">✓</div>1차 면접 AI 대체(Carv 방식) 확산</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="compare-table" style="min-width:700px">
+          <thead>
+            <tr><th>기준</th><th>미국 빅테크</th><th>일본</th><th>유럽</th><th>🇰🇷 한국 2026</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>AI 도구 사용</b></td><td>면접 중 직접 허용</td><td>도입 초기</td><td>규제와 병행</td><td>경험 서술 수준</td></tr>
+            <tr><td><b>포트폴리오</b></td><td>배포 경험 필수</td><td>신설 직무 중심</td><td>오픈소스 기여</td><td>제출 필수화 시작</td></tr>
+            <tr><td><b>학벌·학점</b></td><td>거의 무관</td><td>여전히 중요</td><td>낮아지는 중</td><td>낮아지는 중</td></tr>
+            <tr><td><b>전형 자동화</b></td><td>완전 자동화</td><td>도입 시작</td><td>규제 하 도입</td><td>도입 중</td></tr>
+            <tr><td><b>예상 시차</b></td><td>기준점</td><td>한국 +12개월</td><td>별도 방향</td><td>미국 -24개월</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="insight purple" style="margin-top:20px">
+        🌏 <b>전문가 시각:</b> 미국 빅테크에서 2024년에 도입한 "Agentic AI 면접"(LLM API 연동해서 실시간 문제 해결)이 2026~2027년 한국 대기업 SW직군에 들어올 가능성이 높다. 지금부터 준비해야 한다.
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="section-title" style="font-size:16px;margin-bottom:14px">해외 취업 지원 시 추가 고려사항</div>
+        <div class="card">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;font-size:13px">
+            <div>
+              <div style="font-weight:700;color:#93c5fd;margin-bottom:8px">미국 (Google·Meta·Microsoft)</div>
+              <div style="color:var(--muted)">LinkedIn 프로필 최적화 필수. 추천서(Referral) 네트워크가 서류 합격률을 3~5배 높임. LeetCode 200문제 이상 준비. AI/ML 역할은 Kaggle 순위 포함 권장.</div>
+            </div>
+            <div>
+              <div style="font-weight:700;color:#5eead4;margin-bottom:8px">일본 (소니·토요타·리쿠르트)</div>
+              <div style="color:var(--muted)">JLPT N2 이상 + 일본식 엔트리시트(ES) 형식 준비. 신졸 공채(4월 입사) 타임라인 철저 준수. AI 스킬 증명은 한국보다 덜 엄격하나 급속히 변화 중.</div>
+            </div>
+            <div>
+              <div style="font-weight:700;color:#d8b4fe;margin-bottom:8px">유럽 (SAP·ASML·아스트라제네카)</div>
+              <div style="color:var(--muted)">영어 이력서 + GitHub 포트폴리오 기본. 다국어 역량 우대. 워크퍼밋 스폰서십 여부 사전 확인 필수. Glassdoor 면접 후기 필독.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 합격 전략 -->
+    <div class="tab-panel" id="tab-strategy">
+      <div class="section-sub">30년 현장 경험과 2026 변화를 종합한 실전 합격 전략. 이 중 하나라도 빠지면 서류에서 탈락한다.</div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:24px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:rgba(59,130,246,.15)">📝</div>
+            <div><div class="card-title">서류 작성 핵심 전략</div></div>
+          </div>
+          <div class="timeline" style="font-size:13px">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-title">채용공고 키워드 15~25개 추출</div>
+              <div class="tl-body">JD 전문 복사 → ChatGPT로 핵심 키워드 추출 → 서류에 자연스럽게 삽입. 커버율 65~75% 목표.</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-title">STAR + 수치 구조 적용</div>
+              <div class="tl-body">상황→과제→행동→결과 + 반드시 수치 포함. "5,000건 분석 → 처리시간 40% 단축".</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-title">AI 유사도 검사 통과</div>
+              <div class="tl-body">Copyleaks·잡코리아 AI 분석 활용. 유사도 20% 이하 목표. AI 문체 완전 재작성 필수.</div>
+            </div>
+            <div class="tl-item" style="margin-bottom:0">
+              <div class="tl-dot" style="border-color:var(--gold)"></div>
+              <div class="tl-title">기업명·직무명 오기재 0건</div>
+              <div class="tl-body">AI가 즉시 감지. 제출 전 반드시 확인. 다른 회사 자소서 복붙 흔적은 자동 탈락 사유.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:rgba(34,197,94,.15)">🎤</div>
+            <div><div class="card-title">면접 준비 핵심 전략</div></div>
+          </div>
+          <div class="timeline" style="font-size:13px">
+            <div class="tl-item">
+              <div class="tl-dot" style="border-color:var(--green)"></div>
+              <div class="tl-title">AI 도구 사용 경험 정리</div>
+              <div class="tl-body">"어떤 도구를, 어떤 문제에, 어떤 프롬프트로, 어떤 결과를" 4단계로 2~3개 사례 준비.</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot" style="border-color:var(--green)"></div>
+              <div class="tl-title">포트폴리오 링크 준비</div>
+              <div class="tl-body">GitHub·Notion·배포 URL을 QR코드로 준비. "지금 보여드릴 수 있습니다"가 가장 강한 무기.</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot" style="border-color:var(--green)"></div>
+              <div class="tl-title">산업 전환 이해도 준비</div>
+              <div class="tl-body">삼성→AI반도체, 현대차→SDV/전기차, SK→에너지전환, LG→배터리. 지원 그룹 핵심 사업 방향 암기.</div>
+            </div>
+            <div class="tl-item" style="margin-bottom:0">
+              <div class="tl-dot" style="border-color:var(--gold)"></div>
+              <div class="tl-title">자소서 재현 면접 대비</div>
+              <div class="tl-body">LG 등에서 "이 경험 지금 증명해봐" 요구. 자소서에 쓴 모든 수치와 경험을 실제로 설명할 수 있어야 함.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title" style="font-size:16px;margin-bottom:12px">단계별 준비 진행도 (중요도 순)</div>
+      <div class="card">
+        <div class="progress-wrap">
+          <div class="progress-label"><span class="name">채용공고 키워드 분석 & 서류 최적화</span><span class="val">중요도 95%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0;background:linear-gradient(90deg,#3b82f6,#60a5fa)" data-width="95"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span class="name">AI 도구 활용 경험 구체화 (2~3개 사례)</span><span class="val">중요도 90%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0;background:linear-gradient(90deg,#f59e0b,#fcd34d)" data-width="90"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span class="name">포트폴리오 최소 1개 배포 (GitHub/Notion)</span><span class="val">중요도 88%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0;background:linear-gradient(90deg,#22c55e,#4ade80)" data-width="88"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span class="name">수치화된 경험 정리 (STAR 구조)</span><span class="val">중요도 85%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0;background:linear-gradient(90deg,#a855f7,#d8b4fe)" data-width="85"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span class="name">AI 유사도 검사 통과 (20% 이하)</span><span class="val">중요도 80%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0;background:linear-gradient(90deg,#14b8a6,#5eead4)" data-width="80"></div></div>
+        </div>
+        <div class="progress-wrap" style="margin-bottom:0">
+          <div class="progress-label"><span class="name">지원 그룹 산업 전환 방향 학습</span><span class="val">중요도 75%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0;background:linear-gradient(90deg,#ef4444,#f87171)" data-width="75"></div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="section-title" style="font-size:16px;margin-bottom:14px">월별 준비 로드맵 (2026 하반기 목표)</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="border-color:var(--blue)"></div>
+            <div class="tl-title">6월 — 기반 구축</div>
+            <div class="tl-body">AI 도구(ChatGPT·Copilot·Perplexity) 실습 시작. 자신의 경험 STAR 정리. GitHub 정비. 목표 그룹 채용 홈페이지 즐겨찾기.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="border-color:var(--teal)"></div>
+            <div class="tl-title">7월 — 포트폴리오 완성</div>
+            <div class="tl-body">프로젝트 1개 배포 완료. 채용공고 3~5개 분석 후 키워드 추출 연습. 인적성 준비 시작.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="border-color:var(--gold)"></div>
+            <div class="tl-title">8월 — 서류 완성</div>
+            <div class="tl-body">직무별 자소서 초안 작성 → AI 유사도 검사 → 재작성. AI 면접 예행연습(유튜브 뷰인터 가이드 활용).</div>
+          </div>
+          <div class="tl-item" style="margin-bottom:0">
+            <div class="tl-dot" style="border-color:var(--green)"></div>
+            <div class="tl-title">9~10월 — 실전 지원</div>
+            <div class="tl-body">대기업 하반기 공채 대응. 서류 → 인적성 → 면접 순으로. 면접 후기 즉시 기록하며 개선.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight gold" style="margin-top:20px">
+        💡 <b>30년 경력 최종 조언:</b> 2026년은 AI가 서류를 거르고, AI 활용 능력을 면접에서 확인하는 시대다. 그러나 최종 합격을 결정하는 것은 여전히 사람이다. AI를 통과한 뒤 사람의 마음을 움직이는 것은 <b>수치로 증명된 실패 경험과 거기서 배운 것</b>이다. 완벽한 성공 스토리보다 솔직한 성장 스토리가 2026년 임원 면접을 통과한다.
+      </div>
+    </div>
+  </div>
+
+  <div class="conclusion">
+    <h3>📋 2026 채용 변화 3줄 요약</h3>
+    <p>
+      <b style="color:#60a5fa">① 서류:</b> AI가 먼저 거른다 — 직무 키워드 + 수치 + STAR 구조 없으면 사람 눈에 닿지도 않는다.<br>
+      <b style="color:#fcd34d">② 면접:</b> "AI 어떻게 쓰냐"를 직접 묻는다 — 도구 사용 자체보다 판단력과 설명력이 당락을 결정한다.<br>
+      <b style="color:#4ade80">③ 본질:</b> 스펙이 아닌 증거다 — 인증서보다 배포된 프로젝트 한 개가 서류와 면접 둘 다에서 강하다.
+    </p>
+  </div>
+
+  <div style="text-align:center;padding:24px 0 48px;font-size:11px;color:var(--muted);line-height:2">
+    본 보고서는 공개된 채용 정보 및 HR 전문가 분석을 기반으로 작성되었습니다.<br>
+    실제 채용 일정 및 전형은 각 기업 공식 채용 홈페이지에서 최종 확인하세요.
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
+    btn.classList.add('active')
+    document.getElementById('tab-' + tab).classList.add('active')
+    animateProgress()
+  })
+})
+
+function animateNumbers() {
+  document.querySelectorAll('[data-target]').forEach(el => {
+    const target = parseFloat(el.dataset.target)
+    let current = 0
+    const step = target / 60
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target)
+      el.textContent = current.toFixed(1)
+      if (current >= target) clearInterval(timer)
+    }, 20)
+  })
+}
+
+function animateProgress() {
+  document.querySelectorAll('.progress-fill[data-width]').forEach(el => {
+    el.style.width = '0%'
+    setTimeout(() => { el.style.width = el.dataset.width + '%' }, 100)
+  })
+}
+
+window.addEventListener('load', () => {
+  animateNumbers()
+  setTimeout(animateProgress, 300)
+})
+</script>
+</body>
+</html>
