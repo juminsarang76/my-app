@@ -482,14 +482,25 @@ slides.forEach((_, i) => {
 const dots = document.querySelectorAll('.dot')
 
 function goto(idx) {
-  if (idx < 0 || idx >= total) return
-  slides[current].classList.remove('active')
-  slides[current].classList.add(idx > current ? 'prev' : '')
+  if (idx < 0 || idx >= total || idx === current) return
+  const goingForward = idx > current
+  const oldSlide = slides[current]
+  const newSlide = slides[idx]
+
+  oldSlide.classList.remove('active')
+  oldSlide.classList.toggle('prev', goingForward)
+
   dots[current].classList.remove('active')
   current = idx
-  slides[current].classList.remove('prev')
-  slides[current].classList.add('active')
   dots[current].classList.add('active')
+
+  if (!goingForward) {
+    newSlide.classList.add('prev')
+    void newSlide.offsetWidth
+  }
+  newSlide.classList.remove('prev')
+  newSlide.classList.add('active')
+
   counter.textContent = (current + 1) + ' / ' + total
   progress.style.width = ((current + 1) / total * 100) + '%'
   prevBtn.disabled = current === 0
