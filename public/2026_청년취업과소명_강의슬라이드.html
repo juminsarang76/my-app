@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>2026 청년 취업과 소명 — 강의 슬라이드</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0a0e1a;font-family:'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;color:#e2e8f0;-webkit-font-smoothing:antialiased}
+
+  .deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:6vh 8vw;opacity:0;transform:translateX(40px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;overflow-y:auto}
+  .slide.active{opacity:1;transform:translateX(0);pointer-events:auto;z-index:2}
+  .slide.prev{transform:translateX(-40px)}
+
+  /* 슬라이드 번호 */
+  .slide-num{position:absolute;top:24px;right:36px;font-size:13px;color:rgba(255,255,255,.35);font-weight:600;letter-spacing:2px}
+  .slide-tag{position:absolute;top:24px;left:36px;font-size:11px;letter-spacing:3px;font-weight:700;color:rgba(255,255,255,.4)}
+
+  /* 1. 인트로 */
+  .s1{background:radial-gradient(ellipse at 30% 20%,rgba(59,130,246,.18),transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(245,158,11,.12),transparent 50%),linear-gradient(135deg,#0a0e1a 0%,#0f1d38 100%);align-items:center;text-align:center}
+  .s1 .badge{display:inline-block;font-size:12px;letter-spacing:5px;font-weight:700;color:#fcd34d;border:1px solid rgba(252,211,77,.4);padding:8px 22px;border-radius:30px;margin-bottom:36px}
+  .s1 h1{font-size:clamp(36px,6.5vw,72px);font-weight:900;line-height:1.15;background:linear-gradient(135deg,#f0f6ff 0%,#93c5fd 70%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:24px}
+  .s1 .accent{color:#fcd34d;-webkit-text-fill-color:#fcd34d;background:none}
+  .s1 .sub{font-size:clamp(15px,2vw,20px);color:#94a3b8;margin-bottom:48px;line-height:1.7}
+  .s1 .speaker{display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);padding:14px 28px;border-radius:50px}
+  .s1 .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#0ea5e9);display:flex;align-items:center;justify-content:center;font-size:24px}
+  .s1 .speaker-info{text-align:left}
+  .s1 .speaker-name{font-size:14px;font-weight:700;color:#e2e8f0}
+  .s1 .speaker-role{font-size:11px;color:#94a3b8}
+
+  /* 공통 헤더 */
+  .s-head{margin-bottom:32px}
+  .s-eye{display:inline-block;font-size:11px;font-weight:700;letter-spacing:3px;color:#60a5fa;padding:5px 14px;border:1px solid rgba(96,165,250,.4);border-radius:20px;margin-bottom:16px}
+  .s-title{font-size:clamp(28px,4.2vw,46px);font-weight:900;color:#f0f6ff;line-height:1.2;margin-bottom:10px}
+  .s-sub{font-size:clamp(13px,1.6vw,16px);color:#94a3b8;line-height:1.7}
+
+  /* 2. 목차 */
+  .s2{background:linear-gradient(135deg,#0a0e1a 0%,#111827 100%)}
+  .toc{display:grid;grid-template-columns:1fr 1fr;gap:14px 32px;margin-top:24px}
+  .toc-item{display:flex;align-items:center;gap:18px;padding:14px 20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;transition:.2s}
+  .toc-item:hover{background:rgba(255,255,255,.06);border-color:rgba(96,165,250,.3);transform:translateX(4px)}
+  .toc-num{font-size:24px;font-weight:900;color:#fcd34d;width:36px;flex-shrink:0}
+  .toc-title{font-size:15px;font-weight:700;color:#e2e8f0}
+  .toc-desc{font-size:11px;color:#64748b;margin-top:2px}
+
+  /* 3. 취업이란 */
+  .s3{background:radial-gradient(ellipse at 80% 30%,rgba(168,85,247,.12),transparent 50%),linear-gradient(135deg,#0a0e1a 0%,#1a1230 100%)}
+  .quote-card{background:rgba(255,255,255,.04);border-left:4px solid #fcd34d;padding:24px 28px;border-radius:0 14px 14px 0;margin:28px 0;font-size:clamp(15px,1.8vw,18px);color:#fde68a;font-style:italic;line-height:1.7;max-width:900px}
+  .quote-card .src{display:block;margin-top:12px;font-size:12px;color:#94a3b8;font-style:normal;font-weight:600}
+  .types-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:24px}
+  .type-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px 20px;text-align:center;transition:.2s}
+  .type-card:hover{transform:translateY(-3px);border-color:rgba(168,85,247,.4)}
+  .type-icon{font-size:32px;margin-bottom:8px}
+  .type-name{font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+  .type-desc{font-size:11px;color:#94a3b8;line-height:1.5}
+
+  /* 4. 변화 */
+  .s4{background:radial-gradient(ellipse at 20% 70%,rgba(59,130,246,.14),transparent 50%),linear-gradient(135deg,#0a0e1a 0%,#0f1d38 100%)}
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:20px 0 28px}
+  .stat{background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 22px;text-align:center}
+  .stat-val{font-size:clamp(28px,4vw,40px);font-weight:900;line-height:1;margin-bottom:6px}
+  .stat-lbl{font-size:11px;color:#94a3b8;line-height:1.5}
+  .stat-chg{display:inline-block;margin-top:8px;font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(34,197,94,.15);color:#4ade80;font-weight:700}
+  .changes{display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13.5px}
+  .chg-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 18px}
+  .chg-from{color:#f87171;text-decoration:line-through;display:block;margin-bottom:4px;font-size:12px}
+  .chg-to{color:#4ade80;font-weight:700}
+
+  /* 5. AI 임팩트 */
+  .s5{background:radial-gradient(ellipse at 70% 30%,rgba(20,184,166,.14),transparent 50%),linear-gradient(135deg,#0a0e1a 0%,#0f2530 100%)}
+  .ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}
+  .ai-col{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 24px}
+  .ai-col h3{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .ai-col.danger h3{color:#f87171}
+  .ai-col.opp h3{color:#4ade80}
+  .ai-col ul{list-style:none}
+  .ai-col li{padding:7px 0;font-size:13px;color:#cbd5e1;border-bottom:1px dashed rgba(255,255,255,.06);display:flex;gap:8px}
+  .ai-col li:last-child{border-bottom:none}
+  .ai-col li::before{content:'▸';color:#64748b;flex-shrink:0}
+
+  /* 6. ATS */
+  .s6{background:radial-gradient(ellipse at 30% 80%,rgba(245,158,11,.12),transparent 50%),linear-gradient(135deg,#0a0e1a 0%,#1a1408 100%)}
+  .ats-flow{display:flex;gap:8px;margin:20px 0 24px;flex-wrap:wrap}
+  .ats-step{flex:1;min-width:140px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;text-align:center;position:relative}
+  .ats-step::after{content:'→';position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:#fcd34d;font-size:18px;font-weight:bold}
+  .ats-step:last-child::after{display:none}
+  .ats-num{font-size:11px;color:#fcd34d;font-weight:700;letter-spacing:1px;margin-bottom:6px}
+  .ats-name{font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+  .ats-desc{font-size:10.5px;color:#94a3b8;line-height:1.5}
+  .ats-score{display:flex;align-items:center;gap:20px;background:rgba(252,211,77,.08);border:1px solid rgba(252,211,77,.25);border-radius:12px;padding:18px 24px;margin-bottom:18px}
+  .score-bar{flex:1;height:36px;background:rgba(255,255,255,.06);border-radius:18px;position:relative;overflow:hidden}
+  .score-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,#ef4444 0%,#f59e0b 50%,#22c55e 100%);border-radius:18px}
+  .score-mark{position:absolute;top:-22px;font-size:11px;color:#fcd34d;font-weight:700;transform:translateX(-50%)}
+  .checklist{margin-top:10px}
+  .checklist li{list-style:none;padding:6px 0;font-size:13px;color:#cbd5e1;display:flex;gap:10px}
+  .checklist li::before{content:'✓';color:#4ade80;font-weight:bold}
+
+  /* 7. 면접 */
+  .s7{background:radial-gradient(ellipse at 70% 70%,rgba(168,85,247,.12),transparent 50%),linear-gradient(135deg,#0a0e1a 0%,#1a1230 100%)}
+  .qa-box{background:rgba(168,85,247,.05);border-left:3px solid #a855f7;padding:16px 20px;border-radius:0 12px 12px 0;margin-bottom:12px}
+  .qa-q{font-size:13px;font-weight:700;color:#d8b4fe;margin-bottom:6px;display:flex;gap:8px}
+  .qa-q .qm{background:rgba(168,85,247,.3);color:#e9d5ff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+  .qa-a{font-size:12px;color:#cbd5e1;line-height:1.7;padding-left:28px}
+  .qa-a b{color:#fcd34d}
+
+  /* 8. 실전 준비 */
+  .s8{background:radial-gradient(ellipse at 50% 30%,rgba(34,197,94,.12),transparent 50%),linear-gradient(135deg,#0a0e1a 0%,#0a2419 100%)}
+  .road{position:relative;padding-left:28px;margin-top:20px}
+  .road::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#22c55e,#fcd34d)}
+  .road-item{position:relative;margin-bottom:18px;padding-left:8px}
+  .road-dot{position:absolute;left:-24px;top:4px;width:14px;height:14px;border-radius:50%;background:#fcd34d;box-shadow:0 0 0 4px rgba(252,211,77,.15)}
+  .road-month{font-size:11px;font-weight:700;color:#fcd34d;letter-spacing:1px;margin-bottom:4px}
+  .road-title{font-size:14px;font-weight:700;color:#e2e8f0;margin-bottom:3px}
+  .road-body{font-size:12px;color:#94a3b8;line-height:1.6}
+  .key-msg{margin-top:20px;text-align:center;font-size:clamp(15px,2vw,19px);font-weight:800;color:#fde68a;padding:18px;background:rgba(252,211,77,.06);border:1px dashed rgba(252,211,77,.3);border-radius:12px}
+
+  /* 9. 소외 */
+  .s9{background:radial-gradient(ellipse at 20% 30%,rgba(100,116,139,.2),transparent 50%),radial-gradient(ellipse at 80% 70%,rgba(220,38,38,.1),transparent 50%),linear-gradient(135deg,#050810 0%,#1a0a0a 100%)}
+  .shadow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:18px 0 24px}
+  .shadow-card{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:18px 16px;text-align:center}
+  .shadow-icon{font-size:30px;margin-bottom:8px;filter:grayscale(.2)}
+  .shadow-name{font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+  .shadow-desc{font-size:10.5px;color:#94a3b8;line-height:1.5}
+  .call-text{font-size:clamp(14px,1.8vw,17px);color:#cbd5e1;line-height:1.85;background:rgba(255,255,255,.03);border-left:3px solid #f87171;padding:18px 24px;border-radius:0 12px 12px 0}
+  .call-text b{color:#fde68a}
+
+  /* 10. 소명 */
+  .s10{background:radial-gradient(ellipse at 50% 30%,rgba(252,211,77,.16),transparent 60%),radial-gradient(ellipse at 50% 90%,rgba(59,130,246,.12),transparent 50%),linear-gradient(135deg,#0a0e1a 0%,#1a1408 50%,#0f1d38 100%);align-items:center;text-align:center}
+  .s10 .cross-mark{font-size:48px;margin-bottom:24px;filter:drop-shadow(0 0 20px rgba(252,211,77,.5))}
+  .s10 h1{font-size:clamp(28px,4.5vw,52px);font-weight:900;background:linear-gradient(135deg,#fde68a 0%,#fcd34d 50%,#f0f6ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.25;margin-bottom:24px}
+  .s10 .verse{font-size:clamp(14px,1.7vw,17px);color:#94a3b8;font-style:italic;line-height:1.85;max-width:760px;margin:0 auto 36px}
+  .s10 .verse b{color:#fde68a;font-style:normal;font-weight:800}
+  .s10 .closing{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .s10 .close-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 26px;min-width:200px;text-align:center}
+  .s10 .close-card .em{font-size:11px;letter-spacing:2px;color:#fcd34d;font-weight:700;margin-bottom:6px}
+  .s10 .close-card .txt{font-size:13.5px;color:#e2e8f0;font-weight:600;line-height:1.5}
+
+  /* 네비게이션 */
+  .nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;background:rgba(15,23,42,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:8px 14px;z-index:100}
+  .nav-btn{background:rgba(255,255,255,.06);border:none;color:#e2e8f0;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:14px;transition:.2s;display:flex;align-items:center;justify-content:center}
+  .nav-btn:hover{background:#3b82f6}
+  .nav-btn:disabled{opacity:.3;cursor:not-allowed}
+  .dots{display:flex;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:.2s;border:none;padding:0}
+  .dot:hover{background:rgba(255,255,255,.4)}
+  .dot.active{background:#fcd34d;width:24px;border-radius:4px}
+  .counter{font-size:12px;color:#94a3b8;font-weight:600;min-width:42px;text-align:center;letter-spacing:1px}
+
+  /* 진행 바 */
+  .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#3b82f6,#fcd34d);z-index:100;transition:width .5s ease}
+
+  /* 키 힌트 */
+  .hint{position:fixed;bottom:80px;right:24px;font-size:11px;color:rgba(255,255,255,.3);z-index:99;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .hint kbd{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:4px;padding:1px 6px;font-size:10px;color:#cbd5e1;font-family:monospace}
+
+  @media(max-width:768px){
+    .slide{padding:5vh 5vw}
+    .toc{grid-template-columns:1fr}
+    .changes,.ai-grid{grid-template-columns:1fr}
+    .ats-step::after{display:none}
+    .hint{display:none}
+    .s1 h1{font-size:32px}
+    .s10 h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ─── 1. 인트로 ─── -->
+  <section class="slide s1 active" data-num="01">
+    <div class="slide-tag">CHAPTER · INTRO</div>
+    <div class="slide-num">01 / 10</div>
+    <div class="badge">2026 청년 강의</div>
+    <h1>AI 시대, 청년이여<br>어떻게 일하고 <span class="accent">살 것인가</span></h1>
+    <p class="sub">2026년 채용 시장의 거대한 변화와 — 그 너머의 소명에 관하여</p>
+    <div class="speaker">
+      <div class="avatar">👔</div>
+      <div class="speaker-info">
+        <div class="speaker-name">정현수 강사</div>
+        <div class="speaker-role">30년차 인사 채용 전문가 · 크리스찬 청년 멘토</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 2. 목차 ─── -->
+  <section class="slide s2" data-num="02">
+    <div class="slide-tag">CHAPTER · CONTENTS</div>
+    <div class="slide-num">02 / 10</div>
+    <div class="s-head">
+      <div class="s-eye">목차</div>
+      <h2 class="s-title">오늘 함께 나눌 이야기</h2>
+      <p class="s-sub">현장의 실무에서 출발해, 청년의 삶과 소명으로 이어갑니다.</p>
+    </div>
+    <div class="toc">
+      <div class="toc-item"><div class="toc-num">01</div><div><div class="toc-title">인트로</div><div class="toc-desc">강의를 시작하며</div></div></div>
+      <div class="toc-item"><div class="toc-num">02</div><div><div class="toc-title">목차</div><div class="toc-desc">오늘의 여정</div></div></div>
+      <div class="toc-item"><div class="toc-num">03</div><div><div class="toc-title">취업이란?</div><div class="toc-desc">일의 의미와 다양한 길</div></div></div>
+      <div class="toc-item"><div class="toc-num">04</div><div><div class="toc-title">2026 변화</div><div class="toc-desc">채용 시장의 구조 전환</div></div></div>
+      <div class="toc-item"><div class="toc-num">05</div><div><div class="toc-title">AI 임팩트</div><div class="toc-desc">사회와 직장의 재편</div></div></div>
+      <div class="toc-item"><div class="toc-num">06</div><div><div class="toc-title">서류 · ATS</div><div class="toc-desc">AI 1차 필터 통과법</div></div></div>
+      <div class="toc-item"><div class="toc-num">07</div><div><div class="toc-title">면접</div><div class="toc-desc">실무 과제와 AI 활용</div></div></div>
+      <div class="toc-item"><div class="toc-num">08</div><div><div class="toc-title">실전 준비</div><div class="toc-desc">포트폴리오와 로드맵</div></div></div>
+      <div class="toc-item"><div class="toc-num">09</div><div><div class="toc-title">소외</div><div class="toc-desc">그늘에 있는 이웃들</div></div></div>
+      <div class="toc-item"><div class="toc-num">10</div><div><div class="toc-title">소명</div><div class="toc-desc">우리는 무엇을 준비할까</div></div></div>
+    </div>
+  </section>
+
+  <!-- ─── 3. 취업이란 ─── -->
+  <section class="slide s3" data-num="03">
+    <div class="slide-tag">CHAPTER · MEANING</div>
+    <div class="slide-num">03 / 10</div>
+    <div class="s-head">
+      <div class="s-eye" style="color:#d8b4fe;border-color:rgba(216,180,254,.4)">03 · 취업이란?</div>
+      <h2 class="s-title">일은 단순히 생계의 수단인가?</h2>
+      <p class="s-sub">취업의 의미를 다시 묻습니다. 그리고 우리 앞에 놓인 다양한 길을 봅니다.</p>
+    </div>
+
+    <div class="quote-card">
+      "직업(Vocation)은 라틴어 'Vocare(부르다)'에서 유래합니다.<br>일은 단지 돈벌이가 아니라, 우리를 향한 부르심에 응답하는 자리입니다."
+      <span class="src">— 마틴 루터, 직업 소명론</span>
+    </div>
+
+    <div class="types-grid">
+      <div class="type-card"><div class="type-icon">🏢</div><div class="type-name">정규직</div><div class="type-desc">대기업·중견·공기업</div></div>
+      <div class="type-card"><div class="type-icon">💼</div><div class="type-name">스타트업</div><div class="type-desc">빠른 성장, 큰 책임</div></div>
+      <div class="type-card"><div class="type-icon">🎨</div><div class="type-name">프리랜서</div><div class="type-desc">전문성·자율 기반</div></div>
+      <div class="type-card"><div class="type-icon">🚀</div><div class="type-name">창업</div><div class="type-desc">문제 해결자의 길</div></div>
+      <div class="type-card"><div class="type-icon">🌱</div><div class="type-name">사회적 기업</div><div class="type-desc">가치와 수익의 동행</div></div>
+      <div class="type-card"><div class="type-icon">🕊️</div><div class="type-name">선교·NGO</div><div class="type-desc">소명 중심의 헌신</div></div>
+    </div>
+  </section>
+
+  <!-- ─── 4. 2026 변화 ─── -->
+  <section class="slide s4" data-num="04">
+    <div class="slide-tag">CHAPTER · CHANGE</div>
+    <div class="slide-num">04 / 10</div>
+    <div class="s-head">
+      <div class="s-eye">04 · 2026 채용 변화</div>
+      <h2 class="s-title">시장이 다시 열렸지만,<br>규칙은 완전히 바뀌었다</h2>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat"><div class="stat-val" style="color:#60a5fa">87.3%</div><div class="stat-lbl">대기업 채용 확정률</div><div class="stat-chg">▲ +33.3%p</div></div>
+      <div class="stat"><div class="stat-val" style="color:#fcd34d">68.5%</div><div class="stat-lbl">정기 공채 비율</div><div class="stat-chg">▲ +22.2%p</div></div>
+      <div class="stat"><div class="stat-val" style="color:#4ade80">73.4%</div><div class="stat-lbl">전체 기업 신입 채용 계획</div><div class="stat-chg">▲ +7.9%p</div></div>
+      <div class="stat"><div class="stat-val" style="color:#f87171">64.4%</div><div class="stat-lbl">AI 작성 추정 자소서</div><div class="stat-chg" style="background:rgba(239,68,68,.15);color:#f87171">⚠ 탐지 강화</div></div>
+    </div>
+
+    <div class="changes">
+      <div class="chg-card"><span class="chg-from">학벌·학점·어학 스펙</span><span class="chg-to">직무 키워드 + 수치 경험</span></div>
+      <div class="chg-card"><span class="chg-from">HR 담당자 직접 검토</span><span class="chg-to">AI 자동 1차 필터링</span></div>
+      <div class="chg-card"><span class="chg-from">획일적 자소서 양식</span><span class="chg-to">포트폴리오·GitHub 링크</span></div>
+      <div class="chg-card"><span class="chg-from">"성실히 일하겠습니다"</span><span class="chg-to">"이 문제, 이렇게 해결했습니다"</span></div>
+    </div>
+  </section>
+
+  <!-- ─── 5. AI 임팩트 ─── -->
+  <section class="slide s5" data-num="05">
+    <div class="slide-tag">CHAPTER · AI IMPACT</div>
+    <div class="slide-num">05 / 10</div>
+    <div class="s-head">
+      <div class="s-eye" style="color:#5eead4;border-color:rgba(94,234,212,.4)">05 · AI 임팩트</div>
+      <h2 class="s-title">AI가 회사와 사회를 다시 그리고 있다</h2>
+      <p class="s-sub">단순한 도구가 아니다. 일하는 방식, 평가받는 기준, 직업 그 자체가 재정의된다.</p>
+    </div>
+
+    <div class="ai-grid">
+      <div class="ai-col danger">
+        <h3>🌫 사라지거나 축소되는 일</h3>
+        <ul>
+          <li>단순 반복 사무 업무 (전표·정산)</li>
+          <li>1차 고객 응대·텔레마케팅</li>
+          <li>표준화된 통·번역</li>
+          <li>코드 보일러플레이트 작성</li>
+          <li>1차 자료 조사·요약</li>
+        </ul>
+      </div>
+      <div class="ai-col opp">
+        <h3>🌱 새로 생기거나 부상하는 일</h3>
+        <ul>
+          <li>AI 프롬프트·워크플로 디자이너</li>
+          <li>AI 윤리·거버넌스 전문가</li>
+          <li>인간-AI 협업 PM</li>
+          <li>도메인 + AI 융합 전문가</li>
+          <li>AI가 못 하는 '판단'을 책임지는 자리</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="quote-card" style="border-color:#5eead4;color:#a7f3d0;margin-top:20px">
+      "AI는 당신을 대체하지 않는다. 그러나 AI를 활용하는 사람이 당신을 대체할 것이다."
+      <span class="src">— 글로벌 HR 컨퍼런스, 2025</span>
+    </div>
+  </section>
+
+  <!-- ─── 6. 서류 · ATS ─── -->
+  <section class="slide s6" data-num="06">
+    <div class="slide-tag">CHAPTER · RESUME</div>
+    <div class="slide-num">06 / 10</div>
+    <div class="s-head">
+      <div class="s-eye" style="color:#fcd34d;border-color:rgba(252,211,77,.4)">06 · 서류 · ATS</div>
+      <h2 class="s-title">사람 눈에 닿기 전에 — AI를 먼저 통과해야 한다</h2>
+      <p class="s-sub">ATS(Applicant Tracking System) : Fortune 500의 97%, 국내 대기업 대부분이 도입.</p>
+    </div>
+
+    <div class="ats-flow">
+      <div class="ats-step"><div class="ats-num">STEP 1</div><div class="ats-name">파싱</div><div class="ats-desc">OCR·NLP로 텍스트 추출</div></div>
+      <div class="ats-step"><div class="ats-num">STEP 2</div><div class="ats-name">키워드 매칭</div><div class="ats-desc">JD 키워드 15~25개</div></div>
+      <div class="ats-step"><div class="ats-num">STEP 3</div><div class="ats-name">스코어링</div><div class="ats-desc">직무 적합도 점수화</div></div>
+      <div class="ats-step"><div class="ats-num">STEP 4</div><div class="ats-name">표절·AI 탐지</div><div class="ats-desc">유사도 30% 시 탈락</div></div>
+      <div class="ats-step"><div class="ats-num">STEP 5</div><div class="ats-name">HR 정성평가</div><div class="ats-desc">사람의 판단 (마지막)</div></div>
+    </div>
+
+    <div class="ats-score">
+      <div style="font-size:13px;color:#fde68a;font-weight:700;min-width:90px">현 평균 점수</div>
+      <div class="score-bar">
+        <div class="score-fill" style="width:48%"></div>
+        <div class="score-mark" style="left:48%">48점</div>
+        <div class="score-mark" style="left:65%;color:#4ade80">목표 65점+</div>
+      </div>
+    </div>
+
+    <ul class="checklist">
+      <li>채용공고 JD에서 키워드 15~25개 추출 → 자소서에 자연스럽게 삽입 (커버율 65~75%)</li>
+      <li>STAR 구조 + <b style="color:#fcd34d">반드시 수치 포함</b> (예: 처리시간 40% 단축, 5,000건 분석)</li>
+      <li>AI 유사도 검사 통과 (20% 이하) — Copyleaks·잡코리아 AI 검사 활용</li>
+      <li>기업명·직무명 오기재 0건 (다른 회사 복붙 흔적은 자동 탈락)</li>
+    </ul>
+  </section>
+
+  <!-- ─── 7. 면접 ─── -->
+  <section class="slide s7" data-num="07">
+    <div class="slide-tag">CHAPTER · INTERVIEW</div>
+    <div class="slide-num">07 / 10</div>
+    <div class="s-head">
+      <div class="s-eye" style="color:#d8b4fe;border-color:rgba(216,180,254,.4)">07 · 면접</div>
+      <h2 class="s-title">"AI 쓰지 마"가 아닌 "어떻게 썼는지 말해봐"</h2>
+      <p class="s-sub">실무 과제 중심 · AI 활용 경험 · 문제 해결력. 면접의 본질이 바뀌었다.</p>
+    </div>
+
+    <div class="qa-box">
+      <div class="qa-q"><div class="qm">Q</div><div>삼성 SW직군 (실기 면접)</div></div>
+      <div class="qa-a">"이상값 탐지 알고리즘을 30분 내 구현하고 시간복잡도를 설명하세요. <b>AI 코딩 도구 써도 됩니다. 단, 왜 이 방식을 선택했는지 설명할 수 있어야 합니다.</b>"</div>
+    </div>
+
+    <div class="qa-box">
+      <div class="qa-q"><div class="qm">Q</div><div>SK 행동 면접 (STAR)</div></div>
+      <div class="qa-a">"AI 도구로 업무 효율을 높인 경험이 있나요? <b>어떤 문제를, 어떤 도구로, 어떤 결과를</b> 냈는지 구체적으로 말해보세요."</div>
+    </div>
+
+    <div class="qa-box">
+      <div class="qa-q"><div class="qm">Q</div><div>현대차 직무 면접</div></div>
+      <div class="qa-a">"SDV(소프트웨어 정의 차량) 전환에서 귀하의 직무가 어떤 역할을 해야 한다고 생각합니까? <b>본인 경험과 연결해</b> 설명하세요."</div>
+    </div>
+
+    <div class="qa-box">
+      <div class="qa-q"><div class="qm">Q</div><div>LG (뷰인터 AI 면접 후 대면)</div></div>
+      <div class="qa-a">"AI가 분석한 본인의 약점이 [스트레스 내성 중간]이라 나왔습니다. <b>본인은 어떻게 생각하나요?</b>"</div>
+    </div>
+  </section>
+
+  <!-- ─── 8. 실전 준비 ─── -->
+  <section class="slide s8" data-num="08">
+    <div class="slide-tag">CHAPTER · PREPARATION</div>
+    <div class="slide-num">08 / 10</div>
+    <div class="s-head">
+      <div class="s-eye" style="color:#4ade80;border-color:rgba(74,222,128,.4)">08 · 실전 준비</div>
+      <h2 class="s-title">스펙이 아닌 증거다 —<br>배포된 프로젝트 한 개의 힘</h2>
+      <p class="s-sub">인증서 10개보다 실제로 작동하는 결과물 1개가 강하다. 지금부터의 로드맵.</p>
+    </div>
+
+    <div class="road">
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-month">6월 · 기반 구축</div>
+        <div class="road-title">AI 도구 실습 & 경험 정리</div>
+        <div class="road-body">ChatGPT·Copilot·Perplexity 실제 업무 활용. 본인 경험 STAR 형식으로 정리. GitHub 프로필 정비.</div>
+      </div>
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-month">7월 · 포트폴리오</div>
+        <div class="road-title">프로젝트 1개 배포 완료</div>
+        <div class="road-body">규모는 작아도 좋다. 실제 배포된 URL이 있는 것. 채용공고 3~5개 분석하며 키워드 추출 연습.</div>
+      </div>
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-month">8월 · 서류 완성</div>
+        <div class="road-title">직무별 자소서 + AI 유사도 통과</div>
+        <div class="road-body">직무별 자소서 초안 → AI 유사도 검사 → 자신의 언어로 재작성. AI 면접 예행연습.</div>
+      </div>
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-month">9~10월 · 실전</div>
+        <div class="road-title">하반기 공채 본격 대응</div>
+        <div class="road-body">서류 → 인적성 → 면접 순. 면접 후기 즉시 기록하며 다음 면접에 반영. 동시에 멘토·기도 동역자와 동행.</div>
+      </div>
+    </div>
+
+    <div class="key-msg">"준비된 자에게만 기회가 보인다 — 그러나 준비는 혼자 하지 않는다."</div>
+  </section>
+
+  <!-- ─── 9. 소외 ─── -->
+  <section class="slide s9" data-num="09">
+    <div class="slide-tag">CHAPTER · THE LEFT BEHIND</div>
+    <div class="slide-num">09 / 10</div>
+    <div class="s-head">
+      <div class="s-eye" style="color:#f87171;border-color:rgba(248,113,113,.4)">09 · 소외</div>
+      <h2 class="s-title">우리가 성공할 때,<br>그늘에 있는 이웃은 누구인가</h2>
+      <p class="s-sub">AI와 자본의 가속도 속에서 점점 더 보이지 않게 되는 사람들이 있습니다.</p>
+    </div>
+
+    <div class="shadow-grid">
+      <div class="shadow-card"><div class="shadow-icon">🤖</div><div class="shadow-name">AI에 일자리를 잃은 사람</div><div class="shadow-desc">단순 사무·상담·운수업 종사자</div></div>
+      <div class="shadow-card"><div class="shadow-icon">🌍</div><div class="shadow-name">기후 위기 피해자</div><div class="shadow-desc">농어촌·저소득·해안 거주민</div></div>
+      <div class="shadow-card"><div class="shadow-icon">💰</div><div class="shadow-name">자본 양극화 피해자</div><div class="shadow-desc">자산 없는 청년·플랫폼 노동자</div></div>
+      <div class="shadow-card"><div class="shadow-icon">👵</div><div class="shadow-name">디지털 소외 고령자</div><div class="shadow-desc">키오스크·앱에서 멈춰선 어른들</div></div>
+      <div class="shadow-card"><div class="shadow-icon">🌏</div><div class="shadow-name">이주 노동자</div><div class="shadow-desc">언어·체류 자격의 사각지대</div></div>
+    </div>
+
+    <div class="call-text">
+      성경은 말합니다. <b>"고아와 과부, 나그네를 돌보라"</b> (신명기 10:18).<br>
+      AI 시대의 '고아·과부·나그네'는 누구입니까? 우리가 가는 직장은 — 그들과 어떻게 연결되어 있습니까?<br>
+      <b>크리스찬 청년의 자리</b>는 단지 성공의 자리가 아니라, <b>이 질문을 품고 일하는 자리</b>입니다.
+    </div>
+  </section>
+
+  <!-- ─── 10. 소명 ─── -->
+  <section class="slide s10" data-num="10">
+    <div class="slide-tag">CHAPTER · CALLING</div>
+    <div class="slide-num">10 / 10</div>
+    <div class="cross-mark">✝</div>
+    <h1>나는 어떻게 살고,<br>어떻게 일할 것인가</h1>
+    <p class="verse">
+      "그런즉 너희가 먹든지 마시든지 무엇을 하든지 <b>다 하나님의 영광을 위하여 하라</b>"<br>
+      — 고린도전서 10:31
+    </p>
+    <div class="closing">
+      <div class="close-card"><div class="em">SKILL</div><div class="txt">AI를 활용하는 손</div></div>
+      <div class="close-card"><div class="em">HEART</div><div class="txt">이웃을 보는 눈</div></div>
+      <div class="close-card"><div class="em">CALLING</div><div class="txt">일터로 보내신 자리</div></div>
+    </div>
+    <p style="margin-top:36px;font-size:14px;color:#fcd34d;font-weight:700;letter-spacing:2px">— 청년이여, 일터에서 빛이 되라 —</p>
+  </section>
+
+</div>
+
+<!-- 네비게이션 -->
+<div class="nav">
+  <button class="nav-btn" id="prevBtn" aria-label="이전">‹</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="nextBtn" aria-label="다음">›</button>
+  <div class="counter" id="counter">1 / 10</div>
+</div>
+
+<div class="hint">
+  <div><kbd>←</kbd> <kbd>→</kbd> 이동</div>
+  <div><kbd>Space</kbd> 다음</div>
+  <div><kbd>F</kbd> 전체화면</div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide')
+const total = slides.length
+const counter = document.getElementById('counter')
+const progress = document.getElementById('progress')
+const dotsBox = document.getElementById('dots')
+const prevBtn = document.getElementById('prevBtn')
+const nextBtn = document.getElementById('nextBtn')
+let current = 0
+
+slides.forEach((_, i) => {
+  const dot = document.createElement('button')
+  dot.className = 'dot' + (i === 0 ? ' active' : '')
+  dot.addEventListener('click', () => goto(i))
+  dotsBox.appendChild(dot)
+})
+const dots = document.querySelectorAll('.dot')
+
+function goto(idx) {
+  if (idx < 0 || idx >= total) return
+  slides[current].classList.remove('active')
+  slides[current].classList.add(idx > current ? 'prev' : '')
+  dots[current].classList.remove('active')
+  current = idx
+  slides[current].classList.remove('prev')
+  slides[current].classList.add('active')
+  dots[current].classList.add('active')
+  counter.textContent = (current + 1) + ' / ' + total
+  progress.style.width = ((current + 1) / total * 100) + '%'
+  prevBtn.disabled = current === 0
+  nextBtn.disabled = current === total - 1
+}
+
+prevBtn.addEventListener('click', () => goto(current - 1))
+nextBtn.addEventListener('click', () => goto(current + 1))
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); goto(current + 1) }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goto(current - 1) }
+  else if (e.key === 'Home') goto(0)
+  else if (e.key === 'End') goto(total - 1)
+  else if (e.key === 'f' || e.key === 'F') {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen()
+    else document.exitFullscreen()
+  }
+})
+
+let touchStart = 0
+document.addEventListener('touchstart', e => { touchStart = e.changedTouches[0].screenX }, {passive:true})
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchStart
+  if (Math.abs(diff) > 50) goto(current + (diff < 0 ? 1 : -1))
+}, {passive:true})
+
+progress.style.width = (1 / total * 100) + '%'
+prevBtn.disabled = true
+</script>
+
+</body>
+</html>
