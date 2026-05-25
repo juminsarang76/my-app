@@ -11,48 +11,14 @@
     width:100vw;height:100vh;
     padding:2vh 2vw;
     display:grid;
-    grid-template-rows:auto 1fr auto;
-    gap:1.2vh;
+    grid-template-rows:1fr auto;
+    gap:1.5vh;
     background:
       radial-gradient(ellipse at 80% 10%,rgba(252,211,77,.08),transparent 50%),
       radial-gradient(ellipse at 10% 90%,rgba(59,130,246,.1),transparent 50%),
       linear-gradient(135deg,#0a1628 0%,#0f1d35 100%);
     overflow:hidden;
   }
-
-  /* ── 상단 헤더 (이름 + 직책 + 메타) ── */
-  .head{
-    display:flex;align-items:center;gap:18px;
-    padding:8px 14px;
-    background:linear-gradient(135deg,rgba(30,58,95,.6) 0%,rgba(15,37,64,.4) 100%);
-    border:1px solid rgba(96,165,250,.2);
-    border-radius:14px;
-  }
-  .avatar{
-    width:62px;height:62px;border-radius:50%;
-    background:linear-gradient(135deg,#3b82f6 0%,#0ea5e9 50%,#06b6d4 100%);
-    display:flex;align-items:center;justify-content:center;
-    font-size:28px;font-weight:900;color:white;
-    box-shadow:0 6px 20px rgba(14,165,233,.4),inset 0 -4px 14px rgba(0,0,0,.2);
-    flex-shrink:0;position:relative;
-  }
-  .avatar::after{
-    content:'⛷';position:absolute;bottom:-2px;right:-2px;
-    width:24px;height:24px;background:#fcd34d;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;font-size:12px;
-    box-shadow:0 2px 6px rgba(0,0,0,.3);border:2px solid #0f1d35;
-  }
-  .head-info{flex:1;min-width:0}
-  .name-en{font-size:9.5px;letter-spacing:4px;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:2px}
-  .name{font-size:26px;font-weight:900;color:white;letter-spacing:-1px;line-height:1.1;margin-bottom:3px}
-  .title{font-size:11.5px;color:#93c5fd;font-weight:600;line-height:1.4}
-  .title b{color:#fcd34d}
-  .head-meta{
-    text-align:right;flex-shrink:0;
-    padding-left:18px;border-left:1px solid rgba(255,255,255,.1);
-  }
-  .head-meta .lbl{font-size:9px;letter-spacing:2px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:4px}
-  .head-meta .quote-text{font-size:10.5px;color:#fde68a;font-style:italic;line-height:1.5;max-width:240px}
 
   /* ── 중앙 2×2 그리드 ── */
   .grid-main{
@@ -74,18 +40,18 @@
     background:rgba(255,255,255,.03);
     border:1px solid rgba(255,255,255,.07);
     border-radius:10px;
-    padding:10px 14px;
+    padding:12px 16px;
     display:flex;flex-direction:column;
     min-height:0;overflow:hidden;
   }
-  .panel-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .panel-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
   .panel-emoji{
-    width:24px;height:24px;border-radius:7px;
+    width:32px;height:32px;border-radius:8px;
     display:flex;align-items:center;justify-content:center;
-    font-size:13px;flex-shrink:0;
+    font-size:17px;flex-shrink:0;
   }
-  .panel-label{font-size:9px;letter-spacing:2px;font-weight:700;color:#60a5fa}
-  .panel-title{font-size:13px;font-weight:800;color:#f0f6ff;letter-spacing:-.3px}
+  .panel-label{font-size:11px;letter-spacing:2px;font-weight:700;color:#60a5fa;margin-bottom:1px}
+  .panel-title{font-size:18px;font-weight:800;color:#f0f6ff;letter-spacing:-.3px}
 
   /* 경력 — 오른쪽 아래 (네모 카드 스타일) */
   .panel.career-panel{
@@ -110,12 +76,12 @@
     box-shadow:inset 3px 0 0 #fcd34d;
   }
   @keyframes pulse{0%,100%{opacity:.7}50%{opacity:1}}
-  .career-period{font-size:9px;letter-spacing:.5px;font-weight:700;color:#fcd34d;min-width:74px;flex-shrink:0}
+  .career-period{font-size:15px;letter-spacing:.3px;font-weight:700;color:#fcd34d;min-width:108px;flex-shrink:0}
   .career-body{flex:1;min-width:0}
-  .career-company{font-size:11px;font-weight:700;color:#e2e8f0;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .career-role{font-size:9.5px;color:#94a3b8;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .career-company{font-size:16px;font-weight:700;color:#e2e8f0;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .career-role{font-size:15px;color:#94a3b8;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
   .career-item.current .career-company{color:#fde68a}
-  .badge-now{display:inline-block;margin-left:5px;font-size:7.5px;font-weight:800;color:#0a1628;background:#fcd34d;padding:1px 5px;border-radius:8px;letter-spacing:.5px;vertical-align:middle;animation:pulse 2s ease-in-out infinite}
+  .badge-now{display:inline-block;margin-left:6px;font-size:11px;font-weight:800;color:#0a1628;background:#fcd34d;padding:2px 7px;border-radius:8px;letter-spacing:.5px;vertical-align:middle;animation:pulse 2s ease-in-out infinite}
 
   /* 업무 — 오른쪽 위 */
   .panel.work-panel{
@@ -132,8 +98,8 @@
   }
   .work-row + .work-row{border-top:none;border-top-left-radius:0;border-top-right-radius:0}
   .work-row:not(:last-child){border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:none}
-  .work-row .ic{font-size:20px;flex-shrink:0}
-  .work-row .tx{font-size:11.5px;font-weight:600;color:#e2e8f0;line-height:1.35}
+  .work-row .ic{font-size:28px;flex-shrink:0}
+  .work-row .tx{font-size:17px;font-weight:600;color:#e2e8f0;line-height:1.35}
 
   /* 자격증 — 왼쪽 위 (강조) */
   .panel.cert-panel{
@@ -152,15 +118,15 @@
   }
   .cert:hover{background:rgba(252,211,77,.12);border-color:rgba(252,211,77,.4);transform:translateX(2px)}
   .cert-badge{
-    width:28px;height:24px;border-radius:5px;
+    width:42px;height:30px;border-radius:6px;
     display:flex;align-items:center;justify-content:center;
-    font-size:10px;font-weight:800;flex-shrink:0;color:white;
+    font-size:13px;font-weight:800;flex-shrink:0;color:white;
     box-shadow:0 2px 6px rgba(0,0,0,.3);
   }
   .cert-badge.agile{background:linear-gradient(135deg,#3b82f6,#06b6d4)}
   .cert-badge.coach{background:linear-gradient(135deg,#a855f7,#ec4899)}
   .cert-badge.ski{background:linear-gradient(135deg,#0ea5e9,#fcd34d)}
-  .cert-name{font-size:11px;font-weight:700;color:#f0f6ff;line-height:1.2}
+  .cert-name{font-size:15px;font-weight:700;color:#f0f6ff;line-height:1.2}
 
   /* 취미 — 왼쪽 아래 (강조) */
   .panel.hobby-panel{
@@ -178,9 +144,9 @@
     transition:.2s;
   }
   .hobby:hover{background:rgba(168,85,247,.18);border-color:rgba(168,85,247,.5);transform:translateY(-2px);box-shadow:0 4px 12px rgba(168,85,247,.2)}
-  .hobby-ico{font-size:22px;margin-bottom:3px;filter:drop-shadow(0 2px 4px rgba(168,85,247,.3))}
-  .hobby-name{font-size:11px;font-weight:800;color:#f0f6ff;line-height:1.2;margin-bottom:2px}
-  .hobby-desc{font-size:9px;color:#cbd5e1;line-height:1.3}
+  .hobby-ico{font-size:32px;margin-bottom:5px;filter:drop-shadow(0 2px 4px rgba(168,85,247,.3))}
+  .hobby-name{font-size:16px;font-weight:800;color:#f0f6ff;line-height:1.2;margin-bottom:3px}
+  .hobby-desc{font-size:13px;color:#cbd5e1;line-height:1.3}
 
   /* ── 하단 연락처 (오른쪽 정렬) ── */
   .contact-bar{
@@ -190,29 +156,27 @@
     border:1px solid rgba(96,165,250,.18);
     border-radius:12px;
   }
-  .contact-label{font-size:9.5px;letter-spacing:3px;font-weight:700;color:rgba(255,255,255,.35);margin-right:auto}
+  .contact-label{font-size:15px;letter-spacing:3px;font-weight:700;color:rgba(255,255,255,.4);margin-right:auto}
   .contact-item{
-    display:flex;align-items:center;gap:7px;
-    font-size:11.5px;color:#e2e8f0;
-    padding:4px 12px;border-radius:20px;
+    display:flex;align-items:center;gap:9px;
+    font-size:15px;color:#e2e8f0;
+    padding:6px 16px;border-radius:24px;
     background:rgba(255,255,255,.04);
     border:1px solid rgba(255,255,255,.08);
     transition:.2s;
   }
   .contact-item:hover{background:rgba(252,211,77,.1);border-color:rgba(252,211,77,.3);color:#fde68a}
   .contact-item .ico{
-    width:20px;height:20px;border-radius:50%;
+    width:26px;height:26px;border-radius:50%;
     background:rgba(96,165,250,.18);
     display:flex;align-items:center;justify-content:center;
-    font-size:11px;flex-shrink:0;
+    font-size:14px;flex-shrink:0;
   }
-  .contact-item a{color:inherit;text-decoration:none;font-weight:600;font-size:11px}
+  .contact-item a{color:inherit;text-decoration:none;font-weight:600;font-size:15px}
 
   @media(max-width:900px){
     html,body{overflow:auto}
     .slide{height:auto;min-height:100vh;overflow-y:auto}
-    .head{flex-wrap:wrap}
-    .head-meta{padding-left:0;border-left:none;width:100%;text-align:left;margin-top:8px}
     .grid-main{grid-template-columns:1fr;grid-template-rows:repeat(4,auto);grid-template-areas:"cert" "work" "hobby" "career"}
     .contact-bar{flex-wrap:wrap;justify-content:flex-start;gap:10px}
     .contact-label{width:100%;margin-bottom:4px}
@@ -222,20 +186,6 @@
 <body>
 
 <div class="slide">
-
-  <!-- 상단 헤더 -->
-  <header class="head">
-    <div class="avatar">정</div>
-    <div class="head-info">
-      <div class="name-en">JEONG HYEON SOO</div>
-      <div class="name">정현수 강사</div>
-      <div class="title">반도체 설계 자동화 <b>AI 개발자</b> · 삼성전자 S.LSI Sensor 설계팀 · Agile 코치 · KAC</div>
-    </div>
-    <div class="head-meta">
-      <div class="lbl">PROFILE · 2026</div>
-      <div class="quote-text">"기술은 사람을 위해 존재한다.<br>일은 부르심에 응답하는 자리다."</div>
-    </div>
-  </header>
 
   <!-- 메인 그리드 -->
   <div class="grid-main">
