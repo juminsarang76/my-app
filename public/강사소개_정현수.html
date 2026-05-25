@@ -88,7 +88,7 @@
   .panel-title{font-size:13px;font-weight:800;color:#f0f6ff;letter-spacing:-.3px}
 
   /* 경력 — 오른쪽 아래 */
-  .career{position:relative;padding-left:16px;display:flex;flex-direction:column;gap:6px;flex:1;justify-content:space-around}
+  .career{position:relative;padding-left:16px;display:flex;flex-direction:column;flex:1;justify-content:space-between;gap:4px}
   .career::before{content:'';position:absolute;left:3px;top:4px;bottom:4px;width:2px;background:linear-gradient(to bottom,#60a5fa 0%,#fcd34d 60%,rgba(255,255,255,.1) 100%)}
   .career-item{position:relative}
   .career-dot{position:absolute;left:-16px;top:3px;width:9px;height:9px;border-radius:50%;background:#0a1628;border:2px solid #60a5fa}
@@ -105,7 +105,7 @@
     background:linear-gradient(135deg,rgba(34,197,94,.08) 0%,rgba(16,185,129,.04) 100%);
     border:1px solid rgba(74,222,128,.22);
   }
-  .work-list{display:flex;flex-direction:column;gap:7px;flex:1;justify-content:center}
+  .work-list{display:flex;flex-direction:column;gap:8px;flex:1;justify-content:space-between}
   .work-row{
     display:flex;align-items:center;gap:11px;
     background:rgba(74,222,128,.08);
@@ -122,7 +122,7 @@
     box-shadow:0 0 24px rgba(252,211,77,.08),inset 0 0 20px rgba(252,211,77,.03);
   }
   .panel.cert-panel .panel-title{color:#fde68a}
-  .certs{display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;align-content:center}
+  .certs{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:5px;flex:1}
   .cert{
     display:flex;align-items:center;gap:7px;
     background:rgba(252,211,77,.06);
@@ -149,7 +149,7 @@
     box-shadow:0 0 24px rgba(168,85,247,.08),inset 0 0 20px rgba(168,85,247,.03);
   }
   .panel.hobby-panel .panel-title{color:#e9d5ff}
-  .hobbies{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;flex:1;align-content:center}
+  .hobbies{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:7px;flex:1}
   .hobby{
     background:rgba(168,85,247,.08);
     border:1px solid rgba(168,85,247,.2);
