@@ -9,179 +9,147 @@
 
   .slide{
     width:100vw;height:100vh;
+    padding:2vh 2vw;
     display:grid;
-    grid-template-columns:280px 1fr;
+    grid-template-rows:auto 1fr auto;
+    gap:1.2vh;
     background:
       radial-gradient(ellipse at 80% 10%,rgba(252,211,77,.08),transparent 50%),
       radial-gradient(ellipse at 10% 90%,rgba(59,130,246,.1),transparent 50%),
       linear-gradient(135deg,#0a1628 0%,#0f1d35 100%);
-  }
-
-  /* ─── 좌측 프로필 ─── */
-  .left{
-    background:linear-gradient(180deg,#1e3a5f 0%,#0f2540 60%,#081830 100%);
-    padding:2vh 1.2vw;
-    display:flex;flex-direction:column;gap:8px;
-    position:relative;overflow:hidden;
-  }
-  .left::before{
-    content:'';position:absolute;inset:0;
-    background:radial-gradient(ellipse at 30% 20%,rgba(96,165,250,.15),transparent 50%);
-    pointer-events:none;
-  }
-  .left > *{position:relative;z-index:1}
-
-  .avatar{
-    width:90px;height:90px;border-radius:50%;
-    background:linear-gradient(135deg,#3b82f6 0%,#0ea5e9 50%,#06b6d4 100%);
-    display:flex;align-items:center;justify-content:center;
-    font-size:40px;font-weight:900;color:white;
-    box-shadow:0 8px 28px rgba(14,165,233,.4),inset 0 -6px 18px rgba(0,0,0,.2);
-    margin:0 auto;position:relative;
-  }
-  .avatar::after{
-    content:'⛷';position:absolute;bottom:-2px;right:-2px;
-    width:30px;height:30px;background:#fcd34d;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;font-size:15px;
-    box-shadow:0 3px 8px rgba(0,0,0,.3);border:2px solid #1e3a5f;
-  }
-
-  .name-en{font-size:9px;letter-spacing:4px;color:rgba(255,255,255,.5);text-align:center;font-weight:600;margin-top:8px;margin-bottom:2px}
-  .name{font-size:24px;font-weight:900;color:white;text-align:center;letter-spacing:-1px;margin-bottom:4px}
-  .title{font-size:10.5px;color:#93c5fd;font-weight:600;text-align:center;line-height:1.45}
-  .title b{color:#fcd34d}
-
-  .quote{
-    background:rgba(255,255,255,.05);border-left:2px solid #fcd34d;
-    padding:8px 10px;border-radius:0 8px 8px 0;
-    font-size:10.5px;line-height:1.55;color:#cbd5e1;font-style:italic;
-  }
-  .quote .src{display:block;margin-top:3px;font-size:9px;color:rgba(255,255,255,.4);font-style:normal;font-weight:700;letter-spacing:1px}
-
-  .contact-block{display:flex;flex-direction:column;gap:2px}
-  .contact-label{font-size:9px;letter-spacing:2px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:2px}
-  .contact-item{
-    display:flex;align-items:center;gap:7px;padding:3px 0;
-    font-size:11px;color:#e2e8f0;
-    border-bottom:1px solid rgba(255,255,255,.06);
-  }
-  .contact-item:last-child{border-bottom:none}
-  .contact-item .ico{
-    width:20px;height:20px;border-radius:5px;
-    background:rgba(255,255,255,.08);
-    display:flex;align-items:center;justify-content:center;
-    font-size:10px;flex-shrink:0;
-  }
-  .contact-item a{color:inherit;text-decoration:none;word-break:break-all;font-size:10.5px}
-
-  .strengths-mini{margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
-  .strengths-mini .lbl{font-size:9px;letter-spacing:2px;font-weight:700;color:#fcd34d;margin-bottom:6px;text-align:center}
-  .str-row{display:flex;flex-direction:column;gap:5px}
-  .str-mini{display:flex;gap:8px;align-items:flex-start;font-size:10px;color:#cbd5e1;line-height:1.35}
-  .str-mini .n{color:#fcd34d;font-weight:800;font-size:12px;line-height:1;min-width:16px}
-  .str-mini b{color:#fde68a;display:block;font-size:10.5px;margin-bottom:1px;font-weight:700}
-
-  /* ─── 우측 콘텐츠 ─── */
-  .right{
-    padding:1.8vh 1.5vw;
-    display:grid;
-    grid-template-rows:auto 1fr auto;
-    gap:1vh;
     overflow:hidden;
   }
 
+  /* ── 상단 헤더 (이름 + 직책 + 메타) ── */
   .head{
-    display:flex;justify-content:space-between;align-items:center;
-    padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex;align-items:center;gap:18px;
+    padding:8px 14px;
+    background:linear-gradient(135deg,rgba(30,58,95,.6) 0%,rgba(15,37,64,.4) 100%);
+    border:1px solid rgba(96,165,250,.2);
+    border-radius:14px;
   }
-  .head h1{font-size:22px;font-weight:900;color:#f0f6ff;letter-spacing:-.5px}
-  .head h1 .acc{background:linear-gradient(135deg,#fcd34d,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .head .meta{font-size:10px;color:#64748b;letter-spacing:2px;font-weight:600}
+  .avatar{
+    width:62px;height:62px;border-radius:50%;
+    background:linear-gradient(135deg,#3b82f6 0%,#0ea5e9 50%,#06b6d4 100%);
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;font-weight:900;color:white;
+    box-shadow:0 6px 20px rgba(14,165,233,.4),inset 0 -4px 14px rgba(0,0,0,.2);
+    flex-shrink:0;position:relative;
+  }
+  .avatar::after{
+    content:'⛷';position:absolute;bottom:-2px;right:-2px;
+    width:24px;height:24px;background:#fcd34d;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,.3);border:2px solid #0f1d35;
+  }
+  .head-info{flex:1;min-width:0}
+  .name-en{font-size:9.5px;letter-spacing:4px;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:2px}
+  .name{font-size:26px;font-weight:900;color:white;letter-spacing:-1px;line-height:1.1;margin-bottom:3px}
+  .title{font-size:11.5px;color:#93c5fd;font-weight:600;line-height:1.4}
+  .title b{color:#fcd34d}
+  .head-meta{
+    text-align:right;flex-shrink:0;
+    padding-left:18px;border-left:1px solid rgba(255,255,255,.1);
+  }
+  .head-meta .lbl{font-size:9px;letter-spacing:2px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:4px}
+  .head-meta .quote-text{font-size:10.5px;color:#fde68a;font-style:italic;line-height:1.5;max-width:240px}
 
+  /* ── 중앙 2×2 그리드 ── */
   .grid-main{
     display:grid;
-    grid-template-columns:1fr 1fr 1.1fr;
-    gap:1vh .8vw;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+    grid-template-areas:
+      "cert  work"
+      "hobby career";
+    gap:1.2vh 1vw;
     min-height:0;
   }
+  .panel.cert-panel{grid-area:cert}
+  .panel.work-panel{grid-area:work}
+  .panel.hobby-panel{grid-area:hobby}
+  .panel.career-panel{grid-area:career}
 
   .panel{
     background:rgba(255,255,255,.03);
     border:1px solid rgba(255,255,255,.07);
-    border-radius:9px;
-    padding:8px 12px;
+    border-radius:10px;
+    padding:10px 14px;
     display:flex;flex-direction:column;
     min-height:0;overflow:hidden;
   }
-  .panel-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .panel-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
   .panel-emoji{
-    width:22px;height:22px;border-radius:6px;
+    width:24px;height:24px;border-radius:7px;
     display:flex;align-items:center;justify-content:center;
-    font-size:12px;flex-shrink:0;
+    font-size:13px;flex-shrink:0;
   }
-  .panel-label{font-size:8.5px;letter-spacing:2px;font-weight:700;color:#60a5fa}
-  .panel-title{font-size:12px;font-weight:800;color:#f0f6ff;letter-spacing:-.3px}
+  .panel-label{font-size:9px;letter-spacing:2px;font-weight:700;color:#60a5fa}
+  .panel-title{font-size:13px;font-weight:800;color:#f0f6ff;letter-spacing:-.3px}
 
-  /* 경력 — 패널 1 */
-  .career{position:relative;padding-left:14px;display:flex;flex-direction:column;gap:5px}
+  /* 경력 — 오른쪽 아래 */
+  .career{position:relative;padding-left:16px;display:flex;flex-direction:column;gap:6px;flex:1;justify-content:space-around}
   .career::before{content:'';position:absolute;left:3px;top:4px;bottom:4px;width:2px;background:linear-gradient(to bottom,#60a5fa 0%,#fcd34d 60%,rgba(255,255,255,.1) 100%)}
   .career-item{position:relative}
-  .career-dot{position:absolute;left:-16px;top:2px;width:8px;height:8px;border-radius:50%;background:#0a1628;border:2px solid #60a5fa}
+  .career-dot{position:absolute;left:-16px;top:3px;width:9px;height:9px;border-radius:50%;background:#0a1628;border:2px solid #60a5fa}
   .career-item.current .career-dot{background:#fcd34d;border-color:#fcd34d;animation:pulse 2s ease-in-out infinite}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(252,211,77,.4)}50%{box-shadow:0 0 0 5px rgba(252,211,77,0)}}
-  .career-period{font-size:8.5px;letter-spacing:.5px;font-weight:700;color:#fcd34d;margin-bottom:1px}
-  .career-company{font-size:11px;font-weight:700;color:#e2e8f0;line-height:1.25}
-  .career-role{font-size:9px;color:#94a3b8;line-height:1.3;margin-top:1px}
+  .career-period{font-size:9px;letter-spacing:.5px;font-weight:700;color:#fcd34d}
+  .career-company{font-size:11.5px;font-weight:700;color:#e2e8f0;line-height:1.25}
+  .career-role{font-size:9.5px;color:#94a3b8;line-height:1.3;margin-top:1px}
   .career-item.current .career-company{color:#fcd34d}
   .badge-now{display:inline-block;margin-left:5px;font-size:8px;font-weight:800;color:#0a1628;background:#fcd34d;padding:1px 5px;border-radius:8px;letter-spacing:.5px;vertical-align:middle}
 
-  /* 업무 — 패널 2 */
-  .work-list{display:flex;flex-direction:column;gap:5px}
-  .work-row{
-    display:flex;align-items:center;gap:9px;
-    background:rgba(96,165,250,.05);
-    border:1px solid rgba(96,165,250,.15);
-    border-radius:7px;padding:6px 9px;
+  /* 업무 — 오른쪽 위 */
+  .panel.work-panel{
+    background:linear-gradient(135deg,rgba(34,197,94,.08) 0%,rgba(16,185,129,.04) 100%);
+    border:1px solid rgba(74,222,128,.22);
   }
-  .work-row .ic{font-size:16px;flex-shrink:0}
-  .work-row .tx{font-size:10.5px;font-weight:600;color:#e2e8f0;line-height:1.35}
+  .work-list{display:flex;flex-direction:column;gap:7px;flex:1;justify-content:center}
+  .work-row{
+    display:flex;align-items:center;gap:11px;
+    background:rgba(74,222,128,.08);
+    border:1px solid rgba(74,222,128,.2);
+    border-radius:8px;padding:8px 11px;
+  }
+  .work-row .ic{font-size:20px;flex-shrink:0}
+  .work-row .tx{font-size:11.5px;font-weight:600;color:#e2e8f0;line-height:1.35}
 
-  /* 자격증 — 패널 3 (강조) */
+  /* 자격증 — 왼쪽 위 (강조) */
   .panel.cert-panel{
     background:linear-gradient(135deg,rgba(252,211,77,.1) 0%,rgba(251,191,36,.05) 100%);
     border:1.5px solid rgba(252,211,77,.35);
     box-shadow:0 0 24px rgba(252,211,77,.08),inset 0 0 20px rgba(252,211,77,.03);
   }
   .panel.cert-panel .panel-title{color:#fde68a}
-  .certs{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  .certs{display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;align-content:center}
   .cert{
     display:flex;align-items:center;gap:7px;
     background:rgba(252,211,77,.06);
     border:1px solid rgba(252,211,77,.15);
-    border-radius:6px;padding:5px 7px;
+    border-radius:6px;padding:6px 8px;
     transition:.2s;
   }
   .cert:hover{background:rgba(252,211,77,.12);border-color:rgba(252,211,77,.4);transform:translateX(2px)}
   .cert-badge{
-    width:26px;height:22px;border-radius:5px;
+    width:28px;height:24px;border-radius:5px;
     display:flex;align-items:center;justify-content:center;
-    font-size:9.5px;font-weight:800;flex-shrink:0;color:white;
+    font-size:10px;font-weight:800;flex-shrink:0;color:white;
     box-shadow:0 2px 6px rgba(0,0,0,.3);
   }
   .cert-badge.agile{background:linear-gradient(135deg,#3b82f6,#06b6d4)}
   .cert-badge.coach{background:linear-gradient(135deg,#a855f7,#ec4899)}
   .cert-badge.ski{background:linear-gradient(135deg,#0ea5e9,#fcd34d)}
-  .cert-name{font-size:10.5px;font-weight:700;color:#f0f6ff;line-height:1.2}
+  .cert-name{font-size:11px;font-weight:700;color:#f0f6ff;line-height:1.2}
 
-  /* 취미 — 하단 (강조) */
+  /* 취미 — 왼쪽 아래 (강조) */
   .panel.hobby-panel{
-    grid-column:span 3;
     background:linear-gradient(135deg,rgba(168,85,247,.1) 0%,rgba(236,72,153,.05) 100%);
     border:1.5px solid rgba(168,85,247,.35);
     box-shadow:0 0 24px rgba(168,85,247,.08),inset 0 0 20px rgba(168,85,247,.03);
   }
   .panel.hobby-panel .panel-title{color:#e9d5ff}
-  .hobbies{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .hobbies{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;flex:1;align-content:center}
   .hobby{
     background:rgba(168,85,247,.08);
     border:1px solid rgba(168,85,247,.2);
@@ -194,21 +162,40 @@
   .hobby-name{font-size:11px;font-weight:800;color:#f0f6ff;line-height:1.2;margin-bottom:2px}
   .hobby-desc{font-size:9px;color:#cbd5e1;line-height:1.3}
 
-  /* footer */
-  .foot{text-align:center;font-size:9px;color:#475569;letter-spacing:1.5px;padding-top:2px}
-
-  /* 반응형 — 좁은 화면 fallback */
-  @media(max-height:680px){
-    .avatar{width:90px;height:90px;font-size:40px}
-    .quote{padding:8px 10px;font-size:10.5px;margin-bottom:10px}
+  /* ── 하단 연락처 (오른쪽 정렬) ── */
+  .contact-bar{
+    display:flex;justify-content:flex-end;align-items:center;gap:18px;
+    padding:8px 16px;
+    background:linear-gradient(90deg,transparent 0%,rgba(96,165,250,.06) 50%,rgba(96,165,250,.1) 100%);
+    border:1px solid rgba(96,165,250,.18);
+    border-radius:12px;
   }
+  .contact-label{font-size:9.5px;letter-spacing:3px;font-weight:700;color:rgba(255,255,255,.35);margin-right:auto}
+  .contact-item{
+    display:flex;align-items:center;gap:7px;
+    font-size:11.5px;color:#e2e8f0;
+    padding:4px 12px;border-radius:20px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    transition:.2s;
+  }
+  .contact-item:hover{background:rgba(252,211,77,.1);border-color:rgba(252,211,77,.3);color:#fde68a}
+  .contact-item .ico{
+    width:20px;height:20px;border-radius:50%;
+    background:rgba(96,165,250,.18);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;flex-shrink:0;
+  }
+  .contact-item a{color:inherit;text-decoration:none;font-weight:600;font-size:11px}
+
   @media(max-width:900px){
-    .slide{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:auto;min-height:100vh;overflow-y:auto}
     html,body{overflow:auto}
-    .strengths-mini{margin-top:14px}
-    .grid-main{grid-template-columns:1fr}
-    .panel.hobby-panel{grid-column:auto}
-    .hobbies{grid-template-columns:repeat(3,1fr)}
+    .slide{height:auto;min-height:100vh;overflow-y:auto}
+    .head{flex-wrap:wrap}
+    .head-meta{padding-left:0;border-left:none;width:100%;text-align:left;margin-top:8px}
+    .grid-main{grid-template-columns:1fr;grid-template-rows:repeat(4,auto);grid-template-areas:"cert" "work" "hobby" "career"}
+    .contact-bar{flex-wrap:wrap;justify-content:flex-start;gap:10px}
+    .contact-label{width:100%;margin-bottom:4px}
   }
 </style>
 </head>
@@ -216,146 +203,128 @@
 
 <div class="slide">
 
-  <!-- ── 좌측 프로필 ── -->
-  <aside class="left">
+  <!-- 상단 헤더 -->
+  <header class="head">
     <div class="avatar">정</div>
-    <div class="name-en">JEONG HYEON SOO</div>
-    <div class="name">정현수</div>
-    <div class="title">반도체 설계 자동화 <b>AI 개발자</b><br>삼성전자 S.LSI Sensor 설계팀</div>
+    <div class="head-info">
+      <div class="name-en">JEONG HYEON SOO</div>
+      <div class="name">정현수 강사</div>
+      <div class="title">반도체 설계 자동화 <b>AI 개발자</b> · 삼성전자 S.LSI Sensor 설계팀 · Agile 코치 · KAC</div>
+    </div>
+    <div class="head-meta">
+      <div class="lbl">PROFILE · 2026</div>
+      <div class="quote-text">"기술은 사람을 위해 존재한다.<br>일은 부르심에 응답하는 자리다."</div>
+    </div>
+  </header>
 
-    <div class="quote">
-      "기술은 사람을 위해 존재한다.<br>일은 부르심에 응답하는 자리다."
-      <span class="src">— 강사의 말</span>
+  <!-- 메인 그리드 -->
+  <div class="grid-main">
+
+    <!-- 자격증 — 왼쪽 위 -->
+    <div class="panel cert-panel">
+      <div class="panel-head">
+        <div class="panel-emoji" style="background:rgba(252,211,77,.25);color:#fcd34d">🎓</div>
+        <div><div class="panel-label" style="color:#fcd34d">CERTIFICATIONS</div><div class="panel-title">자격증 8</div></div>
+      </div>
+      <div class="certs">
+        <div class="cert"><div class="cert-badge agile">PO</div><div class="cert-name">SCRUM PO</div></div>
+        <div class="cert"><div class="cert-badge agile">SM</div><div class="cert-name">SCRUM SM</div></div>
+        <div class="cert"><div class="cert-badge agile">TKP</div><div class="cert-name">KANBAN TKP</div></div>
+        <div class="cert"><div class="cert-badge agile">KSD</div><div class="cert-name">KANBAN KSD</div></div>
+        <div class="cert"><div class="cert-badge coach">M3</div><div class="cert-name">Management 3.0</div></div>
+        <div class="cert"><div class="cert-badge coach">KAC</div><div class="cert-name">한국코칭 KAC</div></div>
+        <div class="cert"><div class="cert-badge ski">L1</div><div class="cert-name">스키 레벨1</div></div>
+        <div class="cert"><div class="cert-badge ski">T1</div><div class="cert-name">스키 티칭1</div></div>
+      </div>
     </div>
 
-    <div class="contact-block">
-      <div class="contact-label">CONTACT</div>
-      <div class="contact-item">
-        <div class="ico">📱</div>
-        <a href="tel:01050691891">010-5069-1891</a>
+    <!-- 업무 — 오른쪽 위 -->
+    <div class="panel work-panel">
+      <div class="panel-head">
+        <div class="panel-emoji" style="background:rgba(34,197,94,.2);color:#4ade80">⚙</div>
+        <div><div class="panel-label" style="color:#4ade80">WORK</div><div class="panel-title">전문 업무</div></div>
       </div>
-      <div class="contact-item">
-        <div class="ico">📧</div>
-        <a href="mailto:samopoem@kakao.com">samopoem@kakao.com</a>
-      </div>
-      <div class="contact-item">
-        <div class="ico">📬</div>
-        <a href="mailto:juminsarang76@gmail.com">juminsarang76@gmail.com</a>
+      <div class="work-list">
+        <div class="work-row"><span class="ic">🤖</span><span class="tx">반도체 설계 자동화 AI 개발</span></div>
+        <div class="work-row"><span class="ic">🔬</span><span class="tx">반도체 Wafer Test 장비 시스템</span></div>
+        <div class="work-row"><span class="ic">📊</span><span class="tx">반도체 데이터 처리 시스템</span></div>
       </div>
     </div>
 
-    <div class="strengths-mini">
-      <div class="lbl">CORE STRENGTHS</div>
-      <div class="str-row">
-        <div class="str-mini"><div class="n">01</div><div><b>22년차 엔지니어</b>반도체 설계·테스트·AI 자동화</div></div>
-        <div class="str-mini"><div class="n">02</div><div><b>Agile 코치 · KAC</b>SCRUM·KANBAN·코칭 전문가</div></div>
-        <div class="str-mini"><div class="n">03</div><div><b>크리스찬 청년 멘토</b>일터와 소명을 잇는 사람</div></div>
+    <!-- 취미 — 왼쪽 아래 -->
+    <div class="panel hobby-panel">
+      <div class="panel-head">
+        <div class="panel-emoji" style="background:rgba(168,85,247,.25);color:#d8b4fe">🌿</div>
+        <div><div class="panel-label" style="color:#d8b4fe">HOBBIES</div><div class="panel-title">취미 · 관심사</div></div>
+      </div>
+      <div class="hobbies">
+        <div class="hobby"><div class="hobby-ico">📸</div><div class="hobby-name">사진·영상</div><div class="hobby-desc">시선을 담다</div></div>
+        <div class="hobby"><div class="hobby-ico">⚛️</div><div class="hobby-name">양자컴퓨팅</div><div class="hobby-desc">미래 기술</div></div>
+        <div class="hobby"><div class="hobby-ico">📈</div><div class="hobby-name">투자</div><div class="hobby-desc">흐름 읽기</div></div>
+        <div class="hobby"><div class="hobby-ico">⛷️</div><div class="hobby-name">스키</div><div class="hobby-desc">티칭·레벨</div></div>
+        <div class="hobby"><div class="hobby-ico">🏊</div><div class="hobby-name">수영</div><div class="hobby-desc">꾸준함</div></div>
+        <div class="hobby"><div class="hobby-ico">📖</div><div class="hobby-name">멘토링</div><div class="hobby-desc">청년과 대화</div></div>
       </div>
     </div>
-  </aside>
 
-  <!-- ── 우측 콘텐츠 ── -->
-  <main class="right">
-
-    <div class="head">
-      <h1>강사 <span class="acc">소개</span></h1>
-      <div class="meta">PROFILE · 2026</div>
+    <!-- 경력 — 오른쪽 아래 -->
+    <div class="panel career-panel">
+      <div class="panel-head">
+        <div class="panel-emoji" style="background:rgba(96,165,250,.15);color:#60a5fa">🏢</div>
+        <div><div class="panel-label">CAREER</div><div class="panel-title">회사 · 경력</div></div>
+      </div>
+      <div class="career">
+        <div class="career-item current">
+          <div class="career-dot"></div>
+          <div class="career-period">2024 — 현재<span class="badge-now">NOW</span></div>
+          <div class="career-company">삼성전자 S.LSI</div>
+          <div class="career-role">Sensor 설계팀 · 반도체 설계 자동화 AI 개발</div>
+        </div>
+        <div class="career-item">
+          <div class="career-dot"></div>
+          <div class="career-period">2015 — 2023</div>
+          <div class="career-company">삼성전자 반도체 설비연구소</div>
+          <div class="career-role">Wafer Test 장비 · 데이터 처리 시스템</div>
+        </div>
+        <div class="career-item">
+          <div class="career-dot"></div>
+          <div class="career-period">2010 — 2014</div>
+          <div class="career-company">삼성전자 생산기술연구소</div>
+          <div class="career-role">반도체 생산기술 연구개발</div>
+        </div>
+        <div class="career-item">
+          <div class="career-dot"></div>
+          <div class="career-period">2004 — 2009</div>
+          <div class="career-company">Advantest Korea</div>
+          <div class="career-role">반도체 테스트 솔루션 엔지니어</div>
+        </div>
+        <div class="career-item">
+          <div class="career-dot"></div>
+          <div class="career-period">2003 — 2004</div>
+          <div class="career-company">핸드폰 RF 설계회사</div>
+          <div class="career-role">RF 회로 설계</div>
+        </div>
+      </div>
     </div>
 
-    <div class="grid-main">
+  </div>
 
-      <!-- 경력 (큰 영역) -->
-      <div class="panel career-panel">
-        <div class="panel-head">
-          <div class="panel-emoji" style="background:rgba(96,165,250,.15);color:#60a5fa">🏢</div>
-          <div><div class="panel-label">CAREER</div><div class="panel-title">회사 · 경력</div></div>
-        </div>
-        <div class="career">
-          <div class="career-item current">
-            <div class="career-dot"></div>
-            <div class="career-period">2024 — 현재<span class="badge-now">NOW</span></div>
-            <div class="career-company">삼성전자 S.LSI</div>
-            <div class="career-role">Sensor 설계팀 · 반도체 설계 자동화 AI 개발</div>
-          </div>
-          <div class="career-item">
-            <div class="career-dot"></div>
-            <div class="career-period">2015 — 2023</div>
-            <div class="career-company">삼성전자 반도체 설비연구소</div>
-            <div class="career-role">Wafer Test 장비 · 데이터 처리 시스템 개발</div>
-          </div>
-          <div class="career-item">
-            <div class="career-dot"></div>
-            <div class="career-period">2010 — 2014</div>
-            <div class="career-company">삼성전자 생산기술연구소</div>
-            <div class="career-role">반도체 생산기술 연구개발</div>
-          </div>
-          <div class="career-item">
-            <div class="career-dot"></div>
-            <div class="career-period">2004 — 2009</div>
-            <div class="career-company">Advantest Korea</div>
-            <div class="career-role">반도체 테스트 솔루션 엔지니어</div>
-          </div>
-          <div class="career-item">
-            <div class="career-dot"></div>
-            <div class="career-period">2003 — 2004</div>
-            <div class="career-company">핸드폰 RF 설계회사</div>
-            <div class="career-role">RF 회로 설계</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 업무 -->
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-emoji" style="background:rgba(34,197,94,.15);color:#4ade80">⚙</div>
-          <div><div class="panel-label" style="color:#4ade80">WORK</div><div class="panel-title">전문 업무</div></div>
-        </div>
-        <div class="work-list">
-          <div class="work-row"><span class="ic">🤖</span><span class="tx">반도체 설계 자동화 AI 개발</span></div>
-          <div class="work-row"><span class="ic">🔬</span><span class="tx">반도체 Wafer Test 장비 시스템</span></div>
-          <div class="work-row"><span class="ic">📊</span><span class="tx">반도체 데이터 처리 시스템</span></div>
-        </div>
-      </div>
-
-      <!-- 자격증 -->
-      <div class="panel cert-panel">
-        <div class="panel-head">
-          <div class="panel-emoji" style="background:rgba(252,211,77,.25);color:#fcd34d">🎓</div>
-          <div><div class="panel-label" style="color:#fcd34d">CERTIFICATIONS</div><div class="panel-title">자격증 8</div></div>
-        </div>
-        <div class="certs">
-          <div class="cert"><div class="cert-badge agile">PO</div><div class="cert-name">SCRUM PO</div></div>
-          <div class="cert"><div class="cert-badge agile">SM</div><div class="cert-name">SCRUM SM</div></div>
-          <div class="cert"><div class="cert-badge agile">TKP</div><div class="cert-name">KANBAN TKP</div></div>
-          <div class="cert"><div class="cert-badge agile">KSD</div><div class="cert-name">KANBAN KSD</div></div>
-          <div class="cert"><div class="cert-badge coach">M3</div><div class="cert-name">Management 3.0</div></div>
-          <div class="cert"><div class="cert-badge coach">KAC</div><div class="cert-name">한국코칭 KAC</div></div>
-          <div class="cert"><div class="cert-badge ski">L1</div><div class="cert-name">스키 레벨1</div></div>
-          <div class="cert"><div class="cert-badge ski">T1</div><div class="cert-name">스키 티칭1</div></div>
-        </div>
-      </div>
-
-      <!-- 취미 -->
-      <div class="panel hobby-panel">
-        <div class="panel-head">
-          <div class="panel-emoji" style="background:rgba(168,85,247,.25);color:#d8b4fe">🌿</div>
-          <div><div class="panel-label" style="color:#d8b4fe">HOBBIES</div><div class="panel-title">취미 · 관심사</div></div>
-        </div>
-        <div class="hobbies">
-          <div class="hobby"><div class="hobby-ico">📸</div><div class="hobby-name">사진·영상</div><div class="hobby-desc">시선을 담다</div></div>
-          <div class="hobby"><div class="hobby-ico">⚛️</div><div class="hobby-name">양자컴퓨팅</div><div class="hobby-desc">미래 기술</div></div>
-          <div class="hobby"><div class="hobby-ico">📈</div><div class="hobby-name">투자</div><div class="hobby-desc">흐름 읽기</div></div>
-          <div class="hobby"><div class="hobby-ico">⛷️</div><div class="hobby-name">스키</div><div class="hobby-desc">티칭·레벨</div></div>
-          <div class="hobby"><div class="hobby-ico">🏊</div><div class="hobby-name">수영</div><div class="hobby-desc">꾸준함</div></div>
-          <div class="hobby"><div class="hobby-ico">📖</div><div class="hobby-name">멘토링</div><div class="hobby-desc">청년과 대화</div></div>
-        </div>
-      </div>
-
+  <!-- 하단 연락처 (오른쪽 정렬) -->
+  <footer class="contact-bar">
+    <div class="contact-label">CONTACT</div>
+    <div class="contact-item">
+      <div class="ico">📱</div>
+      <a href="tel:01050691891">010-5069-1891</a>
     </div>
-
-    <div class="foot">© 2026 정현수 · 한 자리에서 22년, 한 부르심을 따라</div>
-
-  </main>
+    <div class="contact-item">
+      <div class="ico">📧</div>
+      <a href="mailto:samopoem@kakao.com">samopoem@kakao.com</a>
+    </div>
+    <div class="contact-item">
+      <div class="ico">📬</div>
+      <a href="mailto:juminsarang76@gmail.com">juminsarang76@gmail.com</a>
+    </div>
+  </footer>
 
 </div>
 
