@@ -26,6 +26,7 @@ const DEFAULT_LIST: WatchItem[] = [
 
 const STORAGE_KEY = 'stock-watchlist-v1'
 const RANGES = [
+  { key: '1d',  label: '1D' },
   { key: '5d',  label: '5D' },
   { key: '1mo', label: '1M' },
   { key: '3mo', label: '3M' },
