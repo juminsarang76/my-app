@@ -50,6 +50,8 @@ export default function WatchlistPage() {
   const [adding, setAdding] = useState(false)
   const [addError, setAddError] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [overIndex, setOverIndex] = useState<number | null>(null)
 
   // localStorage 로드
   useEffect(() => {
@@ -95,6 +97,16 @@ export default function WatchlistPage() {
 
   const removeSymbol = useCallback((symbol: string) => {
     setList(prev => prev.filter(i => i.symbol !== symbol))
+  }, [])
+
+  const moveItem = useCallback((from: number, to: number) => {
+    setList(prev => {
+      if (from === to || from < 0 || to < 0 || from >= prev.length || to >= prev.length) return prev
+      const next = [...prev]
+      const [moved] = next.splice(from, 1)
+      next.splice(to, 0, moved)
+      return next
+    })
   }, [])
 
   return (
@@ -163,8 +175,23 @@ export default function WatchlistPage() {
             종목을 추가해주세요
           </div>
         )}
-        {list.map(item => (
-          <StockChartCard key={item.symbol} item={item} range={range} onRemove={() => removeSymbol(item.symbol)} />
+        {list.map((item, idx) => (
+          <StockChartCard
+            key={item.symbol}
+            item={item}
+            range={range}
+            onRemove={() => removeSymbol(item.symbol)}
+            dragging={dragIndex === idx}
+            over={overIndex === idx && dragIndex !== null && dragIndex !== idx}
+            onDragStart={() => setDragIndex(idx)}
+            onDragEnter={() => { if (dragIndex !== null) setOverIndex(idx) }}
+            onDrop={() => {
+              if (dragIndex !== null) moveItem(dragIndex, idx)
+              setDragIndex(null)
+              setOverIndex(null)
+            }}
+            onDragEnd={() => { setDragIndex(null); setOverIndex(null) }}
+          />
         ))}
       </div>
 
@@ -175,10 +202,24 @@ export default function WatchlistPage() {
   )
 }
 
-function StockChartCard({ item, range, onRemove }: { item: WatchItem; range: string; onRemove: () => void }) {
+function StockChartCard({
+  item, range, onRemove,
+  dragging, over, onDragStart, onDragEnter, onDrop, onDragEnd,
+}: {
+  item: WatchItem
+  range: string
+  onRemove: () => void
+  dragging: boolean
+  over: boolean
+  onDragStart: () => void
+  onDragEnter: () => void
+  onDrop: () => void
+  onDragEnd: () => void
+}) {
   const [data, setData] = useState<QuoteData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [grab, setGrab] = useState(false)   // 핸들을 잡았을 때만 draggable 활성화
 
   useEffect(() => {
     let alive = true
@@ -200,11 +241,31 @@ function StockChartCard({ item, range, onRemove }: { item: WatchItem; range: str
   const stroke = colorOf(up)
 
   return (
-    <div style={{
-      border: '1px solid #BAE6FD', borderRadius: 14, background: '#fff', overflow: 'hidden',
-    }}>
+    <div
+      draggable={grab}
+      onDragStart={(e) => { e.dataTransfer.effectAllowed = 'move'; onDragStart() }}
+      onDragEnter={onDragEnter}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => { e.preventDefault(); onDrop() }}
+      onDragEnd={() => { setGrab(false); onDragEnd() }}
+      style={{
+        border: '1px solid #BAE6FD', borderRadius: 14, background: '#fff', overflow: 'hidden',
+        opacity: dragging ? 0.4 : 1,
+        boxShadow: over ? '0 0 0 2px #1D9E75' : 'none',
+        transition: 'opacity .15s, box-shadow .15s',
+      }}
+    >
       {/* 카드 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px 6px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px 6px' }}>
+        <div
+          onMouseDown={() => setGrab(true)}
+          onMouseUp={() => setGrab(false)}
+          title="드래그하여 순서 변경"
+          style={{
+            cursor: 'grab', color: '#CBD5E1', fontSize: 17, lineHeight: 1,
+            userSelect: 'none', flexShrink: 0, padding: '2px 0',
+          }}
+        >⠿</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {item.label}
