@@ -113,28 +113,26 @@ export default function ProductClient() {
     }
   }
 
-  // ── 이미지 다운로드 공통 함수 ──
-  function downloadDataUrl(imgUrl: string) {
-    const a = document.createElement('a')
-    a.href = imgUrl
-    a.download = `product-image-${Date.now()}.png`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-  }
-
-  // ── 칸바 연동 (다운로드 후 Canva 열기) ──
+  // ── 칸바 연동 — URL 복사 + Canva 열기 ──
   function handleCanva(imgUrl: string) {
-    downloadDataUrl(imgUrl)
-    setTimeout(() => window.open('https://www.canva.com/design/create', '_blank'), 300)
-    showToast('이미지 다운로드 완료 → Canva에서 업로드해 사용하세요')
+    navigator.clipboard.writeText(imgUrl).catch(() => {})
+    window.open('https://www.canva.com/design/create', '_blank')
+    showToast('이미지 URL 복사 완료 → Canva: 업로드 → URL에서 붙여넣기')
     setSelectedImage(null)
   }
 
   // ── 이미지 다운로드 ──
   async function handleDownload(imgUrl: string) {
     try {
-      downloadDataUrl(imgUrl)
+      const res = await fetch(imgUrl)
+      const blob = await res.blob()
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = `product-image-${Date.now()}.png`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(a.href)
     } catch {
       window.open(imgUrl, '_blank')
     }
@@ -354,101 +352,22 @@ export default function ProductClient() {
             opacity: imgLoading || !prompt.trim() ? 0.6 : 1,
           }}
         >
-          {imgLoading ? '🔄 Grok 이미지 생성 중 (최대 30초)...' : '🖼 이미지 4장 생성 (Grok 전송)'}
+          {imgLoading ? '🔄 이미지 생성 중...' : '🖼 이미지 4장 생성'}
         </button>
       </Section>
 
       {/* ── 섹션 3: 생성 이미지 ─────────────────────────────────────── */}
-      {(imgLoading || images.length > 0) && (
+      {images.length > 0 && (
         <Section title="③ 생성된 이미지 (클릭하면 Canva 편집)">
-          {imgLoading ? (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 12,
-            }}>
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  style={{
-                    aspectRatio: '1 / 1',
-                    background: '#F1F5F9',
-                    borderRadius: 10,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#94a3b8',
-                    fontSize: 13,
-                    animation: 'pulse 1.5s ease-in-out infinite',
-                  }}
-                >
-                  이미지 {i} 생성 중...
-                </div>
-              ))}
-            </div>
-          ) : (
-            <>
-              <p style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>
-                이미지를 클릭하면 확대 보기 + Canva 편집 또는 다운로드 가능합니다.
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {images.map((url, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => setSelectedImage(url)}
-                    style={{
-                      position: 'relative',
-                      aspectRatio: '1 / 1',
-                      borderRadius: 10,
-                      overflow: 'hidden',
-                      cursor: 'pointer',
-                      border: '2px solid #BAE6FD',
-                    }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={url}
-                      alt={`생성 이미지 ${idx + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                    />
-                    <div style={{
-                      position: 'absolute', inset: 0,
-                      background: 'rgba(0,0,0,0)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      transition: 'background 0.2s',
-                    }}
-                      onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0.45)' }}
-                      onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0)' }}
-                    >
-                      <span style={{
-                        color: '#fff',
-                        fontSize: 13,
-                        fontWeight: 700,
-                        background: 'rgba(0,0,0,0.5)',
-                        padding: '6px 14px',
-                        borderRadius: 20,
-                        opacity: 0,
-                        transition: 'opacity 0.2s',
-                      }}
-                        onMouseEnter={(e) => { (e.currentTarget as HTMLSpanElement).style.opacity = '1' }}
-                        onMouseLeave={(e) => { (e.currentTarget as HTMLSpanElement).style.opacity = '0' }}
-                      >
-                        클릭하여 편집
-                      </span>
-                    </div>
-                    <div style={{
-                      position: 'absolute', top: 8, left: 8,
-                      background: '#0369A1', color: '#fff',
-                      fontSize: 11, fontWeight: 700,
-                      padding: '3px 8px', borderRadius: 20,
-                    }}>
-                      {idx + 1}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+          <p style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>
+            이미지를 클릭하면 확대 보기 + Canva 편집 또는 다운로드 가능합니다.
+            이미지가 로딩 중이면 잠시 기다려주세요.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            {images.map((url, idx) => (
+              <ImageCard key={url} url={url} idx={idx} onClick={() => setSelectedImage(url)} />
+            ))}
+          </div>
         </Section>
       )}
 
@@ -468,6 +387,63 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     }}>
       <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0369A1', marginBottom: 20 }}>{title}</h2>
       {children}
+    </div>
+  )
+}
+
+function ImageCard({ url, idx, onClick }: { url: string; idx: number; onClick: () => void }) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        position: 'relative', aspectRatio: '1 / 1', borderRadius: 10,
+        overflow: 'hidden', cursor: 'pointer', border: '2px solid #BAE6FD',
+        background: '#F1F5F9',
+      }}
+    >
+      {!loaded && (
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', gap: 8, color: '#94a3b8', fontSize: 12,
+        }}>
+          <div style={{ fontSize: 24 }}>🎨</div>
+          이미지 {idx + 1} 생성 중...
+        </div>
+      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={url}
+        alt={`생성 이미지 ${idx + 1}`}
+        onLoad={() => setLoaded(true)}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: loaded ? 'block' : 'none' }}
+      />
+      {loaded && (
+        <div style={{
+          position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s',
+        }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0.4)' }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0)' }}
+        >
+          <span style={{
+            color: '#fff', fontSize: 13, fontWeight: 700,
+            background: 'rgba(0,0,0,0.5)', padding: '6px 14px', borderRadius: 20,
+            opacity: 0, transition: 'opacity 0.2s',
+          }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLSpanElement).style.opacity = '1' }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLSpanElement).style.opacity = '0' }}
+          >
+            클릭하여 편집
+          </span>
+        </div>
+      )}
+      <div style={{
+        position: 'absolute', top: 8, left: 8, background: '#0369A1', color: '#fff',
+        fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 20,
+      }}>
+        {idx + 1}
+      </div>
     </div>
   )
 }

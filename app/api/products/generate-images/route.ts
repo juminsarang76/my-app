@@ -1,77 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Gemini 2.5 Flash Image — 이미지 생성 (AI Studio GEMINI_API_KEY로 사용 가능)
-// 공식 모델 ID: https://developers.googleblog.com/en/gemini-2-5-flash-image-now-ready-for-production
-const MODEL = 'gemini-2.5-flash-image'
-const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
+// Pollinations.ai — 무료, API 키 불필요, flux 모델
+// URL 접근 시 브라우저에서 실시간 생성 (서버 처리 없음)
+const BASE = 'https://image.pollinations.ai/prompt'
 
 const VARIATIONS = [
-  'professional product photography, front view, clean white studio background, soft diffused lighting',
-  'product photography 45-degree angle, warm natural lighting, modern lifestyle setting',
-  'product flat lay, top-down view, minimal pastel background, aesthetic composition',
-  'product detail close-up, shallow depth of field, elegant bokeh background',
+  'professional product photography, front view, clean white studio background, soft diffused lighting, commercial photo',
+  'product lifestyle photography, 45 degree angle, warm natural light, modern minimal interior',
+  'product flat lay, top-down view, pastel minimal background, aesthetic composition, instagram style',
+  'product detail close-up, shallow depth of field, elegant bokeh background, macro lens',
 ]
 
-async function generateOne(
-  prompt: string,
-  variation: string,
-  apiKey: string,
-): Promise<{ dataUrl: string | null; error?: string }> {
-  const res = await fetch(`${ENDPOINT}?key=${apiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: `${prompt}, ${variation}` }] }],
-      generationConfig: { responseModalities: ['IMAGE'], imageConfig: { aspectRatio: '1:1' } },
-    }),
-  })
-
-  const text = await res.text()
-  if (!res.ok) return { dataUrl: null, error: `${res.status}: ${text}` }
-
-  let data: { candidates?: { content?: { parts?: { inlineData?: { mimeType: string; data: string } }[] } }[] } = {}
-  try { data = JSON.parse(text) } catch { return { dataUrl: null, error: 'JSON parse error' } }
-
-  const imagePart = data.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)
-  if (!imagePart?.inlineData) return { dataUrl: null, error: '이미지 파트 없음' }
-
-  const { mimeType, data: b64 } = imagePart.inlineData
-  return { dataUrl: `data:${mimeType};base64,${b64}` }
-}
-
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
-    return NextResponse.json({ error: 'GEMINI_API_KEY가 설정되지 않았습니다.' }, { status: 500 })
-  }
-
   const { prompt } = await req.json()
   if (!prompt?.trim()) {
     return NextResponse.json({ error: '프롬프트가 비어 있습니다.' }, { status: 400 })
   }
 
-  const results = await Promise.allSettled(
-    VARIATIONS.map((v) => generateOne(prompt, v, apiKey)),
-  )
+  const seed = Math.floor(Math.random() * 9999999)
 
-  const images: string[] = []
-  const errors: string[] = []
-
-  for (const r of results) {
-    if (r.status === 'fulfilled') {
-      if (r.value.dataUrl) images.push(r.value.dataUrl)
-      else errors.push(r.value.error ?? '알 수 없는 오류')
-    } else {
-      errors.push(String(r.reason))
-    }
-  }
-
-  if (images.length === 0) {
-    return NextResponse.json(
-      { error: `이미지 생성 실패: ${errors[0] ?? '알 수 없는 오류'}` },
-      { status: 500 },
-    )
-  }
+  const images = VARIATIONS.map((variation, i) => {
+    const fullPrompt = encodeURIComponent(`${prompt}, ${variation}`)
+    return `${BASE}/${fullPrompt}?width=1024&height=1024&seed=${seed + i}&nologo=true&model=flux`
+  })
 
   return NextResponse.json({ images })
 }
