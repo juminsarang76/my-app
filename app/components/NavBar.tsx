@@ -19,7 +19,7 @@ const NAV_LINKS = [
 
 export default function NavBar() {
   const pathname = usePathname()
-  if (pathname.startsWith('/jungdeung')) return null
+  if (pathname.startsWith('/jungdeung') || pathname.startsWith('/products')) return null
 
   return (
     <nav style={{
