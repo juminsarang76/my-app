@@ -142,8 +142,8 @@ export default function ProductClient() {
     a.click()
     document.body.removeChild(a)
     // 2. Canva 새 탭 열기
-    window.open('https://www.canva.com/design/create', '_blank')
-    showToast('✅ 다운로드 완료 + Canva 열림 → 업로드 탭에서 파일을 선택하세요')
+    window.open('https://www.canva.com', '_blank')
+    showToast('✅ 이미지 다운로드 완료 → Canva: 디자인 만들기 → 업로드에서 파일 선택')
     setSelectedImage(null)
   }
 
