@@ -113,23 +113,28 @@ export default function ProductClient() {
     }
   }
 
-  // ── 칸바 연동 ──
+  // ── 이미지 다운로드 공통 함수 ──
+  function downloadDataUrl(imgUrl: string) {
+    const a = document.createElement('a')
+    a.href = imgUrl
+    a.download = `product-image-${Date.now()}.png`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
+  // ── 칸바 연동 (다운로드 후 Canva 열기) ──
   function handleCanva(imgUrl: string) {
-    navigator.clipboard.writeText(imgUrl).catch(() => {})
-    window.open('https://www.canva.com/design/create', '_blank')
-    showToast('이미지 URL이 복사되었습니다. Canva → 업로드 → URL에서 붙여넣기')
+    downloadDataUrl(imgUrl)
+    setTimeout(() => window.open('https://www.canva.com/design/create', '_blank'), 300)
+    showToast('이미지 다운로드 완료 → Canva에서 업로드해 사용하세요')
     setSelectedImage(null)
   }
 
   // ── 이미지 다운로드 ──
   async function handleDownload(imgUrl: string) {
     try {
-      const res = await fetch(imgUrl)
-      const blob = await res.blob()
-      const a = document.createElement('a')
-      a.href = URL.createObjectURL(blob)
-      a.download = `product-image-${Date.now()}.png`
-      a.click()
+      downloadDataUrl(imgUrl)
     } catch {
       window.open(imgUrl, '_blank')
     }

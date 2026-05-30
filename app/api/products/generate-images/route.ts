@@ -1,52 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// xAI Grok 이미지 생성 API
-// 모델: grok-imagine-image ($0.02/장) | grok-imagine-image-quality ($0.05/장)
-// 문서: https://docs.x.ai/developers/model-capabilities/imagine
-const XAI_ENDPOINT = 'https://api.x.ai/v1/images/generations'
-const IMAGE_MODEL = 'grok-imagine-image'
+// Gemini Imagen 3 Fast — GEMINI_API_KEY 사용 (기존 키 재활용)
+// 문서: https://ai.google.dev/api/images
+const MODEL = 'imagen-3.0-fast-generate-001'
 
 const VARIATIONS = [
-  ', front view, clean studio white background, professional product photography',
-  ', 45-degree angle, warm natural lighting, lifestyle setting',
-  ', top-down flat lay, minimal pastel background, aesthetic composition',
-  ', close-up detail shot, shallow depth of field, bokeh background',
+  'professional product photography, front view, clean white studio background, soft diffused lighting',
+  'product photography 45-degree angle, warm natural lighting, modern lifestyle setting',
+  'product flat lay, top-down view, minimal pastel background, aesthetic composition',
+  'product detail close-up, shallow depth of field, elegant bokeh background',
 ]
 
-async function generateOne(prompt: string, variation: string): Promise<{ url: string | null; error?: string }> {
-  const body = {
-    model: IMAGE_MODEL,
-    prompt: `${prompt}${variation}`,
-  }
-
-  const res = await fetch(XAI_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.XAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  })
-
-  const text = await res.text()
-
-  if (!res.ok) {
-    console.error(`[xAI] ${res.status}:`, text)
-    return { url: null, error: `${res.status}: ${text}` }
-  }
-
-  let data: { data?: { url?: string; b64_json?: string }[] } = {}
-  try { data = JSON.parse(text) } catch { return { url: null, error: 'JSON parse error' } }
-
-  const item = data.data?.[0]
-  const url = item?.url ?? null
-  return { url }
-}
-
 export async function POST(req: NextRequest) {
-  if (!process.env.XAI_API_KEY) {
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) {
     return NextResponse.json(
-      { error: 'XAI_API_KEY가 설정되지 않았습니다. Vercel 환경변수에 추가하세요.' },
+      { error: 'GEMINI_API_KEY가 설정되지 않았습니다.' },
       { status: 500 },
     )
   }
@@ -56,8 +25,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '프롬프트가 비어 있습니다.' }, { status: 400 })
   }
 
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:predict?key=${apiKey}`
+
+  // 4개 변형을 병렬 생성 (각 1장씩 → 응답 크기 분산)
   const results = await Promise.allSettled(
-    VARIATIONS.map((v) => generateOne(prompt, v)),
+    VARIATIONS.map((variation) =>
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          instances: [{ prompt: `${prompt}, ${variation}` }],
+          parameters: { sampleCount: 1, aspectRatio: '1:1' },
+        }),
+      }).then(async (r) => {
+        const text = await r.text()
+        if (!r.ok) throw new Error(`${r.status}: ${text}`)
+        return JSON.parse(text)
+      }),
+    ),
   )
 
   const images: string[] = []
@@ -65,17 +50,21 @@ export async function POST(req: NextRequest) {
 
   for (const r of results) {
     if (r.status === 'fulfilled') {
-      if (r.value.url) images.push(r.value.url)
-      else if (r.value.error) errors.push(r.value.error)
+      const pred = r.value?.predictions?.[0]
+      if (pred?.bytesBase64Encoded) {
+        const mime = pred.mimeType ?? 'image/png'
+        images.push(`data:${mime};base64,${pred.bytesBase64Encoded}`)
+      } else {
+        errors.push('예측 데이터 없음')
+      }
     } else {
       errors.push(String(r.reason))
     }
   }
 
   if (images.length === 0) {
-    const detail = errors[0] ?? '알 수 없는 오류'
     return NextResponse.json(
-      { error: `이미지 생성 실패: ${detail}` },
+      { error: `이미지 생성 실패: ${errors[0] ?? '알 수 없는 오류'}` },
       { status: 500 },
     )
   }
