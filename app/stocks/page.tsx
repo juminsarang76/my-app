@@ -18,7 +18,13 @@ const CARDS: Card[] = [
     href: '/stocks/portfolio',
     icon: '💼',
     title: '주식 리스트',
-    desc: '내 주식 계좌 자산 추이 · 자산 숫자 (연동 예정)',
+    desc: '워치리스트 종목별 차트 (IONQ, RDW, 삼성전자 등) · 드래그 순서 변경',
+  },
+  {
+    href: '/stocks/kiwoom',
+    icon: '🏦',
+    title: '키움증권',
+    desc: 'REST OpenAPI 연동 · 종목 시세 · 매수 / 매도 주문 (모의투자 기본)',
   },
 ]
 
