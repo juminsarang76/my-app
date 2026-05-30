@@ -43,20 +43,37 @@ const INITIAL_FORM: FormData = {
   competitors: '',
 }
 
+// ── 이미지 슬롯 타입 ──────────────────────────────────────────────────
+interface ImageSlot {
+  status: 'idle' | 'loading' | 'done' | 'error'
+  url: string
+  error: string
+}
+
+const EMPTY_SLOTS: ImageSlot[] = Array.from({ length: 4 }, () => ({
+  status: 'idle', url: '', error: '',
+}))
+
 // ── 메인 컴포넌트 ──────────────────────────────────────────────────────
 export default function ProductClient() {
   const [form, setForm] = useState<FormData>(INITIAL_FORM)
   const [prompt, setPrompt] = useState('')
-  const [images, setImages] = useState<string[]>([])
+  const [slots, setSlots] = useState<ImageSlot[]>(EMPTY_SLOTS)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [promptLoading, setPromptLoading] = useState(false)
-  const [imgLoading, setImgLoading] = useState(false)
   const [error, setError] = useState('')
   const [toast, setToast] = useState('')
 
+  const isGenerating = slots.some(s => s.status === 'loading')
+  const hasImages = slots.some(s => s.status === 'done')
+
   function showToast(msg: string) {
     setToast(msg)
-    setTimeout(() => setToast(''), 3500)
+    setTimeout(() => setToast(''), 4000)
+  }
+
+  function updateSlot(idx: number, patch: Partial<ImageSlot>) {
+    setSlots(prev => prev.map((s, i) => i === idx ? { ...s, ...patch } : s))
   }
 
   // ── 플랫폼 체크박스 ──
@@ -91,51 +108,53 @@ export default function ProductClient() {
     }
   }
 
-  // ── 이미지 생성 ──
+  // ── 이미지 생성 — 4개 병렬 개별 요청 ──
   async function handleGenerateImages() {
     if (!prompt.trim()) { setError('프롬프트를 먼저 생성하거나 입력하세요.'); return }
     setError('')
-    setImgLoading(true)
-    setImages([])
-    try {
-      const res = await fetch('/api/products/generate-images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+    setSlots(Array.from({ length: 4 }, () => ({ status: 'loading', url: '', error: '' })))
+
+    await Promise.allSettled(
+      [0, 1, 2, 3].map(async (idx) => {
+        try {
+          const res = await fetch('/api/products/generate-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt, variationIndex: idx }),
+          })
+          const data = await res.json()
+          if (!res.ok || !data.image) throw new Error(data.error ?? '실패')
+          updateSlot(idx, { status: 'done', url: data.image })
+        } catch (e: unknown) {
+          updateSlot(idx, { status: 'error', error: e instanceof Error ? e.message : '오류' })
+        }
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? '이미지 생성 실패')
-      setImages(data.images)
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : '오류가 발생했습니다.')
-    } finally {
-      setImgLoading(false)
-    }
+    )
   }
 
-  // ── 칸바 연동 — URL 복사 + Canva 열기 ──
+  // ── Canva 자동 연동 — 다운로드 + Canva 즉시 열기 ──
   function handleCanva(imgUrl: string) {
-    navigator.clipboard.writeText(imgUrl).catch(() => {})
+    // 1. 이미지 자동 다운로드
+    const a = document.createElement('a')
+    a.href = imgUrl
+    a.download = `product-${Date.now()}.png`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    // 2. Canva 새 탭 열기
     window.open('https://www.canva.com/design/create', '_blank')
-    showToast('이미지 URL 복사 완료 → Canva: 업로드 → URL에서 붙여넣기')
+    showToast('✅ 다운로드 완료 + Canva 열림 → 업로드 탭에서 파일을 선택하세요')
     setSelectedImage(null)
   }
 
-  // ── 이미지 다운로드 ──
-  async function handleDownload(imgUrl: string) {
-    try {
-      const res = await fetch(imgUrl)
-      const blob = await res.blob()
-      const a = document.createElement('a')
-      a.href = URL.createObjectURL(blob)
-      a.download = `product-image-${Date.now()}.png`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(a.href)
-    } catch {
-      window.open(imgUrl, '_blank')
-    }
+  // ── 이미지 다운로드만 ──
+  function handleDownload(imgUrl: string) {
+    const a = document.createElement('a')
+    a.href = imgUrl
+    a.download = `product-${Date.now()}.png`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
   }
 
   // ─────────────────────────────────────────────────────────────────────
@@ -342,30 +361,34 @@ export default function ProductClient() {
         />
         <button
           onClick={handleGenerateImages}
-          disabled={imgLoading || !prompt.trim()}
+          disabled={isGenerating || !prompt.trim()}
           style={{
             ...btnStyle('#1D9E75'),
             marginTop: 14,
             padding: '14px 32px',
             fontSize: 15,
             width: '100%',
-            opacity: imgLoading || !prompt.trim() ? 0.6 : 1,
+            opacity: isGenerating || !prompt.trim() ? 0.6 : 1,
           }}
         >
-          {imgLoading ? '🔄 이미지 생성 중...' : '🖼 이미지 4장 생성'}
+          {isGenerating ? '🔄 이미지 생성 중... (최대 30초)' : '🖼 이미지 4장 생성'}
         </button>
       </Section>
 
       {/* ── 섹션 3: 생성 이미지 ─────────────────────────────────────── */}
-      {images.length > 0 && (
-        <Section title="③ 생성된 이미지 (클릭하면 Canva 편집)">
+      {(isGenerating || hasImages) && (
+        <Section title="③ 생성된 이미지 (클릭하면 Canva 자동 연동)">
           <p style={{ fontSize: 12, color: '#64748b', marginBottom: 14 }}>
-            이미지를 클릭하면 확대 보기 + Canva 편집 또는 다운로드 가능합니다.
-            이미지가 로딩 중이면 잠시 기다려주세요.
+            이미지 클릭 → 자동 다운로드 + Canva 열림 (Canva 업로드 탭에서 파일 선택)
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            {images.map((url, idx) => (
-              <ImageCard key={url} url={url} idx={idx} onClick={() => setSelectedImage(url)} />
+            {slots.map((slot, idx) => (
+              <SlotCard
+                key={idx}
+                slot={slot}
+                idx={idx}
+                onClick={() => slot.status === 'done' && setSelectedImage(slot.url)}
+              />
             ))}
           </div>
         </Section>
@@ -391,58 +414,71 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-function ImageCard({ url, idx, onClick }: { url: string; idx: number; onClick: () => void }) {
-  const [loaded, setLoaded] = useState(false)
+function SlotCard({ slot, idx, onClick }: { slot: ImageSlot; idx: number; onClick: () => void }) {
+  const label = ['전면·스튜디오', '45도·라이프스타일', '플랫레이·미니멀', '클로즈업·보케'][idx]
   return (
     <div
-      onClick={onClick}
+      onClick={slot.status === 'done' ? onClick : undefined}
       style={{
         position: 'relative', aspectRatio: '1 / 1', borderRadius: 10,
-        overflow: 'hidden', cursor: 'pointer', border: '2px solid #BAE6FD',
-        background: '#F1F5F9',
+        overflow: 'hidden', cursor: slot.status === 'done' ? 'pointer' : 'default',
+        border: slot.status === 'done' ? '2px solid #BAE6FD' : '2px solid #E2E8F0',
+        background: '#F8FAFC',
       }}
     >
-      {!loaded && (
+      {/* 로딩 */}
+      {slot.status === 'loading' && (
         <div style={{
           position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center', gap: 8, color: '#94a3b8', fontSize: 12,
+          alignItems: 'center', justifyContent: 'center', gap: 10, color: '#64748b',
         }}>
-          <div style={{ fontSize: 24 }}>🎨</div>
-          이미지 {idx + 1} 생성 중...
+          <div style={{ fontSize: 28, animation: 'spin 1s linear infinite' }}>🎨</div>
+          <div style={{ fontSize: 12, fontWeight: 600 }}>생성 중...</div>
+          <div style={{ fontSize: 11, color: '#94a3b8' }}>{label}</div>
         </div>
       )}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={url}
-        alt={`생성 이미지 ${idx + 1}`}
-        onLoad={() => setLoaded(true)}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: loaded ? 'block' : 'none' }}
-      />
-      {loaded && (
+      {/* 에러 */}
+      {slot.status === 'error' && (
         <div style={{
-          position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s',
-        }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0.4)' }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0)' }}
-        >
-          <span style={{
-            color: '#fff', fontSize: 13, fontWeight: 700,
-            background: 'rgba(0,0,0,0.5)', padding: '6px 14px', borderRadius: 20,
-            opacity: 0, transition: 'opacity 0.2s',
-          }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLSpanElement).style.opacity = '1' }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLSpanElement).style.opacity = '0' }}
-          >
-            클릭하여 편집
-          </span>
+          position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', gap: 6, color: '#ef4444',
+        }}>
+          <div style={{ fontSize: 24 }}>⚠️</div>
+          <div style={{ fontSize: 11, textAlign: 'center', padding: '0 8px' }}>생성 실패</div>
         </div>
       )}
+      {/* 이미지 */}
+      {slot.status === 'done' && (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={slot.url} alt={`생성 이미지 ${idx + 1}`}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <div style={{
+            position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s',
+          }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0.4)' }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(0,0,0,0)' }}
+          >
+            <span style={{
+              color: '#fff', fontSize: 12, fontWeight: 700,
+              background: 'rgba(0,0,0,0.55)', padding: '6px 14px', borderRadius: 20,
+              opacity: 0, transition: 'opacity 0.2s', pointerEvents: 'none',
+            }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLSpanElement).style.opacity = '1' }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLSpanElement).style.opacity = '0' }}
+            >
+              클릭 → Canva 열기
+            </span>
+          </div>
+        </>
+      )}
+      {/* 번호 + 라벨 */}
       <div style={{
         position: 'absolute', top: 8, left: 8, background: '#0369A1', color: '#fff',
-        fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 20,
+        fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 20,
       }}>
-        {idx + 1}
+        {idx + 1} {label}
       </div>
     </div>
   )
