@@ -3,18 +3,26 @@
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 
-type AuthStatus = {
-  ok: boolean
-  env: 'mock' | 'production'
+type EnvKey = 'mock' | 'prod'
+
+type EnvStatus = {
+  env: EnvKey
   base: string
   configured: boolean
-  account?: string | null
+  ok: boolean
   tokenMask?: string
   expiresInMin?: number | null
   error?: string
 }
 
+type AuthAll = {
+  mock: EnvStatus
+  prod: EnvStatus
+  account?: string | null
+}
+
 type Quote = {
+  env: EnvKey
   symbol: string
   name: string
   current: number
@@ -58,20 +66,21 @@ type OrderHistory = {
 
 const UP = '#E24B4A'
 const DOWN = '#0369A1'
-const STORAGE_KEY = 'kiwoom-orders-v1'
+const STORAGE_KEY_ORDERS = 'kiwoom-orders-v1'
+const STORAGE_KEY_ENV = 'kiwoom-env-v1'
 
 const krw = (n: number) => '₩' + (n || 0).toLocaleString('ko-KR')
 
 export default function KiwoomPage() {
-  const [auth, setAuth] = useState<AuthStatus | null>(null)
+  const [env, setEnv] = useState<EnvKey>('mock')
+  const [envLoaded, setEnvLoaded] = useState(false)
+  const [auth, setAuth] = useState<AuthAll | null>(null)
 
-  // ─── 시세 조회 상태 ───
   const [symbolInput, setSymbolInput] = useState('005930')
   const [quote, setQuote] = useState<Quote | null>(null)
   const [quoteLoading, setQuoteLoading] = useState(false)
   const [quoteError, setQuoteError] = useState<string | null>(null)
 
-  // ─── 주문 상태 ───
   const [orderSide, setOrderSide] = useState<'buy' | 'sell'>('buy')
   const [orderQty, setOrderQty] = useState('')
   const [orderPrice, setOrderPrice] = useState('')
@@ -81,53 +90,66 @@ export default function KiwoomPage() {
   const [orderResult, setOrderResult] = useState<OrderResult | null>(null)
   const [history, setHistory] = useState<OrderHistory[]>([])
 
-  // ─── 초기 로드 ───
+  // 환경/이력 로드
   useEffect(() => {
+    try {
+      const e = localStorage.getItem(STORAGE_KEY_ENV) as EnvKey | null
+      if (e === 'mock' || e === 'prod') setEnv(e)
+    } catch { /* */ }
+    setEnvLoaded(true)
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_ORDERS)
+      if (raw) setHistory(JSON.parse(raw))
+    } catch { /* */ }
+    fetchAuth()
+  }, [])
+
+  // 환경 변경 시 저장 + 인증 새로고침
+  useEffect(() => {
+    if (!envLoaded) return
+    try { localStorage.setItem(STORAGE_KEY_ENV, env) } catch { /* */ }
+  }, [env, envLoaded])
+
+  const fetchAuth = useCallback(() => {
     fetch('/api/kiwoom/auth', { cache: 'no-store' })
       .then(r => r.json())
       .then(setAuth)
-      .catch(e => setAuth({ ok: false, env: 'mock', base: '', configured: false, error: String(e) }))
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) setHistory(JSON.parse(raw))
-    } catch { /* ignore */ }
+      .catch(e => setAuth({
+        mock: { env: 'mock', base: '', configured: false, ok: false, error: String(e) },
+        prod: { env: 'prod', base: '', configured: false, ok: false, error: String(e) },
+      }))
   }, [])
 
-  // ─── 시세 조회 ───
+  // 시세 조회
   const fetchQuote = useCallback(async (sym: string) => {
     const s = sym.trim()
-    if (!/^\d{6}$/.test(s)) {
-      setQuoteError('6자리 종목코드를 입력하세요 (예: 005930)')
-      return
-    }
-    setQuoteLoading(true)
-    setQuoteError(null)
+    if (!/^\d{6}$/.test(s)) { setQuoteError('6자리 종목코드를 입력하세요 (예: 005930)'); return }
+    setQuoteLoading(true); setQuoteError(null)
     try {
-      const r = await fetch(`/api/kiwoom/quote?symbol=${s}`, { cache: 'no-store' })
+      const r = await fetch(`/api/kiwoom/quote?symbol=${s}&env=${env}`, { cache: 'no-store' })
       const d = await r.json()
-      if (!r.ok) {
-        setQuoteError(d.error || `오류 ${r.status}`)
-        setQuote(null)
-      } else {
-        setQuote(d)
-        setOrderPrice(String(d.current || ''))
-      }
-    } catch (e) {
-      setQuoteError(String(e))
-    } finally {
-      setQuoteLoading(false)
-    }
-  }, [])
+      if (!r.ok) { setQuoteError(d.error || `오류 ${r.status}`); setQuote(null) }
+      else { setQuote(d); setOrderPrice(String(d.current || '')) }
+    } catch (e) { setQuoteError(String(e)) }
+    finally { setQuoteLoading(false) }
+  }, [env])
 
-  // ─── 주문 실행 ───
-  const submitOrder = useCallback(async () => {
-    setOrderSubmitting(true)
+  // 환경 변경 시 시세 무효화 (다른 환경은 다른 데이터)
+  useEffect(() => {
+    setQuote(null)
     setOrderResult(null)
+    setOrderConfirming(false)
+  }, [env])
+
+  // 주문 실행
+  const submitOrder = useCallback(async () => {
+    setOrderSubmitting(true); setOrderResult(null)
     try {
       const r = await fetch('/api/kiwoom/order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          env,
           side: orderSide,
           symbol: symbolInput,
           qty: Number(orderQty),
@@ -140,54 +162,47 @@ export default function KiwoomPage() {
       const d: OrderResult = await r.json()
       setOrderResult(d)
 
-      // 이력에 추가
       const entry: OrderHistory = {
         ts: new Date().toISOString(),
-        side: orderSide,
-        symbol: symbolInput,
-        name: quote?.name,
+        side: orderSide, symbol: symbolInput, name: quote?.name,
         qty: Number(orderQty),
         price: orderTradeTp === '3' ? 0 : Number(orderPrice),
         tradeTp: orderTradeTp,
-        env: auth?.env || 'mock',
-        ok: !!d.ok,
-        orderNo: d.orderNo ?? null,
+        env,
+        ok: !!d.ok, orderNo: d.orderNo ?? null,
         message: d.message || d.error,
       }
       const next = [entry, ...history].slice(0, 30)
       setHistory(next)
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch { /* ignore */ }
+      try { localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(next)) } catch { /* */ }
 
-      if (d.ok) {
-        setOrderQty('')
-        setOrderConfirming(false)
-      }
+      if (d.ok) { setOrderQty(''); setOrderConfirming(false) }
     } catch (e) {
       setOrderResult({ ok: false, error: String(e) })
     } finally {
       setOrderSubmitting(false)
     }
-  }, [orderSide, orderQty, orderPrice, orderTradeTp, symbolInput, quote, auth, history])
+  }, [env, orderSide, orderQty, orderPrice, orderTradeTp, symbolInput, quote, history])
 
-  // ─── 주문 유효성 ───
-  const orderTotal = orderTradeTp === '3'
-    ? null
-    : Number(orderQty) * Number(orderPrice) || 0
+  const orderTotal = orderTradeTp === '3' ? null : Number(orderQty) * Number(orderPrice) || 0
   const orderValid = Number(orderQty) > 0 && (orderTradeTp === '3' || Number(orderPrice) > 0)
+  const currentStatus = auth ? auth[env] : null
 
   return (
     <main style={{ maxWidth: 720, margin: '40px auto', padding: '0 20px', fontFamily: 'sans-serif' }}>
 
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
         <Link href="/stocks" style={{ fontSize: 13, color: '#0369A1', textDecoration: 'none' }}>‹ 재무</Link>
         <span style={{ fontSize: 13, color: '#bbb' }}>/</span>
         <h1 style={{ fontSize: 22, fontWeight: 500, margin: 0 }}>키움증권</h1>
-        <EnvBadge env={auth?.env} ok={auth?.ok} />
       </div>
 
+      {/* 환경 토글 */}
+      <EnvToggle env={env} setEnv={setEnv} auth={auth} />
+
       {/* 인증 상태 */}
-      <AuthCard auth={auth} />
+      <AuthCard env={env} status={currentStatus} configuredOther={auth?.[env === 'mock' ? 'prod' : 'mock']?.configured} />
 
       {/* 시세 조회 */}
       <section style={{ marginBottom: 22 }}>
@@ -203,11 +218,9 @@ export default function KiwoomPage() {
           />
           <button
             onClick={() => fetchQuote(symbolInput)}
-            disabled={quoteLoading || !symbolInput}
-            style={{ ...buttonStyle, background: quoteLoading || !symbolInput ? '#CBD5E1' : '#0369A1' }}
-          >
-            {quoteLoading ? '...' : '조회'}
-          </button>
+            disabled={quoteLoading || !symbolInput || !currentStatus?.ok}
+            style={{ ...buttonStyle, background: quoteLoading || !symbolInput || !currentStatus?.ok ? '#CBD5E1' : '#0369A1' }}
+          >{quoteLoading ? '...' : '조회'}</button>
         </div>
 
         {quoteError && <div style={{ fontSize: 12, color: UP, marginBottom: 8 }}>⚠ {quoteError}</div>}
@@ -240,60 +253,36 @@ export default function KiwoomPage() {
       <section style={{ marginBottom: 22 }}>
         <h2 style={sectionTitle}>💼 주문</h2>
 
-        {/* 매수/매도 탭 */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 10 }}>
           <button
             onClick={() => { setOrderSide('buy'); setOrderConfirming(false); setOrderResult(null) }}
-            style={{
-              ...tabBtn,
-              background: orderSide === 'buy' ? UP : '#fff',
-              color: orderSide === 'buy' ? '#fff' : UP,
-              borderColor: UP,
-            }}
+            style={{ ...tabBtn, background: orderSide === 'buy' ? UP : '#fff', color: orderSide === 'buy' ? '#fff' : UP, borderColor: UP }}
           >매수</button>
           <button
             onClick={() => { setOrderSide('sell'); setOrderConfirming(false); setOrderResult(null) }}
-            style={{
-              ...tabBtn,
-              background: orderSide === 'sell' ? DOWN : '#fff',
-              color: orderSide === 'sell' ? '#fff' : DOWN,
-              borderColor: DOWN,
-            }}
+            style={{ ...tabBtn, background: orderSide === 'sell' ? DOWN : '#fff', color: orderSide === 'sell' ? '#fff' : DOWN, borderColor: DOWN }}
           >매도</button>
         </div>
 
-        {/* 주문 폼 */}
         <div style={cardStyle}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
             <Field label="종목코드">
               <input value={symbolInput} disabled style={{ ...inputStyle, background: '#F1F5F9' }} />
             </Field>
             <Field label="거래구분">
-              <select
-                value={orderTradeTp}
-                onChange={e => setOrderTradeTp(e.target.value as '0' | '3')}
-                style={inputStyle}
-              >
+              <select value={orderTradeTp} onChange={e => setOrderTradeTp(e.target.value as '0' | '3')} style={inputStyle}>
                 <option value="0">지정가</option>
                 <option value="3">시장가</option>
               </select>
             </Field>
             <Field label="수량">
-              <input
-                value={orderQty}
-                onChange={e => setOrderQty(e.target.value.replace(/\D/g, ''))}
-                placeholder="0"
-                inputMode="numeric"
-                style={inputStyle}
-              />
+              <input value={orderQty} onChange={e => setOrderQty(e.target.value.replace(/\D/g, ''))} placeholder="0" inputMode="numeric" style={inputStyle} />
             </Field>
             <Field label={orderTradeTp === '3' ? '가격 (시장가)' : '가격'}>
               <input
                 value={orderTradeTp === '3' ? '' : orderPrice}
                 onChange={e => setOrderPrice(e.target.value.replace(/\D/g, ''))}
-                placeholder="0"
-                disabled={orderTradeTp === '3'}
-                inputMode="numeric"
+                placeholder="0" disabled={orderTradeTp === '3'} inputMode="numeric"
                 style={{ ...inputStyle, background: orderTradeTp === '3' ? '#F1F5F9' : '#fff' }}
               />
             </Field>
@@ -308,21 +297,24 @@ export default function KiwoomPage() {
           {!orderConfirming && (
             <button
               onClick={() => setOrderConfirming(true)}
-              disabled={!orderValid}
+              disabled={!orderValid || !currentStatus?.ok}
               style={{
                 ...buttonStyle, width: '100%',
-                background: !orderValid ? '#CBD5E1' : (orderSide === 'buy' ? UP : DOWN),
+                background: (!orderValid || !currentStatus?.ok) ? '#CBD5E1' : (orderSide === 'buy' ? UP : DOWN),
               }}
-            >{orderSide === 'buy' ? '매수' : '매도'} 주문</button>
+            >{orderSide === 'buy' ? '매수' : '매도'} 주문 {env === 'prod' && '(실거래)'}</button>
           )}
 
           {orderConfirming && (
             <div style={{
-              padding: '12px 14px', border: '1px solid #FCD34D', borderRadius: 10,
-              background: '#FFFBEB', fontSize: 12, color: '#92400E',
+              padding: '12px 14px',
+              border: `1.5px solid ${env === 'prod' ? '#DC2626' : '#FCD34D'}`,
+              borderRadius: 10,
+              background: env === 'prod' ? '#FEF2F2' : '#FFFBEB',
+              fontSize: 12, color: env === 'prod' ? '#991B1B' : '#92400E',
             }}>
-              <div style={{ marginBottom: 10, fontWeight: 600 }}>
-                {auth?.env === 'production' ? '⚠ 실거래 주문 확인' : '🟡 모의투자 주문 확인'}
+              <div style={{ marginBottom: 10, fontWeight: 700 }}>
+                {env === 'prod' ? '⚠⚠ 실거래 주문 — 진짜 돈이 빠져나갑니다' : '🟡 모의투자 주문 확인'}
               </div>
               <div style={{ marginBottom: 12, lineHeight: 1.7 }}>
                 <b>{orderSide === 'buy' ? '매수' : '매도'}</b> · {quote?.name || symbolInput} ({symbolInput})<br />
@@ -330,19 +322,13 @@ export default function KiwoomPage() {
                 {orderTotal != null && <>예상금액 <b>{krw(orderTotal)}</b></>}
               </div>
               <div style={{ display: 'flex', gap: 6 }}>
-                <button
-                  onClick={() => setOrderConfirming(false)}
-                  disabled={orderSubmitting}
-                  style={{ ...buttonStyle, flex: 1, background: '#E2E8F0', color: '#475569' }}
-                >취소</button>
-                <button
-                  onClick={submitOrder}
-                  disabled={orderSubmitting}
+                <button onClick={() => setOrderConfirming(false)} disabled={orderSubmitting}
+                  style={{ ...buttonStyle, flex: 1, background: '#E2E8F0', color: '#475569' }}>취소</button>
+                <button onClick={submitOrder} disabled={orderSubmitting}
                   style={{
                     ...buttonStyle, flex: 2,
-                    background: orderSubmitting ? '#CBD5E1' : (orderSide === 'buy' ? UP : DOWN),
-                  }}
-                >{orderSubmitting ? '주문 중...' : '확인 · 주문 실행'}</button>
+                    background: orderSubmitting ? '#CBD5E1' : (env === 'prod' ? '#DC2626' : (orderSide === 'buy' ? UP : DOWN)),
+                  }}>{orderSubmitting ? '주문 중...' : '확인 · 주문 실행'}</button>
               </div>
             </div>
           )}
@@ -375,7 +361,7 @@ export default function KiwoomPage() {
                   <th style={th}>종목</th>
                   <th style={{ ...th, textAlign: 'right' }}>수량</th>
                   <th style={{ ...th, textAlign: 'right' }}>가격</th>
-                  <th style={th}>구분</th>
+                  <th style={th}>환경</th>
                   <th style={th}>상태</th>
                 </tr>
               </thead>
@@ -387,10 +373,8 @@ export default function KiwoomPage() {
                     <td style={td}>{h.name ? `${h.name} (${h.symbol})` : h.symbol}</td>
                     <td style={{ ...td, textAlign: 'right' }}>{h.qty.toLocaleString('ko-KR')}</td>
                     <td style={{ ...td, textAlign: 'right' }}>{h.tradeTp === '3' ? '시장가' : krw(h.price)}</td>
-                    <td style={td}>{h.env === 'production' ? '실거래' : '모의'}</td>
-                    <td style={{ ...td, color: h.ok ? '#059669' : UP, fontWeight: 600 }}>
-                      {h.ok ? '✓' : '✗'}
-                    </td>
+                    <td style={{ ...td, color: h.env === 'prod' ? '#DC2626' : '#92400E', fontWeight: 600 }}>{h.env === 'prod' ? '실거래' : '모의'}</td>
+                    <td style={{ ...td, color: h.ok ? '#059669' : UP, fontWeight: 600 }}>{h.ok ? '✓' : '✗'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -400,63 +384,105 @@ export default function KiwoomPage() {
       )}
 
       <p style={{ fontSize: 10.5, color: '#bbb', marginBottom: 40 }}>
-        키움증권 REST OpenAPI · {auth?.base} · <span style={{ color: UP }}>매수/상승</span> / <span style={{ color: DOWN }}>매도/하락</span>
+        키움증권 REST OpenAPI · {currentStatus?.base} · <span style={{ color: UP }}>매수/상승</span> / <span style={{ color: DOWN }}>매도/하락</span>
       </p>
     </main>
   )
 }
 
-// ─── 보조 컴포넌트 ───
-function EnvBadge({ env, ok }: { env?: 'mock' | 'production'; ok?: boolean }) {
-  if (!env) return null
-  const isMock = env === 'mock'
-  const bg = !ok ? '#FECACA' : (isMock ? '#FEF3C7' : '#DBEAFE')
-  const fg = !ok ? '#991B1B' : (isMock ? '#92400E' : '#1E40AF')
-  const label = !ok ? '⚠ 미연결' : (isMock ? '🟡 MOCK · 모의투자' : '🔵 LIVE · 실거래')
+// ─── 환경 토글 ───
+function EnvToggle({ env, setEnv, auth }: { env: EnvKey; setEnv: (e: EnvKey) => void; auth: AuthAll | null }) {
+  const mockReady = auth?.mock?.ok
+  const prodReady = auth?.prod?.ok
   return (
-    <span style={{
-      marginLeft: 'auto', fontSize: 10, fontWeight: 700, letterSpacing: 1,
-      color: fg, background: bg, padding: '4px 10px', borderRadius: 12,
-    }}>{label}</span>
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14,
+      padding: 4, background: '#F1F5F9', borderRadius: 12, border: '1px solid #E2E8F0',
+    }}>
+      <EnvBtn
+        active={env === 'mock'} ready={mockReady}
+        onClick={() => setEnv('mock')}
+        label="🟡 모의투자" sub="mockapi" accent="#F59E0B"
+      />
+      <EnvBtn
+        active={env === 'prod'} ready={prodReady}
+        onClick={() => setEnv('prod')}
+        label="🔵 실거래" sub="api · 실제 돈" accent="#DC2626"
+      />
+    </div>
   )
 }
 
-function AuthCard({ auth }: { auth: AuthStatus | null }) {
-  if (!auth) return (
+function EnvBtn({ active, ready, onClick, label, sub, accent }: {
+  active: boolean; ready?: boolean; onClick: () => void; label: string; sub: string; accent: string;
+}) {
+  return (
+    <button onClick={onClick} style={{
+      flex: 1, padding: '10px 12px', border: 'none', borderRadius: 8, cursor: 'pointer',
+      background: active ? accent : '#fff',
+      color: active ? '#fff' : '#0F172A',
+      textAlign: 'left',
+      boxShadow: active ? `0 2px 8px ${accent}66` : 'none',
+      transition: 'all .15s',
+    }}>
+      <div style={{ fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+        {label}
+        <span style={{
+          fontSize: 9, padding: '1px 6px', borderRadius: 8,
+          background: active ? 'rgba(255,255,255,.25)' : (ready ? '#D1FAE5' : '#FEE2E2'),
+          color: active ? '#fff' : (ready ? '#065F46' : '#991B1B'),
+        }}>{ready ? '연결됨' : '미연결'}</span>
+      </div>
+      <div style={{ fontSize: 10.5, opacity: active ? 0.9 : 0.6, marginTop: 2 }}>{sub}</div>
+    </button>
+  )
+}
+
+// ─── 인증 상태 카드 ───
+function AuthCard({ env, status, configuredOther }: {
+  env: EnvKey; status: EnvStatus | null; configuredOther?: boolean;
+}) {
+  if (!status) return (
     <div style={{ ...cardStyle, marginBottom: 18 }}>
       <div style={{ fontSize: 12, color: '#94A3B8' }}>연결 확인 중...</div>
     </div>
   )
-  if (!auth.configured) return (
+  if (!status.configured) return (
     <div style={{ ...cardStyle, marginBottom: 18, background: '#FEF2F2', borderColor: '#FECACA' }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#991B1B', marginBottom: 6 }}>⚠ 키움 API 미설정</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: '#991B1B', marginBottom: 6 }}>
+        ⚠ {env === 'prod' ? '실전' : '모의투자'} 키 미설정
+      </div>
       <div style={{ fontSize: 11.5, color: '#7F1D1D', lineHeight: 1.7 }}>
-        <code>.env.local</code>에 다음 환경변수 추가 필요:
-        <pre style={{ background: '#FFF', padding: '8px 10px', borderRadius: 6, marginTop: 6, fontSize: 11 }}>{`KIWOOM_APPKEY=발급받은_AppKey
-KIWOOM_SECRETKEY=발급받은_SecretKey
-KIWOOM_ACCOUNT_NO=계좌번호
-KIWOOM_API_BASE=https://mockapi.kiwoom.com  # 또는 https://api.kiwoom.com`}</pre>
+        <code>.env.local</code>에 추가 필요:
+        <pre style={{ background: '#FFF', padding: '8px 10px', borderRadius: 6, marginTop: 6, fontSize: 11 }}>
+{`KIWOOM_APPKEY_${env.toUpperCase()}=...
+KIWOOM_SECRETKEY_${env.toUpperCase()}=...`}
+        </pre>
+        {configuredOther && <div style={{ marginTop: 6, fontSize: 10.5 }}>
+          (다른 환경은 설정되어 있으니 상단 토글로 전환 가능)
+        </div>}
         <div style={{ marginTop: 4 }}>키 발급: <a href="https://openapi.kiwoom.com" target="_blank" rel="noopener noreferrer" style={{ color: '#0369A1' }}>openapi.kiwoom.com</a></div>
       </div>
     </div>
   )
-  if (!auth.ok) return (
+  if (!status.ok) return (
     <div style={{ ...cardStyle, marginBottom: 18, background: '#FEF2F2', borderColor: '#FECACA' }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#991B1B', marginBottom: 6 }}>⚠ 토큰 발급 실패</div>
-      <div style={{ fontSize: 11, color: '#7F1D1D' }}>{auth.error}</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: '#991B1B', marginBottom: 6 }}>⚠ {env === 'prod' ? '실전' : '모의'} 토큰 발급 실패</div>
+      <div style={{ fontSize: 11, color: '#7F1D1D', wordBreak: 'break-all' }}>{status.error}</div>
     </div>
   )
   return (
     <div style={{ ...cardStyle, marginBottom: 18, background: '#F0F9FF' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, fontSize: 11.5 }}>
-        <KV label="환경" v={auth.env === 'mock' ? '모의투자' : '실거래'} />
-        <KV label="계좌" v={auth.account || '-'} />
-        <KV label="토큰 만료까지" v={auth.expiresInMin != null ? `${auth.expiresInMin}분` : '-'} />
+        <KV label="환경" v={env === 'mock' ? '모의투자' : '실거래'} color={env === 'prod' ? '#DC2626' : '#92400E'} />
+        <KV label="Base" v={status.base.replace('https://', '')} />
+        <KV label="토큰 만료까지" v={status.expiresInMin != null ? `${status.expiresInMin}분` : '-'} />
       </div>
     </div>
   )
 }
 
+// ─── 보조 컴포넌트 ───
 function KV({ label, v, color }: { label: string; v: string; color?: string }) {
   return (
     <div>
@@ -476,41 +502,20 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 // ─── 스타일 ───
-const sectionTitle: React.CSSProperties = {
-  fontSize: 13, fontWeight: 500, color: '#888', marginBottom: 10,
-}
-
-const cardStyle: React.CSSProperties = {
-  padding: '14px 16px',
-  border: '1px solid #BAE6FD',
-  borderRadius: 12,
-  background: '#fff',
-}
-
+const sectionTitle: React.CSSProperties = { fontSize: 13, fontWeight: 500, color: '#888', marginBottom: 10 }
+const cardStyle: React.CSSProperties = { padding: '14px 16px', border: '1px solid #BAE6FD', borderRadius: 12, background: '#fff' }
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '9px 12px', fontSize: 13,
   border: '1px solid #BAE6FD', borderRadius: 8, outline: 'none',
-  background: '#fff', color: '#0F172A',
-  fontFamily: 'inherit',
-  boxSizing: 'border-box',
+  background: '#fff', color: '#0F172A', fontFamily: 'inherit', boxSizing: 'border-box',
 }
-
 const buttonStyle: React.CSSProperties = {
   padding: '9px 16px', fontSize: 13, fontWeight: 600,
-  border: 'none', borderRadius: 8, cursor: 'pointer',
-  color: '#fff', whiteSpace: 'nowrap',
+  border: 'none', borderRadius: 8, cursor: 'pointer', color: '#fff', whiteSpace: 'nowrap',
 }
-
 const tabBtn: React.CSSProperties = {
   flex: 1, padding: '9px 16px', fontSize: 13, fontWeight: 700,
-  border: '1.5px solid', borderRadius: 8, cursor: 'pointer',
-  background: '#fff',
+  border: '1.5px solid', borderRadius: 8, cursor: 'pointer', background: '#fff',
 }
-
-const th: React.CSSProperties = {
-  padding: '8px 10px', fontWeight: 600, fontSize: 10.5, letterSpacing: 0.5, textAlign: 'left',
-}
-
-const td: React.CSSProperties = {
-  padding: '8px 10px', color: '#334155', verticalAlign: 'middle',
-}
+const th: React.CSSProperties = { padding: '8px 10px', fontWeight: 600, fontSize: 10.5, letterSpacing: 0.5, textAlign: 'left' }
+const td: React.CSSProperties = { padding: '8px 10px', color: '#334155', verticalAlign: 'middle' }

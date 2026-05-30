@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callKiwoomTR, parseKiwoomNum, kiwoomConfigured } from '@/app/lib/kiwoom'
+import { callKiwoomTR, parseKiwoomNum, kiwoomConfigured, parseEnv } from '@/app/lib/kiwoom'
 
 export const dynamic = 'force-dynamic'
 
-// GET /api/kiwoom/quote?symbol=005930
-// ka10001 (주식기본정보요청)
+// GET /api/kiwoom/quote?symbol=005930&env=mock|prod
 export async function GET(req: NextRequest) {
-  if (!kiwoomConfigured()) {
-    return NextResponse.json({ error: 'KIWOOM_APPKEY/SECRETKEY 미설정' }, { status: 400 })
+  const env = parseEnv(req.nextUrl.searchParams.get('env'))
+  if (!kiwoomConfigured(env)) {
+    return NextResponse.json({ error: `${env === 'prod' ? '실전' : '모의'} 키 미설정` }, { status: 400 })
   }
   const symbol = req.nextUrl.searchParams.get('symbol')?.trim()
   if (!symbol) return NextResponse.json({ error: 'symbol required' }, { status: 400 })
 
   try {
-    const r = await callKiwoomTR({
+    const r = await callKiwoomTR(env, {
       apiId: 'ka10001',
       body: { stk_cd: symbol },
     })
@@ -30,12 +30,12 @@ export async function GET(req: NextRequest) {
     const chg  = parseKiwoomNum(d.pred_pre)
     const rate = parseKiwoomNum(d.flu_rt)
 
-    // 등락구분 (1상한 2상승 3보합 4하한 5하락) — 부호 결정
     const sig = d.pred_pre_sig
     const isUp   = sig === '1' || sig === '2' || cur.sign === 'up'
     const isDown = sig === '4' || sig === '5' || cur.sign === 'down'
 
     return NextResponse.json({
+      env,
       symbol: d.stk_cd || symbol,
       name: d.stk_nm || symbol,
       current: cur.value,

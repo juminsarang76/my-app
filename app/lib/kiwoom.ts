@@ -1,31 +1,51 @@
-// 키움증권 REST API 공통 클라이언트
-// 문서: https://openapi.kiwoom.com (REST OpenAPI+)
+// 키움증권 REST API 공통 클라이언트 (실전/모의 듀얼 환경 지원)
+// 문서: https://openapi.kiwoom.com
 
-const API_BASE   = process.env.KIWOOM_API_BASE || 'https://mockapi.kiwoom.com'
-const APPKEY     = process.env.KIWOOM_APPKEY || ''
-const SECRETKEY  = process.env.KIWOOM_SECRETKEY || ''
+export type KiwoomEnv = 'mock' | 'prod'
+
+const ENVS = {
+  mock: {
+    base: 'https://mockapi.kiwoom.com',
+    appkey: process.env.KIWOOM_APPKEY_MOCK || '',
+    secret: process.env.KIWOOM_SECRETKEY_MOCK || '',
+  },
+  prod: {
+    base: 'https://api.kiwoom.com',
+    appkey: process.env.KIWOOM_APPKEY_PROD || '',
+    secret: process.env.KIWOOM_SECRETKEY_PROD || '',
+  },
+} as const
+
 const ACCOUNT_NO = process.env.KIWOOM_ACCOUNT_NO || ''
 
-export const kiwoomEnv     = (): 'mock' | 'production' => API_BASE.includes('mock') ? 'mock' : 'production'
-export const kiwoomBase    = () => API_BASE
 export const kiwoomAccount = () => ACCOUNT_NO
-export const kiwoomConfigured = () => Boolean(APPKEY && SECRETKEY)
+export const kiwoomBase    = (env: KiwoomEnv) => ENVS[env].base
+export const kiwoomConfigured = (env: KiwoomEnv) => Boolean(ENVS[env].appkey && ENVS[env].secret)
 
-// ─── OAuth 토큰 (메모리 캐시, 만료 1분 전 자동 갱신) ───
-let tokenCache: { token: string; expires: number } | null = null
+export function parseEnv(v: string | null | undefined): KiwoomEnv {
+  return v === 'prod' ? 'prod' : 'mock'
+}
 
-export async function getKiwoomToken(): Promise<string> {
+// ─── OAuth 토큰 (env별 메모리 캐시) ───
+const tokenCache: Record<KiwoomEnv, { token: string; expires: number } | null> = {
+  mock: null,
+  prod: null,
+}
+
+export async function getKiwoomToken(env: KiwoomEnv): Promise<string> {
+  const cfg = ENVS[env]
   const now = Date.now()
-  if (tokenCache && tokenCache.expires > now + 60_000) return tokenCache.token
-  if (!APPKEY || !SECRETKEY) throw new Error('KIWOOM_APPKEY / KIWOOM_SECRETKEY 환경변수 누락')
+  const cached = tokenCache[env]
+  if (cached && cached.expires > now + 60_000) return cached.token
+  if (!cfg.appkey || !cfg.secret) throw new Error(`${env === 'prod' ? '실전' : '모의'} AppKey/SecretKey 미설정 (KIWOOM_APPKEY_${env.toUpperCase()} / KIWOOM_SECRETKEY_${env.toUpperCase()})`)
 
-  const res = await fetch(`${API_BASE}/oauth2/token`, {
+  const res = await fetch(`${cfg.base}/oauth2/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json;charset=UTF-8' },
     body: JSON.stringify({
       grant_type: 'client_credentials',
-      appkey: APPKEY,
-      secretkey: SECRETKEY,
+      appkey: cfg.appkey,
+      secretkey: cfg.secret,
     }),
     cache: 'no-store',
   })
@@ -33,43 +53,41 @@ export async function getKiwoomToken(): Promise<string> {
   const text = await res.text()
   if (!res.ok) throw new Error(`oauth ${res.status}: ${text}`)
 
-  let data: { token?: string; access_token?: string; expires_in?: number | string; expires_dt?: string }
-  try { data = JSON.parse(text) } catch { throw new Error(`oauth 응답 파싱 실패: ${text.slice(0, 200)}`) }
+  let data: { token?: string; access_token?: string; expires_in?: number | string; expires_dt?: string; return_msg?: string; return_code?: number }
+  try { data = JSON.parse(text) } catch { throw new Error(`oauth 파싱 실패: ${text.slice(0, 200)}`) }
+
+  if (data.return_code != null && data.return_code !== 0) {
+    throw new Error(`${data.return_msg || `code ${data.return_code}`}`)
+  }
 
   const raw = data.token || data.access_token
   if (!raw) throw new Error(`토큰 없음: ${text.slice(0, 200)}`)
   const token = raw.startsWith('Bearer ') ? raw : `Bearer ${raw}`
 
-  // 만료 시각 계산
-  let expires = now + 23 * 3600 * 1000  // 기본 23시간
-  if (data.expires_in) {
-    expires = now + Number(data.expires_in) * 1000
-  }
+  let expires = now + 23 * 3600 * 1000
+  if (data.expires_in) expires = now + Number(data.expires_in) * 1000
   if (data.expires_dt) {
     const m = String(data.expires_dt).match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/)
     if (m) expires = new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]).getTime()
   }
 
-  tokenCache = { token, expires }
+  tokenCache[env] = { token, expires }
   return token
 }
 
-export function getCachedTokenExpiry(): number | null {
-  return tokenCache?.expires ?? null
+export function getCachedTokenExpiry(env: KiwoomEnv): number | null {
+  return tokenCache[env]?.expires ?? null
 }
 
 // ─── TR 호출 ───
-// 키움 REST는 TR마다 endpoint가 다름. api-id prefix로 매핑.
 function endpointForApiId(apiId: string): string {
-  if (apiId.startsWith('kt0'))                 return '/api/dostk/acnt'      // 계좌
-  if (apiId.startsWith('kt1'))                 return '/api/dostk/ordr'      // 주문
-  if (apiId.startsWith('kt9'))                 return '/api/dostk/crdtordr'  // 신용주문
+  if (apiId.startsWith('kt0'))                 return '/api/dostk/acnt'
+  if (apiId.startsWith('kt1'))                 return '/api/dostk/ordr'
+  if (apiId.startsWith('kt9'))                 return '/api/dostk/crdtordr'
   if (apiId === 'ka10001' || apiId === 'ka10002' || apiId === 'ka10003' || apiId === 'ka10004' ||
       apiId === 'ka10095' || apiId === 'ka10100')                return '/api/dostk/stkinfo'
   if (apiId === 'ka10081' || apiId === 'ka10079' || apiId === 'ka10080')   return '/api/dostk/chart'
   if (apiId.startsWith('ka103') || apiId.startsWith('ka102'))    return '/api/dostk/mrkcond'
-  if (apiId.startsWith('ka102'))               return '/api/dostk/sect'
-  // 기본
   return '/api/dostk/stkinfo'
 }
 
@@ -88,10 +106,10 @@ export type TRResult = {
   nextKey: string | null
 }
 
-export async function callKiwoomTR(opts: TROpts): Promise<TRResult> {
+export async function callKiwoomTR(env: KiwoomEnv, opts: TROpts): Promise<TRResult> {
   const { apiId, body, contYn = 'N', nextKey = '', endpoint } = opts
-  const token = await getKiwoomToken()
-  const url = `${API_BASE}${endpoint || endpointForApiId(apiId)}`
+  const token = await getKiwoomToken(env)
+  const url = `${ENVS[env].base}${endpoint || endpointForApiId(apiId)}`
 
   const res = await fetch(url, {
     method: 'POST',
@@ -118,9 +136,6 @@ export async function callKiwoomTR(opts: TROpts): Promise<TRResult> {
   }
 }
 
-// ─── 헬퍼: 키움의 "+/-" 접두사 숫자 파싱 ───
-// "+72500" → { value: 72500, sign: 'up' }
-// "-500"   → { value: 500,   sign: 'down' }
 export function parseKiwoomNum(v: unknown): { value: number; sign: 'up' | 'down' | 'flat' } {
   if (v == null) return { value: 0, sign: 'flat' }
   const s = String(v).trim()
