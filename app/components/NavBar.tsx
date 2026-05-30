@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: '/강의.html',     label: '강의' },
   { href: '/jinju',         label: '진주' },
   { href: '/jungdeung',     label: '중등부' },
+  { href: '/products',      label: '상품' },
 ]
 
 export default function NavBar() {
