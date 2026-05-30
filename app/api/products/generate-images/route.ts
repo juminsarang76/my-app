@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Gemini 2.0 Flash — 이미지 생성 (AI Studio GEMINI_API_KEY로 사용 가능)
-const MODEL = 'gemini-2.0-flash-preview-image-generation'
+// Gemini 2.5 Flash Image — 이미지 생성 (AI Studio GEMINI_API_KEY로 사용 가능)
+// 공식 모델 ID: https://developers.googleblog.com/en/gemini-2-5-flash-image-now-ready-for-production
+const MODEL = 'gemini-2.5-flash-image'
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
 
 const VARIATIONS = [
@@ -21,7 +22,7 @@ async function generateOne(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ parts: [{ text: `${prompt}, ${variation}` }] }],
-      generationConfig: { responseModalities: ['IMAGE'] },
+      generationConfig: { responseModalities: ['IMAGE'], imageConfig: { aspectRatio: '1:1' } },
     }),
   })
 
