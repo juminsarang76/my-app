@@ -13,6 +13,9 @@ export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [deletingEmpty, setDeletingEmpty] = useState(false)
+
+  const emptyCount = reports.filter(r => !r.summary).length
 
   useEffect(() => {
     fetch('/api/reports')
@@ -20,6 +23,18 @@ export default function ReportsPage() {
       .then(data => { setReports(data ?? []); setLoading(false) })
       .catch(() => setLoading(false))
   }, [])
+
+  async function handleDeleteEmpty() {
+    if (!confirm(`내용 없는 항목 ${emptyCount}개를 모두 삭제할까요?`)) return
+    setDeletingEmpty(true)
+    const res = await fetch('/api/reports', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deleteEmpty: true }),
+    })
+    if (res.ok) setReports(prev => prev.filter(r => r.summary))
+    setDeletingEmpty(false)
+  }
 
   async function handleDelete(date: string, e: React.MouseEvent) {
     e.preventDefault()
@@ -37,7 +52,22 @@ export default function ReportsPage() {
 
   return (
     <main style={{ maxWidth: 680, margin: '60px auto', padding: '0 20px', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 8 }}>정기요약</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 10 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 500, margin: 0 }}>정기요약</h1>
+        {emptyCount > 0 && (
+          <button
+            onClick={handleDeleteEmpty}
+            disabled={deletingEmpty}
+            style={{
+              padding: '7px 14px', background: '#fee2e2', border: 'none',
+              borderRadius: 8, color: '#ef4444', fontSize: 13, fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            {deletingEmpty ? '삭제 중...' : `내용 없는 항목 ${emptyCount}개 삭제`}
+          </button>
+        )}
+      </div>
       <p style={{ fontSize: 14, color: '#888', marginBottom: 32 }}>
         양자뉴스 · 유튜브 · 요즘IT · Geeks 뉴스를 매일 오전 정리합니다.
       </p>
