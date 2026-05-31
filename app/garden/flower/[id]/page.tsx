@@ -36,11 +36,17 @@ export default function FlowerDetailPage() {
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState('')
   const [sdkReady, setSdkReady] = useState(false)
+  const [friends, setFriends] = useState<{ id: number; name: string }[]>([])
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
   const jsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY
 
   useEffect(() => {
+    fetch('/api/garden/friends')
+      .then((r) => r.json())
+      .then((data) => setFriends(data ?? []))
+      .catch(() => {})
+
     fetch(`/api/garden/flower/${id}`)
       .then((r) => r.json())
       .then((data: Flower) => {
@@ -113,6 +119,12 @@ export default function FlowerDetailPage() {
       showToast(res.ok ? '사진이 저장됐습니다.' : '사진 저장 실패')
     }
     reader.readAsDataURL(file)
+  }
+
+  function handleInsertName(name: string) {
+    const greeting = `${name}님\n`
+    if (text.startsWith(greeting)) return   // 이미 있으면 중복 추가 안 함
+    setText(greeting + text)
   }
 
   async function handleSaveText() {
@@ -241,6 +253,32 @@ export default function FlowerDetailPage() {
           }}>
             ✏️ 메시지
           </div>
+          {/* 친구 이름 삽입 칩 */}
+          {friends.length > 0 && (
+            <div style={{
+              padding: '10px 16px 4px',
+              display: 'flex', gap: 6, flexWrap: 'wrap',
+            }}>
+              {friends.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => handleInsertName(f.name)}
+                  style={{
+                    padding: '4px 12px',
+                    background: '#FEF3C7', border: '1px solid #FDE68A',
+                    borderRadius: 20, fontSize: 12, fontWeight: 600,
+                    color: '#92400E', cursor: 'pointer',
+                  }}
+                >
+                  {f.name}님
+                </button>
+              ))}
+              <span style={{ fontSize: 11, color: '#94a3b8', alignSelf: 'center' }}>
+                클릭 시 이름 삽입
+              </span>
+            </div>
+          )}
+
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
