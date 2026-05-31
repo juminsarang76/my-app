@@ -18,6 +18,13 @@ interface Friend {
   kakao_uuid: string
 }
 
+interface KakaoFriend {
+  uuid: string
+  profile_nickname: string
+  profile_thumbnail_image?: string
+  allowed_msg: boolean
+}
+
 export default function FlowerListPage() {
   const router = useRouter()
   const [flowers, setFlowers] = useState<Flower[]>([])
@@ -28,6 +35,8 @@ export default function FlowerListPage() {
   const [newName, setNewName] = useState('')
   const [newUuid, setNewUuid] = useState('')
   const [friendLoading, setFriendLoading] = useState(false)
+  const [kakaoFriends, setKakaoFriends] = useState<KakaoFriend[] | null>(null)
+  const [kakaoLoading, setKakaoLoading] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -68,6 +77,37 @@ export default function FlowerListPage() {
     // use [id] route for delete
     const res = await fetch(`/api/garden/flower/${id}`, { method: 'DELETE' })
     if (res.ok) setFlowers((prev) => prev.filter((f) => f.id !== id))
+  }
+
+  async function handleLoadKakaoFriends() {
+    setKakaoLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/garden/kakao-friends')
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? '조회 실패')
+      setKakaoFriends(data)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '친구 목록 조회 실패')
+    } finally {
+      setKakaoLoading(false)
+    }
+  }
+
+  async function handleAddKakaoFriend(kf: KakaoFriend) {
+    setError('')
+    try {
+      const res = await fetch('/api/garden/friends', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: kf.profile_nickname, kakao_uuid: kf.uuid }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setFriends((prev) => [...prev, data])
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '추가 실패')
+    }
   }
 
   async function handleAddFriend() {
@@ -224,33 +264,93 @@ export default function FlowerListPage() {
               ))}
             </div>
 
-            {/* 친구 추가 */}
+            {/* 카카오 친구 목록에서 추가 */}
             {friends.length < 5 && (
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <input
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder="이름"
-                  style={{ padding: '8px 12px', border: '1px solid #FED7AA', borderRadius: 6, fontSize: 13, width: 90 }}
-                />
-                <input
-                  value={newUuid}
-                  onChange={(e) => setNewUuid(e.target.value)}
-                  placeholder="카카오 UUID"
-                  style={{ padding: '8px 12px', border: '1px solid #FED7AA', borderRadius: 6, fontSize: 13, flex: 1, minWidth: 200 }}
-                />
+              <div style={{ marginBottom: 16 }}>
                 <button
-                  onClick={handleAddFriend}
-                  disabled={friendLoading}
-                  style={{ padding: '8px 16px', background: '#EA580C', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                  onClick={handleLoadKakaoFriends}
+                  disabled={kakaoLoading}
+                  style={{
+                    padding: '9px 18px', background: '#FEE500', color: '#3C1E1E',
+                    border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13,
+                    cursor: 'pointer', marginBottom: 10,
+                  }}
                 >
-                  {friendLoading ? '...' : '추가'}
+                  {kakaoLoading ? '불러오는 중...' : '💬 카카오 친구 목록 불러오기'}
                 </button>
+
+                {kakaoFriends !== null && (
+                  kakaoFriends.length === 0 ? (
+                    <p style={{ fontSize: 12, color: '#94a3b8' }}>
+                      앱을 허용한 카카오 친구가 없습니다. 친구가 카카오 로그인으로 앱을 사용해야 합니다.
+                    </p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {kakaoFriends.map((kf) => {
+                        const alreadyAdded = friends.some((f) => f.kakao_uuid === kf.uuid)
+                        return (
+                          <div key={kf.uuid} style={{
+                            display: 'flex', alignItems: 'center', gap: 10,
+                            padding: '8px 12px', background: '#FFFBEB', borderRadius: 8, border: '1px solid #FDE68A',
+                          }}>
+                            {kf.profile_thumbnail_image && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={kf.profile_thumbnail_image} alt="" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                            )}
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: '#92400E' }}>{kf.profile_nickname}</div>
+                              <div style={{ fontSize: 10, color: '#94a3b8', fontFamily: 'monospace' }}>{kf.uuid.slice(0, 20)}…</div>
+                              {!kf.allowed_msg && (
+                                <div style={{ fontSize: 10, color: '#ef4444' }}>메시지 수신 미동의</div>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => handleAddKakaoFriend(kf)}
+                              disabled={alreadyAdded || friends.length >= 5}
+                              style={{
+                                padding: '5px 12px', background: alreadyAdded ? '#e2e8f0' : '#EA580C',
+                                color: alreadyAdded ? '#94a3b8' : '#fff',
+                                border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                              }}
+                            >
+                              {alreadyAdded ? '추가됨' : '+ 추가'}
+                            </button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )
+                )}
               </div>
             )}
-            <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 8 }}>
-              UUID는 카카오 개발자 콘솔 → 사용자 관리 → 친구 목록 API에서 확인하세요.
-            </p>
+
+            {/* 수동 UUID 입력 */}
+            {friends.length < 5 && (
+              <details style={{ marginBottom: 8 }}>
+                <summary style={{ fontSize: 12, color: '#94a3b8', cursor: 'pointer', marginBottom: 8 }}>UUID 직접 입력</summary>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+                  <input
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="이름"
+                    style={{ padding: '8px 12px', border: '1px solid #FED7AA', borderRadius: 6, fontSize: 13, width: 90 }}
+                  />
+                  <input
+                    value={newUuid}
+                    onChange={(e) => setNewUuid(e.target.value)}
+                    placeholder="카카오 UUID"
+                    style={{ padding: '8px 12px', border: '1px solid #FED7AA', borderRadius: 6, fontSize: 13, flex: 1, minWidth: 200 }}
+                  />
+                  <button
+                    onClick={handleAddFriend}
+                    disabled={friendLoading}
+                    style={{ padding: '8px 16px', background: '#EA580C', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                  >
+                    {friendLoading ? '...' : '추가'}
+                  </button>
+                </div>
+              </details>
+            )}
           </div>
         )}
       </div>
