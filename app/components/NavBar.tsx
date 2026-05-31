@@ -15,11 +15,16 @@ const NAV_LINKS = [
   { href: '/jinju',         label: '진주' },
   { href: '/jungdeung',     label: '중등부' },
   { href: '/products',      label: '상품' },
+  { href: '/garden',        label: '가든' },
 ]
 
 export default function NavBar() {
   const pathname = usePathname()
-  if (pathname.startsWith('/jungdeung') || pathname.startsWith('/products')) return null
+  if (
+    pathname.startsWith('/jungdeung') ||
+    pathname.startsWith('/products') ||
+    pathname.startsWith('/garden')
+  ) return null
 
   return (
     <nav style={{
