@@ -58,10 +58,11 @@ export default function FlowerDetailPage() {
   }
 
   function handleSdkLoad() {
-    if (jsKey && window.Kakao && !window.Kakao.isInitialized()) {
+    if (!window.Kakao) return
+    if (jsKey && !window.Kakao.isInitialized()) {
       window.Kakao.init(jsKey)
     }
-    setSdkReady(true)
+    setSdkReady(window.Kakao.isInitialized())
   }
 
   // KakaoLink — 카카오톡 앱에서 직접 친구 선택해서 보내기
@@ -138,8 +139,7 @@ export default function FlowerDetailPage() {
     <>
       <Script
         src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
-        integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
-        crossOrigin="anonymous"
+        strategy="afterInteractive"
         onLoad={handleSdkLoad}
       />
 
