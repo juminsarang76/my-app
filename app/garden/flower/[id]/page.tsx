@@ -76,17 +76,22 @@ export default function FlowerDetailPage() {
       ? `${apiUrl}/api/garden/flower/${id}/image`
       : undefined
 
+    const link = {
+      mobileWebUrl: `${apiUrl}/garden/flower/${id}`,
+      webUrl: `${apiUrl}/garden/flower/${id}`,
+    }
+
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
         title: '🌸 하루꽃',
         description: text || '오늘의 꽃입니다.',
         ...(imageUrl ? { imageUrl, imageWidth: 640, imageHeight: 640 } : {}),
-        link: {
-          mobileWebUrl: `${apiUrl}/garden/flower/${id}`,
-          webUrl: `${apiUrl}/garden/flower/${id}`,
-        },
+        link,
       },
+      buttons: [
+        { title: '꽃 보러 가기', link },
+      ],
     })
   }
 
