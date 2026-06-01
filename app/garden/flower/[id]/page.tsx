@@ -35,6 +35,7 @@ export default function FlowerDetailPage() {
   const [hasImage, setHasImage] = useState(false)
   const [saving, setSaving] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
+  const [step, setStep] = useState('')   // 단계별 진행 메시지
   const [toast, setToast] = useState('')
   const [sdkReady, setSdkReady] = useState(false)
   const [friends, setFriends] = useState<{ id: number; name: string }[]>([])
@@ -97,7 +98,7 @@ export default function FlowerDetailPage() {
     })
   }
 
-  // 이미지 선택 → 저장 + Gemini 분석
+  // 이미지 선택 → 즉시 표시 → 단계별 분석
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -107,19 +108,22 @@ export default function FlowerDetailPage() {
       const [meta, b64] = dataUrl.split(',')
       const mime = meta.match(/:(.*?);/)?.[1] ?? 'image/jpeg'
 
+      // ① 사진 즉시 화면 표시
       setPreviewUrl(dataUrl)
       setHasImage(true)
 
-      // 이미지 DB 저장
+      setAnalyzing(true)
+
+      // ② 사진 저장
+      setStep('📸 사진 저장 중...')
       await fetch(`/api/garden/flower/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image_data: b64, image_mime: mime }),
       })
 
-      // Gemini로 꽃 분석
-      setAnalyzing(true)
-      showToast('🌸 꽃을 분석하고 있습니다...')
+      // ③ 꽃 이름 찾기
+      setStep('🔍 꽃 이름 찾는 중...')
       try {
         const res = await fetch('/api/garden/analyze-flower', {
           method: 'POST',
@@ -127,15 +131,35 @@ export default function FlowerDetailPage() {
           body: JSON.stringify({ base64: b64, mime }),
         })
         const result = await res.json()
+
         if (res.ok && result.flowerName) {
+          // ④ 제목 자동 작성
+          setStep('✍️ 제목 작성 중...')
+          await new Promise(r => setTimeout(r, 500))
           setTitle(result.flowerName)
+
+          // ⑤ 오늘의 문장 자동 작성
+          setStep('💬 오늘의 문장 작성 중...')
+          await new Promise(r => setTimeout(r, 500))
           if (result.sentence) setText(result.sentence)
-          showToast(`🌸 ${result.flowerName} 분석 완료! 수정 후 저장하세요.`)
+
+          // ⑥ 자동 저장
+          setStep('💾 저장 중...')
+          await fetch(`/api/garden/flower/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: result.flowerName, flower_text: result.sentence ?? '' }),
+          })
+
+          setStep('')
+          showToast(`🌸 ${result.flowerName} 완료!`)
         } else {
-          showToast('사진은 저장됐습니다. 제목과 문장을 직접 입력해주세요.')
+          setStep('')
+          showToast('사진 저장 완료. 제목과 문장을 직접 입력해주세요.')
         }
       } catch {
-        showToast('사진은 저장됐습니다. 분석에 실패했습니다.')
+        setStep('')
+        showToast('사진 저장 완료. 분석에 실패했습니다.')
       } finally {
         setAnalyzing(false)
       }
@@ -224,7 +248,7 @@ export default function FlowerDetailPage() {
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
-            placeholder={analyzing ? '🌸 꽃 이름 분석 중...' : '꽃 이름 (예: 장미, 수국)'}
+            placeholder={step || '꽃 이름 (예: 장미, 수국)'}
             style={{
               width: '100%', boxSizing: 'border-box',
               padding: '12px 16px', fontSize: 17, fontWeight: 700,
@@ -264,14 +288,20 @@ export default function FlowerDetailPage() {
               <div style={{ fontSize: 12, color: '#FCA570', marginTop: 4 }}>클릭하여 기기에서 선택</div>
             </div>
           )}
-          {analyzing && (
+          {analyzing && step && (
             <div style={{
               position: 'absolute', inset: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexDirection: 'column', gap: 8, color: '#fff',
+              flexDirection: 'column', gap: 8,
             }}>
-              <div style={{ fontSize: 32 }}>🔍</div>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>꽃을 분석하는 중...</div>
+              <div style={{
+                background: 'rgba(0,0,0,0.65)',
+                color: '#fff', fontSize: 15, fontWeight: 700,
+                padding: '12px 24px', borderRadius: 30,
+                backdropFilter: 'blur(4px)',
+              }}>
+                {step}
+              </div>
             </div>
           )}
           {previewUrl && !analyzing && (
