@@ -322,7 +322,18 @@ export default function FlowerDetailPage() {
             {text.length}자{text.length > 100 ? ' (100자 초과 시 말줄임 표시)' : ''}
           </div>
 
-          <div style={{ padding: '8px 16px 12px', background: '#FFF7F0', display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ padding: '8px 16px 12px', background: '#FFF7F0', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <button
+              onClick={() => { setTitle(flower.title ?? ''); setText(flower.flower_text ?? '') }}
+              disabled={saving || analyzing}
+              style={{
+                padding: '8px 20px', background: '#e2e8f0', color: '#475569',
+                border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13,
+                cursor: 'pointer',
+              }}
+            >
+              취소
+            </button>
             <button
               onClick={handleSave}
               disabled={saving || analyzing}
