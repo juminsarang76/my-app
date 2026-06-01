@@ -2,21 +2,37 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const maxDuration = 30
 
-const PROMPT = `이 사진을 분석해서 꽃 이름, 꽃말, 오늘의 문장을 알려주세요.
-꽃이 아닌 사진이면 사진 속 주요 대상으로 대신하세요.
+const GROQ_PROMPT = (flowerName: string) =>
+  `꽃 이름: ${flowerName}
+이 꽃의 꽃말과 그 꽃말을 담은 오늘의 감성적인 문장(10단어 이상, 70자 이내)을 알려주세요.
+JSON만 반환: {"name":"${flowerName} (꽃말)","sentence":"오늘의 문장"}`
 
-반드시 아래 JSON만 반환하고 다른 텍스트 없이 응답하세요:
-{"name":"꽃이름 (꽃말)","sentence":"꽃말을 담은 감성적인 한 문장 (10단어 이상, 70자 이내)"}`
+async function groqText(groqKey: string, content: string) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content }],
+      max_tokens: 150,
+      temperature: 0.8,
+    }),
+    signal: AbortSignal.timeout(15000),
+  })
+  if (!res.ok) return null
+  const data = await res.json()
+  return data.choices?.[0]?.message?.content?.trim() ?? null
+}
 
-function parseResult(raw: string): { name: string; sentence: string } | null {
+function parseJson(raw: string): { name: string; sentence: string } | null {
   try {
     const cleaned = raw.replace(/```json\s*/g, '').replace(/```/g, '').trim()
-    const parsed = JSON.parse(cleaned)
-    if (parsed.name) return { name: parsed.name, sentence: parsed.sentence ?? '' }
+    const p = JSON.parse(cleaned)
+    if (p.name) return { name: p.name, sentence: p.sentence ?? '' }
   } catch { /* fallthrough */ }
-  const nameMatch = raw.match(/"name"\s*:\s*"([^"]+)"/)
-  const sentenceMatch = raw.match(/"sentence"\s*:\s*"([^"]+)"/)
-  if (nameMatch) return { name: nameMatch[1], sentence: sentenceMatch?.[1] ?? '' }
+  const nm = raw.match(/"name"\s*:\s*"([^"]+)"/)
+  const sm = raw.match(/"sentence"\s*:\s*"([^"]+)"/)
+  if (nm) return { name: nm[1], sentence: sm?.[1] ?? '' }
   return null
 }
 
@@ -24,15 +40,50 @@ export async function POST(req: NextRequest) {
   const { base64, mime } = await req.json()
   if (!base64) return NextResponse.json({ error: '이미지 없음' }, { status: 400 })
 
+  const plantnetKey = process.env.PLANTNET_API_KEY
   const geminiKey = process.env.GEMINI_API_KEY
   const groqKey = process.env.GROQ_API_KEY
 
-  // ── 1순위: Groq Vision (LLaVA) ──
-  // meta-llama/llama-4-scout 등 비전 지원 모델 시도
+  // ── 1순위: PlantNet (식물 전문 식별) + Groq (꽃말·문장) ──
+  if (plantnetKey && groqKey) {
+    try {
+      const buf = Buffer.from(base64, 'base64')
+      const formData = new FormData()
+      formData.append('images', new Blob([buf], { type: mime ?? 'image/jpeg' }), 'flower.jpg')
+      formData.append('organs', 'flower')
+
+      const plantRes = await fetch(
+        `https://my-api.plantnet.org/v2/identify/all?api-key=${plantnetKey}&lang=ko&nb-results=1`,
+        { method: 'POST', body: formData, signal: AbortSignal.timeout(15000) },
+      )
+
+      if (plantRes.ok) {
+        const plantData = await plantRes.json()
+        const top = plantData.results?.[0]
+        if (top) {
+          const koreanName = top.species?.commonNames?.[0]
+          const scientificName = top.species?.scientificName ?? ''
+          const flowerName = koreanName || scientificName
+
+          // Groq로 꽃말 + 문장 생성
+          const raw = await groqText(groqKey, GROQ_PROMPT(flowerName))
+          if (raw) {
+            const result = parseJson(raw)
+            if (result) {
+              return NextResponse.json({ ...result, flowerName: result.name, source: 'plantnet+groq' })
+            }
+          }
+          // Groq 파싱 실패 시 PlantNet 이름만 반환
+          return NextResponse.json({ flowerName, name: flowerName, sentence: '', source: 'plantnet' })
+        }
+      }
+    } catch { /* 다음 방법으로 */ }
+  }
+
+  // ── 2순위: Groq Vision (llama-4 등) ──
   if (groqKey) {
     for (const model of [
       'meta-llama/llama-4-scout-17b-16e-instruct',
-      'meta-llama/llama-4-maverick-17b-128e-instruct',
       'llava-v1.5-7b-4096-preview',
     ]) {
       try {
@@ -44,7 +95,11 @@ export async function POST(req: NextRequest) {
             messages: [{
               role: 'user',
               content: [
-                { type: 'text', text: PROMPT },
+                {
+                  type: 'text',
+                  text: `이 사진의 꽃 이름(한국어), 꽃말, 꽃말을 담은 감성 문장(10단어 이상, 70자 이내)을 알려주세요.
+JSON만 반환: {"name":"꽃이름 (꽃말)","sentence":"오늘의 문장"}`,
+                },
                 { type: 'image_url', image_url: { url: `data:${mime ?? 'image/jpeg'};base64,${base64}` } },
               ],
             }],
@@ -53,22 +108,19 @@ export async function POST(req: NextRequest) {
           }),
           signal: AbortSignal.timeout(20000),
         })
-
         if (res.ok) {
           const data = await res.json()
           const raw = (data.choices?.[0]?.message?.content ?? '').trim()
-          const result = parseResult(raw)
-          if (result) {
-            return NextResponse.json({ ...result, flowerName: result.name, source: `groq-vision:${model}` })
-          }
+          const result = parseJson(raw)
+          if (result) return NextResponse.json({ ...result, flowerName: result.name, source: `groq-vision:${model}` })
         }
-      } catch { /* 지원 안 하면 다음 모델 */ }
+      } catch { /* 다음 모델 */ }
     }
   }
 
-  // ── 2순위: Gemini Vision ──
+  // ── 3순위: Gemini Vision ──
   if (geminiKey) {
-    for (const model of ['gemini-1.5-flash-8b', 'gemini-1.5-flash', 'gemini-1.5-pro']) {
+    for (const model of ['gemini-1.5-flash-8b', 'gemini-1.5-flash']) {
       try {
         const res = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
@@ -78,7 +130,7 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify({
               contents: [{
                 parts: [
-                  { text: PROMPT },
+                  { text: `꽃 이름(한국어), 꽃말, 감성 문장(10단어↑, 70자↓) JSON만 반환: {"name":"꽃이름 (꽃말)","sentence":"문장"}` },
                   { inlineData: { mimeType: mime ?? 'image/jpeg', data: base64 } },
                 ],
               }],
@@ -90,41 +142,24 @@ export async function POST(req: NextRequest) {
         if (res.ok) {
           const data = await res.json()
           const raw = (data.candidates?.[0]?.content?.parts?.[0]?.text ?? '').trim()
-          const result = parseResult(raw)
-          if (result) {
-            return NextResponse.json({ ...result, flowerName: result.name, source: `gemini:${model}` })
-          }
+          const result = parseJson(raw)
+          if (result) return NextResponse.json({ ...result, flowerName: result.name, source: `gemini:${model}` })
         }
-      } catch { /* 다음 모델 */ }
+      } catch { /* 다음 */ }
     }
   }
 
-  // ── 3순위: Groq 텍스트 (계절 기반) ──
+  // ── 4순위: Groq 텍스트 (계절 기반) ──
   if (groqKey) {
     const month = new Date(Date.now() + 9 * 3600_000).getUTCMonth() + 1
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [{
-          role: 'user',
-          content: `${month}월에 어울리는 꽃 이름, 꽃말, 그 꽃말을 담은 감성적인 한 문장(10단어 이상, 70자 이내).
-JSON만 반환: {"name":"꽃이름 (꽃말)","sentence":"오늘의 문장"}`,
-        }],
-        max_tokens: 150,
-        temperature: 0.9,
-      }),
-    })
-    if (res.ok) {
-      const data = await res.json()
-      const raw = data.choices?.[0]?.message?.content?.trim() ?? ''
-      const result = parseResult(raw)
-      if (result) {
-        return NextResponse.json({ ...result, flowerName: result.name, source: 'groq-text' })
-      }
+    const raw = await groqText(groqKey,
+      `${month}월에 어울리는 꽃 이름, 꽃말, 그 꽃말을 담은 감성 문장(10단어 이상, 70자 이내).
+JSON만 반환: {"name":"꽃이름 (꽃말)","sentence":"오늘의 문장"}`)
+    if (raw) {
+      const result = parseJson(raw)
+      if (result) return NextResponse.json({ ...result, flowerName: result.name, source: 'groq-text' })
     }
   }
 
-  return NextResponse.json({ flowerName: '예쁜 꽃', sentence: '', name: '예쁜 꽃', source: 'default' })
+  return NextResponse.json({ flowerName: '예쁜 꽃', name: '예쁜 꽃', sentence: '', source: 'default' })
 }
