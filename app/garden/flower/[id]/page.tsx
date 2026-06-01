@@ -126,14 +126,16 @@ export default function FlowerDetailPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ base64: b64, mime }),
         })
-        if (res.ok) {
-          const { flowerName, sentence } = await res.json()
-          setTitle(flowerName)
-          setText(sentence)
-          showToast(`🌸 ${flowerName} 분석 완료! 수정 후 저장하세요.`)
+        const result = await res.json()
+        if (res.ok && result.flowerName) {
+          setTitle(result.flowerName)
+          if (result.sentence) setText(result.sentence)
+          showToast(`🌸 ${result.flowerName} 분석 완료! 수정 후 저장하세요.`)
+        } else {
+          showToast('사진은 저장됐습니다. 제목과 문장을 직접 입력해주세요.')
         }
       } catch {
-        showToast('사진 저장 완료. 분석에 실패했습니다.')
+        showToast('사진은 저장됐습니다. 분석에 실패했습니다.')
       } finally {
         setAnalyzing(false)
       }
