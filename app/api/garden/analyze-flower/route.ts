@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const maxDuration = 30
 
-const GROQ_PROMPT = (flowerName: string) =>
-  `꽃 이름: ${flowerName}
-이 꽃의 꽃말과 그 꽃말을 담은 오늘의 감성적인 문장(10단어 이상, 70자 이내)을 알려주세요.
-JSON만 반환: {"name":"${flowerName} (꽃말)","sentence":"오늘의 문장"}`
+// koreanName: PlantNet이 준 한국어명 (있을 수도 없을 수도)
+// scientificName: 학명 (항상 있음)
+function makeGroqPrompt(koreanName: string | undefined, scientificName: string) {
+  const nameHint = koreanName
+    ? `한국어 이름: ${koreanName}`
+    : `학명: ${scientificName} — 이 학명에 해당하는 한국어 꽃 이름을 찾아주세요`
+
+  return `${nameHint}
+이 꽃의 한국어 이름, 꽃말, 꽃말을 담은 오늘의 감성적인 문장(10단어 이상, 70자 이내)을 알려주세요.
+JSON만 반환: {"name":"한국어꽃이름 (꽃말)","sentence":"오늘의 문장"}`
+}
 
 async function groqText(groqKey: string, content: string) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -61,12 +68,11 @@ export async function POST(req: NextRequest) {
         const plantData = await plantRes.json()
         const top = plantData.results?.[0]
         if (top) {
-          const koreanName = top.species?.commonNames?.[0]
-          const scientificName = top.species?.scientificName ?? ''
-          const flowerName = koreanName || scientificName
+          const koreanName = top.species?.commonNames?.[0] as string | undefined
+          const scientificName = (top.species?.scientificName ?? '') as string
 
-          // Groq로 꽃말 + 문장 생성
-          const raw = await groqText(groqKey, GROQ_PROMPT(flowerName))
+          // Groq로 한국어 이름 + 꽃말 + 문장 생성
+          const raw = await groqText(groqKey, makeGroqPrompt(koreanName, scientificName))
           if (raw) {
             const result = parseJson(raw)
             if (result) {
@@ -74,7 +80,8 @@ export async function POST(req: NextRequest) {
             }
           }
           // Groq 파싱 실패 시 PlantNet 이름만 반환
-          return NextResponse.json({ flowerName, name: flowerName, sentence: '', source: 'plantnet' })
+          const fallbackName = koreanName || scientificName
+          return NextResponse.json({ flowerName: fallbackName, name: fallbackName, sentence: '', source: 'plantnet' })
         }
       }
     } catch { /* 다음 방법으로 */ }
