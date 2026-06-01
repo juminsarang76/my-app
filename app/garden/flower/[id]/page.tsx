@@ -127,15 +127,32 @@ export default function FlowerDetailPage() {
     setText(greeting + text)
   }
 
-  async function handleSaveText() {
-    setSaving(true)
+  async function saveText(): Promise<boolean> {
     const res = await fetch(`/api/garden/flower/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ flower_text: text }),
     })
+    return res.ok
+  }
+
+  async function handleSaveText() {
+    setSaving(true)
+    const ok = await saveText()
     setSaving(false)
-    showToast(res.ok ? '저장됐습니다.' : '저장 실패')
+    showToast(ok ? '저장됐습니다.' : '저장 실패')
+  }
+
+  // 저장 후 바로 카카오 전송
+  async function handleDirectSend() {
+    if (!window.Kakao?.isInitialized()) {
+      showToast('카카오 SDK 로딩 중입니다. 잠시 후 다시 시도하세요.')
+      return
+    }
+    setSaving(true)
+    await saveText()
+    setSaving(false)
+    handleKakaoShare()
   }
 
   function formatId(rawId: string) {
@@ -292,18 +309,29 @@ export default function FlowerDetailPage() {
           />
           <div style={{
             padding: '10px 16px', background: '#FFF7F0',
-            display: 'flex', justifyContent: 'flex-end',
+            display: 'flex', gap: 8, justifyContent: 'flex-end',
           }}>
             <button
               onClick={handleSaveText}
               disabled={saving}
               style={{
-                padding: '8px 20px', background: '#EA580C', color: '#fff',
+                padding: '8px 20px', background: '#e2e8f0', color: '#475569',
                 border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13,
                 cursor: 'pointer',
               }}
             >
               {saving ? '저장 중...' : '저장'}
+            </button>
+            <button
+              onClick={handleDirectSend}
+              disabled={saving || !sdkReady}
+              style={{
+                padding: '8px 20px', background: '#FEE500', color: '#3C1E1E',
+                border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13,
+                cursor: 'pointer',
+              }}
+            >
+              {saving ? '저장 중...' : '💬 바로보내기'}
             </button>
           </div>
         </div>
