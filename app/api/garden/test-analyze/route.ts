@@ -1,86 +1,71 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
-// GET /api/garden/test-analyze
-// 1단계: Gemini API 키 유효성 확인 (텍스트)
-// 2단계: Vision 분석 테스트
-export async function GET() {
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+)
+
+// GET /api/garden/test-analyze?id=DF_260531_2052_26
+// 저장된 하루꽃 이미지로 Gemini Vision 분석 검증
+export async function GET(req: NextRequest) {
+  const id = req.nextUrl.searchParams.get('id')
+  if (!id) return NextResponse.json({ error: 'id 파라미터 필요. 예: ?id=DF_260531_2052_26' })
+
   const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) return NextResponse.json({ ok: false, step: 'init', error: 'GEMINI_API_KEY 없음' })
+  if (!apiKey) return NextResponse.json({ ok: false, error: 'GEMINI_API_KEY 없음' })
 
-  // ── 1단계: 텍스트 API 확인 ──
-  const textRes = await fetch(
+  // Supabase에서 이미지 조회
+  const { data, error } = await supabase
+    .from('daily_flowers')
+    .select('image_data, image_mime, title, flower_text')
+    .eq('id', id)
+    .single()
+
+  if (error || !data) return NextResponse.json({ ok: false, error: `꽃 없음: ${error?.message}` })
+  if (!data.image_data) return NextResponse.json({ ok: false, error: '이미지가 없는 항목입니다.' })
+
+  // Gemini Vision으로 분석
+  const prompt = `이 사진을 보고 두 가지를 알려주세요.
+1. 사진 속 주요 대상의 이름 (꽃이면 꽃 이름, 예: 장미 / 수국 / 튤립)
+2. 그 이름과 관련된 오늘의 감성적인 한 문장 (50자 이내)
+
+반드시 아래 JSON 형식만 반환하세요:
+{"name":"이름","sentence":"오늘의 문장"}`
+
+  const res = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: '장미꽃에 대한 짧은 한 문장을 써주세요.' }] }],
-        generationConfig: { maxOutputTokens: 50 },
+        contents: [{
+          parts: [
+            { text: prompt },
+            { inlineData: { mimeType: data.image_mime ?? 'image/jpeg', data: data.image_data } },
+          ],
+        }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 200 },
       }),
     },
   )
 
-  if (!textRes.ok) {
-    const err = await textRes.text()
-    return NextResponse.json({ ok: false, step: 'text', status: textRes.status, error: err })
-  }
+  const raw = res.ok ? await res.json() : null
+  const text = raw?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
 
-  const textData = await textRes.json()
-  const textAnswer = textData.candidates?.[0]?.content?.parts?.[0]?.text ?? '(응답 없음)'
-
-  // ── 2단계: Vision API 확인 (안정적인 공개 이미지) ──
-  // 작은 공개 이미지를 직접 base64로 변환
-  let visionResult: unknown = null
-  let visionError: string | null = null
-
+  let parsed: unknown = null
   try {
-    const imgUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Red_rose.jpg/320px-Red_rose.jpg'
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 10000)
-    const imgRes = await fetch(imgUrl, {
-      signal: controller.signal,
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; test-bot)' },
-    })
-    clearTimeout(timer)
-
-    if (imgRes.ok) {
-      const buf = await imgRes.arrayBuffer()
-      const b64 = Buffer.from(buf).toString('base64')
-      const mime = imgRes.headers.get('content-type') ?? 'image/jpeg'
-
-      const vRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [
-                { text: '이 꽃의 이름을 한국어로 알려주세요. JSON으로만: {"name":"꽃이름"}' },
-                { inlineData: { mimeType: mime, data: b64 } },
-              ],
-            }],
-            generationConfig: { maxOutputTokens: 50 },
-          }),
-        },
-      )
-      const vData = await vRes.json()
-      const raw = vData.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
-      try {
-        visionResult = JSON.parse(raw.replace(/```json\s*/g, '').replace(/```/g, '').trim())
-      } catch {
-        visionResult = { raw }
-      }
-    } else {
-      visionError = `이미지 로드 실패: ${imgRes.status}`
-    }
-  } catch (e) {
-    visionError = String(e)
+    parsed = JSON.parse(text.replace(/```json\s*/g, '').replace(/```/g, '').trim())
+  } catch {
+    parsed = { raw: text }
   }
 
   return NextResponse.json({
-    ok: true,
-    step1_text: { ok: true, answer: textAnswer },
-    step2_vision: visionError ? { ok: false, error: visionError } : { ok: true, result: visionResult },
+    ok: res.ok,
+    geminiStatus: res.status,
+    flowerId: id,
+    existingTitle: data.title,
+    existingText: data.flower_text,
+    analysisResult: parsed,
   })
 }
