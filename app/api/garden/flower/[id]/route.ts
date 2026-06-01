@@ -34,11 +34,22 @@ export async function PATCH(
   if (body.image_data !== undefined) update.image_data = body.image_data
   if (body.image_mime !== undefined) update.image_mime = body.image_mime
 
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('daily_flowers')
     .update(update)
     .eq('id', id)
     .select()
+
+  // title 컬럼 없을 때 title 제외하고 재시도
+  if (error?.message?.includes('title')) {
+    const { title: _t, ...withoutTitle } = update
+    void _t
+    ;({ data, error } = await supabase
+      .from('daily_flowers')
+      .update(withoutTitle)
+      .eq('id', id)
+      .select())
+  }
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data?.[0])
