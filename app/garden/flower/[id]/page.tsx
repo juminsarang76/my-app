@@ -223,7 +223,6 @@ export default function FlowerDetailPage() {
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder={analyzing ? '🌸 꽃 이름 분석 중...' : '꽃 이름 (예: 장미, 수국)'}
-            disabled={analyzing}
             style={{
               width: '100%', boxSizing: 'border-box',
               padding: '12px 16px', fontSize: 17, fontWeight: 700,
@@ -312,13 +311,11 @@ export default function FlowerDetailPage() {
             value={text}
             onChange={e => setText(e.target.value)}
             placeholder={analyzing ? '꽃을 분석해서 오늘의 문장을 작성 중...' : '오늘의 꽃과 함께 전하고 싶은 말을 적어보세요...'}
-            disabled={analyzing}
             rows={5}
             style={{
               width: '100%', padding: '14px 16px', border: 'none', outline: 'none',
               fontSize: 14, lineHeight: 1.7, resize: 'vertical',
               fontFamily: 'sans-serif', boxSizing: 'border-box',
-              background: analyzing ? '#FFFBF5' : '#fff',
             }}
           />
 
