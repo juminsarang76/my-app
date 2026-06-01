@@ -198,6 +198,19 @@ export default function FlowerDetailPage() {
 
   const textColor = text.length > 100 ? '#ef4444' : text.length > 80 ? '#f97316' : '#94a3b8'
 
+  // 진행 단계 계산
+  const STEPS = ['사진선택', '사진분석', '제목작성', '문장작성', '완료']
+  function getStepIdx() {
+    if (!previewUrl) return -1
+    if (step.includes('저장 중') || step.includes('사진 저장')) return 0
+    if (step.includes('분석')) return 1
+    if (step.includes('제목')) return 2
+    if (step.includes('문장')) return 3
+    if (!analyzing && previewUrl) return 4
+    return 0
+  }
+  const activeStep = getStepIdx()
+
   return (
     <>
       <Script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
@@ -214,54 +227,88 @@ export default function FlowerDetailPage() {
           }}>{toast}</div>
         )}
 
-        {/* 브레드크럼 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, fontSize: 13, color: '#64748b' }}>
-          <Link href="/garden" style={{ color: '#EA580C', textDecoration: 'none' }}>가든</Link>
-          <span>/</span>
-          <Link href="/garden/flower" style={{ color: '#EA580C', textDecoration: 'none' }}>하루꽃</Link>
-          <span>/</span>
-          <span style={{ fontSize: 11 }}>{id}</span>
+        {/* ── 상단: 취소 | 날짜 | 카카오 보내기 + 저장 ── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+          <button
+            onClick={() => router.push('/garden/flower')}
+            style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 13, cursor: 'pointer', padding: '6px 0', display: 'flex', alignItems: 'center', gap: 4 }}
+          >
+            ← 취소
+          </button>
+          <div style={{ fontSize: 11, color: '#94a3b8' }}>{formatId(id)}</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={handleSave}
+              disabled={saving || analyzing}
+              style={{
+                padding: '9px 20px', background: '#EA580C', color: '#fff',
+                border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13,
+                cursor: (saving || analyzing) ? 'not-allowed' : 'pointer',
+                opacity: (saving || analyzing) ? 0.6 : 1,
+              }}
+            >
+              {saving ? '저장 중...' : '저장'}
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              disabled={!sdkReady}
+              style={{
+                padding: '9px 18px',
+                background: sdkReady ? '#FEE500' : '#e2e8f0',
+                color: sdkReady ? '#3C1E1E' : '#94a3b8',
+                border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13,
+                cursor: sdkReady ? 'pointer' : 'not-allowed',
+              }}
+            >
+              {sdkReady ? '💬 보내기' : '...'}
+            </button>
+          </div>
         </div>
 
-        {/* ── 상단: ID + 카카오 보내기 ── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-          <div>
-            <div style={{ fontSize: 11, color: '#94a3b8' }}>{formatId(id)}</div>
-          </div>
-          <button
-            onClick={handleKakaoShare}
-            disabled={!sdkReady}
-            style={{
-              padding: '11px 24px',
-              background: sdkReady ? '#FEE500' : '#e2e8f0',
-              color: sdkReady ? '#3C1E1E' : '#94a3b8',
-              border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 14,
-              cursor: sdkReady ? 'pointer' : 'not-allowed',
-            }}
-          >
-            {sdkReady ? '💬 카카오톡으로 보내기' : '로딩 중...'}
-          </button>
+        {/* ── 진행 상황 ── */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
+          {STEPS.map((s, i) => (
+            <div key={s} style={{ display: 'flex', alignItems: 'center', flex: i < STEPS.length - 1 ? 1 : 0 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                <div style={{
+                  width: 20, height: 20, borderRadius: '50%',
+                  background: i < activeStep ? '#1D9E75' : i === activeStep ? '#EA580C' : '#e2e8f0',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 10, color: '#fff', fontWeight: 700, flexShrink: 0,
+                }}>
+                  {i < activeStep ? '✓' : i + 1}
+                </div>
+                <div style={{
+                  fontSize: 9, color: i === activeStep ? '#EA580C' : i < activeStep ? '#1D9E75' : '#94a3b8',
+                  fontWeight: i === activeStep ? 700 : 400, whiteSpace: 'nowrap',
+                }}>
+                  {s}
+                </div>
+              </div>
+              {i < STEPS.length - 1 && (
+                <div style={{
+                  flex: 1, height: 2, marginBottom: 12,
+                  background: i < activeStep ? '#1D9E75' : '#e2e8f0',
+                  minWidth: 8,
+                }} />
+              )}
+            </div>
+          ))}
         </div>
 
         {/* ── 제목 입력 ── */}
-        <div style={{ marginBottom: 16, position: 'relative' }}>
+        <div style={{ marginBottom: 14, position: 'relative' }}>
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder={step || '꽃 이름 (예: 장미, 수국)'}
             style={{
               width: '100%', boxSizing: 'border-box',
-              padding: '12px 16px', fontSize: 17, fontWeight: 700,
+              padding: '11px 16px', fontSize: 17, fontWeight: 700,
               border: '2px solid #FED7AA', borderRadius: 10, outline: 'none',
-              background: analyzing ? '#FFF7F0' : '#fff',
-              color: '#92400E',
+              background: '#fff', color: '#92400E',
             }}
           />
-          {analyzing && (
-            <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 18 }}>
-              🔍
-            </div>
-          )}
         </div>
 
         {/* ── 꽃 사진 ── */}
@@ -341,45 +388,25 @@ export default function FlowerDetailPage() {
 
           <textarea
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={e => {
+              setText(e.target.value)
+              // 자동 높이 조절
+              e.target.style.height = 'auto'
+              e.target.style.height = `${e.target.scrollHeight}px`
+            }}
             placeholder={analyzing ? '꽃을 분석해서 오늘의 문장을 작성 중...' : '오늘의 꽃과 함께 전하고 싶은 말을 적어보세요...'}
-            rows={5}
+            rows={3}
             style={{
-              width: '100%', padding: '14px 16px', border: 'none', outline: 'none',
-              fontSize: 14, lineHeight: 1.7, resize: 'vertical',
+              width: '100%', padding: '12px 16px', border: 'none', outline: 'none',
+              fontSize: 14, lineHeight: 1.7, resize: 'none',
               fontFamily: 'sans-serif', boxSizing: 'border-box',
+              overflow: 'hidden', minHeight: '4.8em',
             }}
           />
 
           {/* 글자수 카운터 */}
-          <div style={{ padding: '2px 16px 8px', textAlign: 'right', fontSize: 11, color: textColor }}>
-            {text.length}자{text.length > 100 ? ' (100자 초과 시 말줄임 표시)' : ''}
-          </div>
-
-          <div style={{ padding: '8px 16px 12px', background: '#FFF7F0', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-            <button
-              onClick={() => { setTitle(flower.title ?? ''); setText(flower.flower_text ?? '') }}
-              disabled={saving || analyzing}
-              style={{
-                padding: '8px 20px', background: '#e2e8f0', color: '#475569',
-                border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13,
-                cursor: 'pointer',
-              }}
-            >
-              취소
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={saving || analyzing}
-              style={{
-                padding: '8px 24px', background: '#EA580C', color: '#fff',
-                border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13,
-                cursor: (saving || analyzing) ? 'not-allowed' : 'pointer',
-                opacity: (saving || analyzing) ? 0.6 : 1,
-              }}
-            >
-              {saving ? '저장 중...' : '저장'}
-            </button>
+          <div style={{ padding: '2px 16px 10px', textAlign: 'right', fontSize: 11, color: textColor }}>
+            {text.length} / 100{text.length > 100 ? ' ⚠️ 말줄임 표시' : ''}
           </div>
         </div>
       </div>

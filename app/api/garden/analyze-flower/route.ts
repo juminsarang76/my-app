@@ -24,10 +24,10 @@ export async function POST(req: NextRequest) {
                 parts: [
                   {
                     text: `이 사진을 보고 두 가지를 알려주세요.
-1. 사진 속 주요 대상 이름 (꽃이면 꽃 이름, 예: 장미/수국/튤립)
-2. 그 이름과 관련된 오늘의 감성적인 한 문장 (50자 이내)
+1. 꽃 이름과 꽃말 (형식: "꽃이름 (꽃말)", 예: "장미 (사랑)")
+2. 그 꽃말을 담은 오늘의 감성적인 한 문장 (10단어 이상, 70자 이내)
 반드시 아래 JSON만 반환하세요:
-{"name":"이름","sentence":"오늘의 문장"}`
+{"name":"꽃이름 (꽃말)","sentence":"오늘의 문장"}`
                   },
                   { inlineData: { mimeType: mime ?? 'image/jpeg', data: base64 } },
                 ],
@@ -70,8 +70,8 @@ export async function POST(req: NextRequest) {
         model: 'llama-3.3-70b-versatile',
         messages: [{
           role: 'user',
-          content: `${month}월에 어울리는 꽃 한 가지와 그 꽃의 감성적인 한 문장을 알려주세요 (50자 이내).
-JSON만 반환: {"name":"꽃 이름(한국어)","sentence":"오늘의 문장"}`,
+          content: `${month}월에 어울리는 꽃 한 가지, 꽃말, 그 꽃말을 담은 오늘의 감성적인 한 문장(10단어 이상, 70자 이내)을 알려주세요.
+JSON만 반환: {"name":"꽃이름 (꽃말)","sentence":"오늘의 문장"}`,
         }],
         max_tokens: 100,
         temperature: 0.9,
