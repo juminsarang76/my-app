@@ -297,18 +297,36 @@ export default function FlowerDetailPage() {
         </div>
 
         {/* ── 제목 입력 ── */}
-        <div style={{ marginBottom: 14, position: 'relative' }}>
+        <div style={{ marginBottom: 14, display: 'flex', gap: 8, alignItems: 'center' }}>
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
-            placeholder={step || '꽃 이름 (예: 장미, 수국)'}
+            placeholder={step || '꽃 이름 (꽃말) 예: 장미 (사랑)'}
             style={{
-              width: '100%', boxSizing: 'border-box',
-              padding: '11px 16px', fontSize: 17, fontWeight: 700,
+              flex: 1, boxSizing: 'border-box',
+              padding: '11px 16px', fontSize: 16, fontWeight: 700,
               border: '2px solid #FED7AA', borderRadius: 10, outline: 'none',
               background: '#fff', color: '#92400E',
             }}
           />
+          {hasImage && (
+            <button
+              onClick={() => {
+                const imgUrl = `${apiUrl}/api/garden/flower/${id}/image`
+                window.open(`https://lens.google.com/uploadbyurl?url=${encodeURIComponent(imgUrl)}`, '_blank')
+              }}
+              title="Google 렌즈로 꽃 이름 찾기"
+              style={{
+                flexShrink: 0, padding: '10px 14px',
+                background: '#4285F4', color: '#fff',
+                border: 'none', borderRadius: 10,
+                fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              🔍 구글 렌즈
+            </button>
+          )}
         </div>
 
         {/* ── 꽃 사진 ── */}
