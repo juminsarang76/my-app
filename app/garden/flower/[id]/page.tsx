@@ -43,6 +43,11 @@ export default function FlowerDetailPage() {
   const jsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY
 
   useEffect(() => {
+    // SDK가 이미 로드된 경우 (목록→상세 페이지 이동 시)
+    if (typeof window !== 'undefined' && window.Kakao?.isInitialized()) {
+      setSdkReady(true)
+    }
+
     fetch('/api/garden/friends')
       .then(r => r.json()).then(d => setFriends(d ?? [])).catch(() => {})
 
