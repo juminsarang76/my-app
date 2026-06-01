@@ -10,15 +10,14 @@ declare global {
     Kakao: {
       init: (key: string) => void
       isInitialized: () => boolean
-      Share: {
-        sendDefault: (options: object) => void
-      }
+      Share: { sendDefault: (options: object) => void }
     }
   }
 }
 
 interface Flower {
   id: string
+  title: string
   flower_text: string
   sent_at: string | null
   image_mime: string | null
@@ -30,10 +29,12 @@ export default function FlowerDetailPage() {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const [flower, setFlower] = useState<Flower | null>(null)
+  const [title, setTitle] = useState('')
   const [text, setText] = useState('')
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [hasImage, setHasImage] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [analyzing, setAnalyzing] = useState(false)
   const [toast, setToast] = useState('')
   const [sdkReady, setSdkReady] = useState(false)
   const [friends, setFriends] = useState<{ id: number; name: string }[]>([])
@@ -43,14 +44,13 @@ export default function FlowerDetailPage() {
 
   useEffect(() => {
     fetch('/api/garden/friends')
-      .then((r) => r.json())
-      .then((data) => setFriends(data ?? []))
-      .catch(() => {})
+      .then(r => r.json()).then(d => setFriends(d ?? [])).catch(() => {})
 
     fetch(`/api/garden/flower/${id}`)
-      .then((r) => r.json())
+      .then(r => r.json())
       .then((data: Flower) => {
         setFlower(data)
+        setTitle(data.title ?? '')
         setText(data.flower_text ?? '')
         setHasImage(!!data.image_mime)
         if (data.image_mime) setPreviewUrl(`/api/garden/flower/${id}/image`)
@@ -65,42 +65,34 @@ export default function FlowerDetailPage() {
 
   function handleSdkLoad() {
     if (!window.Kakao) return
-    if (jsKey && !window.Kakao.isInitialized()) {
-      window.Kakao.init(jsKey)
-    }
+    if (jsKey && !window.Kakao.isInitialized()) window.Kakao.init(jsKey)
     setSdkReady(window.Kakao.isInitialized())
   }
 
-  // KakaoLink — 카카오톡 앱에서 직접 친구 선택해서 보내기
+  // 카카오링크 공유
   function handleKakaoShare() {
     if (!window.Kakao?.isInitialized()) {
       showToast('카카오 SDK 로딩 중입니다. 잠시 후 다시 시도하세요.')
       return
     }
-
-    const imageUrl = hasImage
-      ? `${apiUrl}/api/garden/flower/${id}/image`
-      : undefined
-
+    const imageUrl = hasImage ? `${apiUrl}/api/garden/flower/${id}/image` : undefined
     const link = {
       mobileWebUrl: `${apiUrl}/garden/flower/${id}`,
       webUrl: `${apiUrl}/garden/flower/${id}`,
     }
-
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
-        title: '🌸 하루꽃',
+        title: title || '🌸 하루꽃',
         description: text || '오늘의 꽃입니다.',
         ...(imageUrl ? { imageUrl, imageWidth: 640, imageHeight: 640 } : {}),
         link,
       },
-      buttons: [
-        { title: '꽃 보러 가기', link },
-      ],
+      buttons: [{ title: '꽃 보러 가기', link }],
     })
   }
 
+  // 이미지 선택 → 저장 + Gemini 분석
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -109,30 +101,55 @@ export default function FlowerDetailPage() {
       const dataUrl = ev.target?.result as string
       const [meta, b64] = dataUrl.split(',')
       const mime = meta.match(/:(.*?);/)?.[1] ?? 'image/jpeg'
+
       setPreviewUrl(dataUrl)
       setHasImage(true)
-      const res = await fetch(`/api/garden/flower/${id}`, {
+
+      // 이미지 DB 저장
+      await fetch(`/api/garden/flower/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image_data: b64, image_mime: mime }),
       })
-      showToast(res.ok ? '사진이 저장됐습니다.' : '사진 저장 실패')
+
+      // Gemini로 꽃 분석
+      setAnalyzing(true)
+      showToast('🌸 꽃을 분석하고 있습니다...')
+      try {
+        const res = await fetch('/api/garden/analyze-flower', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ base64: b64, mime }),
+        })
+        if (res.ok) {
+          const { flowerName, sentence } = await res.json()
+          setTitle(flowerName)
+          setText(sentence)
+          showToast(`🌸 ${flowerName} 분석 완료! 수정 후 저장하세요.`)
+        }
+      } catch {
+        showToast('사진 저장 완료. 분석에 실패했습니다.')
+      } finally {
+        setAnalyzing(false)
+      }
     }
     reader.readAsDataURL(file)
   }
 
+  // 친구 이름 삽입
   function handleInsertName(name: string) {
     const greeting = `${name}님\n`
-    if (text.startsWith(greeting)) return   // 이미 있으면 중복 추가 안 함
+    if (text.startsWith(greeting)) return
     setText(greeting + text)
   }
 
-  async function handleSaveText() {
+  // 제목 + 텍스트 저장
+  async function handleSave() {
     setSaving(true)
     const res = await fetch(`/api/garden/flower/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ flower_text: text }),
+      body: JSON.stringify({ title, flower_text: text }),
     })
     setSaving(false)
     showToast(res.ok ? '저장됐습니다.' : '저장 실패')
@@ -145,32 +162,25 @@ export default function FlowerDetailPage() {
   }
 
   if (!flower) {
-    return (
-      <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8', fontFamily: 'sans-serif' }}>
-        불러오는 중...
-      </div>
-    )
+    return <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8', fontFamily: 'sans-serif' }}>불러오는 중...</div>
   }
+
+  const textColor = text.length > 100 ? '#ef4444' : text.length > 80 ? '#f97316' : '#94a3b8'
 
   return (
     <>
-      <Script
-        src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
-        strategy="afterInteractive"
-        onLoad={handleSdkLoad}
-      />
+      <Script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
+        strategy="afterInteractive" onLoad={handleSdkLoad} />
 
       <div style={{ fontFamily: 'sans-serif', maxWidth: 640, margin: '0 auto', padding: '20px 16px' }}>
 
-        {/* 토스트 */}
         {toast && (
           <div style={{
             position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)',
             background: '#1e293b', color: '#fff', padding: '10px 22px', borderRadius: 10,
             fontSize: 13, zIndex: 1000, boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-          }}>
-            {toast}
-          </div>
+            maxWidth: '90vw', textAlign: 'center',
+          }}>{toast}</div>
         )}
 
         {/* 브레드크럼 */}
@@ -182,48 +192,65 @@ export default function FlowerDetailPage() {
           <span style={{ fontSize: 11 }}>{id}</span>
         </div>
 
-        {/* ── 상단: 제목 + 보내기 버튼 ── */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          marginBottom: 20, flexWrap: 'wrap', gap: 10,
-        }}>
+        {/* ── 상단: ID + 카카오 보내기 ── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
           <div>
-            <h1 style={{ fontSize: 18, fontWeight: 700, color: '#1e293b', margin: 0 }}>🌸 {id}</h1>
-            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{formatId(id)}</div>
+            <div style={{ fontSize: 11, color: '#94a3b8' }}>{formatId(id)}</div>
           </div>
-
           <button
             onClick={handleKakaoShare}
             disabled={!sdkReady}
             style={{
               padding: '11px 24px',
               background: sdkReady ? '#FEE500' : '#e2e8f0',
-              color: '#3C1E1E',
-              border: 'none', borderRadius: 8,
-              fontWeight: 700, fontSize: 14,
+              color: sdkReady ? '#3C1E1E' : '#94a3b8',
+              border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 14,
               cursor: sdkReady ? 'pointer' : 'not-allowed',
-              display: 'flex', alignItems: 'center', gap: 6,
             }}
           >
             {sdkReady ? '💬 카카오톡으로 보내기' : '로딩 중...'}
           </button>
         </div>
 
-        {/* ── 중단: 꽃 사진 ── */}
+        {/* ── 제목 입력 ── */}
+        <div style={{ marginBottom: 16, position: 'relative' }}>
+          <input
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder={analyzing ? '🌸 꽃 이름 분석 중...' : '꽃 이름 (예: 장미, 수국)'}
+            disabled={analyzing}
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              padding: '12px 16px', fontSize: 17, fontWeight: 700,
+              border: '2px solid #FED7AA', borderRadius: 10, outline: 'none',
+              background: analyzing ? '#FFF7F0' : '#fff',
+              color: '#92400E',
+            }}
+          />
+          {analyzing && (
+            <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 18 }}>
+              🔍
+            </div>
+          )}
+        </div>
+
+        {/* ── 꽃 사진 ── */}
         <div
-          onClick={() => fileRef.current?.click()}
+          onClick={() => !analyzing && fileRef.current?.click()}
           style={{
             width: '100%', aspectRatio: '1 / 1', maxHeight: 420,
-            borderRadius: 16, overflow: 'hidden', cursor: 'pointer',
+            borderRadius: 16, overflow: 'hidden',
+            cursor: analyzing ? 'wait' : 'pointer',
             background: '#FFF7F0', border: '2px dashed #FED7AA',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: 20, position: 'relative',
+            marginBottom: 16, position: 'relative',
           }}
         >
           {previewUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={previewUrl} alt="꽃 사진"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              style={{ width: '100%', height: '100%', objectFit: 'cover',
+                filter: analyzing ? 'brightness(0.7)' : 'none' }} />
           ) : (
             <div style={{ textAlign: 'center', color: '#FB923C' }}>
               <div style={{ fontSize: 48, marginBottom: 8 }}>🌸</div>
@@ -231,85 +258,79 @@ export default function FlowerDetailPage() {
               <div style={{ fontSize: 12, color: '#FCA570', marginTop: 4 }}>클릭하여 기기에서 선택</div>
             </div>
           )}
-          {previewUrl && (
+          {analyzing && (
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexDirection: 'column', gap: 8, color: '#fff',
+            }}>
+              <div style={{ fontSize: 32 }}>🔍</div>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>꽃을 분석하는 중...</div>
+            </div>
+          )}
+          {previewUrl && !analyzing && (
             <div style={{
               position: 'absolute', bottom: 10, right: 10,
               background: 'rgba(0,0,0,0.5)', color: '#fff',
               fontSize: 11, padding: '4px 10px', borderRadius: 20,
-            }}>
-              클릭하여 변경
-            </div>
+            }}>클릭하여 변경</div>
           )}
         </div>
 
         <input ref={fileRef} type="file" accept="image/*"
           style={{ display: 'none' }} onChange={handleFileChange} />
 
-        {/* ── 하단: 텍스트 에디터 ── */}
+        {/* ── 텍스트 에디터 ── */}
         <div style={{ border: '1px solid #FED7AA', borderRadius: 12, overflow: 'hidden' }}>
-          <div style={{
-            padding: '12px 16px', background: '#FFF7F0',
-            borderBottom: '1px solid #FED7AA', fontSize: 13, fontWeight: 700, color: '#92400E',
-          }}>
-            ✏️ 메시지
+          <div style={{ padding: '12px 16px', background: '#FFF7F0', borderBottom: '1px solid #FED7AA', fontSize: 13, fontWeight: 700, color: '#92400E' }}>
+            ✏️ 오늘의 문장
           </div>
-          {/* 친구 이름 삽입 칩 */}
+
+          {/* 친구 이름 칩 */}
           {friends.length > 0 && (
-            <div style={{
-              padding: '10px 16px 4px',
-              display: 'flex', gap: 6, flexWrap: 'wrap',
-            }}>
-              {friends.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => handleInsertName(f.name)}
+            <div style={{ padding: '10px 16px 4px', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {friends.map(f => (
+                <button key={f.id} onClick={() => handleInsertName(f.name)}
                   style={{
-                    padding: '4px 12px',
-                    background: '#FEF3C7', border: '1px solid #FDE68A',
-                    borderRadius: 20, fontSize: 12, fontWeight: 600,
-                    color: '#92400E', cursor: 'pointer',
-                  }}
-                >
+                    padding: '4px 12px', background: '#FEF3C7',
+                    border: '1px solid #FDE68A', borderRadius: 20,
+                    fontSize: 12, fontWeight: 600, color: '#92400E', cursor: 'pointer',
+                  }}>
                   {f.name}님
                 </button>
               ))}
-              <span style={{ fontSize: 11, color: '#94a3b8', alignSelf: 'center' }}>
-                클릭 시 이름 삽입
-              </span>
+              <span style={{ fontSize: 11, color: '#94a3b8', alignSelf: 'center' }}>클릭 시 이름 삽입</span>
             </div>
           )}
 
           <textarea
             value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="오늘의 꽃과 함께 전하고 싶은 말을 적어보세요..."
-            rows={6}
+            onChange={e => setText(e.target.value)}
+            placeholder={analyzing ? '꽃을 분석해서 오늘의 문장을 작성 중...' : '오늘의 꽃과 함께 전하고 싶은 말을 적어보세요...'}
+            disabled={analyzing}
+            rows={5}
             style={{
               width: '100%', padding: '14px 16px', border: 'none', outline: 'none',
               fontSize: 14, lineHeight: 1.7, resize: 'vertical',
               fontFamily: 'sans-serif', boxSizing: 'border-box',
+              background: analyzing ? '#FFFBF5' : '#fff',
             }}
           />
+
           {/* 글자수 카운터 */}
-          <div style={{
-            padding: '2px 16px 8px',
-            textAlign: 'right',
-            fontSize: 11,
-            color: text.length > 100 ? '#ef4444' : text.length > 80 ? '#f97316' : '#94a3b8',
-          }}>
+          <div style={{ padding: '2px 16px 8px', textAlign: 'right', fontSize: 11, color: textColor }}>
             {text.length}자{text.length > 100 ? ' (100자 초과 시 말줄임 표시)' : ''}
           </div>
-          <div style={{
-            padding: '8px 16px 12px', background: '#FFF7F0',
-            display: 'flex', justifyContent: 'flex-end',
-          }}>
+
+          <div style={{ padding: '8px 16px 12px', background: '#FFF7F0', display: 'flex', justifyContent: 'flex-end' }}>
             <button
-              onClick={handleSaveText}
-              disabled={saving}
+              onClick={handleSave}
+              disabled={saving || analyzing}
               style={{
-                padding: '8px 20px', background: '#EA580C', color: '#fff',
+                padding: '8px 24px', background: '#EA580C', color: '#fff',
                 border: 'none', borderRadius: 6, fontWeight: 700, fontSize: 13,
-                cursor: 'pointer',
+                cursor: (saving || analyzing) ? 'not-allowed' : 'pointer',
+                opacity: (saving || analyzing) ? 0.6 : 1,
               }}
             >
               {saving ? '저장 중...' : '저장'}

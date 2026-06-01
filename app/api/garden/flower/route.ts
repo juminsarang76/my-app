@@ -20,7 +20,7 @@ function makeFlowerId(): string {
 export async function GET() {
   const { data, error } = await supabase
     .from('daily_flowers')
-    .select('id, created_at, flower_text, sent_at, image_mime')
+    .select('id, created_at, title, flower_text, sent_at, image_mime')
     .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

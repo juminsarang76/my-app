@@ -18,6 +18,7 @@ declare global {
 interface Flower {
   id: string
   created_at: string
+  title: string
   flower_text: string
   sent_at: string | null
   image_mime: string | null
@@ -65,7 +66,7 @@ export default function FlowerListPage() {
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
-        title: '🌸 하루꽃',
+        title: flower.title || '🌸 하루꽃',
         description: flower.flower_text || '오늘의 꽃입니다.',
         ...(imageUrl ? { imageUrl, imageWidth: 640, imageHeight: 640 } : {}),
         link,
@@ -159,8 +160,10 @@ export default function FlowerListPage() {
 
                 {/* 정보 */}
                 <Link href={`/garden/flower/${f.id}`} style={{ flex: 1, textDecoration: 'none' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#92400E' }}>{f.id}</div>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>{formatId(f.id)}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#92400E' }}>
+                    {f.title || f.id}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#64748b' }}>{formatId(f.id)}</div>
                   {f.flower_text && (
                     <div style={{ fontSize: 12, color: '#78350F', marginTop: 2 }}>
                       {f.flower_text.slice(0, 40)}{f.flower_text.length > 40 ? '...' : ''}
