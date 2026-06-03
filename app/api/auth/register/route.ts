@@ -21,11 +21,28 @@ export async function POST(req: NextRequest) {
   // 중복 이메일 체크
   const { data: existing } = await supabase
     .from('haru_users')
-    .select('id')
+    .select('id, status')
     .eq('email', lowerEmail)
     .single()
 
-  if (existing) return NextResponse.json({ error: '이미 등록된 이메일입니다.' }, { status: 409 })
+  if (existing) {
+    // 거부된 계정이면 재신청 허용 (대기 중으로 복구 + 비밀번호 업데이트)
+    if (existing.status === 'rejected') {
+      await supabase
+        .from('haru_users')
+        .update({ name: name.trim(), password: hashPassword(password), status: 'pending' })
+        .eq('id', existing.id)
+      return NextResponse.json({
+        id: existing.id, name: name.trim(), email: lowerEmail,
+        role: 'viewer', status: 'pending', permissions: [],
+      })
+    }
+    // 대기 중 or 승인됨은 이미 등록
+    const msg = existing.status === 'pending'
+      ? '이미 신청됐습니다. 관리자 승인을 기다려주세요.'
+      : '이미 등록된 이메일입니다. 로그인하세요.'
+    return NextResponse.json({ error: msg }, { status: 409 })
+  }
 
   const { data, error } = await supabase
     .from('haru_users')
