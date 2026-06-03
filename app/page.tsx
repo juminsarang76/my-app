@@ -63,20 +63,10 @@ export default function HomePage() {
 
       <section style={{ maxWidth: 860, margin: '0 auto', padding: '0 20px 60px' }}>
         {!user ? (
-          <>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#64748b', marginBottom: 20, textAlign: 'center' }}>신청 후 접근 가능한 메뉴</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
-              {ALL_MENUS.map(menu => (
-                <div key={menu.key} style={{ padding: '20px', background: 'rgba(255,255,255,0.7)', border: '1px solid #E2E8F0', borderRadius: 12, opacity: 0.65 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#475569', marginBottom: 4 }}>🔒 {menu.label}</div>
-                  <div style={{ fontSize: 12, color: '#94a3b8' }}>{menu.desc}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ textAlign: 'center', marginTop: 32 }}>
-              <Link href="/register" style={{ display: 'inline-block', padding: '14px 36px', background: '#0369A1', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 16 }}>🌸 지금 신청하기</Link>
-            </div>
-          </>
+          <div style={{ textAlign: 'center', padding: '20px 0 40px' }}>
+            <Link href="/login" style={{ display: 'inline-block', padding: '13px 32px', background: '#0369A1', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15, marginRight: 12 }}>로그인</Link>
+            <Link href="/register" style={{ display: 'inline-block', padding: '13px 32px', background: 'none', border: '2px solid #0369A1', color: '#0369A1', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 }}>🌸 서비스 신청</Link>
+          </div>
         ) : permittedMenus.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 20px', color: '#94a3b8' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
