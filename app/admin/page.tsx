@@ -160,9 +160,9 @@ export default function AdminPage() {
                 )}
               </div>
 
-              {/* 승인된 사용자 권한 수정 */}
+              {/* 승인된 사용자 권한 수정 + 승인 취소 */}
               {tab === 'approved' && (
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                   {ALL_MENUS.map(m => {
                     const granted = user.permissions.includes(m.key)
                     return (
@@ -172,6 +172,12 @@ export default function AdminPage() {
                       </button>
                     )
                   })}
+                  <button
+                    onClick={() => handleReject(user.id)}
+                    style={{ marginLeft: 'auto', padding: '5px 14px', background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}
+                  >
+                    승인 취소
+                  </button>
                 </div>
               )}
             </div>
