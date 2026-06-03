@@ -57,6 +57,26 @@ export default function AdminPage() {
     setUsers(prev => prev.map(u => u.id !== userId ? u : { ...u, status: 'rejected', permissions: [] }))
   }
 
+  async function handleDelete(userId: string) {
+    if (!confirm('이 사용자를 완전히 삭제하시겠습니까? 복구할 수 없습니다.')) return
+    await fetch('/api/admin/delete-user', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      body: JSON.stringify({ user_id: userId }),
+    })
+    setUsers(prev => prev.filter(u => u.id !== userId))
+  }
+
+  async function handleReset(userId: string) {
+    if (!confirm('승인을 재설정하시겠습니까? 권한이 초기화되고 대기 중 상태로 변경됩니다.')) return
+    await fetch('/api/admin/reset-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      body: JSON.stringify({ user_id: userId }),
+    })
+    setUsers(prev => prev.map(u => u.id !== userId ? u : { ...u, status: 'pending', permissions: [] }))
+  }
+
   async function togglePermission(userId: string, menuKey: string, granted: boolean) {
     await fetch('/api/admin/permissions', {
       method: granted ? 'DELETE' : 'POST',
@@ -151,16 +171,22 @@ export default function AdminPage() {
                       style={{ padding: '7px 16px', background: '#1D9E75', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>승인</button>
                     <button onClick={() => handleReject(user.id)}
                       style={{ padding: '7px 16px', background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>거부</button>
+                    <button onClick={() => handleDelete(user.id)}
+                      style={{ padding: '7px 14px', background: '#F1F5F9', color: '#94a3b8', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>삭제</button>
                   </div>
                 )}
 
                 {tab === 'rejected' && (
-                  <button onClick={() => { setApproveTarget(user); setSelectedMenus([]) }}
-                    style={{ padding: '7px 14px', background: '#EFF8FF', color: '#0369A1', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>재승인</button>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => { setApproveTarget(user); setSelectedMenus([]) }}
+                      style={{ padding: '7px 14px', background: '#EFF8FF', color: '#0369A1', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>재승인</button>
+                    <button onClick={() => handleDelete(user.id)}
+                      style={{ padding: '7px 14px', background: '#F1F5F9', color: '#94a3b8', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>삭제</button>
+                  </div>
                 )}
               </div>
 
-              {/* 승인된 사용자 권한 수정 + 승인 취소 */}
+              {/* 승인된 사용자 권한 수정 */}
               {tab === 'approved' && (
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                   {ALL_MENUS.map(m => {
@@ -172,12 +198,20 @@ export default function AdminPage() {
                       </button>
                     )
                   })}
-                  <button
-                    onClick={() => handleReject(user.id)}
-                    style={{ marginLeft: 'auto', padding: '5px 14px', background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}
-                  >
-                    승인 취소
-                  </button>
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, flexShrink: 0 }}>
+                    <button onClick={() => handleReset(user.id)}
+                      style={{ padding: '5px 12px', background: '#FEF9C3', color: '#92400E', border: 'none', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                      재설정
+                    </button>
+                    <button onClick={() => handleReject(user.id)}
+                      style={{ padding: '5px 12px', background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                      승인 취소
+                    </button>
+                    <button onClick={() => handleDelete(user.id)}
+                      style={{ padding: '5px 12px', background: '#F1F5F9', color: '#94a3b8', border: 'none', borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+                      삭제
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
