@@ -22,6 +22,7 @@ export default function NavBar() {
   // 이 경로들은 자체 헤더가 있어 NavBar 숨김
   if (
     pathname === '/' ||
+    pathname.startsWith('/login') ||
     pathname.startsWith('/register') ||
     pathname.startsWith('/admin') ||
     pathname.startsWith('/jungdeung') ||

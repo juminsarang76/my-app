@@ -49,7 +49,7 @@ export default function HomePage() {
               <button onClick={handleLogout} style={{ fontSize: 12, padding: '5px 12px', background: 'none', border: '1px solid #CBD5E1', borderRadius: 6, color: '#64748b', cursor: 'pointer' }}>로그아웃</button>
             </>
           ) : (
-            <Link href="/register" style={{ fontSize: 13, padding: '8px 18px', background: '#0369A1', color: '#fff', borderRadius: 8, textDecoration: 'none', fontWeight: 700 }}>서비스 신청</Link>
+            <><Link href="/login" style={{ fontSize: 13, padding: "7px 16px", background: "none", border: "1px solid #CBD5E1", color: "#64748b", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>로그인</Link><Link href="/register" style={{ fontSize: 13, padding: "7px 16px", background: "#0369A1", color: "#fff", borderRadius: 8, textDecoration: "none", fontWeight: 700 }}>신청</Link></> 
           )}
         </div>
       </header>

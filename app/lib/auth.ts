@@ -1,3 +1,5 @@
+import { createHash } from 'crypto'
+
 export const ADMIN_EMAIL = 'juminsarang76@gmail.com'
 
 export const ALL_MENUS = [
@@ -13,12 +15,20 @@ export const ALL_MENUS = [
 ] as const
 
 export type MenuKey = (typeof ALL_MENUS)[number]['key']
+export type UserRole = 'admin' | 'viewer'
+export type UserStatus = 'pending' | 'approved' | 'rejected'
 
 export interface AuthUser {
   id: string
   name: string
   email: string
+  role: UserRole
+  status: UserStatus
   permissions: string[]
+}
+
+export function hashPassword(pwd: string): string {
+  return createHash('sha256').update(pwd).digest('hex')
 }
 
 const STORAGE_KEY = 'haru_user'
@@ -28,9 +38,7 @@ export function getStoredUser(): AuthUser | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     return raw ? (JSON.parse(raw) as AuthUser) : null
-  } catch {
-    return null
-  }
+  } catch { return null }
 }
 
 export function setStoredUser(user: AuthUser) {
@@ -42,5 +50,5 @@ export function clearStoredUser() {
 }
 
 export function isAdmin(email: string) {
-  return email === ADMIN_EMAIL
+  return email.toLowerCase() === ADMIN_EMAIL.toLowerCase()
 }
