@@ -1,101 +1,104 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { getStoredUser, clearStoredUser, ALL_MENUS, isAdmin, AuthUser } from '@/app/lib/auth'
 
-type Todo = {
-  id: number
-  title: string
-  is_done: boolean
-  created_at: string
-}
-
-export default function Home() {
-  const [todos, setTodos] = useState<Todo[]>([])
-  const [title, setTitle] = useState('')
-
-  const fetchTodos = async () => {
-    const res = await fetch('/api/todos')
-    const data = await res.json()
-    setTodos(data)
-  }
-
-  const addTodo = async () => {
-    if (!title.trim()) return
-    await fetch('/api/todos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title }),
-    })
-    setTitle('')
-    fetchTodos()
-  }
-
-  const toggleTodo = async (id: number, is_done: boolean) => {
-    await fetch('/api/todos', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, is_done: !is_done }),
-    })
-    fetchTodos()
-  }
-
-  const deleteTodo = async (id: number) => {
-    await fetch('/api/todos', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id }),
-    })
-    fetchTodos()
-  }
+export default function HomePage() {
+  const router = useRouter()
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    fetchTodos()
+    setUser(getStoredUser())
+    setMounted(true)
   }, [])
 
+  function handleLogout() {
+    clearStoredUser()
+    setUser(null)
+  }
+
+  const permittedMenus = user
+    ? ALL_MENUS.filter(m => user.permissions.includes(m.key))
+    : []
+
+  if (!mounted) return null
+
   return (
-    <div style={{ maxWidth: 480, margin: '60px auto', padding: '0 20px', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 24 }}>할 일 목록</h1>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && addTodo()}
-          placeholder="할 일을 입력하세요"
-          style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 14 }}
-        />
-        <button
-          onClick={addTodo}
-          style={{ padding: '8px 16px', background: '#1D9E75', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, cursor: 'pointer' }}
-        >
-          추가
-        </button>
-      </div>
-      <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {todos.map((todo) => (
-          <li
-            key={todo.id}
-            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', border: '1px solid #BAE6FD', borderRadius: 8, background: '#EFF8FF' }}
-          >
-            <input
-              type="checkbox"
-              checked={todo.is_done}
-              onChange={() => toggleTodo(todo.id, todo.is_done)}
-              style={{ width: 16, height: 16, cursor: 'pointer' }}
-            />
-            <span
-              style={{ flex: 1, fontSize: 14, textDecoration: todo.is_done ? 'line-through' : 'none', color: todo.is_done ? '#aaa' : '#000' }}
-            >
-              {todo.title}
-            </span>
-            <button
-              onClick={() => deleteTodo(todo.id)}
-              style={{ padding: '4px 10px', background: 'white', color: '#E24B4A', border: '1px solid #E24B4A', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}
-            >
-              삭제
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div style={{ fontFamily: 'sans-serif', minHeight: '100vh', background: 'linear-gradient(160deg, #FFF7F0 0%, #EFF8FF 60%, #F0FFF4 100%)' }}>
+
+      <header style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '16px 28px', borderBottom: '1px solid rgba(0,0,0,0.06)',
+        background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)',
+        position: 'sticky', top: 0, zIndex: 100,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 22 }}>🌸</span>
+          <span style={{ fontSize: 17, fontWeight: 800, color: '#0369A1' }}>Haru Flower</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {user ? (
+            <>
+              <span style={{ fontSize: 13, color: '#64748b' }}>{user.name}님</span>
+              {isAdmin(user.email) && (
+                <Link href="/admin" style={{ fontSize: 12, padding: '5px 12px', background: '#1e293b', color: '#fff', borderRadius: 6, textDecoration: 'none', fontWeight: 600 }}>관리자</Link>
+              )}
+              <button onClick={handleLogout} style={{ fontSize: 12, padding: '5px 12px', background: 'none', border: '1px solid #CBD5E1', borderRadius: 6, color: '#64748b', cursor: 'pointer' }}>로그아웃</button>
+            </>
+          ) : (
+            <Link href="/register" style={{ fontSize: 13, padding: '8px 18px', background: '#0369A1', color: '#fff', borderRadius: 8, textDecoration: 'none', fontWeight: 700 }}>서비스 신청</Link>
+          )}
+        </div>
+      </header>
+
+      <section style={{ textAlign: 'center', padding: '60px 20px 40px' }}>
+        <div style={{ fontSize: 56, marginBottom: 16 }}>🌸</div>
+        <h1 style={{ fontSize: 36, fontWeight: 800, color: '#1e293b', marginBottom: 12 }}>Haru Flower</h1>
+        <p style={{ fontSize: 16, color: '#64748b', maxWidth: 480, margin: '0 auto 8px', lineHeight: 1.7 }}>하루 한 송이 꽃처럼, 매일 새로운 소식과 일상을 기록하는 공간</p>
+        <p style={{ fontSize: 13, color: '#94a3b8' }}>AI 뉴스 요약 · 하루꽃 일기 · 상품 기획 · 중등부 찬양 선곡</p>
+      </section>
+
+      <section style={{ maxWidth: 860, margin: '0 auto', padding: '0 20px 60px' }}>
+        {!user ? (
+          <>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#64748b', marginBottom: 20, textAlign: 'center' }}>신청 후 접근 가능한 메뉴</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
+              {ALL_MENUS.map(menu => (
+                <div key={menu.key} style={{ padding: '20px', background: 'rgba(255,255,255,0.7)', border: '1px solid #E2E8F0', borderRadius: 12, opacity: 0.65 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#475569', marginBottom: 4 }}>🔒 {menu.label}</div>
+                  <div style={{ fontSize: 12, color: '#94a3b8' }}>{menu.desc}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: 32 }}>
+              <Link href="/register" style={{ display: 'inline-block', padding: '14px 36px', background: '#0369A1', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 16 }}>🌸 지금 신청하기</Link>
+            </div>
+          </>
+        ) : permittedMenus.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: '#94a3b8' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
+            <p style={{ fontSize: 15, fontWeight: 600, color: '#64748b', marginBottom: 8 }}>권한 부여 대기 중</p>
+            <p style={{ fontSize: 13 }}>관리자가 접근 권한을 부여하면 메뉴가 표시됩니다.</p>
+          </div>
+        ) : (
+          <>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#64748b', marginBottom: 20 }}>{user.name}님의 메뉴</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 14 }}>
+              {permittedMenus.map(menu => (
+                <Link key={menu.key} href={menu.href} style={{ textDecoration: 'none' }}>
+                  <div style={{ padding: '22px 20px', background: '#fff', border: '1.5px solid #BAE6FD', borderRadius: 12, cursor: 'pointer' }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#0369A1', marginBottom: 6 }}>{menu.label}</div>
+                    <div style={{ fontSize: 12, color: '#64748b' }}>{menu.desc}</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
     </div>
   )
 }

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My App",
-  description: "양자뉴스 일일요약 서비스",
+  title: "Haru Flower",
+  description: "하루 한 송이 꽃처럼, 매일 새로운 소식과 일상을 기록하는 공간",
 };
 
 export default function RootLayout({
