@@ -24,7 +24,14 @@ export default function HomePage() {
     ? ALL_MENUS.filter(m => user.permissions.includes(m.key))
     : []
 
-  if (!mounted) return null
+  if (!mounted) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(160deg, #FFF7F0 0%, #EFF8FF 60%, #F0FFF4 100%)' }}>
+      <div style={{ textAlign: 'center', color: '#94a3b8', fontFamily: 'sans-serif' }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>🌸</div>
+        <div style={{ fontSize: 14 }}>Haru Flower</div>
+      </div>
+    </div>
+  )
 
   return (
     <div style={{ fontFamily: 'sans-serif', minHeight: '100vh', background: 'linear-gradient(160deg, #FFF7F0 0%, #EFF8FF 60%, #F0FFF4 100%)' }}>
