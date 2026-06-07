@@ -296,7 +296,10 @@ export default function YoutubePage() {
   }
 
   async function handleTranslate() {
-    if (!items.length) return
+    if (!items.length) {
+      setError(`번역할 자막이 없습니다. 먼저 자막을 붙여넣거나 가져오세요.`)
+      return
+    }
     setLoadingTranslate(true)
     setError('')
     try {
@@ -305,8 +308,14 @@ export default function YoutubePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items }),
       })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+        throw new Error(err.error ?? `번역 API 오류 (${res.status})`)
+      }
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      if (!data.translated?.length) {
+        throw new Error('번역 결과가 비어있습니다. 다시 시도해주세요.')
+      }
       setTranslated(data.translated)
       setTab('번역')
     } catch (e) {
