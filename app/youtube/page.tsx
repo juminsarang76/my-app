@@ -97,9 +97,13 @@ function parseSubtitleText(raw: string): SubItem[] {
     }).filter(item => item.text)
   }
 
-  // 일반 텍스트: 줄/문단 단위로 분리
-  const lines = text.split(/\r?\n/).filter(l => l.trim())
-  return lines.map((line, i) => ({ text: line.trim(), start: i * 5, duration: 5 }))
+  // 일반 텍스트: 순수 타임스탬프/인덱스 줄 제거 후 파싱
+  const TIMESTAMP_ONLY = /^(\d{1,2}:)?\d{2}:\d{2}(\.\d+)?$/   // "03:10", "43:00:05"
+  const INDEX_ONLY = /^\d+$/                                     // "53", "517"
+  const lines = text.split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(l => l && !TIMESTAMP_ONLY.test(l) && !INDEX_ONLY.test(l))
+  return lines.map((line, i) => ({ text: line, start: i * 5, duration: 5 }))
 }
 
 function formatTime(sec: number) {
