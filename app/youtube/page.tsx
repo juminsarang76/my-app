@@ -278,18 +278,35 @@ export default function YoutubePage() {
       : dt
   }
 
-  // Obsidian: 마크다운 생성
+  // 문장 배열 → 읽기 편한 단락 텍스트 (5문장마다 줄바꿈)
+  function toReadableText(sentences: string[], chunkSize = 5): string {
+    const chunks: string[] = []
+    for (let i = 0; i < sentences.length; i += chunkSize) {
+      chunks.push(sentences.slice(i, i + chunkSize).join(' '))
+    }
+    return chunks.join('\n\n')
+  }
+
+  // Obsidian: 마크다운 생성 (타임스탬프 없이, 읽기 편한 단락 형식)
   function buildMarkdown() {
     let md = `# ${videoTitle || videoId}\n\n`
     md += `🎬 https://www.youtube.com/watch?v=${videoId}\n`
     md += `📅 ${new Date().toLocaleDateString('ko-KR')}\n\n`
-    if (summary) { md += `## 📋 한글 요약\n\n${summary}\n\n` }
+
+    if (summary) {
+      md += `## 📋 한글 요약\n\n${summary}\n\n`
+    }
+
     if (translated.length) {
       md += `## 🇰🇷 한글 번역\n\n`
-      items.forEach((item, i) => { md += `\`${formatTime(item.start)}\` ${translated[i] || item.text}\n\n` })
+      md += toReadableText(items.map((item, i) => translated[i] || item.text))
+      md += '\n\n'
     }
-    md += `## 📝 원문 자막\n\n`
-    items.forEach(item => { md += `\`${formatTime(item.start)}\` ${item.text}\n\n` })
+
+    md += `## 📝 원문\n\n`
+    md += toReadableText(items.map(item => item.text))
+    md += '\n'
+
     return md
   }
 
