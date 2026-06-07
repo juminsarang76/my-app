@@ -99,7 +99,7 @@ class TranscriptHandler(BaseHTTPRequestHandler):
 
         # 브라우저 인증서 허용 확인 페이지
         if parsed.path == '/':
-            body = b'<h2>YouTube Transcript Server Running!</h2><p>haruflower.vercel.app에서 사용 가능합니다.</p>'
+            body = '<h2>YouTube Transcript Server Running!</h2><p>haruflower.vercel.app OK</p>'.encode('utf-8')
             self.send_response(200); self._cors()
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.end_headers(); self.wfile.write(body); return
