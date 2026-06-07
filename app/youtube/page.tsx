@@ -5,6 +5,45 @@ import { useEffect, useRef, useState } from 'react'
 interface SubItem { text: string; start: number; duration: number }
 type Tab = '원문' | '번역' | '동시보기'
 
+// SRT/VTT/TXT 파싱
+function parseSubtitleText(raw: string): SubItem[] {
+  const text = raw.trim()
+
+  // SRT 형식: 숫자\n00:00:00,000 --> 00:00:00,000\n텍스트
+  if (/\d+\r?\n\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->/.test(text)) {
+    const blocks = text.split(/\r?\n\r?\n/)
+    return blocks.flatMap(block => {
+      const lines = block.split(/\r?\n/)
+      const timeLine = lines.find(l => /-->/.test(l))
+      if (!timeLine) return []
+      const m = timeLine.match(/(\d{2}):(\d{2}):(\d{2})[,\.](\d{3})/)
+      if (!m) return []
+      const start = parseInt(m[1]) * 3600 + parseInt(m[2]) * 60 + parseInt(m[3])
+      const textContent = lines.filter(l => !/-->/.test(l) && !/^\d+$/.test(l.trim())).join(' ').trim()
+      return textContent ? [{ text: textContent, start, duration: 3 }] : []
+    }).filter(Boolean)
+  }
+
+  // VTT 형식: WEBVTT 헤더 포함
+  if (text.startsWith('WEBVTT') || /\d{2}:\d{2}:\d{2}\.\d{3}\s*-->/.test(text)) {
+    const blocks = text.replace('WEBVTT', '').trim().split(/\r?\n\r?\n/)
+    return blocks.flatMap(block => {
+      const lines = block.split(/\r?\n/)
+      const timeLine = lines.find(l => /-->/.test(l))
+      if (!timeLine) return []
+      const m = timeLine.match(/(\d{2}):(\d{2}):(\d{2})\.(\d{3})/)
+      if (!m) return []
+      const start = parseInt(m[1]) * 3600 + parseInt(m[2]) * 60 + parseInt(m[3])
+      const textContent = lines.filter(l => !/-->/.test(l)).join(' ').replace(/<[^>]+>/g, '').trim()
+      return textContent ? [{ text: textContent, start, duration: 3 }] : []
+    }).filter(Boolean)
+  }
+
+  // 일반 텍스트: 줄/문단 단위로 분리
+  const lines = text.split(/\r?\n/).filter(l => l.trim())
+  return lines.map((line, i) => ({ text: line.trim(), start: i * 5, duration: 5 }))
+}
+
 function formatTime(sec: number) {
   const m = Math.floor(sec / 60)
   const s = sec % 60
@@ -29,6 +68,8 @@ export default function YoutubePage() {
   const [toast, setToast] = useState('')
   const [lang, setLang] = useState('')
   const [noCaption, setNoCaption] = useState(false)
+  const [showPasteInput, setShowPasteInput] = useState(false)
+  const [pasteText, setPasteText] = useState('')
   const [obsidianToken, setObsidianToken] = useState('')
   const [obsidianPort, setObsidianPort] = useState('27124')
   const [showObsidianSettings, setShowObsidianSettings] = useState(false)
@@ -236,6 +277,21 @@ export default function YoutubePage() {
     }
   }
 
+  // 수동 붙여넣기 처리
+  function handlePasteSubmit() {
+    if (!pasteText.trim()) return
+    const parsed = parseSubtitleText(pasteText)
+    if (!parsed.length) return
+    setItems(parsed)
+    setTranslated([])
+    setSummary('')
+    setTab('원문')
+    setShowPasteInput(false)
+    setPasteText('')
+    setError('')
+    setNoCaption(false)
+  }
+
   // 둘다 저장
   async function handleSaveBoth() {
     await Promise.allSettled([handleGithub(), handleNotion()])
@@ -381,6 +437,52 @@ export default function YoutubePage() {
           )}
         </div>
       )}
+
+      {/* 수동 자막 입력 (downsub 등에서 복사한 경우) */}
+      <div style={{ marginBottom: 12 }}>
+        <button
+          onClick={() => setShowPasteInput(v => !v)}
+          style={{
+            padding: '6px 14px', background: 'none',
+            border: '1.5px dashed #CBD5E1', borderRadius: 8,
+            color: '#64748b', fontSize: 12, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 6,
+          }}
+        >
+          📋 {showPasteInput ? '자막 직접 입력 닫기' : 'downsub 등에서 자막 붙여넣기'}
+        </button>
+
+        {showPasteInput && (
+          <div style={{ marginTop: 10, border: '1px solid #E2E8F0', borderRadius: 10, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 14px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', fontSize: 12, color: '#64748b', lineHeight: 1.6 }}>
+              <strong>사용법:</strong> <a href="https://downsub.com" target="_blank" rel="noopener noreferrer" style={{ color: '#0369A1' }}>downsub.com</a>에서 자막 다운로드 →
+              TXT/SRT/VTT 내용 전체 복사 → 아래 붙여넣기
+            </div>
+            <textarea
+              value={pasteText}
+              onChange={e => setPasteText(e.target.value)}
+              placeholder={'SRT, VTT, 또는 일반 텍스트 형식으로 붙여넣기...\n\n예시 (SRT):\n1\n00:00:01,000 --> 00:00:04,000\nHello world\n\n2\n00:00:05,000 --> 00:00:08,000\nThis is a test'}
+              rows={8}
+              style={{
+                width: '100%', boxSizing: 'border-box',
+                padding: '12px 14px', border: 'none', outline: 'none',
+                fontSize: 12, lineHeight: 1.6, fontFamily: 'monospace',
+                resize: 'vertical',
+              }}
+            />
+            <div style={{ padding: '10px 14px', background: '#F8FAFC', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button onClick={() => { setShowPasteInput(false); setPasteText('') }}
+                style={{ padding: '7px 16px', background: '#F1F5F9', color: '#64748b', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 12 }}>
+                취소
+              </button>
+              <button onClick={handlePasteSubmit} disabled={!pasteText.trim()}
+                style={{ padding: '7px 16px', background: pasteText.trim() ? '#0369A1' : '#e2e8f0', color: pasteText.trim() ? '#fff' : '#94a3b8', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: pasteText.trim() ? 'pointer' : 'not-allowed' }}>
+                자막 불러오기
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* 영상 정보 + 액션 버튼 — 항상 표시 */}
       <div style={{ marginBottom: 16 }}>
