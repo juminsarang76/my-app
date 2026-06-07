@@ -39,6 +39,19 @@ function parseSubtitleText(raw: string): SubItem[] {
     }).filter(Boolean)
   }
 
+  // [MM:SS] text 또는 MM:SS text 타임스탬프 형식
+  if (/^\[\d{2}:\d{2}\]|\d{2}:\d{2}\s+\w/.test(text.split('\n')[0])) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim())
+    return lines.map((line, i) => {
+      const m = line.match(/^\[?(\d{2}):(\d{2})\]?\s+(.+)/)
+      if (m) {
+        const start = parseInt(m[1]) * 60 + parseInt(m[2])
+        return { text: m[3].trim(), start, duration: 5 }
+      }
+      return { text: line.trim(), start: i * 5, duration: 5 }
+    }).filter(item => item.text)
+  }
+
   // 일반 텍스트: 줄/문단 단위로 분리
   const lines = text.split(/\r?\n/).filter(l => l.trim())
   return lines.map((line, i) => ({ text: line.trim(), start: i * 5, duration: 5 }))
@@ -277,26 +290,6 @@ export default function YoutubePage() {
     }
   }
 
-  // 수동 붙여넣기 처리
-  function handlePasteSubmit() {
-    const raw = pasteText.trim()
-    if (!raw) return
-    const parsed = parseSubtitleText(raw)
-    if (!parsed.length) {
-      alert('자막을 인식하지 못했습니다.\nSRT, VTT, 또는 일반 텍스트 형식을 붙여넣어 주세요.')
-      return
-    }
-    setItems(parsed)
-    setTranslated([])
-    setSummary('')
-    setTab('원문')
-    setShowPasteInput(false)
-    setPasteText('')
-    setError('')
-    setNoCaption(false)
-    setLang(`수동입력 (${parsed.length}줄)`)
-  }
-
   // 둘다 저장
   async function handleSaveBoth() {
     await Promise.allSettled([handleGithub(), handleNotion()])
@@ -491,8 +484,7 @@ export default function YoutubePage() {
               onChange={e => {
                 const val = e.target.value
                 setPasteText(val)
-                // 붙여넣기 즉시 파싱 → 원문 탭에 바로 표시
-                if (val.trim()) {
+                if (val.trim().length > 10) {
                   const parsed = parseSubtitleText(val)
                   if (parsed.length > 0) {
                     setItems(parsed)
@@ -501,35 +493,19 @@ export default function YoutubePage() {
                     setTab('원문')
                     setLang(`수동입력 (${parsed.length}줄)`)
                     setError('')
+                    setNoCaption(false)
                   }
-                } else {
+                } else if (!val.trim()) {
                   setItems([])
                 }
               }}
-              onPaste={e => {
-                // onPaste 이벤트로 즉시 처리 (onChange보다 먼저 값 읽기)
-                const pasted = e.clipboardData.getData('text')
-                if (pasted.trim()) {
-                  const parsed = parseSubtitleText(pasted)
-                  if (parsed.length > 0) {
-                    setItems(parsed)
-                    setTranslated([])
-                    setSummary('')
-                    setTab('원문')
-                    setLang(`수동입력 (${parsed.length}줄)`)
-                    setError('')
-                    setPasteText(pasted)
-                    // 패널은 열어두되 자막은 바로 원문에 표시
-                  }
-                }
-              }}
-              placeholder="여기에 자막 텍스트를 붙여넣으면 바로 원문 탭에 표시됩니다."
-              rows={6}
+              placeholder="자막 텍스트를 여기에 붙여넣으면 원문 탭에 바로 표시됩니다."
+              rows={8}
               style={{
                 width: '100%', boxSizing: 'border-box',
                 padding: '12px 14px', border: 'none', outline: 'none',
-                fontSize: 13, lineHeight: 1.7, fontFamily: 'sans-serif',
-                resize: 'vertical',
+                fontSize: 13, lineHeight: 1.7, fontFamily: 'monospace',
+                resize: 'vertical', background: '#FAFAFA',
               }}
             />
             {items.length > 0 && pasteText && (
