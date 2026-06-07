@@ -169,9 +169,12 @@ export default function YoutubePage() {
       } catch { /* 제목 없으면 videoId 사용 */ }
     } catch (e) {
       const msg = e instanceof Error ? e.message : '자막을 가져오지 못했습니다.'
-      setError(msg)
-      // 자막 없는 영상이면 Whisper 옵션 표시
-      if (msg.includes('비활성화') || msg.includes('disabled') || msg.includes('CC')) {
+      // 서버 IP 차단 → 로컬 서버 안내 메시지로 교체
+      const isBlocked = msg.includes('자막이 없습니다') || msg.includes('비활성화') || msg.includes('disabled')
+      setError(isBlocked
+        ? `YouTube가 서버 요청을 차단했습니다.\n\n✅ 해결 방법 1 (PC): 아래 명령어 실행 후 "자막 가져오기" 재시도\n  python scripts/youtube_server.py\n  (최초 1회: https://localhost:8765 접속 → 인증서 허용)\n\n✅ 해결 방법 2: 📋 자막 직접 붙여넣기 버튼 클릭\n  python scripts/youtube_transcript.py [URL] 실행 후 출력 복사`
+        : msg)
+      if (msg.includes('비활성화') || msg.includes('disabled') || msg.includes('CC') || isBlocked) {
         setNoCaption(true)
       }
     } finally {
