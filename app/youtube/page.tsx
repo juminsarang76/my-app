@@ -24,6 +24,7 @@ export default function YoutubePage() {
   const [loadingSummary, setLoadingSummary] = useState(false)
   const [loadingWhisper, setLoadingWhisper] = useState(false)
   const [savingNotion, setSavingNotion] = useState(false)
+  const [savingGithub, setSavingGithub] = useState(false)
   const [error, setError] = useState('')
   const [toast, setToast] = useState('')
   const [lang, setLang] = useState('')
@@ -189,6 +190,28 @@ export default function YoutubePage() {
     localStorage.setItem('obsidian_port', obsidianPort)
     setShowObsidianSettings(false)
     setToast('✅ Obsidian 설정 저장됨')
+  }
+
+  // GitHub: youtube_script 저장소에 저장 → Obsidian Git sync
+  async function handleGithub() {
+    if (!items.length) return
+    setSavingGithub(true)
+    try {
+      const res = await fetch('/api/youtube/save-github', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: makeFilename(), content: buildMarkdown() }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setToast('✅ GitHub에 저장됨 → Obsidian Git이 자동 sync합니다')
+      if (data.url) window.open(data.url, '_blank')
+    } catch (e) {
+      setToast(`❌ ${e instanceof Error ? e.message : 'GitHub 저장 실패'}`)
+    } finally {
+      setSavingGithub(false)
+      setTimeout(() => setToast(''), 4000)
+    }
   }
 
   // Notion: API 저장
@@ -369,13 +392,16 @@ export default function YoutubePage() {
               {loadingSummary ? '요약 중...' : '한글 요약'}
             </button>
             {/* 저장 버튼 */}
-            <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
+            <div style={{ display: 'flex', gap: 6, marginLeft: 'auto', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', gap: 2 }}>
                 <button onClick={handleObsidian} style={{ padding: '7px 12px', background: '#6d28d9', color: '#fff', border: 'none', borderRadius: '8px 0 0 8px', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
                   🗂 Obsidian
                 </button>
                 <button onClick={() => setShowObsidianSettings(true)} style={{ padding: '7px 8px', background: '#5b21b6', color: '#fff', border: 'none', borderRadius: '0 8px 8px 0', fontSize: 11, cursor: 'pointer' }} title="Obsidian 설정">⚙️</button>
               </div>
+              <button onClick={handleGithub} disabled={savingGithub} style={{ padding: '7px 14px', background: savingGithub ? '#e2e8f0' : '#24292f', color: savingGithub ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: savingGithub ? 'not-allowed' : 'pointer' }}>
+                {savingGithub ? '저장 중...' : '🐙 GitHub'}
+              </button>
               <button onClick={handleNotion} disabled={savingNotion} style={{ padding: '7px 14px', background: savingNotion ? '#e2e8f0' : '#000', color: savingNotion ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: savingNotion ? 'not-allowed' : 'pointer' }}>
                 {savingNotion ? '저장 중...' : '📓 Notion'}
               </button>
