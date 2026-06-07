@@ -17,7 +17,27 @@ function extractVideoId(url: string): string | null {
 }
 
 export async function POST(req: NextRequest) {
-  const { url } = await req.json()
+  const body = await req.json()
+  const { url } = body
+
+  // Python youtube-transcript-api 우선 시도 (더 안정적)
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  if (apiUrl) {
+    try {
+      const pyRes = await fetch(`${apiUrl}/api/youtube/transcript`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+        signal: AbortSignal.timeout(15000),
+      })
+      if (pyRes.ok) {
+        const data = await pyRes.json()
+        if (data.items?.length) return NextResponse.json(data)
+      }
+    } catch { /* Python 함수 실패 시 Node.js 폴백 */ }
+  }
+
+  // Node.js youtube-transcript 폴백
   const videoId = extractVideoId(url ?? '')
   if (!videoId) return NextResponse.json({ error: '유효한 YouTube URL이 아닙니다.' }, { status: 400 })
 
