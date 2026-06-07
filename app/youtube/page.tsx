@@ -411,6 +411,44 @@ export default function YoutubePage() {
         setTranslateProgress(Math.round((done / total) * 100))
         setTranslated([...result])
       }
+      // ── 번역 안 된 항목 재시도 ──
+      const untranslatedIdx = items
+        .map((item, i) => ({ item, i }))
+        .filter(({ item, i }) => result[i] === item.text || !result[i])
+        .map(({ i }) => i)
+
+      if (untranslatedIdx.length > 0 && untranslatedIdx.length < total) {
+        setError(`⚠️ ${untranslatedIdx.length}개 항목 번역 실패 → 재시도 중...`)
+        // 실패 항목만 다시 번역 (청크로)
+        const failedItems = untranslatedIdx.map(i => items[i])
+        const failedChunks: typeof items[] = []
+        for (let i = 0; i < failedItems.length; i += CHUNK) failedChunks.push(failedItems.slice(i, i + CHUNK))
+
+        for (let ci = 0; ci < failedChunks.length; ci++) {
+          const chunk = failedChunks[ci]
+          const res2 = await fetch('/api/youtube/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: chunk }),
+          })
+          if (res2.ok) {
+            const data2 = await res2.json()
+            if (data2.translated?.length) {
+              data2.translated.forEach((t: string, k: number) => {
+                const origIdx = untranslatedIdx[ci * CHUNK + k]
+                if (origIdx !== undefined && t && t !== chunk[k]?.text) {
+                  result[origIdx] = t
+                }
+              })
+              setTranslated([...result])
+            }
+          }
+        }
+        const stillFailed = items.filter((item, i) => result[i] === item.text || !result[i]).length
+        setError(stillFailed > 0 ? `⚠️ ${stillFailed}개 항목은 번역되지 않았습니다 (API 한도 초과).` : '')
+      } else if (untranslatedIdx.length === 0) {
+        setError('')
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : '번역에 실패했습니다.')
     } finally {

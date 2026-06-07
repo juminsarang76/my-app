@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 **핵심 작업**: 끊어진 자막 줄들을 읽고, 의미상 하나의 완성된 문장으로 이어지는 줄들을 합쳐주세요.
 
 **판단 기준** (어떤 하나라도 해당하면 다음 줄과 합침):
-- 줄이 전치사(of, in, to, for, with, from, that, which, because, if, when, although, after, before, as, since, until, unless, though)로 끝남
+- 줄이 전치사(of, in, to, for, with, from, that, which, because, if, when, although, after, before, as, since, until, unless, though, at, by, on, about, over, under, between, into, through, during, without, within, across, around, along, among, against, toward, towards, upon, per)로 끝남
 - 줄이 관사(a, an, the)로 끝남
 - 줄이 쉼표(,)로 끝남
 - 줄이 조동사(is, are, was, were, have, has, had, will, would, could, should, can, do, does, did)로 끝남
