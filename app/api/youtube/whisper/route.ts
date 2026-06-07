@@ -32,9 +32,9 @@ export async function POST(req: NextRequest) {
     })
     lengthSeconds = parseInt(info.videoDetails.lengthSeconds ?? '0')
 
-    if (lengthSeconds > 1200) { // 20분 초과
+    if (lengthSeconds > 2400) { // 20분 초과
       return NextResponse.json({
-        error: `영상이 너무 깁니다 (${Math.floor(lengthSeconds / 60)}분). Whisper AI는 약 15분 이하 영상을 지원합니다.`,
+        error: `영상이 너무 깁니다 (${Math.floor(lengthSeconds / 60)}분). Whisper AI는 약 40분 이하 영상을 지원합니다.`,
       }, { status: 400 })
     }
 
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     audioBuffer = await audioRes.arrayBuffer()
     if (audioBuffer.byteLength > GROQ_LIMIT) {
       return NextResponse.json({
-        error: `오디오 파일이 너무 큽니다 (${Math.round(audioBuffer.byteLength / 1024 / 1024)}MB). 약 15분 이하 영상만 지원합니다.`,
+        error: `오디오 파일이 너무 큽니다 (${Math.round(audioBuffer.byteLength / 1024 / 1024)}MB). 약 40분 이하 영상만 지원합니다.`,
       }, { status: 400 })
     }
   } catch (e) {
