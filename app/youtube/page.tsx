@@ -335,6 +335,29 @@ export default function YoutubePage() {
   }
 
   // 둘다 저장
+  // 클립보드에서 자막 읽기 (python scripts/youtube_transcript.py 실행 후)
+  async function handleReadClipboard() {
+    try {
+      const text = await navigator.clipboard.readText()
+      if (!text.trim()) { setError('클립보드가 비어있습니다.'); return }
+      const parsed = parseSubtitleText(text)
+      if (!parsed.length) { setError('자막 형식이 아닙니다. python scripts/youtube_transcript.py [URL] 실행 후 다시 시도하세요.'); return }
+      setItems(parsed)
+      setTranslated([])
+      setSummary('')
+      setTab('원문')
+      setLang(`클립보드 (${parsed.length}줄)`)
+      setError('')
+      setNormalizing(true)
+      try {
+        const res = await fetch('/api/youtube/normalize', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: parsed }) })
+        if (res.ok) { const d = await res.json(); if (d.items?.length) { setItems(d.items); setLang(`클립보드 정리됨 (${d.items.length}문장)`) } }
+      } catch { /* 실패 시 원문 유지 */ } finally { setNormalizing(false) }
+    } catch {
+      setError('클립보드 접근 권한이 필요합니다. 브라우저 팝업에서 허용을 클릭하세요.')
+    }
+  }
+
   async function handleSaveBoth() {
     await Promise.allSettled([handleGithub(), handleNotion()])
   }
@@ -484,6 +507,21 @@ export default function YoutubePage() {
         }}>
           {loadingTranscript ? '가져오는 중...' : '자막 가져오기'}
         </button>
+        {/* 클립보드에서 가져오기 — python scripts/youtube_transcript.py 실행 후 클릭 */}
+        <button
+          onClick={handleReadClipboard}
+          title="python scripts/youtube_transcript.py [URL] 실행 후 클릭"
+          style={{
+            padding: '10px 14px', background: '#1D9E75', color: '#fff',
+            border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13,
+            cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+          }}
+        >
+          📋 클립보드
+        </button>
+      </div>
+      <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 8 }}>
+        📋 클립보드: <code>python scripts/youtube_transcript.py [URL]</code> 실행 후 클릭
       </div>
 
       {error && (
