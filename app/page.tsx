@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getStoredUser, clearStoredUser, ALL_MENUS, isAdmin, AuthUser } from '@/app/lib/auth'
+import { getStoredUser, setStoredUser, clearStoredUser, ALL_MENUS, isAdmin, AuthUser } from '@/app/lib/auth'
 
 export default function HomePage() {
   const router = useRouter()
@@ -11,8 +11,16 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setUser(getStoredUser())
+    const stored = getStoredUser()
+    setUser(stored)
     setMounted(true)
+
+    // Admin이면 항상 최신 권한으로 자동 갱신
+    if (stored && isAdmin(stored.email)) {
+      const updatedUser = { ...stored, permissions: ALL_MENUS.map(m => m.key) }
+      setStoredUser(updatedUser)
+      setUser(updatedUser)
+    }
   }, [])
 
   function handleLogout() {
