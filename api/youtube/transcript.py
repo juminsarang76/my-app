@@ -36,36 +36,34 @@ class handler(BaseHTTPRequestHandler):
             return
 
         try:
-            # 한국어 → 영어 → 자동 생성 순으로 시도
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-
             transcript = None
             lang = 'auto'
-            for try_lang in ['ko', 'en']:
+
+            # 한국어 → 영어 → 자동 순으로 시도
+            for try_lang in ['ko', 'en', None]:
                 try:
-                    transcript = transcript_list.find_transcript([try_lang])
-                    lang = try_lang
+                    if try_lang:
+                        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[try_lang])
+                        lang = try_lang
+                    else:
+                        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+                        lang = 'auto'
                     break
                 except Exception:
+                    if try_lang is None:
+                        raise
                     continue
 
-            if transcript is None:
-                # 자동 생성 자막 (언어 무관)
-                transcript = transcript_list.find_generated_transcript(
-                    transcript_list._generated_transcripts.keys()
-                    if transcript_list._generated_transcripts
-                    else ['en', 'ko']
-                )
-                lang = 'auto'
+            if not transcript:
+                raise Exception('자막을 찾을 수 없습니다.')
 
-            data = transcript.fetch()
             items = [
                 {
-                    'text': t['text'],
-                    'start': int(t['start']),
+                    'text': t.get('text', ''),
+                    'start': int(t.get('start', 0)),
                     'duration': int(t.get('duration', 0)),
                 }
-                for t in data
+                for t in transcript
             ]
             self._json(200, {
                 'videoId': video_id,
@@ -76,15 +74,18 @@ class handler(BaseHTTPRequestHandler):
 
         except TranscriptsDisabled:
             self._json(500, {
-                'error': '이 영상은 자막이 비활성화되어 있습니다.\n\n'
-                         '자막이 있는 영상을 사용하거나 Whisper AI로 시도해보세요.'
+                'error': '이 영상은 자막이 비활성화되어 있습니다.\n\n자막이 있는 영상을 사용하거나 Whisper AI로 시도해보세요.'
             })
         except NoTranscriptFound:
             self._json(500, {
                 'error': '자막(CC)이 없는 영상입니다. Whisper AI로 시도해보세요.'
             })
         except Exception as e:
-            self._json(500, {'error': f'자막 가져오기 실패: {str(e)}'})
+            msg = str(e)
+            is_disabled = 'disabled' in msg.lower() or 'subtitles' in msg.lower()
+            self._json(500, {
+                'error': '이 영상은 자막이 비활성화되어 있습니다.\n\n자막이 있는 영상을 사용하거나 Whisper AI로 시도해보세요.' if is_disabled else f'자막 가져오기 실패: {msg}'
+            })
 
     def _json(self, status: int, data: dict):
         body = json.dumps(data, ensure_ascii=False).encode('utf-8')
@@ -101,4 +102,4 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
 
     def log_message(self, format, *args):
-        pass  # 로그 억제
+        pass
