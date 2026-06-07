@@ -9,8 +9,13 @@ export async function POST(req: NextRequest) {
   const groqKey = process.env.GROQ_API_KEY
   if (!groqKey) return NextResponse.json({ error: 'GROQ_API_KEY 없음' }, { status: 500 })
 
-  const { videoId } = await req.json()
-  if (!videoId) return NextResponse.json({ error: 'videoId 없음' }, { status: 400 })
+  const { videoId: rawId } = await req.json()
+  if (!rawId) return NextResponse.json({ error: 'videoId 없음' }, { status: 400 })
+
+  // URL이면 ID 추출
+  const idMatch = rawId.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/)
+    || rawId.match(/^([a-zA-Z0-9_-]{11})$/)
+  const videoId = idMatch?.[1] ?? rawId
 
   const url = `https://www.youtube.com/watch?v=${videoId}`
 
