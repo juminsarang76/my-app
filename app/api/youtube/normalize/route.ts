@@ -18,17 +18,20 @@ export async function POST(req: NextRequest) {
 
   const prompt = `당신은 유튜브 자막 편집 전문가입니다. 아래 자막은 영상 재생 타이밍에 맞춰 짧게 잘려 있어 문장이 중간에 끊깁니다.
 
-**핵심 작업**: 끊어진 자막 줄들을 읽고, 의미상 하나의 완성된 문장으로 이어지는 줄들을 합쳐주세요.
+**핵심 작업**: 끊어진 자막 줄들을 읽고, 완성된 문장으로 합쳐주세요.
 
-**판단 기준** (어떤 하나라도 해당하면 다음 줄과 합침):
-- 줄이 전치사(of, in, to, for, with, from, that, which, because, if, when, although, after, before, as, since, until, unless, though, at, by, on, about, over, under, between, into, through, during, without, within, across, around, along, among, against, toward, towards, upon, per)로 끝남
-- 줄이 관사(a, an, the)로 끝남
-- 줄이 쉼표(,)로 끝남
-- 줄이 조동사(is, are, was, were, have, has, had, will, would, could, should, can, do, does, did)로 끝남
-- 다음 줄이 접속사(and, but, or, so, yet, nor, for)로 시작함 → 앞 줄과 합침 ← 매우 중요!
-- 줄이 구두점(., ?, !) 없이 끝나고 문장이 의미상 불완전함
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 **단 하나의 절대 규칙**:
 
-**마침표(.), 물음표(?), 느낌표(!)로 끝나면 → 완성된 문장, 새 줄 시작**
+**모든 출력 문장은 반드시 마침표(.), 물음표(?), 느낌표(!) 중 하나로 끝나야 합니다.**
+
+→ 현재 줄이 . ? ! 로 끝나지 않으면 = 다음 줄과 무조건 합침
+→ . ? ! 를 만날 때까지 계속 합침
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**추가 규칙** (다음 줄도 앞 줄에 붙여야 하는 경우):
+- 다음 줄이 소문자로 시작할 때 (and, but, or, especially, at, of, in, to, for, which, that, when...)
+- 다음 줄이 전치사/접속사로 시작할 때
 
 **출력 규칙**:
 - 완성된 문장만 줄바꿈으로 구분해서 출력
@@ -44,12 +47,18 @@ export async function POST(req: NextRequest) {
 [4] I wouldn't think it was optimizing for anything.
 [5] You get all these other reflections right now
 [6] and this light is just going in all directions.
-[7] But now I will prove to you
-[8] that this is not the case.
+[7] Action was useful and an alternative way of solving physics problems,
+[8] especially when Newton's laws get too cumbersome.
+[9] The hotter the object, the more energy was emitted
+[10] at every wavelength, and the peak of the distribution shifted to the left.
+[11] But now I will prove to you
+[12] that this is not the case.
 
 출력:
 If you later find that of all the possible paths, light took the shortest time to get from A to B, I wouldn't think it was optimizing for anything.
 You get all these other reflections right now and this light is just going in all directions.
+Action was useful and an alternative way of solving physics problems, especially when Newton's laws get too cumbersome.
+The hotter the object, the more energy was emitted at every wavelength, and the peak of the distribution shifted to the left.
 But now I will prove to you that this is not the case.
 
 ---
