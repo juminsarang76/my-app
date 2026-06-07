@@ -373,7 +373,7 @@ export default function YoutubePage() {
       const res = await fetch('/api/youtube/save-notion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoId, videoTitle: makeFilename(), items, translated, summary }),
+        body: JSON.stringify({ videoId, videoTitle, filename: makeFilename(), items, translated, summary }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)

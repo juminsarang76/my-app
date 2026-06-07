@@ -13,10 +13,11 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const { videoId, items, translated, summary } = await req.json()
+  const { videoId, videoTitle, filename, items, translated, summary } = await req.json()
   if (!items?.length) return NextResponse.json({ error: '자막 없음' }, { status: 400 })
 
-  const title = `YouTube 자막 — ${videoId}`
+  // 파일명: YYYYMMDD_HHMMSS_제목 (제목 없으면 YYYYMMDD_HHMMSS)
+  const title = filename || videoTitle || videoId
 
   // Notion 블록 구성
   const blocks: object[] = []
