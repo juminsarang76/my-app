@@ -400,6 +400,10 @@ export default function YoutubePage() {
         } else {
           // 실패한 청크는 원문 유지
           chunk.forEach((item, k) => { result[startIdx + k] = item.text })
+          // 429 Rate Limit 오류 표시
+          if (res.status === 429 || data.error?.includes('rate')) {
+            setError('⚠️ Groq 일일 번역 한도 초과. Cerebras로 재시도 중...')
+          }
         }
 
         // 진행률 업데이트 및 현재까지 번역된 것 즉시 표시
