@@ -45,9 +45,16 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ videoId, items, lang, total: items.length })
   } catch (e) {
-    return NextResponse.json(
-      { error: `자막을 가져올 수 없습니다. 자막이 비활성화된 영상일 수 있습니다. (${String(e)})` },
-      { status: 500 },
-    )
+    const msg = String(e)
+    const isDisabled = msg.includes('disabled') || msg.includes('Transcript is disabled')
+    const isNotFound = msg.includes('No transcript') || msg.includes('not found')
+
+    const userMsg = isDisabled
+      ? '이 영상은 자막이 비활성화되어 있습니다.\n\n자막이 있는 영상을 사용하세요:\n• TED 강연 (ted.com/talks)\n• YouTube에서 CC 버튼이 활성화된 영상\n• 영어권 뉴스·교육 채널 (CNN, BBC, Crash Course 등)'
+      : isNotFound
+      ? '자막(CC)이 없는 영상입니다. 자막이 있는 영상의 URL을 입력해주세요.'
+      : '자막을 가져오지 못했습니다. 잠시 후 다시 시도하거나 다른 영상을 사용해주세요.'
+
+    return NextResponse.json({ error: userMsg }, { status: 500 })
   }
 }

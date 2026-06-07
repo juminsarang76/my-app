@@ -137,7 +137,11 @@ export default function YoutubePage() {
         </button>
       </div>
 
-      {error && <div style={{ padding: '10px 14px', background: '#FEF2F2', color: '#DC2626', borderRadius: 8, fontSize: 13, marginBottom: 16 }}>{error}</div>}
+      {error && (
+        <div style={{ padding: '12px 16px', background: '#FEF2F2', color: '#DC2626', borderRadius: 8, fontSize: 13, marginBottom: 16, lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+          {error}
+        </div>
+      )}
 
       {/* 영상 정보 + 액션 버튼 */}
       {items.length > 0 && (
