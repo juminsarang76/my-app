@@ -269,9 +269,13 @@ export default function YoutubePage() {
   }
 
   function makeFilename() {
-    const today = new Date().toISOString().slice(0, 10)
+    const now = new Date()
+    const pad = (n: number) => String(n).padStart(2, '0')
+    const dt = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
     const title = videoTitle || videoId
-    return `${title}_${today}`.replace(/[/\\?%*:|"<>]/g, '-')
+    return title
+      ? `${dt}_${title}`.replace(/[/\\?%*:|"<>]/g, '-')
+      : dt
   }
 
   // Obsidian: 마크다운 생성
