@@ -73,6 +73,7 @@ export default function YoutubePage() {
   const [videoTitle, setVideoTitle] = useState('')
   const [loadingTranscript, setLoadingTranscript] = useState(false)
   const [loadingTranslate, setLoadingTranslate] = useState(false)
+  const [translateProgress, setTranslateProgress] = useState(0) // 0~100
   const [loadingSummary, setLoadingSummary] = useState(false)
   const [loadingWhisper, setLoadingWhisper] = useState(false)
   const [savingNotion, setSavingNotion] = useState(false)
@@ -297,32 +298,54 @@ export default function YoutubePage() {
 
   async function handleTranslate() {
     if (!items.length) {
-      setError(`번역할 자막이 없습니다. 먼저 자막을 붙여넣거나 가져오세요.`)
+      setError('번역할 자막이 없습니다. 먼저 자막을 붙여넣거나 가져오세요.')
       return
     }
     setLoadingTranslate(true)
+    setTranslateProgress(0)
+    setTranslated([])
     setError('')
+    setTab('번역')
+
+    const CHUNK = 20
+    const total = items.length
+    const chunks: typeof items[] = []
+    for (let i = 0; i < total; i += CHUNK) chunks.push(items.slice(i, i + CHUNK))
+
+    const result: string[] = new Array(total).fill('')
+
     try {
-      const res = await fetch('/api/youtube/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
-      })
-      // 응답 본문 파싱 (빈 응답/타임아웃 대비)
-      let data: { translated?: string[]; error?: string }
-      try {
-        data = await res.json()
-      } catch {
-        throw new Error(`번역 서버 응답 오류 (${res.status}). 자막이 너무 길면 일부만 붙여넣고 다시 시도하세요.`)
+      for (let ci = 0; ci < chunks.length; ci++) {
+        const chunk = chunks[ci]
+        const startIdx = ci * CHUNK
+
+        const res = await fetch('/api/youtube/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: chunk }),
+        })
+
+        let data: { translated?: string[]; error?: string }
+        try { data = await res.json() }
+        catch { data = { error: `HTTP ${res.status}` } }
+
+        if (res.ok && data.translated?.length) {
+          data.translated.forEach((t, k) => { result[startIdx + k] = t || chunk[k].text })
+        } else {
+          // 실패한 청크는 원문 유지
+          chunk.forEach((item, k) => { result[startIdx + k] = item.text })
+        }
+
+        // 진행률 업데이트 및 현재까지 번역된 것 즉시 표시
+        const done = Math.min(startIdx + chunk.length, total)
+        setTranslateProgress(Math.round((done / total) * 100))
+        setTranslated([...result])
       }
-      if (!res.ok) throw new Error(data.error ?? `번역 API 오류 (${res.status})`)
-      if (!data.translated?.length) throw new Error('번역 결과가 비어있습니다. 다시 시도해주세요.')
-      setTranslated(data.translated)
-      setTab('번역')
     } catch (e) {
       setError(e instanceof Error ? e.message : '번역에 실패했습니다.')
     } finally {
       setLoadingTranslate(false)
+      setTranslateProgress(100)
     }
   }
 
@@ -624,28 +647,45 @@ export default function YoutubePage() {
           {/* 번역 탭 */}
           {tab === '번역' && (
             <div style={{ border: '1px solid #E2E8F0', borderTop: 'none' }}>
-              {translated.length === 0 ? (
+              {/* 진행률 바 */}
+              {loadingTranslate && (
+                <div style={{ padding: '10px 16px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#0369A1', marginBottom: 6, fontWeight: 600 }}>
+                    <span>🔄 번역 중...</span>
+                    <span>{translateProgress}% ({Math.round(items.length * translateProgress / 100)} / {items.length}줄)</span>
+                  </div>
+                  <div style={{ height: 6, background: '#E2E8F0', borderRadius: 3, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', background: '#0369A1', borderRadius: 3, width: `${translateProgress}%`, transition: 'width 0.3s ease' }} />
+                  </div>
+                </div>
+              )}
+
+              {/* 오류 표시 */}
+              {error && !loadingTranslate && (
+                <div style={{ padding: '10px 16px', background: '#FEF2F2', color: '#DC2626', fontSize: 12, borderBottom: '1px solid #FECACA' }}>
+                  ⚠️ {error}
+                </div>
+              )}
+
+              {translated.length === 0 && !loadingTranslate ? (
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: '#94a3b8' }}>
-                  {error && (
-                    <div style={{ marginBottom: 16, padding: '10px 16px', background: '#FEF2F2', color: '#DC2626', borderRadius: 8, fontSize: 12, textAlign: 'left' }}>
-                      ⚠️ {error}
-                    </div>
-                  )}
-                  <p style={{ marginBottom: 12 }}>{loadingTranslate ? '번역 중... (최대 30초 소요)' : '번역 결과가 없습니다.'}</p>
-                  {!loadingTranslate && (
-                    <button onClick={handleTranslate} style={{ padding: '8px 20px', background: '#0369A1', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
-                      번역 시작
-                    </button>
-                  )}
+                  <p style={{ marginBottom: 12 }}>번역 결과가 없습니다.</p>
+                  <button onClick={handleTranslate} style={{ padding: '8px 20px', background: '#0369A1', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
+                    번역 시작
+                  </button>
                 </div>
               ) : (
-                <div style={{ height: 520, overflowY: 'auto' }}>
+                <div style={{ height: 480, overflowY: 'auto' }}>
                   {items.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 16px', borderBottom: '1px solid #F1F5F9', alignItems: 'flex-start' }}>
+                    <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 16px', borderBottom: '1px solid #F1F5F9', alignItems: 'flex-start', background: translated[i] ? '#fff' : '#FAFAFA' }}>
                       <span style={{ fontSize: 11, color: '#94a3b8', minWidth: 44, flexShrink: 0, paddingTop: 2, fontFamily: 'monospace' }}>
                         {formatTime(item.start)}
                       </span>
-                      <span style={{ fontSize: 14, color: '#1e293b', lineHeight: 1.6 }}>{translated[i] || item.text}</span>
+                      {translated[i] ? (
+                        <span style={{ fontSize: 14, color: '#1e293b', lineHeight: 1.6 }}>{translated[i]}</span>
+                      ) : (
+                        <span style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.6, fontStyle: 'italic' }}>{item.text}</span>
+                      )}
                     </div>
                   ))}
                 </div>
