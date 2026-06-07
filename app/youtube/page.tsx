@@ -279,9 +279,13 @@ export default function YoutubePage() {
 
   // 수동 붙여넣기 처리
   function handlePasteSubmit() {
-    if (!pasteText.trim()) return
-    const parsed = parseSubtitleText(pasteText)
-    if (!parsed.length) return
+    const raw = pasteText.trim()
+    if (!raw) return
+    const parsed = parseSubtitleText(raw)
+    if (!parsed.length) {
+      alert('자막을 인식하지 못했습니다.\nSRT, VTT, 또는 일반 텍스트 형식을 붙여넣어 주세요.')
+      return
+    }
     setItems(parsed)
     setTranslated([])
     setSummary('')
@@ -290,6 +294,7 @@ export default function YoutubePage() {
     setPasteText('')
     setError('')
     setNoCaption(false)
+    setLang(`수동입력 (${parsed.length}줄)`)
   }
 
   // 둘다 저장
@@ -542,7 +547,7 @@ export default function YoutubePage() {
         </div>
       </div>
 
-      {/* 탭 — 항상 표시 */}
+      {/* 탭 — 통합 */}
       <>
         <div style={{ display: 'flex', borderBottom: '2px solid #E2E8F0', marginBottom: 0 }}>
           {TABS.map(t => (
@@ -555,25 +560,18 @@ export default function YoutubePage() {
             }}>{t}</button>
           ))}
         </div>
+
+        {/* 자막 없을 때 안내 */}
         {!items.length && !loadingTranscript && (
-          <div style={{ height: 200, border: '1px solid #E2E8F0', borderTop: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: 14 }}>
-            YouTube URL을 입력하고 자막 가져오기를 눌러주세요
+          <div style={{ height: 200, border: '1px solid #E2E8F0', borderTop: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: 14, flexDirection: 'column', gap: 8 }}>
+            <span>YouTube URL을 입력하거나 자막을 붙여넣어 주세요</span>
+            <span style={{ fontSize: 12 }}>📋 downsub 등에서 자막 붙여넣기 버튼 이용</span>
           </div>
         )}
-      {items.length > 0 && (
-        <>
-          <div style={{ display: 'flex', borderBottom: '2px solid #E2E8F0', marginBottom: 0 }}>
-            {TABS.map(t => (
-              <button key={t} onClick={() => setTab(t)} style={{
-                padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer',
-                fontWeight: tab === t ? 700 : 400, fontSize: 13,
-                color: tab === t ? '#0369A1' : '#94a3b8',
-                borderBottom: `2px solid ${tab === t ? '#0369A1' : 'transparent'}`,
-                marginBottom: '-2px',
-              }}>{t}</button>
-            ))}
-          </div>
 
+        {/* 자막 있을 때 콘텐츠 */}
+        {items.length > 0 && (
+          <>
           {/* 원문 탭 */}
           {tab === '원문' && (
             <div style={{ height: 520, overflowY: 'auto', border: '1px solid #E2E8F0', borderTop: 'none' }}>
@@ -669,8 +667,8 @@ export default function YoutubePage() {
               <div style={{ fontSize: 14, color: '#1e293b', lineHeight: 1.9, whiteSpace: 'pre-wrap' }}>{summary}</div>
             </div>
           )}
-        </>
-      )}
+          </>
+        )}
       </>
     </div>
   )
