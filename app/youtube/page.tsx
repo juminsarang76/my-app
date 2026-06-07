@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface SubItem { text: string; start: number; duration: number }
 type Tab = '원문' | '번역' | '동시보기'
@@ -28,6 +28,14 @@ export default function YoutubePage() {
   const [toast, setToast] = useState('')
   const [lang, setLang] = useState('')
   const [noCaption, setNoCaption] = useState(false)
+  const [obsidianToken, setObsidianToken] = useState('')
+  const [obsidianPort, setObsidianPort] = useState('27124')
+  const [showObsidianSettings, setShowObsidianSettings] = useState(false)
+
+  useEffect(() => {
+    setObsidianToken(localStorage.getItem('obsidian_token') ?? '')
+    setObsidianPort(localStorage.getItem('obsidian_port') ?? '27124')
+  }, [])
 
   const leftRef = useRef<HTMLDivElement>(null)
   const rightRef = useRef<HTMLDivElement>(null)
@@ -133,30 +141,54 @@ export default function YoutubePage() {
     return md
   }
 
-  // Obsidian 직접 열기 (URI scheme + 파일 다운로드)
-  function handleObsidian() {
+  // Obsidian Local REST API로 직접 저장
+  async function handleObsidian() {
     if (!items.length) return
     const fname = makeFilename()
     const md = buildMarkdown()
 
-    // 1. .md 파일 다운로드
-    const blob = new Blob([md], { type: 'text/markdown; charset=utf-8' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `${fname}.md`
-    document.body.appendChild(a); a.click(); document.body.removeChild(a)
-    URL.revokeObjectURL(a.href)
-
-    // 2. 내용이 짧으면 Obsidian URI로 직접 생성 시도 (2000자 이하)
-    if (md.length <= 2000) {
-      const uri = `obsidian://new?name=${encodeURIComponent(fname)}&content=${encodeURIComponent(md)}`
-      window.open(uri)
-    } else {
-      // 내용이 길면 Obsidian 앱만 열기
-      window.open('obsidian://')
+    // 토큰이 없으면 설정 열기
+    if (!obsidianToken) {
+      setShowObsidianSettings(true)
+      return
     }
 
-    setToast('📥 파일 다운로드 완료 → Obsidian Vault 폴더로 이동하거나, Obsidian이 자동으로 열립니다.')
+    try {
+      // 브라우저에서 직접 localhost Obsidian API 호출
+      const res = await fetch(`https://127.0.0.1:${obsidianPort}/vault/${encodeURIComponent(fname)}.md`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${obsidianToken}`,
+          'Content-Type': 'text/markdown',
+        },
+        body: md,
+      })
+
+      if (res.ok || res.status === 204) {
+        setToast(`✅ Obsidian에 저장됐습니다: ${fname}.md`)
+        // Obsidian 앱으로 바로 이동
+        window.open(`obsidian://open?path=${encodeURIComponent(fname)}.md`)
+      } else {
+        throw new Error(`HTTP ${res.status}`)
+      }
+    } catch (e) {
+      // 실패 시 .md 파일 다운로드로 폴백
+      const blob = new Blob([md], { type: 'text/markdown; charset=utf-8' })
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = `${fname}.md`
+      document.body.appendChild(a); a.click(); document.body.removeChild(a)
+      URL.revokeObjectURL(a.href)
+
+      setToast(`⚠️ 직접 저장 실패 (인증서 문제일 수 있음). 파일 다운로드로 대체했습니다.\n브라우저에서 https://127.0.0.1:${obsidianPort} 접속 후 인증서를 허용하세요.`)
+    }
+  }
+
+  function saveObsidianSettings() {
+    localStorage.setItem('obsidian_token', obsidianToken)
+    localStorage.setItem('obsidian_port', obsidianPort)
+    setShowObsidianSettings(false)
+    setToast('✅ Obsidian 설정 저장됨')
   }
 
   // Notion: API 저장
@@ -226,6 +258,40 @@ export default function YoutubePage() {
 
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: 900, margin: '0 auto', padding: '24px 16px' }}>
+
+      {/* Obsidian 설정 모달 */}
+      {showObsidianSettings && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999, padding: 20 }}>
+          <div style={{ background: '#fff', borderRadius: 14, padding: '28px 24px', maxWidth: 440, width: '100%' }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: 16, color: '#1e293b' }}>🗂 Obsidian Local REST API 설정</h3>
+            <div style={{ fontSize: 12, color: '#64748b', marginBottom: 16, lineHeight: 1.7 }}>
+              Obsidian Local REST API 플러그인이 필요합니다.<br/>
+              플러그인 설정에서 Bearer Token을 확인하세요.
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 4 }}>Bearer Token</label>
+                <input value={obsidianToken} onChange={e => setObsidianToken(e.target.value)}
+                  placeholder="ab69cae5c136ac11..."
+                  style={{ width: '100%', boxSizing: 'border-box', padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 13 }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 4 }}>포트 (기본: 27124)</label>
+                <input value={obsidianPort} onChange={e => setObsidianPort(e.target.value)}
+                  placeholder="27124"
+                  style={{ width: 120, padding: '9px 12px', border: '1.5px solid #E2E8F0', borderRadius: 8, fontSize: 13 }} />
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: '#f97316', marginTop: 12, lineHeight: 1.6 }}>
+              ⚠️ 첫 사용 전 브라우저에서 <strong>https://127.0.0.1:{obsidianPort}</strong> 접속 후 인증서를 허용해야 합니다.
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 20, justifyContent: 'flex-end' }}>
+              <button onClick={() => setShowObsidianSettings(false)} style={{ padding: '8px 18px', background: '#F1F5F9', color: '#64748b', border: 'none', borderRadius: 8, cursor: 'pointer' }}>취소</button>
+              <button onClick={saveObsidianSettings} style={{ padding: '8px 18px', background: '#6d28d9', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>저장</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 토스트 */}
       {toast && (
@@ -304,9 +370,12 @@ export default function YoutubePage() {
             </button>
             {/* 저장 버튼 */}
             <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
-              <button onClick={handleObsidian} style={{ padding: '7px 14px', background: '#6d28d9', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                🗂 Obsidian
-              </button>
+              <div style={{ display: 'flex', gap: 2 }}>
+                <button onClick={handleObsidian} style={{ padding: '7px 12px', background: '#6d28d9', color: '#fff', border: 'none', borderRadius: '8px 0 0 8px', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                  🗂 Obsidian
+                </button>
+                <button onClick={() => setShowObsidianSettings(true)} style={{ padding: '7px 8px', background: '#5b21b6', color: '#fff', border: 'none', borderRadius: '0 8px 8px 0', fontSize: 11, cursor: 'pointer' }} title="Obsidian 설정">⚙️</button>
+              </div>
               <button onClick={handleNotion} disabled={savingNotion} style={{ padding: '7px 14px', background: savingNotion ? '#e2e8f0' : '#000', color: savingNotion ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: savingNotion ? 'not-allowed' : 'pointer' }}>
                 {savingNotion ? '저장 중...' : '📓 Notion'}
               </button>
