@@ -454,9 +454,32 @@ export default function YoutubePage() {
 
         {showPasteInput && (
           <div style={{ marginTop: 10, border: '1px solid #E2E8F0', borderRadius: 10, overflow: 'hidden' }}>
-            <div style={{ padding: '10px 14px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', fontSize: 12, color: '#64748b', lineHeight: 1.6 }}>
-              <strong>사용법:</strong> <a href="https://downsub.com" target="_blank" rel="noopener noreferrer" style={{ color: '#0369A1' }}>downsub.com</a>에서 자막 다운로드 →
-              TXT/SRT/VTT 내용 전체 복사 → 아래 붙여넣기
+            <div style={{ padding: '10px 14px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', fontSize: 12, color: '#64748b', lineHeight: 1.8 }}>
+              <strong>① 아래 사이트에서 자막 추출 후 복사</strong>
+              <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
+                <a
+                  href={url ? `https://downsub.com/?url=${encodeURIComponent(url)}` : 'https://downsub.com'}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ padding: '5px 12px', background: '#1e293b', color: '#fff', borderRadius: 6, textDecoration: 'none', fontSize: 11, fontWeight: 700 }}
+                >
+                  🔗 DownSub에서 열기
+                </a>
+                <a
+                  href={url ? `https://lilys.ai/digest?sId=${url.match(/[a-zA-Z0-9_-]{11}/)?.[0] ?? ''}` : 'https://lilys.ai'}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ padding: '5px 12px', background: '#7C3AED', color: '#fff', borderRadius: 6, textDecoration: 'none', fontSize: 11, fontWeight: 700 }}
+                >
+                  🔗 Lilys.ai에서 열기
+                </a>
+                <a
+                  href={url ? `https://youtubetotranscript.com/?url=${encodeURIComponent(url)}` : 'https://youtubetotranscript.com'}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ padding: '5px 12px', background: '#0369A1', color: '#fff', borderRadius: 6, textDecoration: 'none', fontSize: 11, fontWeight: 700 }}
+                >
+                  🔗 YouTubeToTranscript
+                </a>
+              </div>
+              <div style={{ marginTop: 6 }}>② 추출된 자막 텍스트 전체 복사 → 아래 붙여넣기 (SRT/VTT/TXT 모두 지원)</div>
             </div>
             <textarea
               value={pasteText}
