@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const maxDuration = 30
 
+const INNERTUBE_KEY = 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8'
+
+interface CaptionTrack { baseUrl: string; languageCode: string }
+interface CaptionEvent { tStartMs?: number; dDurationMs?: number; segs?: { utf8?: string }[] }
+
 function extractVideoId(url: string): string | null {
   for (const p of [
     /youtu\.be\/([a-zA-Z0-9_-]{11})/,
@@ -14,72 +19,64 @@ function extractVideoId(url: string): string | null {
   return null
 }
 
-interface CaptionTrack { baseUrl: string; languageCode: string; kind?: string }
-interface CaptionEvent { tStartMs?: number; dDurationMs?: number; segs?: { utf8?: string }[] }
-
-async function fetchViaInnerTube(videoId: string, prefLangs: string[]) {
-  // YouTube InnerTube API — 서버에서 플레이어 데이터 직접 조회
-  const res = await fetch('https://www.youtube.com/youtubei/v1/player', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-YouTube-Client-Name': '1',
-      'X-YouTube-Client-Version': '2.20240101.00.00',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-      'Origin': 'https://www.youtube.com',
-      'Referer': `https://www.youtube.com/watch?v=${videoId}`,
-    },
-    body: JSON.stringify({
-      videoId,
-      context: {
-        client: {
-          clientName: 'WEB',
-          clientVersion: '2.20240101.00.00',
-          hl: 'en',
-          gl: 'US',
-          deviceMake: '',
-          deviceModel: '',
-          platform: 'DESKTOP',
-          browserName: 'Chrome',
-          browserVersion: '125.0.0.0',
-          osName: 'Windows',
-          osVersion: '10.0',
-        },
+async function tryClient(videoId: string, clientCtx: Record<string, string>, clientId: string) {
+  const res = await fetch(
+    `https://www.youtube.com/youtubei/v1/player?key=${INNERTUBE_KEY}&prettyPrint=false`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-YouTube-Client-Name': clientId,
+        'X-YouTube-Client-Version': clientCtx.clientVersion,
+        'User-Agent': 'com.google.ios.youtube/19.09.3 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X)',
+        'Origin': 'https://www.youtube.com',
       },
-    }),
-  })
-
-  if (!res.ok) throw new Error(`InnerTube API 실패: ${res.status}`)
+      body: JSON.stringify({ videoId, context: { client: clientCtx } }),
+      signal: AbortSignal.timeout(10000),
+    },
+  )
+  if (!res.ok) return null
   const data = await res.json()
+  const tracks: CaptionTrack[] = data?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? []
+  return { tracks, videoTitle: data?.videoDetails?.title }
+}
 
-  // 디버그: 실제 응답 구조 확인
-  const captionSection = data?.captions
-  const renderer = captionSection?.playerCaptionsTracklistRenderer
-  const tracks: CaptionTrack[] = renderer?.captionTracks ?? []
+async function fetchTranscript(videoId: string, prefLangs: string[]) {
+  // 여러 클라이언트 순서대로 시도
+  const clients = [
+    [{ clientName: 'iOS', clientVersion: '19.09.3', hl: 'en', gl: 'US', deviceMake: 'Apple', deviceModel: 'iPhone16,2', osName: 'iPhone', osVersion: '17.5.1' }, '5'],
+    [{ clientName: 'ANDROID', clientVersion: '19.09.36', hl: 'en', gl: 'US', osName: 'Android', osVersion: '14', androidSdkVersion: '34' }, '3'],
+    [{ clientName: 'TVHTML5', clientVersion: '7.20231213.07.00', hl: 'en', gl: 'US' }, '7'],
+    [{ clientName: 'WEB', clientVersion: '2.20240101.00.00', hl: 'en', gl: 'US', platform: 'DESKTOP' }, '1'],
+  ] as [Record<string, string>, string][]
+
+  let tracks: CaptionTrack[] = []
+  let dbgTitle = ''
+
+  for (const [ctx, id] of clients) {
+    try {
+      const result = await tryClient(videoId, ctx, id)
+      if (result) {
+        dbgTitle = result.videoTitle ?? ''
+        if (result.tracks.length) { tracks = result.tracks; break }
+      }
+    } catch { /* 다음 클라이언트 */ }
+  }
 
   if (!tracks.length) {
-    // 디버그 정보 포함
-    const debugInfo = {
-      hasCaption: !!captionSection,
-      hasRenderer: !!renderer,
-      rendererKeys: renderer ? Object.keys(renderer) : [],
-      videoDetails: data?.videoDetails?.title ?? 'unknown',
-    }
-    throw new Error(`자막 없음. Debug: ${JSON.stringify(debugInfo)}`)
+    throw new Error(`이 영상에는 자막이 없습니다 (title: ${dbgTitle || '없음'}).\n\nWhisper AI로 음성 인식을 시도해보세요.`)
   }
 
   // 선호 언어 선택
   let selected = tracks[0]
   for (const lang of prefLangs) {
-    const found = tracks.find(t => t.languageCode === lang)
-    if (found) { selected = found; break }
+    const f = tracks.find(t => t.languageCode === lang)
+    if (f) { selected = f; break }
   }
 
-  // 자막 데이터 fetch
-  const captionUrl = selected.baseUrl.startsWith('http') ? selected.baseUrl : `https://www.youtube.com${selected.baseUrl}`
-  const capRes = await fetch(`${captionUrl}&fmt=json3`, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-  })
+  // 자막 fetch
+  const capUrl = (selected.baseUrl.startsWith('http') ? selected.baseUrl : `https://www.youtube.com${selected.baseUrl}`) + '&fmt=json3'
+  const capRes = await fetch(capUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } })
   if (!capRes.ok) throw new Error(`자막 데이터 로드 실패: ${capRes.status}`)
 
   const capData: { events?: CaptionEvent[] } = await capRes.json()
@@ -101,10 +98,9 @@ export async function POST(req: NextRequest) {
   if (!videoId) return NextResponse.json({ error: '유효한 YouTube URL이 아닙니다.' }, { status: 400 })
 
   try {
-    const { items, lang } = await fetchViaInnerTube(videoId, ['ko', 'en'])
+    const { items, lang } = await fetchTranscript(videoId, ['ko', 'en'])
     return NextResponse.json({ videoId, items, lang, total: items.length })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
-    return NextResponse.json({ error: msg }, { status: 500 })
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 })
   }
 }
