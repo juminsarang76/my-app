@@ -14,6 +14,7 @@ import re
 import ssl
 import os
 import socket
+import ipaddress
 import tempfile
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
@@ -44,7 +45,7 @@ def generate_self_signed_cert():
             .serial_number(x509.random_serial_number())
             .not_valid_before(datetime.datetime.utcnow())
             .not_valid_after(datetime.datetime.utcnow() + datetime.timedelta(days=365))
-            .add_extension(x509.SubjectAlternativeName([x509.DNSName('localhost'), x509.IPAddress(socket.inet_aton('127.0.0.1'))]), critical=False)
+            .add_extension(x509.SubjectAlternativeName([x509.DNSName('localhost'), x509.IPAddress(ipaddress.IPv4Address('127.0.0.1'))]), critical=False)
             .sign(key, hashes.SHA256())
         )
         with open(cert_file, 'wb') as f:
