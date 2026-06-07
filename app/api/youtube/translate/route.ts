@@ -14,12 +14,17 @@ const PROVIDERS = [
   {
     url: 'https://api.groq.com/openai/v1/chat/completions',
     keyEnv: 'GROQ_API_KEY',
-    model: 'llama-3.1-8b-instant',  // 더 작은 모델 (별도 쿼터)
+    model: 'llama-3.1-8b-instant',
   },
   {
     url: 'https://api.cerebras.ai/v1/chat/completions',
     keyEnv: 'CEREBRAS_API_KEY',
-    model: 'llama-3.3-70b',
+    model: 'gpt-oss-120b',  // Cerebras 가용 모델
+  },
+  {
+    url: 'https://api.cerebras.ai/v1/chat/completions',
+    keyEnv: 'CEREBRAS_API_KEY',
+    model: 'zai-glm-4.7',
   },
 ]
 
