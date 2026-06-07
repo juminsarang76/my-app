@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const maxDuration = 30
+
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
-const CHUNK = 60 // 한 번에 번역할 자막 줄 수
+const CHUNK = 30 // 청크 크기 축소 (속도 향상)
 
 async function translateChunk(lines: string[], groqKey: string): Promise<string[]> {
   const numbered = lines.map((l, i) => `${i + 1}. ${l}`).join('\n')

@@ -616,10 +616,17 @@ export default function YoutubePage() {
             <div style={{ border: '1px solid #E2E8F0', borderTop: 'none' }}>
               {translated.length === 0 ? (
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: '#94a3b8' }}>
-                  <p style={{ marginBottom: 12 }}>번역 결과가 없습니다.</p>
-                  <button onClick={handleTranslate} disabled={loadingTranslate} style={{ padding: '8px 20px', background: '#0369A1', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
-                    {loadingTranslate ? '번역 중...' : '지금 번역하기'}
-                  </button>
+                  {error && (
+                    <div style={{ marginBottom: 16, padding: '10px 16px', background: '#FEF2F2', color: '#DC2626', borderRadius: 8, fontSize: 12, textAlign: 'left' }}>
+                      ⚠️ {error}
+                    </div>
+                  )}
+                  <p style={{ marginBottom: 12 }}>{loadingTranslate ? '번역 중... (최대 30초 소요)' : '번역 결과가 없습니다.'}</p>
+                  {!loadingTranslate && (
+                    <button onClick={handleTranslate} style={{ padding: '8px 20px', background: '#0369A1', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
+                      번역 시작
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div style={{ height: 520, overflowY: 'auto' }}>
