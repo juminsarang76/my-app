@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2030 AI 마케팅 커리어 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080f;--surface:#0e101c;--card:#13162a;--card2:#181b30;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --text:#dde1f5;--muted:#6b7299;--dim:#3a3f5c;
+  --blue:#4d8ef5;--teal:#28c9a0;--coral:#f2664a;--amber:#f5b230;--purple:#9b77e8;--pink:#e85fa0;
+  --blue-bg:rgba(77,142,245,0.1);--teal-bg:rgba(40,201,160,0.1);
+  --coral-bg:rgba(242,102,74,0.1);--amber-bg:rgba(245,178,48,0.1);
+  --purple-bg:rgba(155,119,232,0.1);--pink-bg:rgba(232,95,160,0.1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+
+/* NOISE OVERLAY */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4;pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,8,15,0.85);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--blue)}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:12px;letter-spacing:1px;color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 80px 80px;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.4}
+.hero-glow{position:absolute;top:20%;left:10%;width:600px;height:600px;background:radial-gradient(circle,rgba(77,142,245,0.08) 0%,transparent 70%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:10%;right:5%;width:400px;height:400px;background:radial-gradient(circle,rgba(40,201,160,0.06) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:24px;opacity:0;animation:fadeUp .6s .2s forwards}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(52px,7vw,96px);font-weight:800;line-height:.95;letter-spacing:-2px;margin-bottom:32px;opacity:0;animation:fadeUp .6s .35s forwards}
+.hero-title .yr{color:var(--blue)}
+.hero-title .ai{color:var(--teal)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:560px;line-height:1.8;margin-bottom:48px;opacity:0;animation:fadeUp .6s .5s forwards}
+.hero-chips{display:flex;flex-wrap:wrap;gap:10px;opacity:0;animation:fadeUp .6s .65s forwards}
+.chip{font-size:11px;padding:6px 16px;border:0.5px solid var(--border2);border-radius:40px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.chip.active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.scroll-hint{position:absolute;bottom:40px;left:80px;font-size:11px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;gap:8px;opacity:0;animation:fadeUp .6s .9s forwards}
+.scroll-hint::before{content:'';width:40px;height:0.5px;background:var(--dim)}
+
+/* SECTIONS */
+section{padding:100px 80px;position:relative;z-index:1}
+.s-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.s-title{font-family:'Syne',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;line-height:1;margin-bottom:56px}
+.accent-line{display:inline-block;position:relative}
+.accent-line::after{content:'';position:absolute;bottom:-4px;left:0;width:100%;height:2px;background:var(--blue)}
+
+/* COMPARE TABLE */
+.compare-wrap{overflow-x:auto}
+.compare-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.compare-tbl thead th{padding:14px 18px;text-align:left;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--muted);border-bottom:0.5px solid var(--border2)}
+.compare-tbl thead th:first-child{color:var(--dim)}
+.compare-tbl thead th:nth-child(2){color:var(--coral)}
+.compare-tbl thead th:nth-child(3){color:var(--teal)}
+.compare-tbl tbody tr{border-bottom:0.5px solid var(--border);transition:background .2s}
+.compare-tbl tbody tr:hover{background:rgba(255,255,255,0.02)}
+.compare-tbl tbody tr:last-child{border-bottom:none}
+.compare-tbl td{padding:14px 18px;vertical-align:top;line-height:1.6}
+.compare-tbl td:first-child{color:var(--muted);font-weight:500;width:15%;white-space:nowrap;font-size:12px}
+.compare-tbl td:nth-child(2){color:rgba(242,102,74,0.8)}
+.compare-tbl td:nth-child(3){color:rgba(40,201,160,0.9)}
+
+/* TECH CARDS */
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.tech-card{background:var(--card);border:0.5px solid var(--border);border-radius:16px;padding:28px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s;cursor:default}
+.tech-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.tech-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.tc-blue::before{background:var(--blue)}.tc-teal::before{background:var(--teal)}
+.tc-coral::before{background:var(--coral)}.tc-amber::before{background:var(--amber)}
+.tc-purple::before{background:var(--purple)}.tc-pink::before{background:var(--pink)}
+.tech-num{font-family:'Syne',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px}
+.tc-blue .tech-num{color:var(--blue)}.tc-teal .tech-num{color:var(--teal)}
+.tc-coral .tech-num{color:var(--coral)}.tc-amber .tech-num{color:var(--amber)}
+.tc-purple .tech-num{color:var(--purple)}.tc-pink .tech-num{color:var(--pink)}
+.tech-title{font-size:17px;font-weight:700;margin-bottom:10px;color:var(--text)}
+.tech-body{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.tech-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tech-tag{font-size:10px;padding:3px 9px;border-radius:4px;font-weight:500}
+.tc-blue .tech-tag{background:var(--blue-bg);color:var(--blue)}
+.tc-teal .tech-tag{background:var(--teal-bg);color:var(--teal)}
+.tc-coral .tech-tag{background:var(--coral-bg);color:var(--coral)}
+.tc-amber .tech-tag{background:var(--amber-bg);color:var(--amber)}
+.tc-purple .tech-tag{background:var(--purple-bg);color:var(--purple)}
+.tc-pink .tech-tag{background:var(--pink-bg);color:var(--pink)}
+
+/* TRACK TABS */
+.tabs{display:flex;gap:4px;margin-bottom:40px;background:var(--surface);border-radius:12px;padding:4px;border:0.5px solid var(--border);width:fit-content}
+.tab-btn{font-size:13px;font-weight:500;padding:10px 24px;border-radius:9px;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;letter-spacing:.3px}
+.tab-btn.active{background:var(--card2);color:var(--text);border:0.5px solid var(--border2)}
+
+/* TRACK CONTENT */
+.track-panel{display:none}.track-panel.active{display:block}
+
+/* COMPANY TRACK */
+.track-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.track-card{background:var(--card);border:0.5px solid var(--border);border-radius:16px;padding:28px;transition:border-color .3s}
+.track-card:hover{border-color:var(--border2)}
+.track-header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.track-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ti-global{background:var(--blue-bg)}.ti-local{background:var(--teal-bg)}
+.track-name{font-size:16px;font-weight:700}
+.track-sub{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
+.track-list{list-style:none;margin-bottom:18px}
+.track-list li{font-size:13px;color:var(--muted);padding:6px 0;border-bottom:0.5px solid var(--border);display:flex;align-items:flex-start;gap:8px}
+.track-list li:last-child{border-bottom:none}
+.track-list li::before{content:'→';color:var(--blue);flex-shrink:0;font-size:12px;margin-top:2px}
+.ti-local .track-list li::before,.track-card:nth-child(2) .track-list li::before{color:var(--teal)}
+.track-badge{display:inline-block;font-size:10px;padding:3px 10px;border-radius:20px;font-weight:500;margin-right:5px;margin-bottom:4px}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-teal{background:var(--teal-bg);color:var(--teal)}
+.badge-coral{background:var(--coral-bg);color:var(--coral)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* DEPT CARDS */
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.dept-card{background:var(--card);border:0.5px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .3s,transform .3s}
+.dept-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.dept-head{padding:20px 24px 16px;border-bottom:0.5px solid var(--border)}
+.dept-icon-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dept-icon{font-size:22px}
+.dept-name{font-size:15px;font-weight:700}
+.dept-en{font-size:11px;color:var(--muted);letter-spacing:1px}
+.dept-body{padding:20px 24px}
+.dept-section-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:14px}
+.dept-section-label:first-child{margin-top:0}
+.dept-items{font-size:12px;color:var(--muted);line-height:1.8}
+.dept-items li{list-style:none;padding-left:12px;position:relative;margin-bottom:2px}
+.dept-items li::before{content:'·';position:absolute;left:1px;color:var(--dim)}
+.dept-skill-tags{display:flex;flex-wrap:wrap;gap:5px}
+
+/* ROADMAP STEPS */
+.roadmap-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:16px;overflow:hidden;border:0.5px solid var(--border)}
+.road-col{background:var(--card);padding:28px}
+.road-phase{font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.rp1{color:var(--teal)}.rp2{color:var(--amber)}.rp3{color:var(--purple)}
+.road-period{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:16px;color:var(--text)}
+.road-items{display:flex;flex-direction:column;gap:10px}
+.road-item{background:var(--card2);border-radius:10px;padding:12px 14px;border:0.5px solid var(--border)}
+.road-item-title{font-size:12px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.road-item-body{font-size:11px;color:var(--muted);line-height:1.6}
+
+/* DIVIDER */
+.divider{height:0.5px;background:var(--border);margin:0 80px}
+
+/* FINAL CTA */
+.cta-section{padding:100px 80px;text-align:center;position:relative;overflow:hidden}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:300px;background:radial-gradient(ellipse,rgba(77,142,245,0.12) 0%,transparent 70%);pointer-events:none}
+.cta-label{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:20px}
+.cta-title{font-family:'Syne',sans-serif;font-size:clamp(36px,5vw,64px);font-weight:800;line-height:1;margin-bottom:24px}
+.cta-body{font-size:15px;color:var(--muted);max-width:540px;margin:0 auto 40px;line-height:1.8}
+.cta-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.cta-btn{font-size:13px;font-weight:700;padding:14px 28px;border-radius:10px;border:none;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#3a7de0;transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--text);border:0.5px solid var(--border2)}.btn-outline:hover{background:var(--surface)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:14px 24px}.nav-links{display:none}
+  .hero{padding:100px 24px 60px}.scroll-hint{left:24px}
+  section{padding:70px 24px}
+  .track-grid{grid-template-columns:1fr}
+  .roadmap-wrap{grid-template-columns:1fr}
+  .divider{margin:0 24px}
+  .cta-section{padding:70px 24px}
+}
+
+/* PROGRESS BARS */
+.skill-bar-wrap{margin-top:12px}
+.skill-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.skill-name-sm{font-size:11px;color:var(--muted);min-width:90px}
+.skill-track{flex:1;height:3px;background:rgba(255,255,255,0.07);border-radius:3px}
+.skill-fill{height:3px;border-radius:3px;transition:width 1.2s ease}
+.sf-blue{background:var(--blue)}.sf-teal{background:var(--teal)}.sf-purple{background:var(--purple)}
+.skill-pct{font-size:10px;color:var(--dim);min-width:28px;text-align:right}
+
+/* STAT CARDS */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:56px}
+.stat-card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:20px}
+.stat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--muted);letter-spacing:.5px}
+
+/* HIGHLIGHT QUOTE */
+.quote-block{border-left:2px solid var(--blue);padding:20px 24px;margin:40px 0;background:var(--blue-bg);border-radius:0 12px 12px 0}
+.quote-text{font-size:15px;font-style:italic;color:var(--text);line-height:1.8;margin-bottom:8px}
+.quote-attr{font-size:11px;color:var(--muted);letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">2030 Marketing</span>
+  <div class="nav-links">
+    <a href="#change">변화</a>
+    <a href="#tech">기술</a>
+    <a href="#global">외국계</a>
+    <a href="#domestic">국내</a>
+    <a href="#dept">부서별</a>
+    <a href="#roadmap">로드맵</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <p class="hero-eyebrow">취업준비생을 위한 2030 마케팅 커리어 가이드</p>
+  <h1 class="hero-title"><span class="yr">2030</span><br>AI가 바꾼<br><span class="ai">마케팅</span><br>세계</h1>
+  <p class="hero-sub">에이전틱 AI가 재편하는 마케팅 업계 — 외국계·국내 회사, 각 부서 입사를 위한 실전 준비 전략까지 한 권에 담았습니다.</p>
+  <div class="hero-chips">
+    <span class="chip active">외국계 마케팅</span>
+    <span class="chip active">국내 마케팅</span>
+    <span class="chip">에이전틱 AI</span>
+    <span class="chip">부서별 준비</span>
+    <span class="chip">1년 반 로드맵</span>
+  </div>
+  <span class="scroll-hint">스크롤하여 탐색</span>
+</section>
+
+<div class="divider"></div>
+
+<!-- STATS -->
+<section id="change">
+  <div class="s-label">Industry Overview</div>
+  <h2 class="s-title reveal">마케팅 업계<br><span class="accent-line">핵심 수치</span></h2>
+  <div class="stat-row reveal">
+    <div class="stat-card"><div class="stat-val" style="color:var(--blue)">$766B</div><div class="stat-label">2025 글로벌 광고 시장</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--teal)">2/3</div><div class="stat-label">AI가 담당할 마케팅 업무 비율</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--amber)">10~30%</div><div class="stat-label">AI 마케팅 도입 시 매출 증가</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--coral)">90%</div><div class="stat-label">AI 테스트 중인 CMO 비율</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--purple)">15배</div><div class="stat-label">에이전틱 AI의 캠페인 속도 향상</div></div>
+  </div>
+
+  <!-- COMPARE TABLE -->
+  <div class="compare-wrap reveal">
+    <table class="compare-tbl">
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th>기존 마케팅</th>
+          <th>2030년 AI 마케팅</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>의사결정</td><td>경험·직관 기반 캠페인 기획</td><td>실시간 데이터 + AI 예측 모델 기반 자율 결정</td></tr>
+        <tr><td>콘텐츠 생산</td><td>크리에이터 수작업, 주 단위 제작</td><td>AI 에이전트가 수백 개 맞춤 변형 콘텐츠를 분 단위 생성</td></tr>
+        <tr><td>타겟팅</td><td>연령·성별 등 인구통계 세그먼트</td><td>개인별 의도·감정·맥락 실시간 분석 1:1 초개인화</td></tr>
+        <tr><td>광고 집행</td><td>담당자가 직접 입찰·예산·소재 설정</td><td>AI가 입찰·예산·소재·채널 자율 최적화</td></tr>
+        <tr><td>고객 여정</td><td>퍼널 단계별 인간 설계</td><td>AI 에이전트가 고객별 여정 실시간 재구성</td></tr>
+        <tr><td>성과 측정</td><td>캠페인 종료 후 월간 리포트</td><td>실시간 대시보드 + AI 자동 예산 재배분</td></tr>
+        <tr><td>마케터 역할</td><td>캠페인 직접 실행자·운영자</td><td>AI 에이전트 오케스트레이터·전략 설계자</td></tr>
+        <tr><td>광고 타겟</td><td>사람(소비자)</td><td>AI 에이전트(구매 대리인) + 사람 병행</td></tr>
+        <tr><td>핵심 스킬</td><td>카피라이팅·디자인·기획력</td><td>AI 프롬프팅·데이터 해석·에이전트 설계</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TECH -->
+<section id="tech">
+  <div class="s-label">2030 Marketing Technologies</div>
+  <h2 class="s-title reveal">변화된<br><span class="accent-line">마케팅 기술</span> 6가지</h2>
+  <div class="tech-grid reveal">
+    <div class="tech-card tc-blue">
+      <div class="tech-num">01 — 에이전틱 AI</div>
+      <div class="tech-title">자율 마케팅 에이전트</div>
+      <div class="tech-body">캠페인 기획부터 집행·최적화·리포팅까지 AI가 자율 수행. 멀티에이전트가 병렬로 협업해 인간 1명이 수십 개 캠페인을 동시 감독. 마케터는 목표·가드레일 설정에 집중.</div>
+      <div class="tech-tags"><span class="tech-tag">Agentic AI</span><span class="tech-tag">오케스트레이션</span><span class="tech-tag">자동화</span></div>
+    </div>
+    <div class="tech-card tc-teal">
+      <div class="tech-num">02 — 초개인화</div>
+      <div class="tech-title">1:1 실시간 맞춤화</div>
+      <div class="tech-body">개인별 행동·감정·구매 의도를 실시간 분석해 콘텐츠·채널·타이밍을 자동 최적화. CDP와 AI가 결합해 수백만 명에게 1:1 메시지를 동시 전달.</div>
+      <div class="tech-tags"><span class="tech-tag">CDP</span><span class="tech-tag">초개인화</span><span class="tech-tag">실시간 분석</span></div>
+    </div>
+    <div class="tech-card tc-coral">
+      <div class="tech-num">03 — 생성형 AI 콘텐츠</div>
+      <div class="tech-title">멀티포맷 자동 생성</div>
+      <div class="tech-body">텍스트·이미지·영상·음성을 AI가 브랜드 가이드라인 내에서 자동 생성. 인간은 방향성과 감성적 판단을 담당. 콘텐츠 속도 10배 이상 향상.</div>
+      <div class="tech-tags"><span class="tech-tag">LLM</span><span class="tech-tag">AI 영상</span><span class="tech-tag">브랜드 컴플라이언스</span></div>
+    </div>
+    <div class="tech-card tc-amber">
+      <div class="tech-num">04 — 예측 분석</div>
+      <div class="tech-title">AI 기반 수요 예측</div>
+      <div class="tech-body">구매 이탈·이탈 위험·LTV를 사전 예측해 선제적 개입. 마케팅 예산을 ROI 기준으로 실시간 자동 재배분. 직감이 아닌 데이터가 예산을 결정.</div>
+      <div class="tech-tags"><span class="tech-tag">Predictive AI</span><span class="tech-tag">LTV 예측</span><span class="tech-tag">예산 최적화</span></div>
+    </div>
+    <div class="tech-card tc-purple">
+      <div class="tech-num">05 — M2M 마케팅</div>
+      <div class="tech-title">AI가 AI에게 판다</div>
+      <div class="tech-body">소비자 대신 AI 에이전트가 구매를 결정하는 시대. 브랜드 정보를 AI가 이해할 수 있는 구조화 데이터로 설계하는 것이 새 마케팅의 핵심.</div>
+      <div class="tech-tags"><span class="tech-tag">M2M</span><span class="tech-tag">에이전트 커머스</span><span class="tech-tag">구조화 데이터</span></div>
+    </div>
+    <div class="tech-card tc-pink">
+      <div class="tech-num">06 — GEO / AEO</div>
+      <div class="tech-title">AI 검색 최적화</div>
+      <div class="tech-body">ChatGPT·Perplexity·Google AI Overview 등 AI 검색엔진에 브랜드가 인용되도록 콘텐츠를 구조화. 기존 SEO를 대체하는 새로운 검색 패러다임.</div>
+      <div class="tech-tags"><span class="tech-tag">GEO</span><span class="tech-tag">AI 검색</span><span class="tech-tag">AEO</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GLOBAL vs DOMESTIC TRACK -->
+<section id="global">
+  <div class="s-label">Career Track</div>
+  <h2 class="s-title reveal">외국계 vs 국내<br><span class="accent-line">마케팅 입사 전략</span></h2>
+
+  <div class="tabs reveal" id="trackTabs">
+    <button class="tab-btn active" onclick="switchTab('global')">🌐 외국계 마케팅</button>
+    <button class="tab-btn" onclick="switchTab('domestic')">🇰🇷 국내 마케팅</button>
+  </div>
+
+  <!-- GLOBAL PANEL -->
+  <div class="track-panel active" id="panel-global">
+    <div class="track-grid reveal">
+      <!-- 외국계 회사 -->
+      <div class="track-card">
+        <div class="track-header">
+          <div class="track-icon ti-global">🌐</div>
+          <div>
+            <div class="track-name">외국계 마케팅 기업/부서</div>
+            <div class="track-sub">Google · Meta · P&G · L'Oréal · 유니레버 등</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <span class="track-badge badge-blue">영어 필수</span>
+          <span class="track-badge badge-coral">글로벌 사고</span>
+          <span class="track-badge badge-purple">데이터 중심</span>
+          <span class="track-badge badge-amber">수시채용</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.7">외국계 기업은 성과(KPI) 중심 문화와 영어 커뮤니케이션이 기본. 직무 전문성이 스펙보다 우선시되며, 인턴→전환 경로가 가장 현실적이다.</p>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">채용 채널</div>
+        <ul class="track-list">
+          <li>LinkedIn (가장 중요 — 프로필이 이력서)</li>
+          <li>각사 공식 채용 사이트 (Google Careers, Meta Careers)</li>
+          <li>글로벌 인턴십 프로그램 직접 지원</li>
+          <li>업계 네트워킹 이벤트·컨퍼런스 (DMEXCO, Cannes Lions)</li>
+        </ul>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">필수 준비</div>
+        <ul class="track-list">
+          <li>영문 이력서·커버레터 (1페이지, STAR 방식)</li>
+          <li>영어 인터뷰 대비 — 케이스 스터디·행동 면접</li>
+          <li>LinkedIn 프로필 완성도 90% 이상</li>
+          <li>글로벌 마케팅 트렌드 영문 리포트 정독 습관</li>
+          <li>수치 기반 성과 서술 ("XX% 성장", "XX배 향상")</li>
+        </ul>
+        <div class="skill-bar-wrap">
+          <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">핵심 역량 중요도</div>
+          <div class="skill-row"><span class="skill-name-sm">영어 커뮤니케이션</span><div class="skill-track"><div class="skill-fill sf-blue" style="width:0" data-w="95"></div></div><span class="skill-pct">95%</span></div>
+          <div class="skill-row"><span class="skill-name-sm">데이터 분석</span><div class="skill-track"><div class="skill-fill sf-blue" style="width:0" data-w="90"></div></div><span class="skill-pct">90%</span></div>
+          <div class="skill-row"><span class="skill-name-sm">AI 툴 활용</span><div class="skill-track"><div class="skill-fill sf-blue" style="width:0" data-w="88"></div></div><span class="skill-pct">88%</span></div>
+          <div class="skill-row"><span class="skill-name-sm">글로벌 시장 이해</span><div class="skill-track"><div class="skill-fill sf-blue" style="width:0" data-w="82"></div></div><span class="skill-pct">82%</span></div>
+          <div class="skill-row"><span class="skill-name-sm">포트폴리오</span><div class="skill-track"><div class="skill-fill sf-blue" style="width:0" data-w="85"></div></div><span class="skill-pct">85%</span></div>
+        </div>
+      </div>
+
+      <!-- 외국계 부서별 준비 -->
+      <div class="track-card">
+        <div class="track-header">
+          <div class="track-icon ti-global">📋</div>
+          <div>
+            <div class="track-name">외국계 — 부서별 핵심 전형</div>
+            <div class="track-sub">부서에 따라 전혀 다른 준비가 필요하다</div>
+          </div>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px;margin-top:4px">디지털 마케팅팀</div>
+        <ul class="track-list" style="margin-bottom:16px">
+          <li>Google Analytics 4 인증 + 광고 운영 실적 수치화</li>
+          <li>Meta·Google Ads 캠페인 직접 운영 경험 필수</li>
+          <li>영문 퍼포먼스 리포트 작성 능력</li>
+        </ul>
+        <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px">브랜드 마케팅팀</div>
+        <ul class="track-list" style="margin-bottom:16px">
+          <li>글로벌 브랜드 캠페인 케이스 스터디 영문 발표 준비</li>
+          <li>소비자 인사이트 리서치 경험 (정량+정성)</li>
+          <li>크리에이티브 브리프 영문 작성 실습</li>
+        </ul>
+        <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px">콘텐츠·소셜미디어팀</div>
+        <ul class="track-list" style="margin-bottom:16px">
+          <li>영문 SNS 채널 직접 운영 경험 (팔로워 불문)</li>
+          <li>AI 생성 콘텐츠 + 인간 크리에이티브 결합 포트폴리오</li>
+          <li>TikTok·Instagram Reels 트렌드 분석 능력</li>
+        </ul>
+        <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px">마케팅 애널리틱스팀</div>
+        <ul class="track-list">
+          <li>SQL 기초 + Python pandas 데이터 분석 포트폴리오</li>
+          <li>Looker Studio·Tableau 대시보드 제작 경험</li>
+          <li>A/B 테스트 설계·분석 사례 보유</li>
+        </ul>
+        <div class="quote-block" style="margin-top:20px;margin-bottom:0">
+          <div class="quote-text">"외국계는 '무엇을 했나'가 아닌 '얼마나 성과가 났나'를 본다. 모든 경험에 숫자를 붙여라."</div>
+          <div class="quote-attr">— 외국계 마케터 채용 인사이트</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOMESTIC PANEL -->
+  <div class="track-panel" id="panel-domestic">
+    <div class="track-grid reveal">
+      <!-- 국내 회사 -->
+      <div class="track-card">
+        <div class="track-header">
+          <div class="track-icon ti-local">🇰🇷</div>
+          <div>
+            <div class="track-name">국내 마케팅 기업/부서</div>
+            <div class="track-sub">무신사·컬리·올리브영·아모레·삼성·LG 등</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <span class="track-badge badge-teal">공채·수시 병행</span>
+          <span class="track-badge badge-coral">현장 경험 우대</span>
+          <span class="track-badge badge-blue">포트폴리오 중심</span>
+          <span class="track-badge badge-amber">자소서 필수</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.7">국내 기업은 직무 적합성과 조직 문화 적응력을 함께 본다. 대기업은 상·하반기 공채 + 수시채용을 병행하며, 버티컬 플랫폼은 포트폴리오 중심 수시채용이 주류.</p>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">채용 채널</div>
+        <ul class="track-list">
+          <li>사람인·잡코리아·원티드 (수시 채용 모니터링)</li>
+          <li>각사 채용 사이트 직접 지원 (대기업 공채)</li>
+          <li>링크드인 국내 네트워크 활용</li>
+          <li>학교 취업처·업계 커뮤니티 (마케터스 등)</li>
+        </ul>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">필수 준비</div>
+        <ul class="track-list">
+          <li>자기소개서 — 직무 연관 경험 스토리텔링</li>
+          <li>포트폴리오 — SNS 채널 운영 성과 + 기획서</li>
+          <li>마케팅 자격증 (Google 애널리틱스, SNS 광고 등)</li>
+          <li>국내 소비 트렌드·브랜드 분석 능력</li>
+          <li>유통·리테일 현장 경험 (올리브영 경험 활용)</li>
+        </ul>
+        <div class="skill-bar-wrap">
+          <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">핵심 역량 중요도</div>
+          <div class="skill-row"><span class="skill-name-sm">직무 경험·실습</span><div class="skill-track"><div class="skill-fill sf-teal" style="width:0" data-w="90"></div></div><span class="skill-pct">90%</span></div>
+          <div class="skill-row"><span class="skill-name-sm">포트폴리오</span><div class="skill-track"><div class="skill-fill sf-teal" style="width:0" data-w="88"></div></div><span class="skill-pct">88%</span></div>
+          <div class="skill-row"><span class="skill-name-sm">AI 툴 활용</span><div class="skill-track"><div class="skill-fill sf-teal" style="width:0" data-w="82"></div></div><span class="skill-pct">82%</span></div>
+          <div class="skill-row"><span class="skill-name-sm">국내 트렌드 이해</span><div class="skill-track"><div class="skill-fill sf-teal" style="width:0" data-w="85"></div></div><span class="skill-pct">85%</span></div>
+          <div class="skill-row"><span class="skill-name-sm">자소서·면접</span><div class="skill-track"><div class="skill-fill sf-teal" style="width:0" data-w="80"></div></div><span class="skill-pct">80%</span></div>
+        </div>
+      </div>
+
+      <!-- 국내 부서별 준비 -->
+      <div class="track-card">
+        <div class="track-header">
+          <div class="track-icon ti-local">📋</div>
+          <div>
+            <div class="track-name">국내 — 부서별 핵심 전형</div>
+            <div class="track-sub">회사 유형에 따라 전략이 달라진다</div>
+          </div>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--teal);margin-bottom:8px;margin-top:4px">대기업 마케팅팀 (삼성·LG·현대 등)</div>
+        <ul class="track-list" style="margin-bottom:16px">
+          <li>상·하반기 공채 준비 — 인적성 검사 + 직무 면접</li>
+          <li>브랜드 분석·소비자 인사이트 리포트 작성 능력</li>
+          <li>팀 프로젝트 경험·리더십 (청년회 리더 활용)</li>
+        </ul>
+        <div style="font-size:13px;font-weight:700;color:var(--teal);margin-bottom:8px">뷰티·유통 브랜드 (아모레·올리브영·LG생건)</div>
+        <ul class="track-list" style="margin-bottom:16px">
+          <li>올리브영 아르바이트 경험 → 브랜드 분석 리포트로 전환</li>
+          <li>뷰티 카테고리 소비 트렌드 및 경쟁사 분석</li>
+          <li>SNS 채널에서 뷰티 콘텐츠 직접 기획·제작 경험</li>
+        </ul>
+        <div style="font-size:13px;font-weight:700;color:var(--teal);margin-bottom:8px">버티컬 플랫폼 (무신사·컬리·오늘의집)</div>
+        <ul class="track-list" style="margin-bottom:16px">
+          <li>수시채용 중심 — 포트폴리오 상시 업데이트 필수</li>
+          <li>데이터 기반 마케팅 기획서 1편 이상 완성</li>
+          <li>해당 플랫폼 서비스 깊은 이해 (유저 경험 분석)</li>
+        </ul>
+        <div style="font-size:13px;font-weight:700;color:var(--teal);margin-bottom:8px">마케팅 에이전시 (대행사)</div>
+        <ul class="track-list">
+          <li>빠른 실전 경험 — 다양한 브랜드·캠페인 동시 경험</li>
+          <li>퍼포먼스 마케팅 (Meta·Google 광고) 운영 실습</li>
+          <li>대기업 이직의 현실적 발판 — 2~3년 후 이직 전략</li>
+        </ul>
+        <div class="quote-block" style="margin-top:20px;margin-bottom:0">
+          <div class="quote-text">"국내는 '이 사람이 우리 팀에서 바로 일할 수 있나'를 본다. 직무 연관 경험의 밀도가 핵심이다."</div>
+          <div class="quote-attr">— 국내 마케터 채용 인사이트</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEPT SECTION -->
+<section id="dept">
+  <div class="s-label">Department Guide</div>
+  <h2 class="s-title reveal">마케팅 <span class="accent-line">부서별</span> 입사 준비</h2>
+  <div class="dept-grid reveal">
+
+    <div class="dept-card">
+      <div class="dept-head">
+        <div class="dept-icon-row"><span class="dept-icon">📱</span><div><div class="dept-name">디지털 마케팅</div><div class="dept-en">Digital Marketing</div></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <span class="track-badge badge-blue">퍼포먼스</span>
+          <span class="track-badge badge-teal">데이터</span>
+          <span class="track-badge badge-coral">광고 운영</span>
+        </div>
+      </div>
+      <div class="dept-body">
+        <div class="dept-section-label">하는 일</div>
+        <ul class="dept-items"><li>Meta·Google·TikTok 광고 기획·집행·최적화</li><li>SEO / GEO 콘텐츠 전략 수립</li><li>퍼포먼스 KPI 관리 및 리포팅</li><li>AI 자동화 광고 캠페인(PMax, Advantage+) 운영</li></ul>
+        <div class="dept-section-label">입사 필수 준비</div>
+        <ul class="dept-items"><li>Google Ads·Meta Ads 실제 운영 경험 (소액이라도)</li><li>GA4 인증 수료 + Looker Studio 대시보드 제작</li><li>CPC·ROAS·CTR 등 광고 지표 완전 이해</li><li>퍼포먼스 캠페인 결과 수치화 포트폴리오</li></ul>
+        <div class="dept-section-label">추천 자격증·툴</div>
+        <div class="dept-skill-tags">
+          <span class="track-badge badge-blue">Google Ads 인증</span>
+          <span class="track-badge badge-blue">GA4 인증</span>
+          <span class="track-badge badge-teal">Meta Blueprint</span>
+          <span class="track-badge badge-purple">Looker Studio</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dept-card">
+      <div class="dept-head">
+        <div class="dept-icon-row"><span class="dept-icon">🎨</span><div><div class="dept-name">브랜드 마케팅</div><div class="dept-en">Brand Marketing</div></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <span class="track-badge badge-coral">크리에이티브</span>
+          <span class="track-badge badge-amber">전략</span>
+          <span class="track-badge badge-purple">스토리텔링</span>
+        </div>
+      </div>
+      <div class="dept-body">
+        <div class="dept-section-label">하는 일</div>
+        <ul class="dept-items"><li>브랜드 포지셔닝·아이덴티티 전략 수립</li><li>통합 마케팅 캠페인(IMC) 기획·실행</li><li>소비자 인사이트 리서치 (FGI·설문·데이터)</li><li>광고·콘텐츠 크리에이티브 방향 설정</li></ul>
+        <div class="dept-section-label">입사 필수 준비</div>
+        <ul class="dept-items"><li>관심 브랜드 마케팅 전략 분석 리포트 2편 이상</li><li>브랜드 캠페인 기획서 (가상이라도) 1편 완성</li><li>소비자 트렌드 리포트 정독 습관 (대학내일·오픈서베이)</li><li>AI 활용 크리에이티브 브리프 작성 실습</li></ul>
+        <div class="dept-section-label">추천 자격증·툴</div>
+        <div class="dept-skill-tags">
+          <span class="track-badge badge-coral">마케팅조사분석사</span>
+          <span class="track-badge badge-amber">Canva Pro</span>
+          <span class="track-badge badge-purple">Adobe Express</span>
+          <span class="track-badge badge-blue">Figma 기초</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dept-card">
+      <div class="dept-head">
+        <div class="dept-icon-row"><span class="dept-icon">📦</span><div><div class="dept-name">MD (상품기획)</div><div class="dept-en">Merchandising</div></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <span class="track-badge badge-teal">유통</span>
+          <span class="track-badge badge-amber">데이터 분석</span>
+          <span class="track-badge badge-blue">협상</span>
+        </div>
+      </div>
+      <div class="dept-body">
+        <div class="dept-section-label">하는 일</div>
+        <ul class="dept-items"><li>상품 기획·소싱·가격 전략 수립</li><li>판매 데이터 분석으로 주력 상품 선정</li><li>벤더사·브랜드사 협상 및 관계 관리</li><li>AI 기반 수요 예측으로 재고 최적화</li></ul>
+        <div class="dept-section-label">입사 필수 준비</div>
+        <ul class="dept-items"><li>올리브영 아르바이트 경험 → 판매 데이터 인사이트로 정리</li><li>유통관리사 자격증 취득 (이미 보유 시 유리)</li><li>엑셀 피벗·VLOOKUP 완전 정복 (MD 기본 툴)</li><li>카테고리별 상품 트렌드 분석 리포트 작성</li></ul>
+        <div class="dept-section-label">추천 자격증·툴</div>
+        <div class="dept-skill-tags">
+          <span class="track-badge badge-teal">유통관리사</span>
+          <span class="track-badge badge-blue">엑셀 고급</span>
+          <span class="track-badge badge-amber">유통 데이터 분석</span>
+          <span class="track-badge badge-coral">SCM 기초</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dept-card">
+      <div class="dept-head">
+        <div class="dept-icon-row"><span class="dept-icon">📊</span><div><div class="dept-name">마케팅 애널리틱스</div><div class="dept-en">Marketing Analytics</div></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <span class="track-badge badge-purple">데이터 사이언스</span>
+          <span class="track-badge badge-blue">SQL</span>
+          <span class="track-badge badge-teal">AI 분석</span>
+        </div>
+      </div>
+      <div class="dept-body">
+        <div class="dept-section-label">하는 일</div>
+        <ul class="dept-items"><li>마케팅 KPI 대시보드 구축·운영</li><li>고객 데이터 세분화·LTV 분석</li><li>A/B 테스트 설계·분석·인사이트 도출</li><li>AI 예측 모델 기반 캠페인 효과 예측</li></ul>
+        <div class="dept-section-label">입사 필수 준비</div>
+        <ul class="dept-items"><li>SQL 기초 완성 (SELECT·JOIN·GROUP BY)</li><li>파이썬 pandas·matplotlib 데이터 분석 실습</li><li>Looker Studio 대시보드 포트폴리오</li><li>실제 데이터로 인사이트 도출 사례 문서화</li></ul>
+        <div class="dept-section-label">추천 자격증·툴</div>
+        <div class="dept-skill-tags">
+          <span class="track-badge badge-purple">Google DA 수료증</span>
+          <span class="track-badge badge-blue">SQL 기초</span>
+          <span class="track-badge badge-teal">Python pandas</span>
+          <span class="track-badge badge-amber">Tableau Public</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dept-card">
+      <div class="dept-head">
+        <div class="dept-icon-row"><span class="dept-icon">✍️</span><div><div class="dept-name">콘텐츠·소셜미디어</div><div class="dept-en">Content & Social</div></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <span class="track-badge badge-pink">크리에이티브</span>
+          <span class="track-badge badge-teal">SNS 운영</span>
+          <span class="track-badge badge-blue">AI 콘텐츠</span>
+        </div>
+      </div>
+      <div class="dept-body">
+        <div class="dept-section-label">하는 일</div>
+        <ul class="dept-items"><li>인스타·유튜브·틱톡 채널 기획·운영</li><li>AI 생성 콘텐츠 + 인간 크리에이티브 결합</li><li>콘텐츠 성과 분석 및 전략 개선</li><li>인플루언서·크리에이터 협업 관리</li></ul>
+        <div class="dept-section-label">입사 필수 준비</div>
+        <ul class="dept-items"><li>SNS 채널 직접 운영 6개월 이상 (뷰티·라이프 추천)</li><li>AI 툴(Claude·Canva AI·Runway) 콘텐츠 제작 포트폴리오</li><li>콘텐츠 성과 지표 분석 및 개선 사례 수치화</li><li>숏폼 영상 기획·편집 경험</li></ul>
+        <div class="dept-section-label">추천 자격증·툴</div>
+        <div class="dept-skill-tags">
+          <span class="track-badge badge-pink">Canva Pro</span>
+          <span class="track-badge badge-blue">CapCut·Premiere</span>
+          <span class="track-badge badge-teal">Claude AI</span>
+          <span class="track-badge badge-amber">Hootsuite</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dept-card">
+      <div class="dept-head">
+        <div class="dept-icon-row"><span class="dept-icon">🤝</span><div><div class="dept-name">CRM·고객 마케팅</div><div class="dept-en">CRM & Customer</div></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <span class="track-badge badge-amber">고객 분석</span>
+          <span class="track-badge badge-teal">이메일·푸시</span>
+          <span class="track-badge badge-blue">자동화</span>
+        </div>
+      </div>
+      <div class="dept-body">
+        <div class="dept-section-label">하는 일</div>
+        <ul class="dept-items"><li>고객 세분화·등급제 전략 기획</li><li>이메일·앱 푸시·SMS 마케팅 운영</li><li>고객 LTV·이탈률 분석 및 개입 전략</li><li>AI 기반 초개인화 메시지 자동화</li></ul>
+        <div class="dept-section-label">입사 필수 준비</div>
+        <ul class="dept-items"><li>HubSpot CRM 무료 인증 취득</li><li>이메일 마케팅 캠페인 A/B 테스트 실습 (Mailchimp)</li><li>고객 세분화 기획서 작성 (가상 데이터로)</li><li>청년회 리더 경험 → 커뮤니티 운영 사례로 정리</li></ul>
+        <div class="dept-section-label">추천 자격증·툴</div>
+        <div class="dept-skill-tags">
+          <span class="track-badge badge-amber">HubSpot 인증</span>
+          <span class="track-badge badge-teal">Mailchimp</span>
+          <span class="track-badge badge-blue">Salesforce 기초</span>
+          <span class="track-badge badge-purple">Braze 이해</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="s-label">1년 반 준비 계획</div>
+  <h2 class="s-title reveal">단계별 <span class="accent-line">로드맵</span></h2>
+
+  <div class="tabs reveal" id="roadmapTabs">
+    <button class="tab-btn active" onclick="switchRoadmap('all')">전체 로드맵</button>
+    <button class="tab-btn" onclick="switchRoadmap('global-road')">외국계 집중</button>
+    <button class="tab-btn" onclick="switchRoadmap('domestic-road')">국내 집중</button>
+  </div>
+
+  <div class="track-panel active" id="panel-all">
+    <div class="roadmap-wrap reveal">
+      <div class="road-col">
+        <div class="road-phase rp1">1단계 · Phase 1</div>
+        <div class="road-period">지금~<br>4개월</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">AI 툴 기본기</div><div class="road-item-body">Claude·GPT 마케팅 기획서 작성, Canva AI 콘텐츠 제작 실습</div></div>
+          <div class="road-item"><div class="road-item-title">SNS 채널 개설</div><div class="road-item-body">뷰티·라이프스타일 인스타그램 채널 개설·운영 시작</div></div>
+          <div class="road-item"><div class="road-item-title">데이터 기초</div><div class="road-item-body">GA4 인증 수료, 엑셀 피벗테이블 완전 정복</div></div>
+          <div class="road-item"><div class="road-item-title">올리브영 경험 정리</div><div class="road-item-body">현장 인사이트를 브랜드 분석 리포트로 문서화</div></div>
+          <div class="road-item"><div class="road-item-title">LinkedIn 프로필</div><div class="road-item-body">영문 프로필 완성 (외국계 목표 시 필수)</div></div>
+        </div>
+      </div>
+      <div class="road-col">
+        <div class="road-phase rp2">2단계 · Phase 2</div>
+        <div class="road-period">4개월~<br>10개월</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">마케팅 인턴</div><div class="road-item-body">뷰티 브랜드사·에이전시·버티컬 플랫폼 인턴 지원·진행</div></div>
+          <div class="road-item"><div class="road-item-title">광고 운영 실습</div><div class="road-item-body">Meta·Google Ads 소액 캠페인 직접 운영 경험</div></div>
+          <div class="road-item"><div class="road-item-title">마케팅 공모전</div><div class="road-item-body">브랜드 주최 마케팅 공모전 1~2회 참가</div></div>
+          <div class="road-item"><div class="road-item-title">자동화 파이프라인</div><div class="road-item-body">Make·n8n으로 SNS 자동화 워크플로우 1개 구축</div></div>
+          <div class="road-item"><div class="road-item-title">자격증 취득</div><div class="road-item-body">Google Ads·GA4·HubSpot CRM 인증 중 목표 직무 맞춤 선택</div></div>
+        </div>
+      </div>
+      <div class="road-col">
+        <div class="road-phase rp3">3단계 · Phase 3</div>
+        <div class="road-period">10개월~<br>졸업</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">포트폴리오 완성</div><div class="road-item-body">SNS 성과 + 인턴 결과물 + AI 기획서 = 차별화 포트폴리오</div></div>
+          <div class="road-item"><div class="road-item-title">지원 전략 수립</div><div class="road-item-body">외국계(LinkedIn 수시) + 국내(공채·수시) 동시 병행 지원</div></div>
+          <div class="road-item"><div class="road-item-title">면접 스토리 준비</div><div class="road-item-body">"AI 시대 마케팅 MD 비전" + 수치 성과 기반 STAR 답변</div></div>
+          <div class="road-item"><div class="road-item-title">GEO 포트폴리오</div><div class="road-item-body">AI 검색에 인용되는 구조화 콘텐츠 사례 정리</div></div>
+          <div class="road-item"><div class="road-item-title">네트워크 구축</div><div class="road-item-body">마케팅 커뮤니티·업계 행사 참여, 현직자 커피챗</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="track-panel" id="panel-global-road">
+    <div class="roadmap-wrap reveal">
+      <div class="road-col">
+        <div class="road-phase rp1">외국계 1단계</div>
+        <div class="road-period">지금~<br>4개월</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">영어 실력 점검</div><div class="road-item-body">OPIc AL 또는 TOEIC Speaking 목표 설정·준비</div></div>
+          <div class="road-item"><div class="road-item-title">LinkedIn 완성</div><div class="road-item-body">영문 프로필, 경험 수치화, 업계 인플루언서 팔로우</div></div>
+          <div class="road-item"><div class="road-item-title">영문 마케팅 리포트</div><div class="road-item-body">McKinsey·Deloitte·HBR 영문 마케팅 아티클 주 3편 정독</div></div>
+          <div class="road-item"><div class="road-item-title">Google·Meta 인증</div><div class="road-item-body">Google Ads Certification, Meta Blueprint 취득</div></div>
+        </div>
+      </div>
+      <div class="road-col">
+        <div class="road-phase rp2">외국계 2단계</div>
+        <div class="road-period">4개월~<br>10개월</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">글로벌 인턴 지원</div><div class="road-item-body">Google·Meta·P&G·L'Oréal 인턴십 직접 지원 (영문 지원서)</div></div>
+          <div class="road-item"><div class="road-item-title">케이스 스터디 준비</div><div class="road-item-body">외국계 면접 특화 — 마케팅 케이스 스터디 10편 분석·발표 연습</div></div>
+          <div class="road-item"><div class="road-item-title">영문 포트폴리오</div><div class="road-item-body">영문 포트폴리오 사이트 제작 (Notion·Canva 활용)</div></div>
+          <div class="road-item"><div class="road-item-title">글로벌 네트워킹</div><div class="road-item-body">LinkedIn으로 외국계 마케터 커피챗 5명 이상</div></div>
+        </div>
+      </div>
+      <div class="road-col">
+        <div class="road-phase rp3">외국계 3단계</div>
+        <div class="road-period">10개월~<br>졸업</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">집중 지원</div><div class="road-item-body">목표 기업 3~5곳 집중 공략 + LinkedIn Easy Apply 병행</div></div>
+          <div class="road-item"><div class="road-item-title">영어 면접 대비</div><div class="road-item-body">행동 면접(STAR) + 케이스 인터뷰 영어 모의 면접 반복</div></div>
+          <div class="road-item"><div class="road-item-title">글로벌 트렌드 숙지</div><div class="road-item-body">지원 기업의 AI 마케팅 전략·최근 캠페인 사전 분석</div></div>
+          <div class="road-item"><div class="road-item-title">레퍼런스 확보</div><div class="road-item-body">인턴 시 받은 추천서·LinkedIn 추천 글 2개 이상 확보</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="track-panel" id="panel-domestic-road">
+    <div class="roadmap-wrap reveal">
+      <div class="road-col">
+        <div class="road-phase rp1">국내 1단계</div>
+        <div class="road-period">지금~<br>4개월</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">올리브영 경험 재정의</div><div class="road-item-body">아르바이트 → "헬스뷰티 유통 현장 인사이트 보유자"로 재포지셔닝</div></div>
+          <div class="road-item"><div class="road-item-title">뷰티 SNS 채널</div><div class="road-item-body">인스타그램 뷰티·라이프 채널 개설, AI 콘텐츠 기획·제작</div></div>
+          <div class="road-item"><div class="road-item-title">자소서 소재 발굴</div><div class="road-item-body">올리브영·청년회·유통 자격증 경험을 STAR 형식으로 정리</div></div>
+          <div class="road-item"><div class="road-item-title">국내 트렌드 학습</div><div class="road-item-body">대학내일·오픈서베이·코리아트렌드 리포트 정기 구독</div></div>
+        </div>
+      </div>
+      <div class="road-col">
+        <div class="road-phase rp2">국내 2단계</div>
+        <div class="road-period">4개월~<br>10개월</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">뷰티 브랜드 인턴</div><div class="road-item-body">아모레·LG생건·중소 뷰티 브랜드 마케팅 인턴 지원</div></div>
+          <div class="road-item"><div class="road-item-title">공모전 참가</div><div class="road-item-body">대한화장품협회·올리브영 마케팅 공모전 1~2회 도전</div></div>
+          <div class="road-item"><div class="road-item-title">포트폴리오 제작</div><div class="road-item-body">기획서·분석 리포트·SNS 운영 성과를 PDF로 정리</div></div>
+          <div class="road-item"><div class="road-item-title">자격증 완성</div><div class="road-item-body">유통관리사·SNS 광고 마케터·구글 애널리틱스 인증 취득</div></div>
+        </div>
+      </div>
+      <div class="road-col">
+        <div class="road-phase rp3">국내 3단계</div>
+        <div class="road-period">10개월~<br>졸업</div>
+        <div class="road-items">
+          <div class="road-item"><div class="road-item-title">공채·수시 동시 공략</div><div class="road-item-body">상반기 공채 + 무신사·컬리·올리브영 수시채용 병행</div></div>
+          <div class="road-item"><div class="road-item-title">자소서 완성</div><div class="road-item-body">직무별 맞춤 자소서 3종 완성 (브랜드·디지털·MD 버전)</div></div>
+          <div class="road-item"><div class="road-item-title">면접 스토리 구성</div><div class="road-item-body">"AI 네이티브 마케터" 포지셔닝 + 올리브영 현장 인사이트 스토리</div></div>
+          <div class="road-item"><div class="road-item-title">현직자 네트워크</div><div class="road-item-body">마케터스 커뮤니티 가입, 현직 마케터 커피챗 3명 이상</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <p class="cta-label">핵심 메시지</p>
+  <h2 class="cta-title">AI를 두려워하지 말고<br>지휘하라</h2>
+  <p class="cta-body">올리브영 현장 경험 + 청년회 리더십 + AI 툴 활용 능력을 조합하면, 외국계든 국내든 당신만의 차별화된 스토리가 완성됩니다. 지금 시작하면 1년 반이면 충분합니다.</p>
+  <div class="cta-row">
+    <button class="cta-btn btn-primary" onclick="document.getElementById('roadmap').scrollIntoView({behavior:'smooth'})">로드맵 다시 보기</button>
+    <button class="cta-btn btn-outline" onclick="document.getElementById('dept').scrollIntoView({behavior:'smooth'})">부서별 준비 확인</button>
+  </div>
+</section>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('#trackTabs .tab-btn').forEach((b,i)=>{
+    const panels=['global','domestic'];
+    b.classList.toggle('active',panels[i]===id);
+  });
+  document.querySelectorAll('.track-panel').forEach(p=>{
+    p.classList.toggle('active',p.id==='panel-'+id);
+  });
+  animateBars();
+}
+
+function switchRoadmap(id){
+  document.querySelectorAll('#roadmapTabs .tab-btn').forEach((b,i)=>{
+    const panels=['all','global-road','domestic-road'];
+    b.classList.toggle('active',panels[i]===id);
+  });
+  document.querySelectorAll('.track-panel').forEach(p=>{
+    const ids=['panel-all','panel-global-road','panel-domestic-road'];
+    p.classList.toggle('active',p.id==='panel-'+id);
+  });
+}
+
+function animateBars(){
+  setTimeout(()=>{
+    document.querySelectorAll('.track-panel.active .skill-fill').forEach(el=>{
+      el.style.width=(el.dataset.w||'0')+'%';
+    });
+  },100);
+}
+
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      e.target.querySelectorAll('.skill-fill').forEach(el=>{
+        el.style.width=(el.dataset.w||'0')+'%';
+      });
+    }
+  });
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+animateBars();
+</script>
+</body>
+</html>

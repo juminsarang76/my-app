@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WOW 브랜드 로드맵 — 국가 AI 전략 정책 속 기회 찾기</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: #faf8ff;
+    color: #1a1a1a;
+    padding: 0;
+    line-height: 1.6;
+  }
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #4a148c, #6a1b9a, #283593);
+    color: #fff;
+    text-align: center;
+    padding: 36px 24px 28px;
+  }
+  .header .crown { font-size: 40px; }
+  .header h1 { font-size: 26px; font-weight: 900; letter-spacing: 4px; margin: 8px 0 4px; }
+  .header .sub { font-size: 13px; color: #e1bee7; margin-bottom: 4px; }
+  .header .profile { font-size: 12px; color: #ce93d8; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  /* ALERT BOX */
+  .box {
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    border-left: 5px solid;
+  }
+  .box-warn { background: #fff3e0; border-color: #ff6f00; }
+  .box-strength { background: #e8f5e9; border-color: #2e7d32; }
+  .box h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .box-warn h3 { color: #bf360c; }
+  .box-strength h3 { color: #1b5e20; }
+  .box p, .box li { font-size: 12.5px; color: #444; margin-bottom: 4px; }
+  .box ul { padding-left: 18px; }
+  .box strong { color: #5c35a0; }
+  .box .highlight { color: #e65100; font-weight: 700; margin-top: 8px; display: block; }
+
+  /* PHASE HEADER */
+  .phase-header {
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin: 24px 0 14px;
+    color: #fff;
+    text-align: center;
+  }
+  .phase-1 { background: linear-gradient(90deg, #2e7d32, #66bb6a); }
+  .phase-2 { background: linear-gradient(90deg, #1565c0, #42a5f5); }
+  .phase-3 { background: linear-gradient(90deg, #6a1b9a, #ab47bc); }
+  .phase-header .label { font-size: 11px; letter-spacing: 3px; opacity: 0.85; margin-bottom: 4px; }
+  .phase-header h2 { font-size: 20px; font-weight: 800; }
+
+  /* CARD GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 600px) { .card-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border-top: 4px solid;
+  }
+  .card-p1 { border-color: #43a047; }
+  .card-p2 { border-color: #1565c0; }
+  .card-p3 { border-color: #7b1fa2; }
+  .card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .card-p1 h4 { color: #2e7d32; }
+  .card-p2 h4 { color: #0d47a1; }
+  .card-p3 h4 { color: #4a148c; }
+  .card .main-text { font-size: 12px; color: #333; margin-bottom: 6px; }
+  .card .items { font-size: 11.5px; color: #555; margin-bottom: 6px; }
+  .card .items li { margin-bottom: 3px; }
+  .card .tips { font-size: 11px; color: #777; }
+  .card .tips li { margin-bottom: 2px; }
+  .card ul { padding-left: 16px; }
+
+  /* GOAL BAR */
+  .goal-bar {
+    border-radius: 8px;
+    padding: 11px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .goal-p1 { background: #e8f5e9; color: #1b5e20; }
+  .goal-p2 { background: #e3f2fd; color: #0d47a1; }
+  .goal-p3 { background: #f3e5f5; color: #4a148c; }
+
+  /* ACTION NOW */
+  .action-section {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    border-radius: 14px;
+    padding: 24px 20px;
+    margin-top: 24px;
+    color: #fff;
+    text-align: center;
+  }
+  .action-section .section-label { font-size: 11px; letter-spacing: 3px; color: #90caf9; margin-bottom: 6px; }
+  .action-section h3 { font-size: 18px; font-weight: 800; margin-bottom: 18px; }
+  .action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 600px) { .action-grid { grid-template-columns: 1fr; } }
+  .action-card {
+    background: #283593;
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: left;
+  }
+  .action-card h5 { font-size: 12px; font-weight: 700; color: #90caf9; margin-bottom: 8px; }
+  .action-card p { font-size: 11.5px; color: #e3f2fd; margin-bottom: 6px; }
+  .action-card ul { padding-left: 14px; }
+  .action-card li { font-size: 11px; color: #b3e5fc; margin-bottom: 3px; }
+
+  /* FOOTER */
+  .footer {
+    background: #4a148c;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    margin-top: 32px;
+  }
+  .footer .quote { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .footer .note { font-size: 11px; color: #ce93d8; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="crown">👑</div>
+  <h1>WOW 브랜드 로드맵</h1>
+  <div class="sub">Way Of Worship · 패션 디자이너 → AI 시대 신앙 크리에이터 브랜드</div>
+  <div class="profile">31세 · 패션+광고 기획 경험 · 미국 거주 3년 · 현재 온라인몰 운영</div>
+</div>
+
+<div class="container">
+
+  <!-- 진단 -->
+  <div class="box box-warn" style="margin-top:20px">
+    <h3>⚠ 한국 국가 AI 전략 정책에서 소외되는 이유와 기회</h3>
+    <ul>
+      <li>정부 AI 지원(AI 바우처·콘텐츠 지원)은 <strong>'법인 기업' 중심</strong> → 1인 소상공인·개인 창작자는 신청 문턱이 높음</li>
+      <li>AI 기본법(2026.1.22 시행)은 기술·규제 중심 → 신앙·의미·감성 콘텐츠 창작자 보호 <strong>틈새 존재</strong></li>
+      <li>국가 AI 문화강국 전략(12대 전략 9번)은 K-콘텐츠 대형 IP 위주 → 소규모 가치 기반 브랜드는 비가시권</li>
+      <li>AI 기본법 개정안: <strong>취약계층 AI 접근성 강화</strong> 명시 — 소상공인 대상 지원 점차 확대 예정</li>
+    </ul>
+    <span class="highlight">→ 역설적으로, 이 틈새가 당신의 기회. AI가 못 만드는 '영적 진정성'이 핵심 차별점!</span>
+  </div>
+
+  <!-- 강점 -->
+  <div class="box box-strength">
+    <h3>✅ 당신의 숨겨진 AI 시대 강점</h3>
+    <ul>
+      <li><strong>패션 전공 + 광고 기획 2년</strong> = 시각언어 + 설득 구조 → AI 도구 활용 시 시너지 폭발</li>
+      <li><strong>미국 거주 3년</strong> = 글로벌 감각 + 영어권 크리스천 시장 직접 이해</li>
+      <li><strong>WOW 브랜드의 세계관</strong> = 명확한 철학·스토리 (AI가 절대 대체 못하는 가장 강력한 자산)</li>
+      <li>트렌드 코리아 2026 키워드 <strong>'근본이즘'</strong> — AI 시대일수록 진정성·철학 있는 브랜드가 오히려 강해짐</li>
+    </ul>
+  </div>
+
+  <!-- ========== PHASE 1 ========== -->
+  <div class="phase-header phase-1">
+    <div class="label">PHASE 1 · 단기</div>
+    <h2>지금 ~ 1년 후 (2026~2027) · 뿌리 내리기</h2>
+  </div>
+
+  <div class="card-grid">
+    <div class="card card-p1">
+      <h4>🎓 AI 도구 기초 장착</h4>
+      <p class="main-text">생성형 AI로 WOW 디자인 시안 제작 속도 10배↑, 비용은 0에 가깝게</p>
+      <ul class="items">
+        <li>Adobe Firefly / 미드저니: WOW 왕관 모티프 변형 디자인</li>
+        <li>ChatGPT: 영문 제품 설명·SNS 카피 자동 생성</li>
+        <li>Canva AI: 상세페이지 반자동 제작</li>
+        <li>AI 기본법(2026.1.22~) AI 생성 표시의무 준수 습관화</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ 중기부 「AI+로그인」 — 지원사업 추천 자동화</li>
+        <li>▸ 주 1회 도구 실험 → 월 1회 새 디자인 출시 루틴</li>
+      </ul>
+    </div>
+
+    <div class="card card-p1">
+      <h4>📦 WOW 브랜드 정체성 정립</h4>
+      <p class="main-text">왕관 로고 + Way Of Worship 세계관을 디자인 시스템으로 문서화</p>
+      <ul class="items">
+        <li>핵심 제품 5종 정비 (티셔츠·에코백·스티커·머그·노트)</li>
+        <li>각 디자인에 '말씀 스토리' 부착 → 일반 굿즈와 차별화</li>
+        <li>스마트스토어 브랜드관 개설·정비</li>
+        <li>인스타그램 릴스 주 2회 (제작 과정 + 말씀 이야기)</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ AI 시대 소비자→팬 전환, 초기 100명 커뮤니티 목표</li>
+        <li>▸ AI 콘텐츠 피로감 → 진정성 있는 수작업 병행 스토리</li>
+      </ul>
+    </div>
+
+    <div class="card card-p1">
+      <h4>🏛 정부 지원 첫 접점 만들기</h4>
+      <p class="main-text">소상공인 및 크리에이터 대상 지원사업 파악 후 첫 신청 도전</p>
+      <ul class="items">
+        <li>소상공인진흥공단 「AI·디지털 전환 지원사업」 (2026 통합공고)</li>
+        <li>콘진원 「1인 미디어 콘텐츠 창작자 지원」 도전형 2천만원</li>
+        <li>→ 업종코드에 '1인 미디어 콘텐츠 창작자' 추가 필수</li>
+        <li>경기창업센터·화성시 창업지원 프로그램 탐색</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ bizinfo.go.kr 즐겨찾기, 공고 주 1회 체크</li>
+        <li>▸ 중기부 AI 에이전트 — 서류 작성 보조 활용</li>
+      </ul>
+    </div>
+
+    <div class="card card-p1">
+      <h4>🌐 해외 채널 씨앗 심기</h4>
+      <p class="main-text">미국 거주 경험 활용 — 영어권 크리스천 커뮤니티 타겟팅</p>
+      <ul class="items">
+        <li>Etsy 영문 스토어 개설 (Printful 연동 POD 무재고 방식)</li>
+        <li>Pinterest 영문 핀보드 — 크리스천 라이프스타일 콘텐츠</li>
+        <li>TikTok Shop US 탐색 (K-패션 글로벌 확산 흐름)</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ 2026년 크로스보더 커머스 국내 대비 2배↑ 성장 예측</li>
+        <li>▸ AI 번역으로 영문 콘텐츠 비용 없이 생성</li>
+        <li>▸ Z세대 76%: 크리에이터 통해 브랜드 발견</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="goal-bar goal-p1">
+    📌 1년 목표: AI 도구 능숙 · WOW 브랜드 아이덴티티 완성 · 국내외 채널 각 1개 개설 · 첫 정부 지원 신청 경험
+  </div>
+
+  <!-- ========== PHASE 2 ========== -->
+  <div class="phase-header phase-2">
+    <div class="label">PHASE 2 · 중기</div>
+    <h2>2년 후 (2027~2028) · 구조 만들기</h2>
+  </div>
+
+  <div class="card-grid">
+    <div class="card card-p2">
+      <h4>🏛 국가 AI 문화강국 정책 올라타기</h4>
+      <p class="main-text">AI 행동계획 9번 전략 「AI 기반 문화강국」 — K-컬처+신앙 가치 융합 포지셔닝</p>
+      <ul class="items">
+        <li>콘진원 AI 콘텐츠 진입형 (최대 2억·자부담 10%) 신청</li>
+        <li>→ 1년차에 실적·팀 구성 쌓아 2년차 신청 가능</li>
+        <li>문화체육관광부 종교문화 콘텐츠 지원 탐색</li>
+        <li>사업자등록 법인화 검토 → 지원 폭 대폭 확대</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ 지역 교회·기독교 단체 컬래버 레퍼런스 확보</li>
+        <li>▸ 'AI 생성 + 수작업 병행' → 진정성 보증 스토리화</li>
+      </ul>
+    </div>
+
+    <div class="card card-p2">
+      <h4>📱 AI 기반 콘텐츠 파이프라인 구축</h4>
+      <p class="main-text">'근본이즘' 흐름 — AI 시대일수록 진정성 있는 창작자가 더 강해짐</p>
+      <ul class="items">
+        <li>유튜브 채널: 디자인 제작 과정 + 말씀 이야기 (주 1회)</li>
+        <li>AI로 콘텐츠 초안 → 본인 스토리로 완성하는 하이브리드</li>
+        <li>영문 뉴스레터(서브스택) → 해외 크리스천 팬덤 육성</li>
+        <li>제휴 링크 + 구매 수익 모델 병행으로 수익 다각화</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ 2026 크리에이터 = 스토어+미디어+마케터 역할 동시</li>
+        <li>▸ 영문 인스타·틱톡 팔로워 1만 목표</li>
+      </ul>
+    </div>
+
+    <div class="card card-p2">
+      <h4>🏷 POD → 자체 제조 전환 준비</h4>
+      <p class="main-text">AI 디자인 도구로 시즌 컬렉션 기획, WOW 말씀 시리즈·절기 에디션</p>
+      <ul class="items">
+        <li>국내: 소량 주문 제작 (MOQ 최소화 업체 연결)</li>
+        <li>해외: Printful/Printify POD 병행 유지</li>
+        <li>AI 수요 예측으로 재고 리스크 최소화</li>
+        <li>패키지 디자인도 WOW 세계관으로 통일</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ 한정판 전략 → 소장가치 → 재구매율 상승</li>
+        <li>▸ 디자인 특허 및 IP 등록 시작</li>
+      </ul>
+    </div>
+
+    <div class="card card-p2">
+      <h4>🌏 글로벌 크리스천 시장 진입</h4>
+      <p class="main-text">미국·동남아 크리스천 커뮤니티 공략, 교회 굿즈·선교 용품 B2B</p>
+      <ul class="items">
+        <li>KOTRA 해외시장 개척단 참가 (정부 지원)</li>
+        <li>K-패션 수출 100억불 돌파 흐름 탑승</li>
+        <li>미국 교회 박람회·크리스천 마켓 온라인 참가</li>
+        <li>현지 크리스천 인플루언서 협업 (무가 시딩)</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ 무가 시딩, 유가 시딩보다 참여율 높음(2.16% vs 1.65%)</li>
+        <li>▸ 2028 크로스보더 커머스 시장 3.3조 달러 예상</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="goal-bar goal-p2">
+    📌 2년 목표: 정부 지원금 1건 수혜 · 유튜브·영문 채널 구축 · 해외 판매 본격화 · 연 매출 3천만원 돌파
+  </div>
+
+  <!-- ========== PHASE 3 ========== -->
+  <div class="phase-header phase-3">
+    <div class="label">PHASE 3 · 장기</div>
+    <h2>5년 후 (2030) · 영향력 확장</h2>
+  </div>
+
+  <div class="card-grid">
+    <div class="card card-p3">
+      <h4>🏆 WOW — 글로벌 신앙 라이프스타일 브랜드</h4>
+      <p class="main-text">「AI 기반 문화강국」 정책 수혜 + 독자 IP 보유 브랜드로 성장</p>
+      <ul class="items">
+        <li>시즌 컬렉션 + 크리에이터 컬래버 정례화</li>
+        <li>국내외 크리스천 라이프스타일 편집숍 입점</li>
+        <li>연 매출 1~2억 / 해외 매출 30% 이상 목표</li>
+        <li>디자인 특허·IP 자산화 완성</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ 2028~2030 크로스보더 커머스 3.3조달러 시장</li>
+        <li>▸ K-문화 글로벌 확산 흐름 지속 탑승</li>
+      </ul>
+    </div>
+
+    <div class="card card-p3">
+      <h4>🎓 AI 시대 소외 창작자의 연결고리</h4>
+      <p class="main-text">당신의 경험 자체가 자산 — 소외계층 AI 접근성 강화 흐름과 연결</p>
+      <ul class="items">
+        <li>AI 활용 소규모 창작 브랜드 멘토링·컨설팅</li>
+        <li>신앙+디자인 워크샵 (교회·기독교 기관 강연)</li>
+        <li>정부 정책 자문·크리에이터 협회 참여</li>
+        <li>'AI 시대 가치 기반 창작' 콘셉트 선도자 포지셔닝</li>
+      </ul>
+      <ul class="tips">
+        <li>▸ WOW = 브랜드이자 운동(Movement)으로 확장</li>
+        <li>▸ 강연·교육·멘토링 수익 다각화</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="goal-bar goal-p3">
+    📌 5년 목표: 글로벌 신앙 라이프스타일 브랜드 확립 · 강연·멘토링 수익 다각화 · 독립적 영향력 구축
+  </div>
+
+  <!-- ACTION NOW -->
+  <div class="action-section">
+    <div class="section-label">ACTION NOW</div>
+    <h3>🚀 이번 달 바로 시작할 3가지</h3>
+    <div class="action-grid">
+      <div class="action-card">
+        <h5>① 사업자 등록 업종코드 추가</h5>
+        <p>업종코드에 <strong style="color:#fff">'1인 미디어 콘텐츠 창작자'</strong> 추가</p>
+        <ul>
+          <li>→ 콘진원 지원 신청 자격 확보</li>
+          <li>→ bizinfo.go.kr 즐겨찾기 등록</li>
+          <li>→ 소상공인 AI 전환 공고 주 1회 체크</li>
+          <li>→ 중기부 AI 에이전트 서비스 활용</li>
+        </ul>
+      </div>
+      <div class="action-card">
+        <h5>② Etsy 영문 스토어 오픈</h5>
+        <p>미국 경험으로 <strong style="color:#fff">영문 상품 설명</strong> 직접 작성</p>
+        <ul>
+          <li>→ Printful 연동 무재고 시작</li>
+          <li>→ 크리스천 키워드 SEO 최적화</li>
+          <li>→ 글로벌 시장 반응 테스트</li>
+          <li>→ 초기 5개 제품으로 시작</li>
+        </ul>
+      </div>
+      <div class="action-card">
+        <h5>③ AI 도구 주 1회 실험</h5>
+        <p>Adobe Firefly·미드저니로 <strong style="color:#fff">WOW 디자인 초안</strong> 제작</p>
+        <ul>
+          <li>→ AI 기본법 표시의무 준수</li>
+          <li>→ '인간+AI 협업' 스토리화</li>
+          <li>→ 제작 시간 단축으로 콘텐츠 증가</li>
+          <li>→ ChatGPT로 영문 SNS 카피 작성</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="quote">"AI가 대체할 수 없는 것 = 당신의 비전, 신앙, 그리고 WOW 브랜드의 스토리"</div>
+  <div class="note">한국 국가 AI 전략 정책의 틈새는 곧 당신의 기회입니다 👑 Way Of Worship</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>신갈고 2027학년도 대입 통합 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ── dark palette ── */
+  --bg:        #0d0f14;
+  --bg-card:   #141720;
+  --bg-card2:  #1a1e2a;
+  --bg-card3:  #1f2433;
+  --border:    rgba(255,255,255,.08);
+  --border2:   rgba(255,255,255,.14);
+  --text:      #e8ecf4;
+  --muted:     #7a8499;
+  --muted2:    #9ba5ba;
+
+  /* ── accent palette (kept vivid for contrast) ── */
+  --accent:    #ff4d4d;
+  --gold:      #f5b800;
+  --teal:      #00cdb4;
+  --purple:    #9b6eff;
+  --school:    #ff8c42;
+  --green:     #3dd68c;
+
+  /* ── semantic bg (dark translucent) ── */
+  --light-teal:   rgba(0,205,180,.12);
+  --light-red:    rgba(255,77,77,.14);
+  --light-gold:   rgba(245,184,0,.13);
+  --light-purple: rgba(155,110,255,.13);
+  --light-school: rgba(255,140,66,.13);
+  --light-green:  rgba(61,214,140,.12);
+  --light-blue:   rgba(80,140,255,.13);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* ═══════════════════════════════
+   HEADER
+═══════════════════════════════ */
+.header{
+  background:linear-gradient(135deg,#0a0d14 0%,#111625 55%,#141d38 100%);
+  color:white;padding:38px 40px 30px;position:relative;overflow:hidden;
+  border-bottom:1px solid var(--border2);
+}
+.header::before{content:'';position:absolute;top:-80px;right:-80px;width:340px;height:340px;border-radius:50%;background:rgba(80,120,255,.06)}
+.header::after{content:'';position:absolute;bottom:-50px;left:30px;width:200px;height:200px;border-radius:50%;background:rgba(245,184,0,.06)}
+.header-inner{position:relative;z-index:1;max-width:1060px;margin:0 auto}
+.header-badge{display:inline-block;background:rgba(245,184,0,.15);border:1px solid rgba(245,184,0,.35);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:4px 12px;border-radius:20px;margin-bottom:10px}
+.header h1{font-family:'Noto Serif KR',serif;font-size:clamp(20px,3.2vw,28px);font-weight:700;line-height:1.35;margin-bottom:7px;color:#f0f4ff}
+.header h1 span{color:var(--gold)}
+.header-sub{font-size:12px;color:rgba(255,255,255,.45);line-height:1.7}
+.school-banner{margin-top:14px;background:rgba(255,140,66,.12);border:1px solid rgba(255,140,66,.3);border-radius:8px;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.school-icon{font-size:22px}
+.school-banner-text{font-size:12.5px;color:#ffcda0;line-height:1.6}
+.school-banner-text b{color:#ffb070}
+.header-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.stat-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:5px 12px;border-radius:20px;font-size:11.5px;color:rgba(255,255,255,.8)}
+.stat-pill b{color:var(--gold)}
+.header-notice{margin-top:12px;background:rgba(255,77,77,.12);border-left:3px solid var(--accent);padding:8px 14px;border-radius:0 8px 8px 0;font-size:11.5px;color:#ffb0b0;line-height:1.6}
+
+/* ═══════════════════════════════
+   TIMELINE WRAPPER
+═══════════════════════════════ */
+.tl-wrapper{max-width:1060px;margin:0 auto;padding:28px 20px 8px}
+.tl-head{font-size:12px;font-weight:700;color:var(--muted2);letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.tl-head::after{content:'';flex:1;height:1px;background:var(--border)}
+.tl-legend{display:flex;flex-wrap:wrap;gap:5px 14px;margin:10px 0 0;padding:8px 12px;background:var(--bg-card2);border-radius:8px;border:.5px solid var(--border)}
+.tl-li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.tl-lsq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ═══════════════════════════════
+   MONTH TABLE
+═══════════════════════════════ */
+.table-section{max-width:1060px;margin:0 auto;padding:20px 20px 48px}
+.section-head{font-size:12px;font-weight:700;color:var(--muted2);letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.source-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.source-label{font-size:11px;color:var(--muted)}
+.source-badge{display:inline-flex;align-items:center;gap:5px;background:var(--bg-card2);border:1px solid var(--border2);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;color:var(--muted2)}
+.source-badge .dot{width:6px;height:6px;border-radius:50%}
+
+table{width:100%;border-collapse:separate;border-spacing:0 5px;background:transparent}
+thead tr th{background:var(--bg-card3);color:var(--muted2);font-size:11px;font-weight:700;padding:11px 14px;text-align:left;letter-spacing:.5px;border-bottom:1px solid var(--border2)}
+thead tr th:first-child{border-radius:10px 0 0 10px}
+thead tr th:last-child{border-radius:0 10px 10px 0}
+tbody tr{background:var(--bg-card);transition:background .18s,transform .15s;border:1px solid transparent}
+tbody tr:hover{background:var(--bg-card2);transform:translateY(-1px);border-color:var(--border2)}
+tbody tr td:first-child{border-radius:10px 0 0 10px}
+tbody tr td:last-child{border-radius:0 10px 10px 0}
+td{padding:14px;vertical-align:top;font-size:12.5px;line-height:1.65;border-bottom:none;color:#c8d0e0}
+
+/* month pills */
+.month-cell{width:72px;min-width:72px;text-align:center;vertical-align:middle}
+.month-pill{display:inline-flex;flex-direction:column;align-items:center;border-radius:10px;padding:8px 10px;min-width:52px;opacity:.92}
+.month-pill .month-num{font-size:19px;font-weight:900;line-height:1;color:white}
+.month-pill .month-text{font-size:9px;color:rgba(255,255,255,.65);margin-top:2px;letter-spacing:.5px}
+.m5  .month-pill{background:#1a3d6e}.m6  .month-pill{background:#0d4a43}
+.m7  .month-pill{background:#5a2a10}.m8  .month-pill{background:#4a3400}
+.m9  .month-pill{background:#2d1a5e}.m10 .month-pill{background:#5a1010}
+.m11 .month-pill{background:#0d1825}.m12 .month-pill{background:#0d2028}
+.m127 .month-pill{background:#0d2e1a}
+
+/* event cell */
+.event-cell{width:32%}
+.slogan-tag{display:inline-block;background:var(--light-teal);color:var(--teal);font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;margin-bottom:8px;white-space:nowrap}
+.key-event{display:flex;align-items:flex-start;gap:6px;margin-bottom:3px}
+.event-dot{width:7px;height:7px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.dot-red{background:var(--accent)}.dot-gold{background:var(--gold)}
+.dot-teal{background:var(--teal)}.dot-navy{background:#5080ff}
+.dot-purple{background:var(--purple)}.dot-school{background:var(--school)}
+.dot-gray{background:#4a5270}
+.highlight{color:var(--accent);font-weight:700}
+.date-badge{display:inline-block;background:var(--light-red);color:#ff8080;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:5px}
+.date-badge.gold{background:var(--light-gold);color:#f5c840}
+.date-badge.teal{background:var(--light-teal);color:#00e0c8}
+.date-badge.school{background:var(--light-school);color:#ffaa60}
+
+.school-block{background:var(--light-school);border:1px solid rgba(255,140,66,.25);border-radius:7px;padding:7px 10px;margin-top:6px}
+.school-block-title{font-size:10px;font-weight:700;color:var(--school);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.school-block-body{font-size:12px;line-height:1.75;color:#f0c8a0}
+
+/* prepare cell */
+.prepare-cell{width:55%}
+.prepare-cell ul{list-style:none;padding:0}
+.prepare-cell li{padding:6px 0 6px 20px;position:relative;font-size:12px;line-height:1.65;border-bottom:1px solid var(--border);color:#c8d0e0}
+.prepare-cell li:last-child{border-bottom:none}
+.prepare-cell li::before{content:'▸';position:absolute;left:0;color:var(--teal);font-size:11px;top:8px}
+.prepare-cell li b{color:#e8ecf4;font-weight:700}
+.info-box{margin-top:8px;padding:8px 12px;border-radius:0 7px 7px 0;font-size:11.5px;line-height:1.7}
+.tip-box{background:rgba(80,140,255,.12);border-left:3px solid #508cff;color:#a8c8ff}
+.warn-box{background:rgba(255,140,40,.12);border-left:3px solid #ff8c28;color:#ffc890}
+.insight-box{background:rgba(155,110,255,.12);border-left:3px solid var(--purple);color:#c8aaff}
+.school-tip{background:rgba(255,140,66,.12);border-left:3px solid var(--school);color:#ffb870}
+.src-tag{display:inline-block;font-size:9px;font-weight:700;background:rgba(80,140,255,.18);color:#90b8ff;padding:0 5px;border-radius:4px;vertical-align:middle;margin-left:3px}
+
+/* footer */
+.footer{text-align:center;padding:24px 20px 36px;font-size:11px;color:var(--muted);line-height:1.9;border-top:1px solid var(--border)}
+.footer a{color:#508cff;text-decoration:none;font-weight:700}
+.footer a:hover{color:#80b0ff;text-decoration:underline}
+
+/* tooltip */
+.tl-tooltip{position:fixed;background:var(--bg-card3);border:.5px solid var(--border2);border-radius:8px;padding:7px 11px;font-size:11px;line-height:1.5;color:var(--text);pointer-events:none;z-index:9999;max-width:200px;opacity:0;transition:opacity .12s;font-family:'Noto Sans KR',sans-serif}
+
+@media(max-width:700px){
+  .header{padding:28px 16px 22px}
+  td{padding:10px 8px;font-size:11.5px}
+  .prepare-cell{font-size:11px}
+  .tl-wrapper,.table-section{padding-left:12px;padding-right:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-badge">🎓 2027학년도 대입 가이드 — 신갈고 맞춤 통합판</div>
+    <h1>고3 대입 핵심 일정 &amp; <span>월별 준비 전략</span></h1>
+    <div class="school-banner">
+      <div class="school-icon">🏫</div>
+      <div class="school-banner-text">
+        <b>경기도 용인시 기흥구 신갈고등학교</b> 학사일정 반영 (shingal-h.goeyi.kr)<br>
+        어디가(대입정보포털) · 메가스터디 · 진학사 · EBSi 교차 검증 · 경기도교육청 공통 학사일정 기준
+      </div>
+    </div>
+    <div class="header-sub" style="margin-top:10px">중간고사 4/20~4/24 · 기말고사 6/29~7/3 · 전국연합 6/4 · 수능 11/19</div>
+    <div class="header-stats">
+      <div class="stat-pill">수시 <b>80.3%</b> · 277,583명</div>
+      <div class="stat-pill">정시 <b>19.7%</b> · 68,134명</div>
+      <div class="stat-pill">논술 <b>44개 대학 12,711명</b></div>
+      <div class="stat-pill">수능 <b>2026년 11월 19일(목)</b> &nbsp;<span id="dday-badge" style="display:inline-block;background:rgba(232,69,69,.22);color:#ffcfcf;font-size:11px;font-weight:900;padding:2px 9px;border-radius:20px;letter-spacing:.5px;min-width:54px;text-align:center">…</span></div>
+    </div>
+    <div class="header-notice">
+      ⚠️ <b>핵심:</b> 2027학년도는 <b>2015 개정 교육과정·통합수능 마지막 해</b>. 2028부터 고교학점제·신수능 도입 → N수생 급증 예상. 모든 일정은 해당 기관 공식 발표에서 최종 확인하세요.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 1: 타임라인 (점 + 사선 레이블)
+══════════════════════════════════════ -->
+<div class="tl-wrapper">
+  <div class="tl-head">전체 타임라인 2026.5 → 2027.2</div>
+  <div id="tl-container" style="position:relative"></div>
+  <div class="tl-legend" id="tl-legend"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 2: 월별 바 차트
+══════════════════════════════════════ -->
+<div class="tl-wrapper" style="padding-top:20px;padding-bottom:20px">
+  <div class="tl-head">월별 상세 일정 바 차트</div>
+  <div id="bar-chart-section"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 3: 월별 상세 가이드 테이블
+══════════════════════════════════════ -->
+<div class="table-section">
+  <div class="section-head">월별 상세 일정 &amp; 준비 전략</div>
+
+  <div class="source-bar">
+    <span class="source-label">📌 참고</span>
+    <div class="source-badge"><div class="dot" style="background:#e07020"></div>신갈고등학교</div>
+    <div class="source-badge"><div class="dot" style="background:#3b7dd8"></div>어디가 adiga.kr</div>
+    <div class="source-badge"><div class="dot" style="background:#e84545"></div>메가스터디</div>
+    <div class="source-badge"><div class="dot" style="background:#7c3aed"></div>진학사</div>
+    <div class="source-badge"><div class="dot" style="background:#1d3557"></div>EBSi</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>월</th>
+        <th>🏫 신갈고 학사일정 + 주요 대입 이벤트</th>
+        <th>수험생 &amp; 학부모 준비 전략</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- 5월 -->
+      <tr class="m5">
+        <td class="month-cell"><div class="month-pill"><span class="month-num">5</span><span class="month-text">월·현재</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">💡 첫 단추 채우기 &amp; 취약점 보완</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              📝 <b>1학기 중간고사</b> <span class="date-badge school">4/20~4/24</span> — 성적 확인 중<br>
+              📋 <span class="date-badge school">5/7(목)</span> 고3 학력평가 (경기교육청)
+            </div>
+          </div>
+          <div class="key-event" style="margin-top:8px"><div class="event-dot dot-teal"></div><span>대학별 수시 모집요강 최종 발표 (5월 말)</span></div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>중간고사 복기:</b> 아쉬운 과목 점검, 기말고사(6/29~7/3) 만회 전략 수립. 신갈고 고3 내신 반영 마지막 기회</li>
+            <li><b>5/7 학평 → 6/4 모평 준비:</b> 5월 학평을 6월 모평 직전 워밍업으로 활용. 취약 영역 집중 점검</li>
+            <li><b>모집요강 체크:</b> 목표 대학 수시 반영 비율 및 수능 최저 변화 확인. 성균관대·동덕여대 등 최저 강화 <span class="src-tag">진학사</span></li>
+          </ul>
+          <div class="insight-box info-box">📊 <b>진학사 전망:</b> 2026년 교과전형 경쟁률 하락(고려대 6.94:1) → 2027년 반등 가능. 최저 충족 점검 지금부터 시작.</div>
+        </td>
+      </tr>
+
+      <!-- 6월 -->
+      <tr class="m6">
+        <td class="month-cell"><div class="month-pill"><span class="month-num">6</span><span class="month-text">월</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">📍 진짜 내 위치 파악 &amp; 기말고사 올인</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              📋 <span class="date-badge school">6/4(목)</span> <b>평가원 6월 모의평가</b> (N수생 합류)<br>
+              📝 1학기 수행평가 집중 기간<br>
+              📝 <span class="date-badge school">6/29(일)~</span> <b>1학기 기말고사 시작</b>
+            </div>
+          </div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>6월 모평(6/4) 분석:</b> N수생 합류로 전국 경쟁력 객관화. 수능 최저 달성 가능성 냉정 판단</li>
+            <li><b>기말고사(6/29~7/3) 준비:</b> 모평 직후 즉시 내신 모드 전환. 고3 수시 내신 마지막 기회</li>
+            <li><b>선택과목 최종 검토:</b> 6월 모평 후 결정. 9월 이후 변경 불가 <span class="src-tag">메가스터디</span></li>
+          </ul>
+          <div class="warn-box info-box">⚡ <b>사탐런·확통런:</b> 2026수능 응시자 77.3%가 사탐 선택. 과탐 3~4등급 이과생은 표준점수 전략 검토.</div>
+        </td>
+      </tr>
+
+      <!-- 7월 -->
+      <tr class="m7">
+        <td class="month-cell"><div class="month-pill"><span class="month-num">7</span><span class="month-text">월</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">📚 내신 마무리 &amp; 생기부 최종 점검</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              📝 <span class="date-badge school">~7/3(목)</span> <b>1학기 기말고사 종료</b><br>
+              📋 <span class="date-badge school">7/8(수)</span> 고3 전국연합학력평가 (인천교육청)<br>
+              🏖️ <b>여름방학 시작</b> (7월 중순 예상)
+            </div>
+          </div>
+          <div class="key-event" style="margin-top:8px"><div class="event-dot dot-teal"></div><span>1학기 학생부 마감 준비 (8/31 기준일)</span></div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>기말고사(~7/3) 전력투구:</b> 고3 수시 내신 마지막 기회. 끝난 즉시 생기부 점검 모드 전환</li>
+            <li><b>7/8 학평 활용:</b> 기말 다음 날 바로 모의고사. 즉시 수능 모드 복귀 훈련</li>
+            <li><b>학생부 점검:</b> 세특·발표·심화 탐구 담임 최종 확인. 8/31 기준일 전 내용 보완 요청</li>
+            <li><b>대입 노선 확정:</b> 최종 내신으로 수시 중심/정시 올인 결정 <span class="src-tag">어디가</span></li>
+          </ul>
+          <div class="school-tip info-box">🏫 <b>신갈고 주의:</b> 기말고사 종료(7/3)와 7월 학평(7/8)이 5일 차이! 기말 직후 수능 모드 전환 연습 필요.</div>
+        </td>
+      </tr>
+
+      <!-- 8월 -->
+      <tr class="m8">
+        <td class="month-cell"><div class="month-pill"><span class="month-num">8</span><span class="month-text">월</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">☀️ 방학 순삭 — 수시 준비 완성</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              🏖️ <b>여름방학</b> (약 3~4주 / 개학 8월 말 예상)<br>
+              📋 수능 원서 접수 시작 (8월 하순)
+            </div>
+          </div>
+          <div class="key-event" style="margin-top:8px"><div class="event-dot dot-teal"></div><span><span class="date-badge teal">8/31(월)</span> <b>수시용 학생부 기준일 마감</b></span></div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>여름방학 = 수능 고지전:</b> 방학 3~4주, 일 8~10시간 순수 학습. 방학 끝나면 9월 원서 접수 직전</li>
+            <li><b>생기부 8/31 마감 철칙:</b> 교과·비교과 이 날까지만 반영. 담임 교사와 재확인 <span class="src-tag">어디가</span></li>
+            <li><b>수능 원서 + 과목 확정:</b> 9월 모평 이후 변경 불가. 사탐런 유불리 최종 판단 후 결정</li>
+            <li><b>수시 6개 조합 완성:</b> 개학 전 담임 상담 완료. 논술 지원자는 수능 전 논술 일정 확인</li>
+          </ul>
+          <div class="tip-box info-box">📌 정시용 생기부 기준일은 <b>11/30(월)</b>까지 별도 적용.</div>
+        </td>
+      </tr>
+
+      <!-- 9월 -->
+      <tr class="m9">
+        <td class="month-cell"><div class="month-pill"><span class="month-num">9</span><span class="month-text">월</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">🃏 6장의 카드 던지기 &amp; 최후 시뮬레이션</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              📋 <span class="date-badge school">9/2(화)</span> <b>평가원 9월 모의평가</b><br>
+              ✏️ <span class="date-badge school">9/7(월)~11(금)</span> <b>수시 원서 접수</b><br>
+              🏖️ 추석 연휴 9/13~15
+            </div>
+          </div>
+          <div class="key-event" style="margin-top:6px"><div class="event-dot dot-gray"></div><span>수시 전형 시작 (9/12~12/17, 97일)</span></div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>9월 모평 = 원서 최종 기준:</b> 모평 후 바로 9/7 접수. 수능 최저 충족 여부 냉정 판단 <span class="src-tag">메가스터디</span></li>
+            <li><b>추석 전 마감 긴장:</b> 추석 9/15로 9/7~11 원서 접수. 서류·마감시간 반드시 재확인</li>
+            <li><b>논술 지원자:</b> 연세대·서울시립대(자연) 등 9/27부터 수능 전 논술 시작 <span class="src-tag">진학사</span></li>
+          </ul>
+          <div class="insight-box info-box">🔍 <b>논술전형:</b> 44개 대학 12,711명. 중앙대 창의형(재학생 전용) 신설, 단국대 천안 폐지. 경쟁률 높고 충원율 낮음.</div>
+        </td>
+      </tr>
+
+      <!-- 10월 -->
+      <tr class="m10">
+        <td class="month-cell"><div class="month-pill"><span class="month-num">10</span><span class="month-text">월</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">🧘 흔들리지 않는 자가 이긴다</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              📝 <span class="date-badge school">10/13~16</span> <b>2학기 중간고사</b> (4일간)<br>
+              📋 <span class="date-badge school">10/20(화)</span> 전국연합학력평가 (경기교육청)
+            </div>
+          </div>
+          <div class="key-event" style="margin-top:6px"><div class="event-dot dot-purple"></div><span>수능 전 논술 막바지 (상명대 10/31~11/1)</span></div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>2학기 중간고사(10/13~16):</b> 고3은 내신 부담 크지 않지만 재수 대비로 최소 관리</li>
+            <li><b>생체 리듬 수능 시간대 고정:</b> 수능(11/19)까지 30일. 오전 집중 체제 전환</li>
+            <li><b>멘탈 관리:</b> 수시 접수 후 들뜬 교실에 흔들리지 말 것. 수능이 최후 변수</li>
+          </ul>
+          <div class="school-tip info-box">🏫 <b>신갈고 주의:</b> 2학기 중간고사(10/13~16)와 10월 학평(10/20)이 1주일 차이. 시험 직후 수능 모드 전환 연습 필요.</div>
+        </td>
+      </tr>
+
+      <!-- 11월 -->
+      <tr>
+        <td class="month-cell"><div class="month-pill" style="background:#1d3557"><span class="month-num">11</span><span class="month-text">월</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">🔥 끝날 때까지 끝난 게 아니다</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              🎯 <span class="date-badge school">11/19(목)</span> <b class="highlight">대학수학능력시험</b><br>
+              📋 수능 직후 주말 수시 논술·면접 집중 (11/22~23 최다)<br>
+              📚 <span class="date-badge school">11/30(월)</span> 정시용 학생부 기준일 마감
+            </div>
+          </div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>수능 당일 준비:</b> 도시락·복장·오답노트 전날 준비. 신갈고에서 수능 시험장 확인 필수</li>
+            <li><b>수능 직후 가채점:</b> 최저 충족 여부 즉시 판단 → 11/22~23 논술·면접 참가 결정 <span class="src-tag">진학사</span></li>
+            <li><b>표준점수·백분위:</b> 가채점 후 선택과목 유불리 분석 → 정시 전략 초안 수립 <span class="src-tag">메가스터디</span></li>
+            <li><b>2학기 내신 최소 관리:</b> 신갈고 기말고사 12월 예정. 재수 가능성 감안해 관리</li>
+          </ul>
+          <div class="tip-box info-box">📌 2027년은 <b>통합수능 마지막 해</b>. N수생 급증으로 수시 최저 충족이 더욱 중요 <span class="src-tag">진학사·메가</span></div>
+        </td>
+      </tr>
+
+      <!-- 12월 -->
+      <tr class="m12">
+        <td class="month-cell"><div class="month-pill"><span class="month-num">12</span><span class="month-text">월</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">🎯 성적표 수령 &amp; 수시 마무리</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              📝 <span class="date-badge school">12/15~18</span> <b>2학기 기말고사</b> (1·2학년 / 고3 미시행)<br>
+              🎓 12월 말 겨울방학 시작 예정
+            </div>
+          </div>
+          <div class="key-event" style="margin-top:6px"><div class="event-dot dot-red"></div><span><span class="date-badge">12/11(목)</span> 수능 성적 통지표 교부</span></div>
+          <div class="key-event"><div class="event-dot dot-gold"></div><span><span class="date-badge gold">12/21~23</span> 수시 합격자 등록 (전 대학 동시)</span></div>
+          <div class="key-event"><div class="event-dot dot-gold"></div><span><span class="date-badge gold">12/24~29</span> 수시 추합 통보 · 12/30 등록 마감</span></div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>수시 추합 대기:</b> 12/24~29 충원합격 통보. 홈페이지 14시·전화 모니터링 <span class="src-tag">메가스터디</span></li>
+            <li><b>수시 등록(12/21~23):</b> 복수 합격 시 반드시 1개 대학만 등록. 미등록 시 합격 취소</li>
+            <li><b>수능 최저 적용 대학:</b> 12/11 성적통지 후 12/18까지 발표. 이 기간 집중 확인</li>
+            <li><b>정시 전략 수립:</b> 표준점수·백분위 기반 가/나/다군 탐색. 어디가 활용 <span class="src-tag">어디가</span></li>
+          </ul>
+          <div class="school-tip info-box">🏫 <b>신갈고:</b> 고3은 기말고사 없음. 수능 후 수시 합격 여부에 따라 정시 준비 본격화 가능.</div>
+        </td>
+      </tr>
+
+      <!-- 1~2월 -->
+      <tr class="m127">
+        <td class="month-cell"><div class="month-pill"><span class="month-num">1~2</span><span class="month-text">'27년 월</span></div></td>
+        <td class="event-cell">
+          <div class="slogan-tag">🏁 정보력 싸움 — 최후의 마침표</div>
+          <div class="school-block">
+            <div class="school-block-title">🏫 신갈고 학사일정</div>
+            <div class="school-block-body">
+              🎓 <b>겨울방학</b> (12월 말~2월 초)<br>
+              🎓 <b>졸업식</b> (2월 초 예정)
+            </div>
+          </div>
+          <div class="key-event" style="margin-top:6px"><div class="event-dot dot-gold"></div><span><span class="date-badge gold">1/4~7</span> 정시 원서 접수</span></div>
+          <div class="key-event"><div class="event-dot dot-navy"></div><span>가군 1/11~17 · 나군 1/18~24 · 다군 1/25~31</span></div>
+          <div class="key-event"><div class="event-dot dot-red"></div><span><span class="date-badge">2/5까지</span> 합격 발표 · <span class="date-badge gold">2/10~12</span> 등록</span></div>
+          <div class="key-event"><div class="event-dot dot-gold"></div><span>2/13~17 미등록 충원 · 2/19~26 추가모집</span></div>
+        </td>
+        <td class="prepare-cell">
+          <ul>
+            <li><b>정시 원서 전략:</b> 소신·적정·안정 3장 조합. 마감 직전 경쟁률 확인 후 접수. 어디가·진학사 합격예측 활용 <span class="src-tag">메가스터디</span></li>
+            <li><b>합격자 발표·등록:</b> 2/5까지 발표 → 2/10~12 등록금 고지서 기한 내 납부. 미납 시 합격 취소 <span class="src-tag">메가스터디</span></li>
+            <li><b>추가모집 활용:</b> 2/19~26 추가모집. 복수 지원 제한 없으므로 끝까지 포기 금지 <span class="src-tag">어디가</span></li>
+            <li><b>신갈고 졸업식:</b> 2월 초 졸업 후 대학 입학 준비. 운전면허·여행 등 스무 살 맞이</li>
+          </ul>
+          <div class="insight-box info-box">🔍 <b>진학사 합격예측 + 어디가 입시결과:</b> 정시 접수 전 두 사이트 교차 활용 → 전년도 입결과 이월인원 함께 확인 후 최종 결정.</div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  <b>🏫 신갈고등학교</b> · 경기도 용인시 기흥구 백남준로 13 · Tel. 031-281-7004 · <a href="https://shingal-h.goeyi.kr" target="_blank">shingal-h.goeyi.kr</a><br>
+  학사일정은 학교 공식 홈페이지에서 최종 확인하세요 (학교 사정에 따라 변경 가능)<br><br>
+  <b>참고 사이트</b><br>
+  🔵 <a href="https://www.adiga.kr" target="_blank">어디가 adiga.kr</a> &nbsp;|&nbsp;
+  🔴 <a href="https://www.megastudy.net/entinfo/main/entinfo_main.asp" target="_blank">메가스터디</a> &nbsp;|&nbsp;
+  🟣 <a href="https://www.jinhak.com" target="_blank">진학사</a> &nbsp;|&nbsp;
+  🟤 <a href="https://www.ebsi.co.kr" target="_blank">EBSi</a><br>
+  ※ 모든 일정은 대학별·교육청 사정에 따라 변경될 수 있으므로 각 기관 공식 발표를 최종 확인하세요.
+</div>
+
+<!-- ══════════════════════════════════════
+     TIMELINE SCRIPT
+══════════════════════════════════════ -->
+<div class="tl-tooltip" id="tl-tip"></div>
+<script>
+(function(){
+  const C={exam:'#ff6060',school:'#ff8c42',apply:'#f5c040',result:'#3dd68c',suneung:'#4d8eff',mock:'#00e0c4',extra:'#b080ff'};
+  const MAY1=121,SPAN=305;
+  function dayPct(m,d){
+    const cum=[0,31,59,90,120,151,181,212,243,273,304,334];
+    const doy=m>=5?cum[m-1]+d:365+cum[m-1]+d;
+    return Math.min(99.5,Math.max(0,(doy-MAY1)/SPAN*100));
+  }
+  const SEGS=[
+    {f:0, t:20,color:'#1e5fa8',label:'1학기'},
+    {f:20,t:30,color:'#8b3a18',label:'방학'},
+    {f:30,t:60,color:'#4a28a0',label:'수시'},
+    {f:60,t:70,color:'#0d2040',label:'수능 후'},
+    {f:70,t:100,color:'#0d3d22',label:'정시'},
+  ];
+  const MONTH_TICKS=[
+    {l:'5월',p:0},{l:'6월',p:10},{l:'7월',p:20},{l:'8월',p:30},
+    {l:'9월',p:40},{l:'10월',p:50},{l:'11월',p:60},{l:'12월',p:70},
+    {l:'1월',p:80},{l:'2월',p:90},{l:'',p:100}
+  ];
+  const TL_MS=[
+    {m:5, d:7, color:C.mock,    label:'5월 학평',  tip:'5/7 고3 전국연합학력평가(경기교육청)'},
+    {m:6, d:4, color:C.mock,    label:'6월 모평',  tip:'6/4 평가원 6월 모의평가(N수생 합류)'},
+    {m:6, d:29,color:C.school,  label:'기말고사',  tip:'6/29~7/3 1학기 기말고사'},
+    {m:7, d:8, color:C.mock,    label:'7월 학평',  tip:'7/8 고3 전국연합학력평가(인천교육청)'},
+    {m:8, d:31,color:C.exam,    label:'생기부 마감',tip:'8/31 수시용 학생부 기준일 마감'},
+    {m:9, d:2, color:C.mock,    label:'9월 모평',  tip:'9/2 평가원 9월 모의평가'},
+    {m:9, d:7, color:C.apply,   label:'수시 접수', tip:'9/7~11 수시 원서 접수'},
+    {m:10,d:20,color:C.mock,    label:'10월 학평', tip:'10/20 전국연합학력평가(서울교육청)'},
+    {m:11,d:19,color:C.suneung, label:'수능',       tip:'11/19(목) 2027학년도 수능'},
+    {m:12,d:11,color:C.result,  label:'수능 성적',  tip:'12/11 수능 성적 통지표 교부'},
+    {m:12,d:18,color:C.result,  label:'수시 발표',  tip:'12/18 수시 합격자 최종 발표'},
+    {m:1, d:4, color:C.apply,   label:'정시 접수', tip:'1/4~7 정시 원서 접수'},
+    {m:2, d:10,color:C.result,  label:'정시 등록', tip:'2/10~12 정시 합격자 등록'},
+  ];
+
+  /* tooltip */
+  const tipEl=document.getElementById('tl-tip');
+  function showTip(e,text){tipEl.textContent=text;tipEl.style.opacity='1';moveTip(e);}
+  function moveTip(e){
+    const x=Math.min(e.clientX+12,window.innerWidth-215);
+    const y=Math.max(e.clientY-35,4);
+    tipEl.style.left=x+'px';tipEl.style.top=y+'px';
+  }
+  function hideTip(){tipEl.style.opacity='0';}
+  document.addEventListener('mousemove',e=>{if(tipEl.style.opacity==='1')moveTip(e);});
+  window.showTip=showTip; window.hideTip=hideTip;
+
+  /* build SVG */
+  function buildSVG(){
+    const W=900,PAD_L=16,PAD_R=16;
+    const usable=W-PAD_L-PAD_R;
+    const BAR_Y=160,BAR_H=10,DOT_R=5;
+    const LABEL_W=58,LABEL_H=18;
+    const ROW_GAP=24;
+
+    function xOf(p){return PAD_L+usable*p/100;}
+
+    /* compute dot x */
+    const dots=TL_MS.map(ms=>({
+      ...ms,pct:dayPct(ms.m,ms.d),x:xOf(dayPct(ms.m,ms.d))
+    }));
+
+    /* assign alternating rows, sorted by x */
+    const sorted=[...dots].sort((a,b)=>a.x-b.x);
+    sorted.forEach((d,i)=>{d.row=i%2;});
+
+    /* push within same row so chips don't overlap */
+    function pushRow(items){
+      const placed=[];
+      items.forEach(d=>{
+        let lx=d.x-LABEL_W/2;
+        for(const p of placed){
+          if(lx<p.lx+LABEL_W+3) lx=p.lx+LABEL_W+3;
+        }
+        d.lx=Math.max(0,Math.min(lx,W-LABEL_W));
+        placed.push(d);
+      });
+    }
+    pushRow(sorted.filter(d=>d.row===0));
+    pushRow(sorted.filter(d=>d.row===1));
+
+    const ROW1_TOP=BAR_Y-ROW_GAP-LABEL_H;
+    const ROW0_TOP=ROW1_TOP-ROW_GAP-LABEL_H;
+    const SVG_H=BAR_Y+BAR_H+34;
+
+    let s=`<svg width="100%" viewBox="0 0 ${W} ${SVG_H}" style="overflow:visible;display:block;font-family:'Noto Sans KR',sans-serif">`;
+
+    /* segments */
+    SEGS.forEach(sg=>{
+      const x1=xOf(sg.f),x2=xOf(sg.t);
+      s+=`<rect x="${x1}" y="${BAR_Y}" width="${x2-x1}" height="${BAR_H}" rx="3" fill="${sg.color}" opacity=".92"/>`;
+      const sw=(sg.t-sg.f)/100*usable;
+      if(sw>38){
+        const mx=xOf((sg.f+sg.t)/2);
+        s+=`<text x="${mx}" y="${BAR_Y+BAR_H/2}" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="500" fill="rgba(255,255,255,.88)">${sg.label}</text>`;
+      }
+    });
+
+    /* month ticks below bar */
+    MONTH_TICKS.forEach(t=>{
+      if(!t.l) return;
+      const tx=xOf(t.p);
+      s+=`<line x1="${tx}" y1="${BAR_Y+BAR_H}" x2="${tx}" y2="${BAR_Y+BAR_H+6}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
+      s+=`<text x="${tx}" y="${BAR_Y+BAR_H+18}" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.35)">${t.l}</text>`;
+    });
+
+    /* labels + leader lines + dots */
+    dots.forEach(d=>{
+      const labelTop=d.row===0?ROW0_TOP:ROW1_TOP;
+      const chipCx=d.lx+LABEL_W/2;
+      const chipBotY=labelTop+LABEL_H;
+      const dotTopY=BAR_Y-DOT_R-1;
+
+      /* diagonal + vertical leader */
+      const elbowX=chipCx, elbowY=chipBotY+3;
+      if(Math.abs(elbowX-d.x)>2){
+        s+=`<polyline points="${d.x},${dotTopY} ${elbowX},${elbowY}" fill="none" stroke="${d.color}" stroke-width="1" stroke-opacity=".55" stroke-dasharray="2 2"/>`;
+      } else {
+        s+=`<line x1="${d.x}" y1="${dotTopY}" x2="${d.x}" y2="${elbowY}" stroke="${d.color}" stroke-width="1" stroke-opacity=".55" stroke-dasharray="2 2"/>`;
+      }
+
+      /* label chip (invisible hit area for tooltip handled by SVG foreignObject-free approach: use <title>) */
+      const isSuneung=d.label==='수능';
+      s+=`<g style="cursor:pointer">`;
+      s+=`<rect x="${d.lx}" y="${labelTop}" width="${LABEL_W}" height="${LABEL_H}" rx="${isSuneung?4:3}" fill="${d.color}"/>`;
+      s+=`<text x="${chipCx}" y="${labelTop+LABEL_H/2}" text-anchor="middle" dominant-baseline="central" font-size="${isSuneung?9.5:9}" font-weight="${isSuneung?700:600}" fill="#0d0f14">${d.label}</text>`;
+      s+=`<rect x="${d.lx}" y="${labelTop}" width="${LABEL_W}" height="${LABEL_H}" rx="${isSuneung?4:3}" fill="transparent" data-tip="${d.tip}" class="tl-hit"/>`;
+      s+=`</g>`;
+
+      /* dot */
+      s+=`<circle cx="${d.x}" cy="${BAR_Y}" r="${isSuneung?DOT_R+2:DOT_R}" fill="${d.color}" stroke="#0d0f14" stroke-width="2.5" style="cursor:pointer" data-tip="${d.tip}" class="tl-hit"/>`;
+    });
+
+    s+='</svg>';
+    return s;
+  }
+
+  const container=document.getElementById('tl-container');
+  container.style.position='relative';
+  container.innerHTML=buildSVG();
+
+  /* attach tooltip to SVG hit rects */
+  container.querySelectorAll('.tl-hit').forEach(el=>{
+    el.addEventListener('mouseenter',e=>showTip(e,el.dataset.tip));
+    el.addEventListener('mouseleave',hideTip);
+  });
+
+  /* legend */
+  const legendData=[
+    {color:C.school,label:'신갈고 학사'},
+    {color:C.mock,  label:'모의고사·학평'},
+    {color:C.apply, label:'원서접수·등록'},
+    {color:C.result,label:'합격발표·성적'},
+    {color:C.suneung,label:'수능'},
+    {color:C.extra, label:'논술·추가'},
+  ];
+  document.getElementById('tl-legend').innerHTML=legendData.map(d=>
+    `<div class="tl-li"><div class="tl-lsq" style="width:10px;height:10px;border-radius:2px;background:${d.color};flex-shrink:0"></div><span style="font-size:10px;color:var(--muted)">${d.label}</span></div>`
+  ).join('');
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════
+   월별 바 차트 렌더러
+══════════════════════════════════════════ */
+(function(){
+  const C={
+    exam:'#ff6060', school:'#ff8c42', apply:'#f5c040',
+    result:'#3dd68c', suneung:'#4d8eff', mock:'#00e0c4',
+    extra:'#b080ff', neutral:'rgba(255,255,255,.13)'
+  };
+
+  const MONTHS=[
+    {m:5, color:'#1e5fa8', name:'5월',  sub:'현재', slogan:'첫 단추 채우기',
+     bars:[
+       {l:'중간고사(종료)', color:C.school,  f:0,  t:13,  tip:'4/20~4/24 종료', ms:[]},
+       {l:'5월 학평',       color:C.mock,    f:23, t:30,  tip:'5/7 경기교육청', ms:[{color:C.mock, tip:'5/7 학력평가'}]},
+       {l:'모집요강 발표',  color:C.exam,    f:80, t:100, tip:'5월 말 최종 발표', ms:[]},
+     ]},
+    {m:6, color:'#0d4a43', name:'6월',  sub:'', slogan:'진짜 내 위치 파악',
+     bars:[
+       {l:'수행평가',       color:C.neutral, f:1,  t:90,  tip:'1학기 수행평가 기간', ms:[]},
+       {l:'6월 모의평가',   color:C.mock,    f:13, t:20,  tip:'6/4 평가원 N수생 합류', ms:[{color:C.mock, tip:'6/4 모의평가'}]},
+       {l:'기말고사 시작',  color:C.school,  f:97, t:100, tip:'6/29 기말고사 시작', ms:[{color:C.school, tip:'6/29 기말 시작'}]},
+     ]},
+    {m:7, color:'#5a2a10', name:'7월',  sub:'', slogan:'내신 마무리',
+     bars:[
+       {l:'기말고사',       color:C.school,  f:0,  t:13,  tip:'~7/3 기말 종료', ms:[{color:C.school, tip:'7/3 기말 종료'}]},
+       {l:'7월 학평',       color:C.mock,    f:27, t:33,  tip:'7/8 인천교육청', ms:[{color:C.mock, tip:'7/8 학력평가'}]},
+       {l:'여름방학',       color:'#7a3a18', f:55, t:100, tip:'7월 중순~ 여름방학', ms:[]},
+     ]},
+    {m:8, color:'#4a3400', name:'8월',  sub:'', slogan:'방학 순삭',
+     bars:[
+       {l:'여름방학',       color:'#7a3a18', f:0,  t:90,  tip:'여름방학(3~4주)', ms:[]},
+       {l:'수능 원서접수',  color:C.apply,   f:70, t:100, tip:'8월 하순 원서접수', ms:[]},
+       {l:'생기부 마감',    color:C.exam,    f:98, t:100, tip:'8/31 수시 생기부 마감', ms:[{color:C.exam, tip:'8/31 생기부'}]},
+     ]},
+    {m:9, color:'#2d1a5e', name:'9월',  sub:'', slogan:'6장의 카드',
+     bars:[
+       {l:'9월 모의평가',   color:C.mock,    f:4,  t:10,  tip:'9/2 평가원 마지막 모평', ms:[{color:C.mock, tip:'9/2 9월 모평'}]},
+       {l:'수시 원서접수',  color:C.apply,   f:23, t:40,  tip:'9/7~11 원서접수', ms:[{color:C.apply, tip:'9/7 시작'},{color:C.apply, tip:'9/11 마감'}]},
+       {l:'수시 전형',      color:C.neutral, f:40, t:100, tip:'9/12~ 수시 전형(97일)', ms:[]},
+     ]},
+    {m:10,color:'#5a1010', name:'10월', sub:'', slogan:'흔들리지 않는 자',
+     bars:[
+       {l:'수시 전형',      color:C.neutral, f:0,  t:100, tip:'수시 전형 진행 중', ms:[]},
+       {l:'2학기 중간고사', color:C.school,  f:41, t:57,  tip:'10/13~16 4일간', ms:[]},
+       {l:'10월 학평',      color:C.mock,    f:64, t:70,  tip:'10/20 서울교육청', ms:[{color:C.mock, tip:'10/20 학력평가'}]},
+     ]},
+    {m:11,color:'#0d1825', name:'11월', sub:'', slogan:'끝날 때까지',
+     bars:[
+       {l:'수시 전형',      color:C.neutral, f:0,  t:57,  tip:'수시 전형 마무리', ms:[]},
+       {l:'수능 D-DAY',     color:C.suneung, f:57, t:70,  tip:'11/19(목) 수능', ms:[{color:C.suneung, tip:'11/19 수능'}]},
+       {l:'수시 논술·면접', color:C.extra,   f:70, t:100, tip:'수능 직후 대학별 고사 집중', ms:[]},
+     ]},
+    {m:12,color:'#0d2028', name:'12월', sub:'', slogan:'성적표 & 수시 마무리',
+     bars:[
+       {l:'수능 성적 통지',  color:C.result,  f:33, t:40,  tip:'12/11 성적 통지표', ms:[{color:C.result, tip:'12/11 성적통지'}]},
+       {l:'수시 합격 발표',  color:C.result,  f:57, t:63,  tip:'12/18 최종 발표', ms:[{color:C.result, tip:'12/18 합격발표'}]},
+       {l:'수시 등록·추합',  color:C.apply,   f:67, t:97,  tip:'12/21~23 등록 / 12/24~29 추합', ms:[]},
+     ]},
+    {m:1, color:'#0d3d22', name:'1월',  sub:"'27", slogan:'정시 눈치싸움',
+     bars:[
+       {l:'정시 원서접수',  color:C.apply,   f:10, t:23,  tip:'1/4~7 가·나·다군 접수', ms:[{color:C.apply, tip:'1/4 접수시작'},{color:C.apply, tip:'1/7 마감'}]},
+       {l:'가군 전형',      color:'#1e4a8a', f:33, t:56,  tip:'1/11~17 가군(7일)', ms:[]},
+       {l:'나군 전형',      color:'#0d4a38', f:57, t:80,  tip:'1/18~24 나군(7일)', ms:[]},
+       {l:'다군 전형',      color:'#2d1a5e', f:80, t:100, tip:'1/25~31 다군(7일)', ms:[]},
+     ]},
+    {m:2, color:'#0d1825', name:'2월',  sub:"'27", slogan:'마지막 마침표',
+     bars:[
+       {l:'합격자 발표',    color:C.result,  f:0,  t:16,  tip:'2/5까지 합격 발표', ms:[{color:C.result, tip:'2/5 발표'}]},
+       {l:'정시 등록',      color:C.apply,   f:31, t:40,  tip:'2/10~12 정시 등록', ms:[]},
+       {l:'미등록 충원',    color:C.neutral, f:40, t:57,  tip:'2/13~17 충원', ms:[]},
+       {l:'추가 모집',      color:C.extra,   f:60, t:90,  tip:'2/19~26 추가모집', ms:[]},
+     ]},
+  ];
+
+  const BAR_H=20, GAP=5, BADGE_W=52, CHART_PAD_T=4, CHART_PAD_B=4;
+  const DOT=12;
+
+  /* tooltip (shared with timeline) */
+  const tipEl = document.getElementById('tl-tip');
+  function showTip(e,text){
+    tipEl.textContent=text; tipEl.style.opacity='1';
+    const x=Math.min(e.clientX+12,window.innerWidth-215);
+    tipEl.style.left=x+'px';
+    tipEl.style.top=Math.max(e.clientY-35,4)+'px';
+  }
+  function hideTip(){ tipEl.style.opacity='0'; }
+
+  /* build milestone vertical stack at bar-end */
+  function msStack(msArr, endPct, barIdx){
+    if(!msArr||msArr.length===0) return '';
+    const totalH = msArr.length*DOT+(msArr.length-1)*3;
+    const top    = (BAR_H - totalH)/2;
+    let h = `<div style="position:absolute;top:${-totalH+BAR_H/2+DOT/2}px;left:calc(${endPct}% - ${DOT/2}px);display:flex;flex-direction:column;align-items:center;z-index:10">`;
+    msArr.forEach((ms,i)=>{
+      if(i>0) h+=`<div style="width:1px;height:3px;background:rgba(255,255,255,.2);flex-shrink:0"></div>`;
+      h+=`<div style="width:${DOT}px;height:${DOT}px;border-radius:50%;background:${ms.color};border:1.5px solid #0d0f14;cursor:pointer;flex-shrink:0;transition:transform .15s"
+              data-tip="${ms.tip}"
+              onmouseenter="this._st=event;this.style.transform='scale(1.25)'"
+              onmouseleave="this.style.transform=''"
+              onclick="void(0)"></div>`;
+    });
+    h+=`<div style="width:1px;height:${BAR_H/2+2}px;background:rgba(255,255,255,.15);flex-shrink:0"></div>`;
+    h+='</div>';
+    return h;
+  }
+
+  function renderMonth(mo){
+    const hasMulti = mo.bars.some(b=>b.ms&&b.ms.length>1);
+    const topPad   = hasMulti ? 18 : CHART_PAD_T;
+    const areaH    = mo.bars.length*(BAR_H+GAP)-GAP + topPad + CHART_PAD_B;
+
+    const barsHtml = mo.bars.map((b,bi)=>{
+      const w   = (b.t-b.f)+'%';
+      const lft = b.f+'%';
+      const inside = (b.t-b.f) > 17;
+      const ms  = msStack(b.ms, b.t, bi);
+      return `
+      <div style="position:relative;height:${BAR_H}px;margin-bottom:${GAP}px;cursor:pointer"
+           data-tip="${b.tip}"
+           onmouseenter="showTip(event,this.dataset.tip)" onmouseleave="hideTip()">
+        <div style="position:absolute;top:0;left:${lft};width:${w};height:${BAR_H}px;
+                    border-radius:3px;background:${b.color};transition:filter .15s"
+             onmouseenter="this.style.filter='brightness(1.18)'" onmouseleave="this.style.filter=''"></div>
+        ${inside
+          ? `<div style="position:absolute;top:0;left:calc(${lft} + 5px);height:${BAR_H}px;display:flex;align-items:center;font-size:9px;font-weight:600;color:white;white-space:nowrap;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.5)">${b.l}</div>`
+          : `<div style="position:absolute;top:0;left:${lft};width:${w};height:${BAR_H}px;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;font-size:9px;font-weight:600;color:white;white-space:nowrap;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.5);overflow:hidden">${b.l}</div>`
+        }
+        <div style="position:absolute;right:2px;top:0;height:${BAR_H}px;display:flex;align-items:center;font-size:8.5px;color:rgba(255,255,255,.28);white-space:nowrap;pointer-events:none">${b.tip.split(' ')[0]}</div>
+        ${ms}
+      </div>`;
+    }).join('');
+
+    return `
+    <div style="display:grid;grid-template-columns:${BADGE_W}px 1fr;gap:0 10px;margin-bottom:6px;align-items:start">
+      <div style="width:${BADGE_W}px;background:${mo.color};border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 0;min-height:${areaH+6}px;flex-shrink:0">
+        <span style="font-size:14px;font-weight:900;color:white;line-height:1">${mo.name}</span>
+        ${mo.sub?`<span style="font-size:8px;color:rgba(255,255,255,.6);line-height:1.3;margin-top:1px">${mo.sub}</span>`:''}
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:500;color:rgba(255,255,255,.45);margin-bottom:4px;display:flex;align-items:center;gap:6px">
+          <span style="color:${mo.color};font-weight:700">${mo.name}</span>
+          <span style="background:rgba(0,205,180,.12);color:#00e0c4;font-size:9px;font-weight:700;padding:1px 8px;border-radius:10px;white-space:nowrap">${mo.slogan}</span>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:${topPad}px 5px ${CHART_PAD_B}px;position:relative">
+          <div style="position:relative">${barsHtml}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const section = document.getElementById('bar-chart-section');
+  if(section){
+    section.innerHTML = MONTHS.map(renderMonth).join('');
+    /* attach tooltip events via delegation */
+    section.addEventListener('mouseenter', e=>{
+      const el = e.target.closest('[data-tip]');
+      if(el) showTip(e, el.dataset.tip);
+    }, true);
+    section.addEventListener('mouseleave', e=>{
+      const el = e.target.closest('[data-tip]');
+      if(el) hideTip();
+    }, true);
+  }
+
+  /* expose helpers for tooltip (shared) */
+  window.showTip = showTip;
+  window.hideTip = hideTip;
+})();
+</script>
+
+<script>
+(function(){
+  const SUNEUNG = new Date('2026-11-19T00:00:00');
+  function update(){
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const target = new Date(SUNEUNG.getFullYear(), SUNEUNG.getMonth(), SUNEUNG.getDate());
+    const diff = Math.round((target - today) / 86400000);
+    const badge = document.getElementById('dday-badge');
+    if(!badge) return;
+    if(diff > 0){
+      badge.textContent = 'D-' + diff;
+      badge.style.background = 'rgba(232,69,69,.22)';
+      badge.style.color = '#ffcfcf';
+    } else if(diff === 0){
+      badge.textContent = 'D-DAY';
+      badge.style.background = 'rgba(240,165,0,.3)';
+      badge.style.color = '#ffe29a';
+    } else {
+      badge.textContent = 'D+' + Math.abs(diff);
+      badge.style.background = 'rgba(22,163,74,.2)';
+      badge.style.color = '#a7f3c4';
+    }
+  }
+  update();
+  const msUntilMidnight = (function(){
+    const n = new Date();
+    return new Date(n.getFullYear(),n.getMonth(),n.getDate()+1) - n;
+  })();
+  setTimeout(function tick(){ update(); setInterval(update, 86400000); }, msUntilMidnight);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울대 스마트시스템과학과 — 뉴스 & 링크 아카이브</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ──────────────────────────────────────────
+   DESIGN SYSTEM
+   Aesthetic: Broadsheet editorial × data viz
+   Palette: Warm cream + deep forest + amber
+────────────────────────────────────────── */
+:root {
+  --cream:   #f5f0e8;
+  --paper:   #faf7f2;
+  --ink:     #1a1208;
+  --forest:  #1d3a2a;
+  --amber:   #c47d0e;
+  --amber2:  #e8961a;
+  --rust:    #c0392b;
+  --sky:     #2980b9;
+  --muted:   #7a6e5f;
+  --border:  #d8ceb8;
+  --shadow:  rgba(26,18,8,.12);
+  --card:    #ffffff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans KR', 'Instrument Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* Texture overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='%23c4b89a' opacity='.08'/%3E%3Crect width='1' height='1' x='2' y='2' fill='%23c4b89a' opacity='.06'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+/* ── MASTHEAD ── */
+.masthead {
+  border-bottom: 4px double var(--ink);
+  padding: 32px 0 20px;
+  margin-bottom: 32px;
+  text-align: center;
+  position: relative;
+}
+.masthead::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--ink);
+  margin-top: 8px;
+}
+.masthead-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.masthead h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  margin-bottom: 8px;
+}
+.masthead h1 em {
+  font-style: italic;
+  color: var(--forest);
+}
+.masthead-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .1em;
+  flex-wrap: wrap;
+}
+.masthead-meta span { display: flex; align-items: center; gap: 6px; }
+.masthead-meta span::before { content: '◆'; font-size: 7px; color: var(--amber); }
+
+/* ── STAT STRIP ── */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border: 2px solid var(--ink);
+  margin-bottom: 36px;
+  background: var(--forest);
+  color: white;
+}
+.stat-cell {
+  padding: 18px 16px;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.15);
+}
+.stat-cell:last-child { border-right: none; }
+.stat-n {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--amber2);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-l {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  opacity: .7;
+  text-transform: uppercase;
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+.filter-btn {
+  padding: 6px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+  color: var(--ink);
+  transition: all .2s;
+  text-transform: uppercase;
+}
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--forest);
+  color: white;
+  border-color: var(--forest);
+}
+
+/* ── SEARCH ── */
+.search-wrap {
+  position: relative;
+  margin-bottom: 28px;
+  max-width: 480px;
+}
+.search-wrap input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  border: 2px solid var(--ink);
+  background: var(--card);
+  color: var(--ink);
+  outline: none;
+}
+.search-wrap input:focus { border-color: var(--forest); }
+.search-wrap::before {
+  content: '🔍';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* ── SECTION HEADER ── */
+.section-hd {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+.section-hd h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -.01em;
+}
+.section-hd .count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .05em;
+  margin-left: auto;
+}
+.section-hd .tag-cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 10px;
+  background: var(--forest);
+  color: white;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+/* ── NEWS GRID LAYOUTS ── */
+.section { margin-bottom: 52px; }
+
+/* Featured = 3-col, first card spans 2 rows */
+.grid-featured {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.grid-featured .card:first-child {
+  grid-row: 1 / 3;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.grid-1 { display: grid; grid-template-columns: 1fr; gap: 2px; margin-bottom: 2px; }
+
+/* ── NEWS CARD ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 22px 22px 18px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all .22s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background .2s;
+}
+.card:hover {
+  background: var(--paper);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px var(--shadow);
+  z-index: 2;
+}
+.card:hover::before { background: var(--amber); }
+
+.card-cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: white;
+  background: var(--cat-color, var(--forest));
+  padding: 3px 10px;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+.card-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .05em;
+}
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -.01em;
+}
+.card.lg .card-title { font-size: 26px; }
+.card.sm .card-title { font-size: 15px; }
+.card-summary {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  flex: 1;
+}
+.card.sm .card-summary { display: none; }
+.card-source {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--amber);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+.card-source::after { content: '→'; font-size: 12px; }
+.card-highlight {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: rgba(196,125,14,.1);
+  border-left: 3px solid var(--amber);
+  padding: 8px 12px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ── LINK LIST (compact) ── */
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.link-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  background: var(--card);
+  transition: all .18s;
+}
+.link-item:last-child { border-bottom: none; }
+.link-item:hover {
+  background: var(--paper);
+  padding-left: 26px;
+}
+.link-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--border);
+  line-height: 1;
+}
+.link-main {}
+.link-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 3px;
+  line-height: 1.4;
+}
+.link-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .05em;
+}
+.link-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  color: white;
+  background: var(--forest);
+}
+
+/* ── TICKER ── */
+.ticker-wrap {
+  overflow: hidden;
+  background: var(--forest);
+  color: white;
+  padding: 10px 0;
+  margin-bottom: 32px;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+.ticker-inner {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker 35s linear infinite;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.85);
+}
+@keyframes ticker {
+  from { transform: translateX(100vw); }
+  to   { transform: translateX(-100%); }
+}
+
+/* ── PULLQUOTE ── */
+.pullquote {
+  border-left: 5px solid var(--amber);
+  padding: 18px 24px;
+  background: linear-gradient(135deg, rgba(196,125,14,.08) 0%, transparent 60%);
+  margin: 24px 0;
+}
+.pullquote p {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--forest);
+  margin-bottom: 8px;
+}
+.pullquote cite {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-style: normal;
+}
+
+/* ── BACK TO TOP ── */
+.back-top {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 44px;
+  height: 44px;
+  background: var(--ink);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .3s;
+  z-index: 999;
+}
+.back-top.visible { opacity: 1; }
+.back-top:hover { background: var(--forest); }
+
+/* ── FOOTER ── */
+.site-footer {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 44px 0;
+  margin-top: 60px;
+  text-align: center;
+}
+.site-footer h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 12px;
+  color: var(--amber2);
+}
+.site-footer p {
+  font-size: 13px;
+  color: rgba(245,240,232,.6);
+  max-width: 560px;
+  margin: 0 auto 20px;
+  line-height: 1.8;
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--amber2);
+  text-decoration: none;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.footer-links a:hover { color: white; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .grid-featured { grid-template-columns: 1fr; }
+  .grid-featured .card:first-child { grid-row: auto; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+  .stat-strip { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .stat-strip { grid-template-columns: 1fr 1fr; }
+  .link-item { grid-template-columns: 50px 1fr; }
+  .link-badge { display: none; }
+  .masthead h1 { font-size: 32px; }
+  .wrap { padding: 0 14px; }
+}
+
+/* ── ANIMATIONS ── */
+.card, .link-item { animation: fadeIn .4s ease backwards; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- ── MASTHEAD ── -->
+<header class="masthead">
+  <div class="masthead-kicker">뉴스 & 링크 아카이브 · 2024–2026</div>
+  <h1>서울대 <em>스마트시스템과학과</em><br>뉴스 종합</h1>
+  <div class="masthead-meta">
+    <span>신설 2024년</span>
+    <span>1기 입학 2025년</span>
+    <span>총 25명 정원</span>
+    <span>수시 경쟁률 19.5:1</span>
+    <span>링크 32개 수록</span>
+  </div>
+</header>
+
+<!-- ── TICKER ── -->
+<div class="ticker-wrap">
+  <span class="ticker-inner">
+    📢 2025년 첫 신입생 입학 · 서울대 최초 스마트농업 전문 학과 &nbsp;&nbsp; ★ 수시 일반전형 경쟁률 19.5:1 — 의예과(16.12:1) 초과 &nbsp;&nbsp; 🌾 빅데이터·AI·IoT로 농업의 미래를 설계하는 학과 &nbsp;&nbsp; 🎓 1기 합격생 "작물 생장 예측 프로그램 개발이 목표" &nbsp;&nbsp; 📊 글로벌 스마트농업 시장 2025년 220억 달러 규모 &nbsp;&nbsp; 🤖 스마트팜·디지털농업·기후스마트농업·배양육 연구 &nbsp;&nbsp;
+  </span>
+</div>
+
+<!-- ── STAT STRIP ── -->
+<div class="stat-strip">
+  <div class="stat-cell"><div class="stat-n">25명</div><div class="stat-l">전체 정원</div></div>
+  <div class="stat-cell"><div class="stat-n">19.5:1</div><div class="stat-l">수시 경쟁률</div></div>
+  <div class="stat-cell"><div class="stat-n">9명</div><div class="stat-l">교수진</div></div>
+  <div class="stat-cell"><div class="stat-n">2025</div><div class="stat-l">첫 신입생</div></div>
+  <div class="stat-cell"><div class="stat-n">$220B</div><div class="stat-l">스마트농업 시장</div></div>
+</div>
+
+<!-- ── FILTER + SEARCH ── -->
+<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:28px">
+  <div class="search-wrap" style="flex:1;min-width:240px">
+    <input type="text" id="searchInput" placeholder="뉴스 검색..." oninput="filterCards()">
+  </div>
+  <div class="filter-bar" style="flex:1;min-width:260px">
+    <span class="filter-label">카테고리</span>
+    <button class="filter-btn active" onclick="filterCat('all',this)">전체</button>
+    <button class="filter-btn" onclick="filterCat('official',this)">공식</button>
+    <button class="filter-btn" onclick="filterCat('admission',this)">입시</button>
+    <button class="filter-btn" onclick="filterCat('interview',this)">인터뷰</button>
+    <button class="filter-btn" onclick="filterCat('research',this)">연구</button>
+    <button class="filter-btn" onclick="filterCat('market',this)">시장</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SECTION 1: 학과 공식 페이지
+═════════════════════════════════════════ -->
+<section class="section" data-cat="official">
+  <div class="section-hd">
+    <span class="tag-cat">공식 채널</span>
+    <h2>학과 공식 페이지 & 발표</h2>
+    <span class="count">4개 링크</span>
+  </div>
+
+  <div class="grid-featured">
+
+    <a class="card lg" href="http://smsys.snu.ac.kr/" target="_blank" data-cat="official" data-text="스마트시스템과학과 공식 홈페이지 스마트팜 전문인력">
+      <span class="card-cat" style="--cat-color:#1d3a2a">🏛️ 공식 홈페이지</span>
+      <span class="card-date">서울대학교 농업생명과학대학 · 상시</span>
+      <div class="card-title">서울대학교 스마트시스템과학과 공식 홈페이지</div>
+      <div class="card-summary">빅데이터, AI, IoT 등 4차 산업혁명 기술을 활용하여 농업의 디지털 전환과 데이터과학 기반 신산업을 선도하는 미래지향적 학과. 학사일정, 교수진 소개, 교과과정 안내 등 모든 학과 정보 제공.</div>
+      <div class="card-highlight">💡 2024년 신설 → 2025년 첫 신입생 입학. 교육부 첨단학과 정원 순증 25명 전부 반영.</div>
+      <span class="card-source">smsys.snu.ac.kr</span>
+    </a>
+
+    <a class="card" href="http://cals.snu.ac.kr/board/notice?bm=v&bbsidx=12337" target="_blank" data-cat="official" data-text="스마트시스템과학과 소개자료 PDF 농업생명과학대학">
+      <span class="card-cat" style="--cat-color:#1d3a2a">📄 공식 소개자료</span>
+      <span class="card-date">2024.09.10 · 농생대 공지사항</span>
+      <div class="card-title">스마트시스템과학과 공식 소개자료 PDF</div>
+      <div class="card-summary">교과과정·전공 분야·교수진·입학전형 정보 수록. 조회수 7,218회, 다운로드 4,894회.</div>
+      <span class="card-source">cals.snu.ac.kr</span>
+    </a>
+
+    <a class="card sm" href="https://admission.snu.ac.kr/undergraduate/notice?md=v&bbsidx=146639" target="_blank" data-cat="official" data-text="입학전형 안내 모집요강 스마트시스템과학과 신설">
+      <span class="card-cat" style="--cat-color:#2c6e49">📋 입학본부 공지</span>
+      <span class="card-date">2024 · 서울대 입학본부</span>
+      <div class="card-title">2025학년도 입학전형 안내 — 스마트시스템과학과 신설 반영</div>
+      <span class="card-source">admission.snu.ac.kr</span>
+    </a>
+
+    <a class="card sm" href="https://snuarori.snu.ac.kr/" target="_blank" data-cat="official interview" data-text="아로리 입학 웹진 스마트시스템과학과 인터뷰">
+      <span class="card-cat" style="--cat-color:#c47d0e">📰 아로리 웹진</span>
+      <span class="card-date">서울대 입학정보 웹진</span>
+      <div class="card-title">서울대 입학정보 웹진 '아로리' — 스마트시스템과학과 학과 소개 게재</div>
+      <span class="card-source">snuarori.snu.ac.kr</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SECTION 2: 학과 신설 뉴스
+═════════════════════════════════════════ -->
+<section class="section" data-cat="admission">
+  <div class="section-hd">
+    <span class="tag-cat">입시 & 신설 뉴스</span>
+    <h2>학과 신설 & 입시 결과</h2>
+    <span class="count">8개 링크</span>
+  </div>
+
+  <div class="pullquote">
+    <p>"신설된 스마트시스템과학과는 수시 일반전형에서 19.5대 1의 경쟁률을 기록하며 예체능계열을 제외한 서울대 전체 모집단위 중 가장 높은 경쟁률을 나타냈습니다."</p>
+    <cite>— 에듀스토리, 2024년 9월 30일</cite>
+  </div>
+
+  <div class="grid-3">
+
+    <a class="card" href="http://www.veritas-a.com/news/articleView.html?idxno=508869" target="_blank" data-cat="admission" data-text="첨단학과 신설 서울대 스마트시스템과학 고대 인공지능 연대 지능형반도체">
+      <span class="card-cat" style="--cat-color:#c0392b">📣 베리타스알파</span>
+      <span class="card-date">2024.06.13</span>
+      <div class="card-title">2025 첨단학과 1145명 순증… 서울대 스마트시스템과학 신설</div>
+      <div class="card-summary">SKY 포함 22개 대학 첨단학과 신설. 서울대는 25명 전원을 스마트시스템과학과에 배정. 핵심권장과목 미적분, 권장과목 물Ⅰ/화Ⅰ/생Ⅰ 안내.</div>
+      <span class="card-source">veritas-a.com</span>
+    </a>
+
+    <a class="card" href="https://sevoluion.com/2025%ED%95%99%EB%85%84%EB%8F%84-%EC%84%9C%EC%9A%B8%EB%8C%80%ED%95%99%EA%B5%90-%EC%88%98%EC%8B%9C-%EA%B2%BD%EC%9F%81%EB%A5%A0-%EB%B6%84%EC%84%9D-%EC%83%81%EC%8A%B9%EC%84%B8-%EC%A7%80%EC%86%8D/" target="_blank" data-cat="admission" data-text="수시 경쟁률 분석 스마트시스템과학과 19.5대1 의예과 초과">
+      <span class="card-cat" style="--cat-color:#c0392b">📊 경쟁률 분석</span>
+      <span class="card-date">2024.09.30</span>
+      <div class="card-title">2025 서울대 수시 경쟁률 분석 — 스마트시스템 <strong>19.5:1</strong> 전체 1위</div>
+      <div class="card-summary">의예과(16.12:1)마저 뛰어넘은 이례적 경쟁률. 지역균형전형도 9:1 기록. 신설 학과 최초 결과.</div>
+      <div class="card-highlight">📌 예체능 제외 서울대 전체 1위</div>
+      <span class="card-source">EDU STORY</span>
+    </a>
+
+    <a class="card" href="https://www.nextplay.kr/news/articleView.html?idxno=7679" target="_blank" data-cat="admission" data-text="2025 vs 2024 서울대 스마트시스템과학과 신설 변화">
+      <span class="card-cat" style="--cat-color:#c0392b">🔄 입시 변화</span>
+      <span class="card-date">2024.06.26</span>
+      <div class="card-title">2025 VS 2024 서울대 변화 — 스마트시스템과학과 신설로 지각변동</div>
+      <div class="card-summary">수시 지역균형 4명, 일반전형 10명, 기회균형 1명, 정시 10명으로 25명 모집. 스마트팜 전문인력 양성 학과 설명.</div>
+      <span class="card-source">괜찮은 뉴스</span>
+    </a>
+
+    <a class="card sm" href="https://m.jinhak.com/IpsiStrategy/NewsDetail.aspx?Sigi=J&ContentID=824938" target="_blank" data-cat="admission" data-text="정시 특징 스마트시스템과학과 교과평가 수능">
+      <span class="card-cat" style="--cat-color:#2980b9">📝 정시 분석</span>
+      <span class="card-date">2024.12.09 · 진학사</span>
+      <div class="card-title">2025 서울대 정시 특징 — 스마트시스템과학과 10명 선발</div>
+      <span class="card-source">jinhak.com</span>
+    </a>
+
+    <a class="card sm" href="http://www.edulove.net/news/articleView.html?idxno=32736" target="_blank" data-cat="admission" data-text="정시 서울대 스마트시스템과학과 농업생명과학대학">
+      <span class="card-cat" style="--cat-color:#2980b9">📝 정시 요강</span>
+      <span class="card-date">2024.12.17</span>
+      <div class="card-title">2025 서울대 정시 — 스마트시스템과학과 10명 일반전형 선발</div>
+      <span class="card-source">교육사랑신문</span>
+    </a>
+
+    <a class="card sm" href="https://www.megastudy.net/Entinfo/ipsi_News/news_view_ax.asp?idx=7484" target="_blank" data-cat="admission" data-text="2026 서울대 정시요강 공개 스마트시스템 농업생명">
+      <span class="card-cat" style="--cat-color:#2980b9">📊 2026 요강</span>
+      <span class="card-date">2025 · 메가스터디</span>
+      <div class="card-title">서울대 2026 정시요강 — 1353명 모집 · 스마트시스템 계속 유지</div>
+      <span class="card-source">megastudy.net</span>
+    </a>
+
+    <a class="card sm" href="https://namu.wiki/w/%EC%84%9C%EC%9A%B8%EB%8C%80%ED%95%99%EA%B5%90/%ED%95%99%EB%B6%80/%EB%86%8D%EC%97%85%EC%83%9D%EB%AA%85%EA%B3%BC%ED%95%99%EB%8C%80%ED%95%99" target="_blank" data-cat="admission" data-text="나무위키 서울대 농업생명과학대학 스마트시스템과학과">
+      <span class="card-cat" style="--cat-color:#555">📖 나무위키</span>
+      <span class="card-date">2024 신설 · 최신 업데이트</span>
+      <div class="card-title">나무위키 — 서울대 농업생명과학대학 스마트시스템과학과 항목</div>
+      <span class="card-source">namu.wiki</span>
+    </a>
+
+    <a class="card sm" href="https://orbi.kr/00070979031" target="_blank" data-cat="admission" data-text="오르비 스마트시스템 vs 조경지역 수험생 질문">
+      <span class="card-cat" style="--cat-color:#7f8c8d">💬 수험생 커뮤니티</span>
+      <span class="card-date">2025.01.01 · 오르비</span>
+      <div class="card-title">오르비 — "스마트시스템과학과 vs 조경·지역시스템 어디가 낫나요?"</div>
+      <span class="card-source">orbi.kr</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SECTION 3: 1기 합격생 인터뷰
+═════════════════════════════════════════ -->
+<section class="section" data-cat="interview">
+  <div class="section-hd">
+    <span class="tag-cat">합격생 인터뷰</span>
+    <h2>1기 합격생 실제 목소리</h2>
+    <span class="count">4개 링크</span>
+  </div>
+
+  <div class="grid-2">
+
+    <a class="card" href="https://snuarori.snu.ac.kr/interview/freshman?year=2025" target="_blank" data-cat="interview" data-text="2025 신입생 면접 이야기 스마트시스템과학과 작물 생장 예측">
+      <span class="card-cat" style="--cat-color:#c47d0e">🎤 면접 인터뷰</span>
+      <span class="card-date">2025 · 서울대 아로리 공식 웹진</span>
+      <div class="card-title">2025 신입생이 들려주는 면접이야기 — 스마트시스템과학과 1기 K씨</div>
+      <div class="card-summary">면접에서 "환경조건을 입력하면 시간에 따라 작물의 생장을 예측하는 프로그램 개발"이 목표라고 적었는데 이를 바탕으로 심층 질문이 집중됐다고 증언. "고등학교 3년간 얼마나 열심히 탐구하고 고민했느냐가 핵심"이라고 조언.</div>
+      <div class="card-highlight">💡 생기부 내용 이상으로 생각해보지 않으면 답변 어려운 질문 다수 출제</div>
+      <span class="card-source">snuarori.snu.ac.kr</span>
+    </a>
+
+    <a class="card" href="https://snuarori.snu.ac.kr/highschool-life/freshman-bookshelf?year=2025" target="_blank" data-cat="interview" data-text="2025 신입생 독서 스마트시스템과학과 종자 세계를 지배하다 농업">
+      <span class="card-cat" style="--cat-color:#c47d0e">📚 신입생 독서</span>
+      <span class="card-date">2025 · 서울대 아로리 공식 웹진</span>
+      <div class="card-title">2025 신입생의 서재 — 스마트시스템과학과 1기 K씨의 추천도서</div>
+      <div class="card-summary">『종자, 세계를 지배하다』를 읽고 생명공학 기술을 농민에게 유익한 방향으로 활용하는 시스템이 필요하다는 생각으로 발전. 농업 분야 관심이 독서 → 진로 → 합격으로 이어진 실제 사례.</div>
+      <span class="card-source">snuarori.snu.ac.kr</span>
+    </a>
+
+    <a class="card" href="https://www.localnaeil.com/News/View/652757/1" target="_blank" data-cat="interview admission" data-text="한영고 정채율 서울대 스마트시스템과학과 수시 4관왕 합격">
+      <span class="card-cat" style="--cat-color:#1d3a2a">🏆 합격 사례</span>
+      <span class="card-date">2025 · 지역내일</span>
+      <div class="card-title">한영고 정채율 — 서울대 스마트시스템과학과 학종 합격 · 수시 4관왕</div>
+      <div class="card-summary">서울대 스마트시스템 + 고려대 보건환경융합 + 한양대 한양인터칼리지 + 서강대 AI자유전공 4곳 동시 합격. 내신 1등급 후반대. 창의융합프로그램·코딩 프로그램 적극 활용. "목표는 크게 잡아라. 꿈이 깨져도 그 조각이 클 것이다."</div>
+      <div class="card-highlight">📌 내신 1.81 / 수시 4관왕 / 방과후 창의융합·핵심역량 프로그램 활용</div>
+      <span class="card-source">localnaeil.com</span>
+    </a>
+
+    <a class="card" href="https://snuarori.snu.ac.kr/campus-life/majors?md=view&dataidx=64" target="_blank" data-cat="interview" data-text="아로리 학과 소개 인터뷰 스마트시스템과학과 학과장 교수">
+      <span class="card-cat" style="--cat-color:#c47d0e">🎓 학과 소개 인터뷰</span>
+      <span class="card-date">2024 · 서울대 아로리 공식 웹진</span>
+      <div class="card-title">아로리 웹진 — 스마트시스템과학과 학과 소개 공식 인터뷰 (학과장)</div>
+      <div class="card-summary">학과장 김광수 교수 및 김태형 교수의 학과 비전 인터뷰. "데이터 사이언스 + 도메인 지식 연결인재", "Learning to Learn", "농업 기업가 배출" 등 핵심 인재상 직접 명시.</div>
+      <span class="card-source">snuarori.snu.ac.kr</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SECTION 4: 교수 연구 & 논문
+═════════════════════════════════════════ -->
+<section class="section" data-cat="research">
+  <div class="section-hd">
+    <span class="tag-cat">교수 연구 & 논문</span>
+    <h2>교수진 연구 프로필 & 논문</h2>
+    <span class="count">9개 링크</span>
+  </div>
+
+  <div class="grid-4">
+
+    <a class="card sm" href="https://www.researchgate.net/profile/Kwang-Soo-Kim" target="_blank" data-cat="research" data-text="김광수 교수 ResearchGate 작물 모델 기후변화 DSSAT ORYZA">
+      <span class="card-cat" style="--cat-color:#1d3a2a">🌾 김광수 교수</span>
+      <span class="card-date">ResearchGate 프로필</span>
+      <div class="card-title">작물 모델링·기후변화 영향 — ResearchGate</div>
+      <span class="card-source">researchgate.net</span>
+    </a>
+
+    <a class="card sm" href="https://www.researchgate.net/profile/Hak-Jin-Kim" target="_blank" data-cat="research" data-text="김학진 교수 ResearchGate 자율농기계 UAV 드론 정밀농업">
+      <span class="card-cat" style="--cat-color:#c0392b">🚜 김학진 교수</span>
+      <span class="card-date">ResearchGate 프로필</span>
+      <div class="card-title">자율농기계·UAV 원격탐사 — ResearchGate</div>
+      <span class="card-source">researchgate.net</span>
+    </a>
+
+    <a class="card sm" href="https://calslab.snu.ac.kr/cellyu/doc.view?mcode=11&cate=11" target="_blank" data-cat="research" data-text="유경록 교수 동물세포공학 줄기세포 면역치료 NIH">
+      <span class="card-cat" style="--cat-color:#8e44ad">🧬 유경록 교수</span>
+      <span class="card-date">SNU 연구실 공식</span>
+      <div class="card-title">동물세포공학 연구실 — 약력·수상·논문 목록</div>
+      <span class="card-source">calslab.snu.ac.kr</span>
+    </a>
+
+    <a class="card sm" href="https://snu.elsevierpure.com/en/persons/taehyeong-kim/" target="_blank" data-cat="research" data-text="김태형 교수 SNU 딥러닝 농업 AI 식물병해 Scopus">
+      <span class="card-cat" style="--cat-color:#f39c12">🤖 김태형 교수</span>
+      <span class="card-date">SNU Elsevier Pure</span>
+      <div class="card-title">농업 AI·딥러닝 — SNU Research Portal (논문 25편)</div>
+      <span class="card-source">snu.elsevierpure.com</span>
+    </a>
+
+    <a class="card sm" href="https://www.researchgate.net/profile/Hyungsuk-Kimm" target="_blank" data-cat="research" data-text="김형석 교수 SIF 위성 원격탐사 광합성 오존 ResearchGate">
+      <span class="card-cat" style="--cat-color:#2980b9">🛰️ 김형석 교수</span>
+      <span class="card-date">ResearchGate 프로필</span>
+      <div class="card-title">태양유도 형광·위성 원격탐사 — 피인용 2,154회</div>
+      <span class="card-source">researchgate.net</span>
+    </a>
+
+    <a class="card sm" href="https://academic.oup.com/jxb/article/75/1/350/7272702" target="_blank" data-cat="research" data-text="김형석 SIF 오존 대두 2024 JXB Journal Experimental Botany">
+      <span class="card-cat" style="--cat-color:#2980b9">📄 김형석 논문</span>
+      <span class="card-date">2024 · J. Experimental Botany</span>
+      <div class="card-title">SIF로 오존 스트레스 탐지 — SIF760 후기 36% 감소 증명</div>
+      <span class="card-source">academic.oup.com</span>
+    </a>
+
+    <a class="card sm" href="https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2021.663779/full" target="_blank" data-cat="research" data-text="김광수 논문 고온 잡초 벼 수확량 2021 Frontiers Plant Science">
+      <span class="card-cat" style="--cat-color:#1d3a2a">📄 김광수 논문</span>
+      <span class="card-date">2021 · Frontiers in Plant Science</span>
+      <div class="card-title">고온·잡초 경쟁이 벼 수확량에 미치는 영향 모델 (3년 실험)</div>
+      <span class="card-source">frontiersin.org</span>
+    </a>
+
+    <a class="card sm" href="https://www.sciencedirect.com/science/article/abs/pii/S0168169925011858" target="_blank" data-cat="research" data-text="김학진 김태형 안태인 온실 토마토 증산량 CNN 레일 2025">
+      <span class="card-cat" style="--cat-color:#e67e22">📄 3교수 공동논문</span>
+      <span class="card-date">2025 · C&EA</span>
+      <div class="card-title">온실 토마토 증산량 CNN+레일 측정 — 김학진·김태형·안태인 공저</div>
+      <span class="card-source">sciencedirect.com</span>
+    </a>
+
+    <a class="card sm" href="http://journal.kfs21.or.kr/archive/view_article?pid=jksfs-112-3-363" target="_blank" data-cat="research" data-text="한희 교수 백팩 드론 LiDAR 산림 바이오매스 2023">
+      <span class="card-cat" style="--cat-color:#27ae60">📄 한희 교수 논문</span>
+      <span class="card-date">2023 · 한국산림과학회지</span>
+      <div class="card-title">백팩형·드론 LiDAR로 산림 바이오매스 추정 비교 연구</div>
+      <span class="card-source">journal.kfs21.or.kr</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SECTION 5: 시장 & 산업 뉴스
+═════════════════════════════════════════ -->
+<section class="section" data-cat="market">
+  <div class="section-hd">
+    <span class="tag-cat">시장 & 산업</span>
+    <h2>스마트농업 시장 & 관련 산업</h2>
+    <span class="count">5개 링크</span>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:2px">
+
+    <a class="card" href="https://seo.goover.ai/report/202505/go-public-report-ko-0b7bab85-809b-4158-87bd-d604e17e9fd5-0-0.html" target="_blank" data-cat="market" data-text="2025 스마트농업 시장 글로벌 220억 달러 정밀농업 성장">
+      <span class="card-cat" style="--cat-color:#16a085">📈 시장 분석</span>
+      <span class="card-date">2025.05 · 최신</span>
+      <div class="card-title">2025년 스마트농업 시장 현황 — 글로벌 220억 달러, 연 9.8% 성장</div>
+      <div class="card-summary">글로벌 스마트농업 시장 2020년 138억→2025년 220억 달러. 정밀농업 64억→110.7억 달러로 급성장. ICT 융복합 기술·데이터 기반 농업이 산업 구조 재편 중.</div>
+      <div class="card-highlight">📊 스마트시스템과학과 설립의 직접적 산업 배경</div>
+      <span class="card-source">goover.ai 시장보고서</span>
+    </a>
+
+    <a class="card" href="https://cals.snu.ac.kr/academics/graduate?deptidx=47" target="_blank" data-cat="market official" data-text="서울대 융합전공 글로벌스마트팜 대학원 교육과정">
+      <span class="card-cat" style="--cat-color:#1d3a2a">🎓 연계 대학원</span>
+      <span class="card-date">서울대 농생대</span>
+      <div class="card-title">서울대 융합전공 글로벌스마트팜 — 스마트시스템과학과 연계 대학원</div>
+      <div class="card-summary">인문사회-농학-공학 융합. 농축산물 최적 생산관리 + 유통-소비-경영. 스마트팜 전문경영인·국내외 종자기업·식품·유통회사 취업 연계 교육.</div>
+      <span class="card-source">cals.snu.ac.kr</span>
+    </a>
+
+  </div>
+
+  <div class="grid-3">
+
+    <a class="card sm" href="https://dams.pa.go.kr/dams/PUBLICATION/2025/10/21/DOC/SRC/0B04202510211010064641046017063.pdf" target="_blank" data-cat="market" data-text="데이터기반 스마트농업 확산 정책과제 서울대 산학협력">
+      <span class="card-cat" style="--cat-color:#16a085">🏛️ 정책 보고서</span>
+      <span class="card-date">2021 · 서울대 산학협력단</span>
+      <div class="card-title">데이터 기반 스마트농업 확산을 위한 정책과제 연구 (PDF)</div>
+      <span class="card-source">정책자료실 (PDF)</span>
+    </a>
+
+    <a class="card sm" href="https://dsdo.co.kr/pages/board/post-detail.html?boardType=ipsi&articleNo=10518" target="_blank" data-cat="admission" data-text="서울대 2026 정시요강 스마트시스템과학과 농업생명">
+      <span class="card-cat" style="--cat-color:#2980b9">📋 2026 요강</span>
+      <span class="card-date">2025 · 입시분석</span>
+      <div class="card-title">서울대 2026 정시요강 단독 공개 — 스마트시스템과학과 포함</div>
+      <span class="card-source">dsdo.co.kr</span>
+    </a>
+
+    <a class="card sm" href="https://gsf.snu.ac.kr" target="_blank" data-cat="official market" data-text="서울대 글로벌스마트팜 융합전공 홈페이지">
+      <span class="card-cat" style="--cat-color:#1d3a2a">🌱 연계 전공</span>
+      <span class="card-date">서울대 글로벌스마트팜</span>
+      <div class="card-title">서울대 융합전공 글로벌스마트팜 홈페이지</div>
+      <span class="card-source">gsf.snu.ac.kr</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SECTION 6: 전체 링크 목록
+═════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-hd">
+    <span class="tag-cat">전체 링크 목록</span>
+    <h2>수집된 모든 링크 — 컴팩트 뷰</h2>
+    <span class="count">32개 전체</span>
+  </div>
+
+  <div class="link-list">
+
+    <a class="link-item" href="http://smsys.snu.ac.kr/" target="_blank" data-cat="official" data-text="스마트시스템과학과 공식 홈페이지">
+      <div class="link-num">01</div>
+      <div class="link-main">
+        <div class="link-title">스마트시스템과학과 공식 홈페이지</div>
+        <div class="link-sub">smsys.snu.ac.kr · 공식</div>
+      </div>
+      <span class="link-badge">공식</span>
+    </a>
+
+    <a class="link-item" href="http://cals.snu.ac.kr/board/notice?bm=v&bbsidx=12337" target="_blank" data-cat="official">
+      <div class="link-num">02</div>
+      <div class="link-main">
+        <div class="link-title">스마트시스템과학과 소개자료 PDF (농생대 공지)</div>
+        <div class="link-sub">cals.snu.ac.kr · 2024.09.10 · 다운로드 4,894회</div>
+      </div>
+      <span class="link-badge">공식</span>
+    </a>
+
+    <a class="link-item" href="https://admission.snu.ac.kr/undergraduate/notice?md=v&bbsidx=146639" target="_blank" data-cat="official">
+      <div class="link-num">03</div>
+      <div class="link-main">
+        <div class="link-title">2025학년도 입학전형 안내 — 스마트시스템과학과 신설 반영</div>
+        <div class="link-sub">admission.snu.ac.kr · 입학본부 공지</div>
+      </div>
+      <span class="link-badge">공식</span>
+    </a>
+
+    <a class="link-item" href="https://snuarori.snu.ac.kr/" target="_blank" data-cat="official interview">
+      <div class="link-num">04</div>
+      <div class="link-main">
+        <div class="link-title">서울대 입학정보 웹진 '아로리' — 스마트시스템과학과 학과 소개 게재</div>
+        <div class="link-sub">snuarori.snu.ac.kr · 공식 입학 웹진</div>
+      </div>
+      <span class="link-badge">공식</span>
+    </a>
+
+    <a class="link-item" href="https://snuarori.snu.ac.kr/campus-life/majors?md=view&dataidx=64" target="_blank" data-cat="interview">
+      <div class="link-num">05</div>
+      <div class="link-main">
+        <div class="link-title">아로리 학과 소개 인터뷰 — 학과장·교수 직접 인터뷰</div>
+        <div class="link-sub">snuarori.snu.ac.kr · "데이터+도메인 연결인재" · "기업가형 인재 배출"</div>
+      </div>
+      <span class="link-badge">인터뷰</span>
+    </a>
+
+    <a class="link-item" href="https://snuarori.snu.ac.kr/interview/freshman?year=2025" target="_blank" data-cat="interview">
+      <div class="link-num">06</div>
+      <div class="link-main">
+        <div class="link-title">1기 합격생이 들려주는 면접이야기 (아로리 공식)</div>
+        <div class="link-sub">snuarori.snu.ac.kr · 2025 · "작물 생장 예측 프로그램 개발이 목표"</div>
+      </div>
+      <span class="link-badge">인터뷰</span>
+    </a>
+
+    <a class="link-item" href="https://snuarori.snu.ac.kr/highschool-life/freshman-bookshelf?year=2025" target="_blank" data-cat="interview">
+      <div class="link-num">07</div>
+      <div class="link-main">
+        <div class="link-title">2025 신입생의 서재 — 1기 합격생 추천 도서</div>
+        <div class="link-sub">snuarori.snu.ac.kr · 『종자, 세계를 지배하다』 독서 → 진로 연결 사례</div>
+      </div>
+      <span class="link-badge">인터뷰</span>
+    </a>
+
+    <a class="link-item" href="https://www.localnaeil.com/News/View/652757/1" target="_blank" data-cat="interview admission">
+      <div class="link-num">08</div>
+      <div class="link-main">
+        <div class="link-title">한영고 정채율 — 서울대 스마트시스템과학과 합격·수시 4관왕</div>
+        <div class="link-sub">localnaeil.com · 내신 1.81 · 창의융합프로그램 활용</div>
+      </div>
+      <span class="link-badge">합격사례</span>
+    </a>
+
+    <a class="link-item" href="http://www.veritas-a.com/news/articleView.html?idxno=508869" target="_blank" data-cat="admission">
+      <div class="link-num">09</div>
+      <div class="link-main">
+        <div class="link-title">베리타스알파 — 2025 첨단학과 1145명 순증 · 스마트시스템과학 신설</div>
+        <div class="link-sub">veritas-a.com · 2024.06.13 · SKY 첨단학과 신설 보도</div>
+      </div>
+      <span class="link-badge">입시</span>
+    </a>
+
+    <a class="link-item" href="https://sevoluion.com/2025%ED%95%99%EB%85%84%EB%8F%84-%EC%84%9C%EC%9A%B8%EB%8C%80%ED%95%99%EA%B5%90-%EC%88%98%EC%8B%9C-%EA%B2%BD%EC%9F%81%EB%A5%A0-%EB%B6%84%EC%84%9D-%EC%83%81%EC%8A%B9%EC%84%B8-%EC%A7%80%EC%86%8D/" target="_blank" data-cat="admission">
+      <div class="link-num">10</div>
+      <div class="link-main">
+        <div class="link-title">2025 서울대 수시 경쟁률 — 스마트시스템 19.5:1 전체 1위</div>
+        <div class="link-sub">EDU STORY · 2024.09.30 · 의예과(16.12:1) 초과</div>
+      </div>
+      <span class="link-badge">입시</span>
+    </a>
+
+    <a class="link-item" href="https://www.nextplay.kr/news/articleView.html?idxno=7679" target="_blank" data-cat="admission">
+      <div class="link-num">11</div>
+      <div class="link-main">
+        <div class="link-title">괜찮은 뉴스 — 2025 VS 2024 서울대 변화 · 스마트시스템 신설</div>
+        <div class="link-sub">nextplay.kr · 2024.06.26</div>
+      </div>
+      <span class="link-badge">입시</span>
+    </a>
+
+    <a class="link-item" href="https://m.jinhak.com/IpsiStrategy/NewsDetail.aspx?Sigi=J&ContentID=824938" target="_blank" data-cat="admission">
+      <div class="link-num">12</div>
+      <div class="link-main">
+        <div class="link-title">진학사 — 2025 서울대 정시 특징 · 스마트시스템 10명 선발</div>
+        <div class="link-sub">jinhak.com · 2024.12.09</div>
+      </div>
+      <span class="link-badge">입시</span>
+    </a>
+
+    <a class="link-item" href="http://www.edulove.net/news/articleView.html?idxno=32736" target="_blank" data-cat="admission">
+      <div class="link-num">13</div>
+      <div class="link-main">
+        <div class="link-title">교육사랑신문 — 2025 서울대 정시 특징 분석</div>
+        <div class="link-sub">edulove.net · 2024.12.17</div>
+      </div>
+      <span class="link-badge">입시</span>
+    </a>
+
+    <a class="link-item" href="https://www.megastudy.net/Entinfo/ipsi_News/news_view_ax.asp?idx=7484" target="_blank" data-cat="admission">
+      <div class="link-num">14</div>
+      <div class="link-main">
+        <div class="link-title">메가스터디 — 서울대 2026 정시요강 1353명 · 스마트시스템 유지</div>
+        <div class="link-sub">megastudy.net · 2025 · 수시이월 추이·충원율 분석</div>
+      </div>
+      <span class="link-badge">입시</span>
+    </a>
+
+    <a class="link-item" href="https://namu.wiki/w/%EC%84%9C%EC%9A%B8%EB%8C%80%ED%95%99%EA%B5%90/%ED%95%99%EB%B6%80/%EB%86%8D%EC%97%85%EC%83%9D%EB%AA%85%EA%B3%BC%ED%95%99%EB%8C%80%ED%95%99" target="_blank" data-cat="admission">
+      <div class="link-num">15</div>
+      <div class="link-main">
+        <div class="link-title">나무위키 — 서울대 농업생명과학대학 / 스마트시스템과학과 항목</div>
+        <div class="link-sub">namu.wiki · 2024 신설 · 최신 업데이트</div>
+      </div>
+      <span class="link-badge">정보</span>
+    </a>
+
+    <a class="link-item" href="https://orbi.kr/00070979031" target="_blank" data-cat="admission">
+      <div class="link-num">16</div>
+      <div class="link-main">
+        <div class="link-title">오르비 — 스마트시스템과학과 vs 조경지역시스템 수험생 토론</div>
+        <div class="link-sub">orbi.kr · 2025.01.01 · 조회 2,025회</div>
+      </div>
+      <span class="link-badge">커뮤니티</span>
+    </a>
+
+    <a class="link-item" href="https://www.researchgate.net/profile/Kwang-Soo-Kim" target="_blank" data-cat="research">
+      <div class="link-num">17</div>
+      <div class="link-main">
+        <div class="link-title">김광수 교수 — ResearchGate 연구 프로필</div>
+        <div class="link-sub">작물 모델링·기후변화 영향·DSSAT·ORYZA2000 · 한국농림기상학회 편집장</div>
+      </div>
+      <span class="link-badge">연구</span>
+    </a>
+
+    <a class="link-item" href="https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2021.663779/full" target="_blank" data-cat="research">
+      <div class="link-num">18</div>
+      <div class="link-main">
+        <div class="link-title">김광수 연구실 논문 — 고온·잡초 경쟁이 벼 수확량에 미치는 영향</div>
+        <div class="link-sub">Frontiers in Plant Science · 2021 · 잡초 80주/㎡ 고온에서 수확량 35.9~42.3%</div>
+      </div>
+      <span class="link-badge">논문</span>
+    </a>
+
+    <a class="link-item" href="https://www.researchgate.net/profile/Hak-Jin-Kim" target="_blank" data-cat="research">
+      <div class="link-num">19</div>
+      <div class="link-main">
+        <div class="link-title">김학진 교수 — ResearchGate 연구 프로필</div>
+        <div class="link-sub">자율농기계·UAV·이온센싱·수경재배·CNN · 논문 60편+</div>
+      </div>
+      <span class="link-badge">연구</span>
+    </a>
+
+    <a class="link-item" href="https://www.sciencedirect.com/science/article/abs/pii/S0168169925011858" target="_blank" data-cat="research">
+      <div class="link-num">20</div>
+      <div class="link-main">
+        <div class="link-title">김학진·김태형·안태인 공저 — 온실 토마토 증산량 CNN+레일 시스템</div>
+        <div class="link-sub">Computers & Electronics in Agriculture · 2025 · 3교수 융합 공동연구</div>
+      </div>
+      <span class="link-badge">논문</span>
+    </a>
+
+    <a class="link-item" href="https://calslab.snu.ac.kr/cellyu/doc.view?mcode=11&cate=11" target="_blank" data-cat="research">
+      <div class="link-num">21</div>
+      <div class="link-main">
+        <div class="link-title">유경록 교수 — 동물세포공학 연구실 공식 (약력·수상·논문)</div>
+        <div class="link-sub">NIH 박사후·한림원 차세대 회원·ASH 우수상 2회·2019 보건의료 30선</div>
+      </div>
+      <span class="link-badge">연구</span>
+    </a>
+
+    <a class="link-item" href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0102426" target="_blank" data-cat="research">
+      <div class="link-num">22</div>
+      <div class="link-main">
+        <div class="link-title">유경록 논문 — p38 MAPK-COX2/PGE₂·줄기세포 면역억제 노화</div>
+        <div class="link-sub">PLOS ONE · 2014 · 피인용 300회+ · 줄기세포 치료제 품질 원리</div>
+      </div>
+      <span class="link-badge">논문</span>
+    </a>
+
+    <a class="link-item" href="https://snu.elsevierpure.com/en/persons/taehyeong-kim/" target="_blank" data-cat="research">
+      <div class="link-num">23</div>
+      <div class="link-main">
+        <div class="link-title">김태형 교수 — SNU Elsevier Pure 연구 포털 (논문 25편, 피인용 465회)</div>
+        <div class="link-sub">딥러닝·도메인 적응·식물병해·사과결함·스마트팜 AI</div>
+      </div>
+      <span class="link-badge">연구</span>
+    </a>
+
+    <a class="link-item" href="https://www.researchgate.net/profile/Hyungsuk-Kimm" target="_blank" data-cat="research">
+      <div class="link-num">24</div>
+      <div class="link-main">
+        <div class="link-title">김형석 교수 — ResearchGate 프로필 (피인용 2,154회)</div>
+        <div class="link-sub">SIF·위성·광합성·오존 스트레스·대두·옥수수 · 논문 34편</div>
+      </div>
+      <span class="link-badge">연구</span>
+    </a>
+
+    <a class="link-item" href="https://academic.oup.com/jxb/article/75/1/350/7272702" target="_blank" data-cat="research">
+      <div class="link-num">25</div>
+      <div class="link-main">
+        <div class="link-title">김형석 논문 — 태양유도 형광으로 오존 스트레스 탐지 (JXB 2024)</div>
+        <div class="link-sub">J. Experimental Botany (IF 7.6) · SIF760 후기 36% 감소 · Vcmax25 29% 감소</div>
+      </div>
+      <span class="link-badge">논문</span>
+    </a>
+
+    <a class="link-item" href="https://pubmed.ncbi.nlm.nih.gov/38388559/" target="_blank" data-cat="research">
+      <div class="link-num">26</div>
+      <div class="link-main">
+        <div class="link-title">김형석 논문 — 지상 SIF 데이터셋 공개 (Scientific Data, Nature 계열)</div>
+        <div class="link-sub">Scientific Data · 2024 · 옥수수·대두·미스칸서스 다년치 SIF 오픈 데이터</div>
+      </div>
+      <span class="link-badge">논문</span>
+    </a>
+
+    <a class="link-item" href="http://journal.kfs21.or.kr/archive/view_article?pid=jksfs-112-3-363" target="_blank" data-cat="research">
+      <div class="link-num">27</div>
+      <div class="link-main">
+        <div class="link-title">한희 교수 논문 — 백팩형·드론 LiDAR 산림 바이오매스 추정 비교</div>
+        <div class="link-sub">한국산림과학회지 · 2023 · 탄소흡수원 평가 산림 측정 방법론</div>
+      </div>
+      <span class="link-badge">논문</span>
+    </a>
+
+    <a class="link-item" href="https://seo.goover.ai/report/202505/go-public-report-ko-0b7bab85-809b-4158-87bd-d604e17e9fd5-0-0.html" target="_blank" data-cat="market">
+      <div class="link-num">28</div>
+      <div class="link-main">
+        <div class="link-title">2025 스마트농업 시장 현황 분석 — 글로벌 220억 달러, 연 9.8% 성장</div>
+        <div class="link-sub">goover.ai · 2025.05 · 정밀농업 110억 달러·스마트팜 정책 동향</div>
+      </div>
+      <span class="link-badge">시장</span>
+    </a>
+
+    <a class="link-item" href="https://cals.snu.ac.kr/academics/graduate?deptidx=47" target="_blank" data-cat="market official">
+      <div class="link-num">29</div>
+      <div class="link-main">
+        <div class="link-title">서울대 융합전공 글로벌스마트팜 — 스마트시스템과학과 연계 대학원</div>
+        <div class="link-sub">cals.snu.ac.kr · 인문사회-농학-공학 융합 대학원 과정</div>
+      </div>
+      <span class="link-badge">연계</span>
+    </a>
+
+    <a class="link-item" href="https://dams.pa.go.kr/dams/PUBLICATION/2025/10/21/DOC/SRC/0B04202510211010064641046017063.pdf" target="_blank" data-cat="market">
+      <div class="link-num">30</div>
+      <div class="link-main">
+        <div class="link-title">정책보고서 — 데이터 기반 스마트농업 확산 정책과제 (서울대 산학협력단)</div>
+        <div class="link-sub">PDF · 농림부·농진청 스마트농업 정책 현황 및 과제 연구</div>
+      </div>
+      <span class="link-badge">정책</span>
+    </a>
+
+    <a class="link-item" href="https://link.springer.com/article/10.1007/s12892-015-0103-z" target="_blank" data-cat="research">
+      <div class="link-num">31</div>
+      <div class="link-main">
+        <div class="link-title">김광수 논문 — 기후변화 시나리오·벼 생산성 지역 불확실도 분석 (2015)</div>
+        <div class="link-sub">J. Crop Science and Biotechnology · ORYZA2000 + RCP 8.5 시나리오</div>
+      </div>
+      <span class="link-badge">논문</span>
+    </a>
+
+    <a class="link-item" href="https://www.edujin.co.kr/news/articleView.html?idxno=51139" target="_blank" data-cat="admission">
+      <div class="link-num">32</div>
+      <div class="link-main">
+        <div class="link-title">에듀진 — 2026 인서울 스마트학과 경쟁률 분석</div>
+        <div class="link-sub">edujin.co.kr · 2025.09 · 스마트계열 전반 경쟁률 상승 추세</div>
+      </div>
+      <span class="link-badge">입시</span>
+    </a>
+
+  </div>
+</section>
+
+</div><!-- .wrap -->
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="wrap">
+    <h3>서울대학교 스마트시스템과학과</h3>
+    <p>이 페이지는 학과 관련 뉴스·링크를 수집·정리한 아카이브입니다.<br>각 링크의 내용은 원본 사이트에서 확인하세요.</p>
+    <div class="footer-links">
+      <a href="http://smsys.snu.ac.kr/" target="_blank">공식 홈페이지</a>
+      <a href="https://snuarori.snu.ac.kr/" target="_blank">아로리 웹진</a>
+      <a href="http://cals.snu.ac.kr/" target="_blank">농생대 홈페이지</a>
+      <a href="https://admission.snu.ac.kr/" target="_blank">서울대 입학본부</a>
+    </div>
+    <p style="margin-top:20px;font-size:11px">자료 수집 기준일 2026년 5월 · 총 32개 링크 수록</p>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+/* ── Filter by category ── */
+let activeCat = 'all';
+
+function filterCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+
+function filterCards() { applyFilter(); }
+
+function applyFilter() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+
+  document.querySelectorAll('.card, .link-item').forEach(el => {
+    const cats = (el.dataset.cat || '').split(' ');
+    const text = (el.dataset.text || '') + ' ' + el.textContent.toLowerCase();
+    const catMatch = activeCat === 'all' || cats.includes(activeCat);
+    const qMatch   = q === '' || text.includes(q);
+    el.classList.toggle('hidden', !(catMatch && qMatch));
+  });
+
+  /* Hide empty sections */
+  document.querySelectorAll('.section').forEach(sec => {
+    const catAttr = sec.dataset.cat || '';
+    const cats = catAttr.split(' ');
+    const secVisible = activeCat === 'all' || cats.includes(activeCat) || catAttr === '';
+    /* But check if it has visible children */
+    const hasVisible = [...sec.querySelectorAll('.card, .link-item')].some(el => !el.classList.contains('hidden'));
+    sec.style.display = (secVisible || hasVisible) ? '' : 'none';
+  });
+}
+
+/* ── Back to top visibility ── */
+const backTopBtn = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  backTopBtn.classList.toggle('visible', window.scrollY > 400);
+});
+
+/* ── Stagger animation on load ── */
+document.querySelectorAll('.card, .link-item').forEach((el, i) => {
+  el.style.animationDelay = `${i * 0.03}s`;
+});
+</script>
+</body>
+</html>

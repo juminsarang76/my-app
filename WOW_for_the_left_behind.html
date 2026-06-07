@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WOW — AI 시대 소외된 사람들 곁에 서다</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: #0f0f1a;
+    color: #e8e4f0;
+    line-height: 1.75;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(160deg, #1a0533 0%, #2d0a5e 50%, #0a1a3d 100%);
+    text-align: center;
+    padding: 48px 24px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(180,100,255,0.15) 0%, transparent 70%);
+  }
+  .header .crown { font-size: 52px; display: block; margin-bottom: 12px; }
+  .header h1 {
+    font-size: 30px; font-weight: 900;
+    letter-spacing: 6px; color: #fff;
+    margin-bottom: 8px;
+  }
+  .header .tagline {
+    font-size: 15px; color: #ce93d8;
+    font-weight: 600; margin-bottom: 6px;
+  }
+  .header .desc { font-size: 12px; color: #9575cd; }
+
+  /* ── SECTION ── */
+  .section { max-width: 880px; margin: 0 auto; padding: 32px 20px; }
+
+  /* ── WHO IS LEFT BEHIND ── */
+  .who-title {
+    font-size: 13px; letter-spacing: 3px;
+    color: #9575cd; margin-bottom: 12px; text-align: center;
+  }
+  .who-heading {
+    font-size: 22px; font-weight: 800;
+    text-align: center; color: #fff;
+    margin-bottom: 24px;
+  }
+  .people-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 640px) { .people-grid { grid-template-columns: 1fr 1fr; } }
+  .person-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(180,100,255,0.2);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .person-card .emoji { font-size: 28px; display: block; margin-bottom: 8px; }
+  .person-card .name { font-size: 13px; font-weight: 700; color: #e1bee7; margin-bottom: 4px; }
+  .person-card .pain { font-size: 11px; color: #9e8fb5; line-height: 1.5; }
+
+  /* ── INSIGHT BOX ── */
+  .insight {
+    background: linear-gradient(135deg, rgba(106,27,154,0.3), rgba(21,101,192,0.2));
+    border: 1px solid rgba(180,100,255,0.3);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .insight .q { font-size: 11px; letter-spacing: 2px; color: #9575cd; margin-bottom: 10px; }
+  .insight .big { font-size: 18px; font-weight: 800; color: #fff; line-height: 1.5; margin-bottom: 8px; }
+  .insight .small { font-size: 12.5px; color: #b39ddb; }
+
+  /* ── PHASE ── */
+  .phase-bar {
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin: 28px 0 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .phase-bar .num {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; flex-shrink: 0;
+  }
+  .phase-bar .text-wrap .label {
+    font-size: 10px; letter-spacing: 2px; opacity: 0.75; margin-bottom: 2px;
+  }
+  .phase-bar .text-wrap h2 { font-size: 18px; font-weight: 800; }
+
+  .ph1 { background: linear-gradient(90deg, rgba(46,125,50,0.4), rgba(102,187,106,0.15)); border: 1px solid rgba(102,187,106,0.4); }
+  .ph1 .num { background: #2e7d32; color: #fff; }
+  .ph1 .text-wrap { color: #a5d6a7; }
+
+  .ph2 { background: linear-gradient(90deg, rgba(21,101,192,0.4), rgba(66,165,245,0.15)); border: 1px solid rgba(66,165,245,0.4); }
+  .ph2 .num { background: #1565c0; color: #fff; }
+  .ph2 .text-wrap { color: #90caf9; }
+
+  .ph3 { background: linear-gradient(90deg, rgba(106,27,154,0.4), rgba(171,71,188,0.15)); border: 1px solid rgba(171,71,188,0.4); }
+  .ph3 .num { background: #6a1b9a; color: #fff; }
+  .ph3 .text-wrap { color: #ce93d8; }
+
+  /* ── CARD GRID ── */
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+  @media (max-width: 600px) { .card-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 18px;
+    border-top: 3px solid;
+  }
+  .c1 { border-color: #66bb6a; }
+  .c2 { border-color: #42a5f5; }
+  .c3 { border-color: #ab47bc; }
+
+  .card .card-icon { font-size: 22px; margin-bottom: 8px; }
+  .card h4 { font-size: 13.5px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+  .card .body { font-size: 12px; color: #b0a8c8; margin-bottom: 8px; line-height: 1.65; }
+  .card ul { padding-left: 16px; }
+  .card li { font-size: 11.5px; color: #9e8fb5; margin-bottom: 3px; }
+  .card .wow-point {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 11.5px; font-weight: 600;
+  }
+  .c1 .wow-point { background: rgba(102,187,106,0.12); color: #a5d6a7; }
+  .c2 .wow-point { background: rgba(66,165,245,0.12); color: #90caf9; }
+  .c3 .wow-point { background: rgba(171,71,188,0.12); color: #ce93d8; }
+
+  /* ── GOAL BAR ── */
+  .goal {
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 12px; font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .g1 { background: rgba(46,125,50,0.2); color: #a5d6a7; border-left: 3px solid #66bb6a; }
+  .g2 { background: rgba(21,101,192,0.2); color: #90caf9; border-left: 3px solid #42a5f5; }
+  .g3 { background: rgba(106,27,154,0.2); color: #ce93d8; border-left: 3px solid #ab47bc; }
+
+  /* ── NOW ── */
+  .now-section {
+    background: linear-gradient(135deg, #1a0533, #0a1a3d);
+    border: 1px solid rgba(180,100,255,0.25);
+    border-radius: 16px;
+    padding: 28px 22px;
+    margin-top: 28px;
+  }
+  .now-section .now-label { font-size: 11px; letter-spacing: 3px; color: #9575cd; text-align: center; margin-bottom: 8px; }
+  .now-section h3 { font-size: 20px; font-weight: 800; text-align: center; color: #fff; margin-bottom: 20px; }
+  .now-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .now-grid { grid-template-columns: 1fr; } }
+  .now-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px; padding: 16px 14px;
+  }
+  .now-card .step { font-size: 11px; color: #9575cd; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px; }
+  .now-card h5 { font-size: 13px; font-weight: 700; color: #e1bee7; margin-bottom: 8px; }
+  .now-card p { font-size: 11.5px; color: #9e8fb5; margin-bottom: 6px; }
+  .now-card ul { padding-left: 14px; }
+  .now-card li { font-size: 11px; color: #7986cb; margin-bottom: 3px; }
+
+  /* ── CORE STATEMENT ── */
+  .core {
+    margin-top: 28px;
+    text-align: center;
+    padding: 28px 20px;
+    border-top: 1px solid rgba(180,100,255,0.15);
+  }
+  .core .core-label { font-size: 11px; letter-spacing: 3px; color: #7c4dff; margin-bottom: 14px; }
+  .core .statement { font-size: 20px; font-weight: 800; color: #fff; line-height: 1.6; margin-bottom: 10px; }
+  .core .sub-statement { font-size: 13px; color: #9575cd; }
+  .core .brand { font-size: 26px; font-weight: 900; letter-spacing: 6px; color: #ce93d8; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <span class="crown">👑</span>
+  <h1>WOW</h1>
+  <div class="tagline">Way Of Worship · AI 시대, 소외된 사람들 곁에 서다</div>
+  <div class="desc">국가 AI 전략 정책이 담지 못한 사람들을 위한 브랜드</div>
+</div>
+
+<!-- WHO IS LEFT BEHIND -->
+<div class="section">
+  <div class="who-title">WHO IS LEFT BEHIND</div>
+  <div class="who-heading">AI 시대, 누가 소외되고 있는가</div>
+
+  <div class="people-grid">
+    <div class="person-card">
+      <span class="emoji">👴👵</span>
+      <div class="name">고령층·장애인</div>
+      <div class="pain">AI 활용률 30% 수준.<br>키오스크도 어려운데<br>AI는 더 먼 이야기</div>
+    </div>
+    <div class="person-card">
+      <span class="emoji">🧑‍🎨</span>
+      <div class="name">소규모 창작자</div>
+      <div class="pain">대형 IP 기업 중심 정책.<br>1인 창작자는 지원<br>사각지대에 놓임</div>
+    </div>
+    <div class="person-card">
+      <span class="emoji">🛒</span>
+      <div class="name">영세 소상공인</div>
+      <div class="pain">비용·접근성 문제로<br>AI 기술 활용 못하고<br>경쟁에서 밀려남</div>
+    </div>
+    <div class="person-card">
+      <span class="emoji">📞</span>
+      <div class="name">단순 반복 직군</div>
+      <div class="pain">콜센터·사무직·번역가.<br>AI 대체 가능성<br>가장 높은 직군</div>
+    </div>
+    <div class="person-card">
+      <span class="emoji">🙏</span>
+      <div class="name">신앙 공동체</div>
+      <div class="pain">의미·가치·공동체를<br>추구하지만 AI 정책<br>논의에서 완전 배제</div>
+    </div>
+    <div class="person-card">
+      <span class="emoji">💭</span>
+      <div class="name">방향 잃은 청년</div>
+      <div class="pain">AI가 직업을 바꾸는데<br>무엇을 준비해야<br>할지 모르는 세대</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="q">THE CORE QUESTION</div>
+    <div class="big">국가 AI 정책은 '강국 도약'을 말하지만<br>소외된 사람들에게 누가 말을 걸어주는가?</div>
+    <div class="small">AI 활용 경험률 전체 국민 51% — 취약계층은 30% 수준 (NIA 디지털 정보격차 실태조사)<br>응답자 60%: "AI가 일자리를 위협한다" 느끼지만 대안을 모른다</div>
+  </div>
+
+  <div class="insight" style="margin-top:-10px">
+    <div class="q">WOW BRAND ANSWER</div>
+    <div class="big">"AI가 대체할 수 없는 것 —<br>진정성, 관계, 그리고 신앙에서 오는 위로"</div>
+    <div class="small">WOW는 기술 격차 앞에서 길을 잃은 사람들에게<br>디자인과 말씀으로 말을 거는 브랜드입니다</div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase-bar ph1">
+    <div class="num">1</div>
+    <div class="text-wrap">
+      <div class="label">PHASE 1 · 단기 1년 (2026~2027)</div>
+      <h2>소외된 사람들의 언어를 배운다</h2>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card c1">
+      <div class="card-icon">👂</div>
+      <h4>직접 현장에 들어가기</h4>
+      <div class="body">AI 시대 소외된 사람들이 실제로 무엇을 두려워하고 무엇을 필요로 하는지 직접 만나는 것이 먼저.</div>
+      <ul>
+        <li>지역 교회·복지관·노인정 방문 — 디지털 격차 체험</li>
+        <li>소규모 창작자·소상공인 커뮤니티 참여</li>
+        <li>실직 위기 직군과의 대화 (콜센터·사무직 등)</li>
+        <li>인터뷰 내용을 콘텐츠화 → WOW 스토리 아카이브</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 듣는 브랜드. 먼저 들어야 말할 수 있다.</div>
+    </div>
+
+    <div class="card c1">
+      <div class="card-icon">🎨</div>
+      <h4>소외감을 디자인으로 언어화</h4>
+      <div class="body">WOW 디자인이 AI 시대 불안·소외·상실감을 안아주는 시각 언어가 되도록.</div>
+      <ul>
+        <li>'길을 잃은 사람도 하나님이 아신다' 메시지 시리즈</li>
+        <li>AI에 밀린 직군의 이야기를 담은 티셔츠·포스터</li>
+        <li>위로와 회복 테마 — 디지털 기기 없어도 닿는 디자인</li>
+        <li>소외된 사람들이 공감하는 WOW 굿즈 5종 기획</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 소외감을 아름다운 언어로 바꾸는 창작자.</div>
+    </div>
+
+    <div class="card c1">
+      <div class="card-icon">🤝</div>
+      <h4>공동체 연결 시작</h4>
+      <div class="body">혼자 두려움을 안고 있는 사람들을 연결하는 작은 모임의 장을 만든다.</div>
+      <ul>
+        <li>교회·복지관 연계 소규모 워크샵 (월 1회)</li>
+        <li>"AI 시대 나의 자리 찾기" 대화 모임 운영</li>
+        <li>참가자 작품·이야기 → SNS 공유로 존재감 회복</li>
+        <li>WOW 굿즈를 모임 기념품으로 활용</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 소외된 사람들이 모이는 장소를 만드는 브랜드.</div>
+    </div>
+
+    <div class="card c1">
+      <div class="card-icon">📖</div>
+      <h4>AI 격차 콘텐츠 창작</h4>
+      <div class="body">소외된 사람들의 이야기를 영상·글·디자인으로 기록하고 세상에 알린다.</div>
+      <ul>
+        <li>유튜브/릴스: "AI 시대, 이 사람들은 어디 있나요?"</li>
+        <li>고령층·창작자·소상공인 인터뷰 시리즈</li>
+        <li>영문 채널: 글로벌 크리스천에게 한국의 소외 현실 전달</li>
+        <li>콘텐츠가 정책 자료로 활용될 수 있도록 아카이빙</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 보이지 않던 사람들을 보이게 하는 기록자.</div>
+    </div>
+  </div>
+
+  <div class="goal g1">📌 1년 목표: 소외된 사람 50명 이상 직접 만남 · 위로 테마 WOW 시리즈 출시 · 워크샵 6회 운영 · 콘텐츠 50편 기록</div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-bar ph2">
+    <div class="num">2</div>
+    <div class="text-wrap">
+      <div class="label">PHASE 2 · 중기 2년 (2027~2028)</div>
+      <h2>소외된 사람들을 위한 다리가 된다</h2>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card c2">
+      <div class="card-icon">🌉</div>
+      <h4>AI 도구 접근 돕기 (디지털 다리)</h4>
+      <div class="body">AI를 두려워하는 사람들이 WOW를 통해 처음으로 AI를 경험하는 안전한 공간.</div>
+      <ul>
+        <li>고령층·장애인 대상 "AI로 나만의 카드 만들기" 강좌</li>
+        <li>소상공인 대상 "AI 상세페이지 같이 만들기" 워크샵</li>
+        <li>복잡한 AI 용어 없이, 말씀과 디자인으로 연결</li>
+        <li>참가자 결과물을 WOW 굿즈로 제작해 선물</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: AI와 소외된 사람 사이의 온기 있는 번역자.</div>
+    </div>
+
+    <div class="card c2">
+      <div class="card-icon">💼</div>
+      <h4>소외 직군을 위한 전환 지원</h4>
+      <div class="body">AI에 밀리는 직군이 새로운 정체성을 찾도록 돕는 실질적 프로그램.</div>
+      <ul>
+        <li>콜센터·사무직 퇴직자 대상 "나만의 브랜드 만들기"</li>
+        <li>WOW 디자인 방식으로 1인 굿즈 창업 멘토링</li>
+        <li>정부 소상공인·창업 지원 사업 연결 코디네이터 역할</li>
+        <li>수료자 WOW 파트너 브랜드로 연대</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 직업을 잃은 사람이 창작자로 다시 서도록 돕는 멘토.</div>
+    </div>
+
+    <div class="card c2">
+      <div class="card-icon">📢</div>
+      <h4>정책 목소리 내기</h4>
+      <div class="body">현장에서 만난 소외된 사람들의 이야기를 정책 자리에서 대변한다.</div>
+      <ul>
+        <li>AI 기본법 취약계층 접근성 강화 조항 관련 의견 제출</li>
+        <li>국가 AI 문화강국 전략 소규모 창작자 포함 촉구</li>
+        <li>지자체·복지관 협력으로 지원 사각지대 발굴·보고</li>
+        <li>미디어 인터뷰·포럼 참여로 WOW 브랜드 신뢰 구축</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 소외된 사람들의 목소리를 정책 공간에 전달하는 대변자.</div>
+    </div>
+
+    <div class="card c2">
+      <div class="card-icon">🌏</div>
+      <h4>글로벌 소외 공동체로 확장</h4>
+      <div class="body">AI 소외는 한국만의 문제가 아님. 글로벌 크리스천 공동체와 연대.</div>
+      <ul>
+        <li>미국·동남아 교회 커뮤니티 — AI 소외 이슈 공유</li>
+        <li>영문 콘텐츠로 '기술 시대 인간의 존엄성' 주제 발신</li>
+        <li>해외 기독교 NGO·단체와 협업 탐색</li>
+        <li>WOW 굿즈 수익 일부 → 소외 지원 프로그램 재투자</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 국경을 넘어 소외된 사람들을 연결하는 글로벌 브랜드.</div>
+    </div>
+  </div>
+
+  <div class="goal g2">📌 2년 목표: 연간 워크샵 참가자 200명 · 소외 직군 전환 지원 10팀 · 정책 자문 참여 1건 · 해외 파트너 1곳 연결</div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-bar ph3">
+    <div class="num">3</div>
+    <div class="text-wrap">
+      <div class="label">PHASE 3 · 장기 5년 (2030)</div>
+      <h2>소외된 사람들의 브랜드이자 운동이 된다</h2>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card c3">
+      <div class="card-icon">🏛</div>
+      <h4>WOW 사회적기업 또는 비영리 전환</h4>
+      <div class="body">브랜드 수익의 구조를 소외된 사람 지원과 연결하는 지속가능한 모델.</div>
+      <ul>
+        <li>사회적기업 인증 → 정부 사회가치 지원 연계</li>
+        <li>굿즈 판매 수익 일부 → AI 격차 해소 교육 프로그램</li>
+        <li>소외된 창작자 작품을 WOW 플랫폼에서 판매 대행</li>
+        <li>"당신도 창작자입니다" 선언 — WOW 정체성 완성</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 수익과 사명이 일치하는 브랜드 모델의 선례.</div>
+    </div>
+
+    <div class="card c3">
+      <div class="card-icon">📣</div>
+      <h4>AI 시대 인간 존엄성 운동 (Movement)</h4>
+      <div class="body">WOW는 상품이 아니라 '운동'이 된다. AI가 대체할 수 없는 인간의 가치를 선언.</div>
+      <ul>
+        <li>"AI 시대에도 당신은 쓸모 있다" 캠페인</li>
+        <li>소외된 사람 1000명의 이야기 기록 프로젝트</li>
+        <li>WOW 디자인 = 운동의 시각 언어 (배지·포스터·티셔츠)</li>
+        <li>국내외 미디어·교회·학교·기업 연대 네트워크</li>
+      </ul>
+      <div class="wow-point">👑 WOW의 역할: 브랜드를 넘어 시대의 운동을 이끄는 리더.</div>
+    </div>
+  </div>
+
+  <div class="goal g3">📌 5년 목표: 사회적기업 또는 NGO 형태 안정화 · 소외된 사람 1000명 이야기 기록 · 국내외 파트너 10곳 · WOW = 운동 브랜드로 인식</div>
+
+  <!-- NOW -->
+  <div class="now-section">
+    <div class="now-label">START TODAY</div>
+    <h3>🚀 이번 달, 바로 시작하는 3가지</h3>
+    <div class="now-grid">
+      <div class="now-card">
+        <div class="step">STEP 01</div>
+        <h5>소외된 사람 5명 만나기</h5>
+        <p>주변 교회·복지관·가족 중 AI 시대에 불안한 사람 5명과 직접 대화.</p>
+        <ul>
+          <li>→ 그들의 두려움을 노트에 기록</li>
+          <li>→ 그 언어로 WOW 첫 디자인 기획</li>
+          <li>→ "들어주는 것" 자체가 이미 WOW</li>
+        </ul>
+      </div>
+      <div class="now-card">
+        <div class="step">STEP 02</div>
+        <h5>"소외된 사람을 위한 WOW" 첫 디자인</h5>
+        <p>AI 시대 불안·소외감을 말씀과 디자인으로 담은 첫 작품 1개 완성.</p>
+        <ul>
+          <li>→ 티셔츠 또는 포스터 1종</li>
+          <li>→ 만든 이유와 이야기 함께 발행</li>
+          <li>→ SNS에 "이 사람들을 위해 만들었어요"</li>
+        </ul>
+      </div>
+      <div class="now-card">
+        <div class="step">STEP 03</div>
+        <h5>작은 모임 1회 열기</h5>
+        <p>AI가 두렵거나 소외된 사람 5~10명 모아 커피 한 잔 마시는 자리.</p>
+        <ul>
+          <li>→ 거창한 행사 아닌 대화 모임</li>
+          <li>→ WOW 굿즈를 선물로 나눔</li>
+          <li>→ 이 모임 자체가 WOW의 시작</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORE STATEMENT -->
+  <div class="core">
+    <div class="core-label">WOW BRAND MISSION</div>
+    <div class="statement">
+      국가 AI 전략이 외면한 사람들 곁에서<br>
+      디자인으로 말을 걸고, 말씀으로 위로하고,<br>
+      공동체로 연결한다
+    </div>
+    <div class="sub-statement">
+      AI가 빠를수록, WOW는 더 깊어진다<br>
+      기술이 사람을 대체할 때, WOW는 사람 곁에 선다
+    </div>
+    <div class="brand">👑 W O W</div>
+  </div>
+</div>
+
+</body>
+</html>
