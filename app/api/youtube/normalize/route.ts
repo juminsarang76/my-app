@@ -59,6 +59,13 @@ export async function POST(req: NextRequest) {
 [16] with an almost identical distribution of light.
 [17] But now I will prove to you
 [18] that this is not the case.
+[19] What's weird about this is that as humans,
+[20] we can see where we want to go and then figure out the fastest route.
+[21] Now, you might recognize this mathematical relationship because it is
+[22] the exact same law that governs light passing from one medium into another.
+[23] In a previous video, we showed how an obscure scientist, Maupertuis,
+[24] made an ad hoc proposal that there should be a quantity
+[25] called action that nature minimizes.
 
 출력:
 If you later find that of all the possible paths, light took the shortest time to get from A to B, I wouldn't think it was optimizing for anything.
@@ -68,6 +75,9 @@ The hotter the object, the more energy was emitted at every wavelength, and the 
 But now the total distance is longer than it needs to be.
 At low temperatures, each material gave off its own characteristic spectrum, mostly in the infrared, but above about 500°C all materials started to glow in the same way, with an almost identical distribution of light.
 But now I will prove to you that this is not the case.
+What's weird about this is that as humans, we can see where we want to go and then figure out the fastest route.
+Now, you might recognize this mathematical relationship because it is the exact same law that governs light passing from one medium into another.
+In a previous video, we showed how an obscure scientist, Maupertuis, made an ad hoc proposal that there should be a quantity called action that nature minimizes.
 
 ---
 자막:
