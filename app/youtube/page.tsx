@@ -488,24 +488,59 @@ export default function YoutubePage() {
             </div>
             <textarea
               value={pasteText}
-              onChange={e => setPasteText(e.target.value)}
-              placeholder={'SRT, VTT, 또는 일반 텍스트 형식으로 붙여넣기...\n\n예시 (SRT):\n1\n00:00:01,000 --> 00:00:04,000\nHello world\n\n2\n00:00:05,000 --> 00:00:08,000\nThis is a test'}
-              rows={8}
+              onChange={e => {
+                const val = e.target.value
+                setPasteText(val)
+                // 붙여넣기 즉시 파싱 → 원문 탭에 바로 표시
+                if (val.trim()) {
+                  const parsed = parseSubtitleText(val)
+                  if (parsed.length > 0) {
+                    setItems(parsed)
+                    setTranslated([])
+                    setSummary('')
+                    setTab('원문')
+                    setLang(`수동입력 (${parsed.length}줄)`)
+                    setError('')
+                  }
+                } else {
+                  setItems([])
+                }
+              }}
+              onPaste={e => {
+                // onPaste 이벤트로 즉시 처리 (onChange보다 먼저 값 읽기)
+                const pasted = e.clipboardData.getData('text')
+                if (pasted.trim()) {
+                  const parsed = parseSubtitleText(pasted)
+                  if (parsed.length > 0) {
+                    setItems(parsed)
+                    setTranslated([])
+                    setSummary('')
+                    setTab('원문')
+                    setLang(`수동입력 (${parsed.length}줄)`)
+                    setError('')
+                    setPasteText(pasted)
+                    // 패널은 열어두되 자막은 바로 원문에 표시
+                  }
+                }
+              }}
+              placeholder="여기에 자막 텍스트를 붙여넣으면 바로 원문 탭에 표시됩니다."
+              rows={6}
               style={{
                 width: '100%', boxSizing: 'border-box',
                 padding: '12px 14px', border: 'none', outline: 'none',
-                fontSize: 12, lineHeight: 1.6, fontFamily: 'monospace',
+                fontSize: 13, lineHeight: 1.7, fontFamily: 'sans-serif',
                 resize: 'vertical',
               }}
             />
-            <div style={{ padding: '10px 14px', background: '#F8FAFC', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            {items.length > 0 && pasteText && (
+              <div style={{ padding: '8px 14px', background: '#D1FAE5', fontSize: 12, color: '#065F46', fontWeight: 600 }}>
+                ✅ {items.length}줄 인식됨 — 원문 탭에서 확인하세요
+              </div>
+            )}
+            <div style={{ padding: '8px 14px', background: '#F8FAFC', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
               <button onClick={() => { setShowPasteInput(false); setPasteText('') }}
                 style={{ padding: '7px 16px', background: '#F1F5F9', color: '#64748b', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 12 }}>
-                취소
-              </button>
-              <button onClick={handlePasteSubmit} disabled={!pasteText.trim()}
-                style={{ padding: '7px 16px', background: pasteText.trim() ? '#0369A1' : '#e2e8f0', color: pasteText.trim() ? '#fff' : '#94a3b8', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: pasteText.trim() ? 'pointer' : 'not-allowed' }}>
-                자막 불러오기
+                닫기
               </button>
             </div>
           </div>
