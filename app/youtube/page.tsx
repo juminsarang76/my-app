@@ -113,12 +113,15 @@ export default function YoutubePage() {
   }
 
   async function tryLocalServer(videoUrl: string): Promise<{ items: SubItem[]; videoId: string; lang: string } | null> {
-    // 로컬 Python 서버 시도 (PC에서 scripts/youtube_server.py 실행 중인 경우)
-    for (const port of [8765, 8766]) {
+    // 로컬 Python 서버 시도 — HTTP 우선 (Chrome은 localhost HTTP 허용)
+    const endpoints = [
+      `http://127.0.0.1:8765/transcript?url=${encodeURIComponent(videoUrl)}`,
+      `http://localhost:8765/transcript?url=${encodeURIComponent(videoUrl)}`,
+      `https://127.0.0.1:8765/transcript?url=${encodeURIComponent(videoUrl)}`,
+    ]
+    for (const endpoint of endpoints) {
       try {
-        const res = await fetch(`https://127.0.0.1:${port}/transcript?url=${encodeURIComponent(videoUrl)}`, {
-          signal: AbortSignal.timeout(5000),
-        })
+        const res = await fetch(endpoint, { signal: AbortSignal.timeout(5000) })
         if (res.ok) {
           const data = await res.json()
           if (data.items?.length) return data
