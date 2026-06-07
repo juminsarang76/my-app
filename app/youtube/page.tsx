@@ -112,6 +112,22 @@ export default function YoutubePage() {
     setTimeout(() => { syncingRef.current = false }, 50)
   }
 
+  async function tryLocalServer(videoUrl: string): Promise<{ items: SubItem[]; videoId: string; lang: string } | null> {
+    // 로컬 Python 서버 시도 (PC에서 scripts/youtube_server.py 실행 중인 경우)
+    for (const port of [8765, 8766]) {
+      try {
+        const res = await fetch(`https://127.0.0.1:${port}/transcript?url=${encodeURIComponent(videoUrl)}`, {
+          signal: AbortSignal.timeout(5000),
+        })
+        if (res.ok) {
+          const data = await res.json()
+          if (data.items?.length) return data
+        }
+      } catch { /* 로컬 서버 없으면 무시 */ }
+    }
+    return null
+  }
+
   async function handleFetch() {
     if (!url.trim()) return
     setError('')
@@ -122,6 +138,20 @@ export default function YoutubePage() {
     setLoadingTranscript(true)
     setTab('원문')
     try {
+      // 1순위: 로컬 Python 서버 (PC에서 scripts/youtube_server.py 실행 시)
+      const local = await tryLocalServer(url)
+      if (local) {
+        setItems(local.items)
+        setVideoId(local.videoId)
+        setLang(`${local.lang} (로컬)`)
+        try {
+          const oRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${local.videoId}&format=json`)
+          if (oRes.ok) { const oData = await oRes.json(); setVideoTitle(oData.title ?? '') }
+        } catch { /* ignore */ }
+        return
+      }
+
+      // 2순위: Vercel 서버 API
       const res = await fetch('/api/youtube/transcript', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
