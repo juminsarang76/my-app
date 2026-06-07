@@ -84,6 +84,7 @@ export default function YoutubePage() {
   const [noCaption, setNoCaption] = useState(false)
   const [showPasteInput, setShowPasteInput] = useState(false)
   const [pasteText, setPasteText] = useState('')
+  const [normalizing, setNormalizing] = useState(false)
   const [obsidianToken, setObsidianToken] = useState('')
   const [obsidianPort, setObsidianPort] = useState('27124')
   const [showObsidianSettings, setShowObsidianSettings] = useState(false)
@@ -514,19 +515,38 @@ export default function YoutubePage() {
             </div>
             <textarea
               value={pasteText}
-              onChange={e => {
+              onChange={async e => {
                 const val = e.target.value
                 setPasteText(val)
                 if (val.trim().length > 0) {
                   const parsed = parseSubtitleText(val)
                   if (parsed.length > 0) {
+                    // 1단계: 원문 즉시 표시
                     setItems(parsed)
                     setTranslated([])
                     setSummary('')
                     setTab('원문')
-                    setLang(`수동입력 (${parsed.length}줄)`)
+                    setLang(`수동입력 (${parsed.length}줄) — 문장 정리 중...`)
                     setError('')
                     setNoCaption(false)
+
+                    // 2단계: AI로 문장 완성 (비동기)
+                    setNormalizing(true)
+                    try {
+                      const res = await fetch('/api/youtube/normalize', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ items: parsed }),
+                      })
+                      if (res.ok) {
+                        const data = await res.json()
+                        if (data.items?.length) {
+                          setItems(data.items)
+                          setLang(`정리됨 (${data.items.length}문장)`)
+                        }
+                      }
+                    } catch { /* 실패 시 원문 유지 */ }
+                    finally { setNormalizing(false) }
                   }
                 } else {
                   setItems([])
@@ -632,7 +652,13 @@ export default function YoutubePage() {
           <>
           {/* 원문 탭 */}
           {tab === '원문' && (
-            <div style={{ height: 520, overflowY: 'auto', border: '1px solid #E2E8F0', borderTop: 'none' }}>
+            <div style={{ border: '1px solid #E2E8F0', borderTop: 'none' }}>
+              {normalizing && (
+                <div style={{ padding: '8px 16px', background: '#FFFBEB', borderBottom: '1px solid #FDE68A', fontSize: 12, color: '#92400E', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>✍️ AI가 끊어진 문장을 완성된 문장으로 정리하는 중...</span>
+                </div>
+              )}
+            <div style={{ height: normalizing ? 480 : 520, overflowY: 'auto' }}>
               {items.map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 16px', borderBottom: '1px solid #F1F5F9', alignItems: 'flex-start' }}>
                   <span style={{ fontSize: 11, color: '#94a3b8', minWidth: 44, flexShrink: 0, paddingTop: 2, fontFamily: 'monospace' }}>
@@ -641,6 +667,7 @@ export default function YoutubePage() {
                   <span style={{ fontSize: 14, color: '#1e293b', lineHeight: 1.6 }}>{item.text}</span>
                 </div>
               ))}
+            </div>
             </div>
           )}
 
