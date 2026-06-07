@@ -118,32 +118,45 @@ export default function YoutubePage() {
     return `${title}_${today}`.replace(/[/\\?%*:|"<>]/g, '-')
   }
 
-  // Obsidian: 마크다운 파일 다운로드
-  function handleObsidian() {
-    if (!items.length) return
-    const fname = makeFilename()
+  // Obsidian: 마크다운 생성
+  function buildMarkdown() {
     let md = `# ${videoTitle || videoId}\n\n`
     md += `🎬 https://www.youtube.com/watch?v=${videoId}\n`
     md += `📅 ${new Date().toLocaleDateString('ko-KR')}\n\n`
-
     if (summary) { md += `## 📋 한글 요약\n\n${summary}\n\n` }
-
     if (translated.length) {
       md += `## 🇰🇷 한글 번역\n\n`
-      items.forEach((item, i) => {
-        md += `\`${formatTime(item.start)}\` ${translated[i] || item.text}\n\n`
-      })
+      items.forEach((item, i) => { md += `\`${formatTime(item.start)}\` ${translated[i] || item.text}\n\n` })
     }
-
     md += `## 📝 원문 자막\n\n`
     items.forEach(item => { md += `\`${formatTime(item.start)}\` ${item.text}\n\n` })
+    return md
+  }
 
+  // Obsidian 직접 열기 (URI scheme + 파일 다운로드)
+  function handleObsidian() {
+    if (!items.length) return
+    const fname = makeFilename()
+    const md = buildMarkdown()
+
+    // 1. .md 파일 다운로드
     const blob = new Blob([md], { type: 'text/markdown; charset=utf-8' })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
     a.download = `${fname}.md`
     document.body.appendChild(a); a.click(); document.body.removeChild(a)
     URL.revokeObjectURL(a.href)
+
+    // 2. 내용이 짧으면 Obsidian URI로 직접 생성 시도 (2000자 이하)
+    if (md.length <= 2000) {
+      const uri = `obsidian://new?name=${encodeURIComponent(fname)}&content=${encodeURIComponent(md)}`
+      window.open(uri)
+    } else {
+      // 내용이 길면 Obsidian 앱만 열기
+      window.open('obsidian://')
+    }
+
+    setToast('📥 파일 다운로드 완료 → Obsidian Vault 폴더로 이동하거나, Obsidian이 자동으로 열립니다.')
   }
 
   // Notion: API 저장
