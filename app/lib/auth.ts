@@ -12,6 +12,7 @@ export const ALL_MENUS = [
   { key: 'jungdeung', label: '중등부',     href: '/jungdeung', desc: '중등부 찬양 선곡' },
   { key: 'products',  label: '상품',       href: '/products',  desc: 'AI 상품 이미지 기획' },
   { key: 'garden',    label: '가든',       href: '/garden',    desc: '하루꽃 일기' },
+  { key: 'youtube',   label: '유튜브 자막', href: '/youtube',   desc: 'YouTube 자막 번역·요약' },
 ] as const
 
 export type MenuKey = (typeof ALL_MENUS)[number]['key']

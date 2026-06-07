@@ -23,6 +23,7 @@ export default function NavBar() {
   if (
     pathname === '/' ||
     pathname.startsWith('/login') ||
+    pathname.startsWith('/youtube') ||
     pathname.startsWith('/register') ||
     pathname.startsWith('/admin') ||
     pathname.startsWith('/jungdeung') ||
