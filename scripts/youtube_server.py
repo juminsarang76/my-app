@@ -9,11 +9,19 @@ haruflower.vercel.app에서 자막 가져오기 버튼 사용 가능
 Chrome은 HTTPS 사이트에서 localhost HTTP 허용 — 인증서 불필요
 """
 
+import sys
 import json
 import re
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
+
+# Windows 한국어 터미널 UTF-8 출력 설정
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 PORT = 8765
 
@@ -104,7 +112,7 @@ def main():
     print()
 
     server = HTTPServer(('127.0.0.1', PORT), Handler)
-    print(f"✅ 서버 시작: http://localhost:{PORT}")
+    print(f"[OK] 서버 시작: http://localhost:{PORT}")
     print()
     print("haruflower.vercel.app 에서 '자막 가져오기' 버튼 클릭하면 됩니다.")
     print()

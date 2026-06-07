@@ -117,16 +117,22 @@ export default function YoutubePage() {
     const endpoints = [
       `http://127.0.0.1:8765/transcript?url=${encodeURIComponent(videoUrl)}`,
       `http://localhost:8765/transcript?url=${encodeURIComponent(videoUrl)}`,
-      `https://127.0.0.1:8765/transcript?url=${encodeURIComponent(videoUrl)}`,
     ]
     for (const endpoint of endpoints) {
       try {
-        const res = await fetch(endpoint, { signal: AbortSignal.timeout(5000) })
+        const res = await fetch(endpoint, {
+          signal: AbortSignal.timeout(15000),
+          // Chrome Private Network Access 정책 대응
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+        })
         if (res.ok) {
           const data = await res.json()
           if (data.items?.length) return data
         }
-      } catch { /* 로컬 서버 없으면 무시 */ }
+      } catch (e) {
+        console.warn('[LocalServer]', endpoint, e)
+      }
     }
     return null
   }
