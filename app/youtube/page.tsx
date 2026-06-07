@@ -800,63 +800,67 @@ export default function YoutubePage() {
             </div>
           )}
 
-          {/* 동시보기 탭 */}
+          {/* 동시보기 탭 — 단일 스크롤, 문장별 동일 높이 */}
           {tab === '동시보기' && (
-            <div style={{ border: '1px solid #E2E8F0', borderTop: 'none' }}>
-              {translated.length === 0 ? (
-                <div style={{ padding: '40px 20px', textAlign: 'center', color: '#94a3b8' }}>
-                  <p style={{ marginBottom: 12 }}>먼저 한글 번역을 진행해주세요.</p>
-                  <button onClick={handleTranslate} disabled={loadingTranslate} style={{ padding: '8px 20px', background: '#0369A1', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
-                    {loadingTranslate ? '번역 중...' : '번역하기'}
+            <div style={{ border: '1px solid #E2E8F0', borderTop: 'none', height: 520, display: 'flex', flexDirection: 'column' }}>
+
+              {/* 번역 진행률 */}
+              {loadingTranslate && (
+                <div style={{ padding: '6px 12px', background: '#EFF8FF', borderBottom: '1px solid #BAE6FD', flexShrink: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#0369A1', marginBottom: 3, fontWeight: 600 }}>
+                    <span>번역 중...</span>
+                    <span>{translateProgress}% ({Math.round(items.length * translateProgress / 100)}/{items.length}줄)</span>
+                  </div>
+                  <div style={{ height: 3, background: '#DBEAFE', borderRadius: 2, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', background: '#0369A1', width: `${translateProgress}%`, transition: 'width 0.3s ease' }} />
+                  </div>
+                </div>
+              )}
+
+              {translated.length === 0 && !loadingTranslate ? (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12, color: '#94a3b8' }}>
+                  <p>먼저 한글 번역을 진행해주세요.</p>
+                  <button onClick={handleTranslate} style={{ padding: '8px 20px', background: '#0369A1', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
+                    번역 시작
                   </button>
                 </div>
               ) : (
-                /* 단일 스크롤 — 행별 동일 높이로 완벽 정렬 */
-                <div style={{ height: 520, display: 'flex', flexDirection: 'column' }}>
-                {/* 번역 진행률 바 (동시보기에도 표시) */}
-                {loadingTranslate && (
-                  <div style={{ padding: '8px 12px', background: '#EFF8FF', borderBottom: '1px solid #BAE6FD', flexShrink: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#0369A1', marginBottom: 4, fontWeight: 600 }}>
-                      <span>🔄 번역 중...</span>
-                      <span>{translateProgress}% ({Math.round(items.length * translateProgress / 100)}/{items.length}줄)</span>
-                    </div>
-                    <div style={{ height: 4, background: '#DBEAFE', borderRadius: 2, overflow: 'hidden' }}>
-                      <div style={{ height: '100%', background: '#0369A1', borderRadius: 2, width: `${translateProgress}%`, transition: 'width 0.3s ease' }} />
-                    </div>
-                  </div>
-                )}
+                /* ── 핵심: 하나의 스크롤 박스 안에 좌우 열 ── */
                 <div style={{ flex: 1, overflowY: 'auto' }}>
-                  {/* 헤더 */}
-                  <div style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 1 }}>
-                    <div style={{ flex: 1, padding: '8px 12px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', borderRight: '1px solid #E2E8F0', fontSize: 11, fontWeight: 700, color: '#64748b' }}>
-                      원문
-                    </div>
-                    <div style={{ flex: 1, padding: '8px 12px', background: '#EFF8FF', borderBottom: '1px solid #BAE6FD', fontSize: 11, fontWeight: 700, color: '#0369A1' }}>
-                      한글 번역
-                    </div>
+
+                  {/* 고정 헤더 */}
+                  <div style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 2 }}>
+                    <div style={{ flex: 1, padding: '7px 12px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', borderRight: '1px solid #E2E8F0', fontSize: 11, fontWeight: 700, color: '#64748b' }}>원문</div>
+                    <div style={{ flex: 1, padding: '7px 12px', background: '#EFF8FF', borderBottom: '1px solid #BAE6FD', fontSize: 11, fontWeight: 700, color: '#0369A1' }}>한글 번역</div>
                   </div>
-                  {/* 행: 원문-번역 같은 행에 나란히 → 높이 자동 동기화 */}
+
+                  {/* 문장 행 — 한 행 안에 원문·번역 → 높이 자동 일치 */}
                   {items.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', borderBottom: '1px solid #F1F5F9', alignItems: 'stretch' }}>
-                      {/* 원문 */}
-                      <div style={{ flex: 1, display: 'flex', gap: 8, padding: '10px 12px', borderRight: '1px solid #E2E8F0', alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: 10, color: '#94a3b8', minWidth: 38, flexShrink: 0, paddingTop: 3, fontFamily: 'monospace' }}>
+                    <div key={i} style={{
+                      display: 'flex',
+                      borderBottom: '1px solid #F1F5F9',
+                      /* 중요: stretch로 양쪽 셀 높이 동기화 */
+                      alignItems: 'stretch',
+                    }}>
+                      {/* 원문 셀 */}
+                      <div style={{ flex: 1, display: 'flex', gap: 8, padding: '9px 12px', borderRight: '1px solid #E2E8F0' }}>
+                        <span style={{ fontSize: 10, minWidth: 36, flexShrink: 0, paddingTop: 3, fontFamily: 'monospace', color: '#94a3b8' }}>
                           {formatTime(item.start)}
                         </span>
-                        <span style={{ fontSize: 13, color: '#1e293b', lineHeight: 1.7 }}>{item.text}</span>
+                        <span style={{ fontSize: 13, color: '#1e293b', lineHeight: 1.7, flex: 1 }}>{item.text}</span>
+                        <span style={{ fontSize: 11, color: '#CBD5E1', flexShrink: 0, paddingTop: 3, minWidth: 20, textAlign: 'right' }}>{i + 1}</span>
                       </div>
-                      {/* 번역 */}
-                      <div style={{ flex: 1, display: 'flex', gap: 8, padding: '10px 12px', background: translated[i] ? '#fff' : '#FAFAFA', alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: 10, color: '#94a3b8', minWidth: 38, flexShrink: 0, paddingTop: 3, fontFamily: 'monospace' }}>
+                      {/* 번역 셀 */}
+                      <div style={{ flex: 1, display: 'flex', gap: 8, padding: '9px 12px', background: translated[i] ? '#fff' : '#FAFAFA' }}>
+                        <span style={{ fontSize: 10, minWidth: 36, flexShrink: 0, paddingTop: 3, fontFamily: 'monospace', color: '#94a3b8' }}>
                           {formatTime(item.start)}
                         </span>
-                        <span style={{ fontSize: 13, color: translated[i] ? '#1e293b' : '#94a3b8', lineHeight: 1.7, fontStyle: translated[i] ? 'normal' : 'italic' }}>
+                        <span style={{ fontSize: 13, lineHeight: 1.7, color: translated[i] ? '#1e293b' : '#94a3b8', fontStyle: translated[i] ? 'normal' : 'italic' }}>
                           {translated[i] || item.text}
                         </span>
                       </div>
                     </div>
                   ))}
-                </div>
                 </div>
               )}
             </div>
