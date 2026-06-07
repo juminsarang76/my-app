@@ -5,6 +5,51 @@ import { useEffect, useRef, useState } from 'react'
 interface SubItem { text: string; start: number; duration: number }
 type Tab = '원문' | '번역' | '동시보기' | '한글요약'
 
+// 클라이언트 규칙 기반 문장 합치기 (API 불필요)
+// 규칙: 구두점(. ? !)으로 끝나지 않으면 다음 줄과 합침
+function mergeIntoSentences(items: SubItem[]): SubItem[] {
+  if (!items.length) return items
+
+  const SENTENCE_END = /[.?!][\s"'»)]*$/
+  const CONTINUES_NEXT = (text: string) => !SENTENCE_END.test(text.trim())
+
+  const merged: SubItem[] = []
+  let buffer: string[] = []
+  let bufferStart = 0
+  let bufferDuration = 0
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]
+    if (buffer.length === 0) {
+      bufferStart = item.start
+      bufferDuration = 0
+    }
+    buffer.push(item.text.trim())
+    bufferDuration += item.duration
+
+    // 현재 줄이 구두점으로 끝나면 → 완성 문장
+    if (!CONTINUES_NEXT(item.text)) {
+      merged.push({
+        text: buffer.join(' ').replace(/\s+/g, ' '),
+        start: bufferStart,
+        duration: bufferDuration,
+      })
+      buffer = []
+    }
+  }
+
+  // 마지막에 남은 버퍼 (구두점 없이 끝난 경우)
+  if (buffer.length > 0) {
+    merged.push({
+      text: buffer.join(' ').replace(/\s+/g, ' '),
+      start: bufferStart,
+      duration: bufferDuration,
+    })
+  }
+
+  return merged
+}
+
 // SRT/VTT/TXT 파싱
 function parseSubtitleText(raw: string): SubItem[] {
   const text = raw.trim()
@@ -643,22 +688,23 @@ export default function YoutubePage() {
                 if (val.trim().length > 0) {
                   const parsed = parseSubtitleText(val)
                   if (parsed.length > 0) {
-                    // 1단계: 원문 즉시 표시
-                    setItems(parsed)
+                    // 1단계: 클라이언트 규칙 기반 즉시 합치기 (구두점 없으면 다음 줄과 합침)
+                    const merged = mergeIntoSentences(parsed)
+                    setItems(merged)
                     setTranslated([])
                     setSummary('')
                     setTab('원문')
-                    setLang(`수동입력 (${parsed.length}줄) — 문장 정리 중...`)
+                    setLang(`수동입력 (${merged.length}문장) — AI 정제 중...`)
                     setError('')
                     setNoCaption(false)
 
-                    // 2단계: AI로 문장 완성 (비동기)
+                    // 2단계: AI로 추가 정제 (비동기, API 실패해도 1단계 결과 유지)
                     setNormalizing(true)
                     try {
                       const res = await fetch('/api/youtube/normalize', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ items: parsed }),
+                        body: JSON.stringify({ items: merged }),
                       })
                       if (res.ok) {
                         const data = await res.json()
