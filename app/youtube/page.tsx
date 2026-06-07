@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 interface SubItem { text: string; start: number; duration: number }
-type Tab = '원문' | '번역' | '동시보기'
+type Tab = '원문' | '번역' | '동시보기' | '한글요약'
 
 // SRT/VTT/TXT 파싱
 function parseSubtitleText(raw: string): SubItem[] {
@@ -343,7 +343,7 @@ export default function YoutubePage() {
     }
   }
 
-  const TABS: Tab[] = ['원문', '번역', '동시보기']
+  const TABS: Tab[] = ['원문', '번역', '동시보기', '한글요약']
 
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: 900, margin: '0 auto', padding: '24px 16px' }}>
@@ -523,10 +523,14 @@ export default function YoutubePage() {
               총 {items.length}줄 · {lang}
             </span>
           )}
-          <button onClick={handleTranslate} disabled={loadingTranslate || !items.length} style={{ padding: '7px 14px', background: (!items.length || loadingTranslate) ? '#e2e8f0' : '#0369A1', color: (!items.length || loadingTranslate) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: (!items.length || loadingTranslate) ? 'not-allowed' : 'pointer' }}>
+          <button onClick={() => { setTab('번역'); if (!translated.length && !loadingTranslate && items.length) handleTranslate() }}
+            disabled={loadingTranslate || !items.length}
+            style={{ padding: '7px 14px', background: (!items.length || loadingTranslate) ? '#e2e8f0' : '#0369A1', color: (!items.length || loadingTranslate) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: (!items.length || loadingTranslate) ? 'not-allowed' : 'pointer' }}>
             {loadingTranslate ? '번역 중...' : '한글 번역'}
           </button>
-          <button onClick={handleSummary} disabled={loadingSummary || !items.length} style={{ padding: '7px 14px', background: (!items.length || loadingSummary) ? '#e2e8f0' : '#1D9E75', color: (!items.length || loadingSummary) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: (!items.length || loadingSummary) ? 'not-allowed' : 'pointer' }}>
+          <button onClick={() => { setTab('한글요약'); if (!summary && !loadingSummary && items.length) handleSummary() }}
+            disabled={loadingSummary || !items.length}
+            style={{ padding: '7px 14px', background: (!items.length || loadingSummary) ? '#e2e8f0' : '#1D9E75', color: (!items.length || loadingSummary) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: (!items.length || loadingSummary) ? 'not-allowed' : 'pointer' }}>
             {loadingSummary ? '요약 중...' : '한글 요약'}
           </button>
           {/* 저장 버튼 — 항상 표시, 자막 없으면 비활성 */}
@@ -551,7 +555,17 @@ export default function YoutubePage() {
       <>
         <div style={{ display: 'flex', borderBottom: '2px solid #E2E8F0', marginBottom: 0 }}>
           {TABS.map(t => (
-            <button key={t} onClick={() => setTab(t)} style={{
+            <button key={t} onClick={() => {
+              setTab(t)
+              // 한글요약 탭 클릭 시 요약 없으면 자동 실행
+              if (t === '한글요약' && !summary && !loadingSummary && items.length > 0) {
+                handleSummary()
+              }
+              // 번역 탭 클릭 시 번역 없으면 자동 실행
+              if (t === '번역' && !translated.length && !loadingTranslate && items.length > 0) {
+                handleTranslate()
+              }
+            }} style={{
               padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer',
               fontWeight: tab === t ? 700 : 400, fontSize: 13,
               color: tab === t ? '#0369A1' : '#94a3b8',
@@ -660,11 +674,26 @@ export default function YoutubePage() {
             </div>
           )}
 
-          {/* 요약 */}
-          {summary && (
-            <div style={{ marginTop: 20, padding: '20px', background: '#E0F2FE', borderRadius: 12, border: '1px solid #BAE6FD' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0369A1', marginBottom: 10 }}>📋 한글 요약</div>
-              <div style={{ fontSize: 14, color: '#1e293b', lineHeight: 1.9, whiteSpace: 'pre-wrap' }}>{summary}</div>
+          {/* 한글요약 탭 */}
+          {tab === '한글요약' && (
+            <div style={{ border: '1px solid #E2E8F0', borderTop: 'none', minHeight: 200 }}>
+              {loadingSummary ? (
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: '#94a3b8', fontSize: 14 }}>
+                  ✍️ 요약 생성 중...
+                </div>
+              ) : summary ? (
+                <div style={{ padding: '20px', fontSize: 14, color: '#1e293b', lineHeight: 1.9, whiteSpace: 'pre-wrap' }}>
+                  {summary}
+                </div>
+              ) : (
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: '#94a3b8' }}>
+                  <p style={{ marginBottom: 12 }}>요약을 생성합니다.</p>
+                  <button onClick={handleSummary} disabled={loadingSummary}
+                    style={{ padding: '8px 20px', background: '#1D9E75', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
+                    요약 생성
+                  </button>
+                </div>
+              )}
             </div>
           )}
           </>
