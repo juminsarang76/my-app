@@ -69,7 +69,7 @@ export default function YoutubePage() {
   const [items, setItems] = useState<SubItem[]>([])
   const [translated, setTranslated] = useState<string[]>([])
   const [summary, setSummary] = useState('')
-  const [tab, setTab] = useState<Tab>('원문')
+  const [tab, setTab] = useState<Tab>('동시보기')
   const [videoTitle, setVideoTitle] = useState('')
   const [loadingTranscript, setLoadingTranscript] = useState(false)
   const [loadingTranslate, setLoadingTranslate] = useState(false)
@@ -305,7 +305,7 @@ export default function YoutubePage() {
     setTranslateProgress(0)
     setTranslated([])
     setError('')
-    setTab('번역')
+    setTab('동시보기')
 
     const CHUNK = 20
     const total = items.length
@@ -369,7 +369,7 @@ export default function YoutubePage() {
     }
   }
 
-  const TABS: Tab[] = ['원문', '번역', '동시보기', '한글요약']
+  const TABS: Tab[] = ['동시보기', '원문', '번역', '한글요약']
 
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: 900, margin: '0 auto', padding: '24px 16px' }}>
@@ -567,7 +567,7 @@ export default function YoutubePage() {
               총 {items.length}줄 · {lang}
             </span>
           )}
-          <button onClick={() => { setTab('번역'); if (!translated.length && !loadingTranslate && items.length) handleTranslate() }}
+          <button onClick={() => { setTab('동시보기'); if (!translated.length && !loadingTranslate && items.length) handleTranslate() }}
             disabled={loadingTranslate || !items.length}
             style={{ padding: '7px 14px', background: (!items.length || loadingTranslate) ? '#e2e8f0' : '#0369A1', color: (!items.length || loadingTranslate) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: (!items.length || loadingTranslate) ? 'not-allowed' : 'pointer' }}>
             {loadingTranslate ? '번역 중...' : '한글 번역'}
