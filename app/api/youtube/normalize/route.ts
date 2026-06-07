@@ -51,14 +51,22 @@ export async function POST(req: NextRequest) {
 [8] especially when Newton's laws get too cumbersome.
 [9] The hotter the object, the more energy was emitted
 [10] at every wavelength, and the peak of the distribution shifted to the left.
-[11] But now I will prove to you
-[12] that this is not the case.
+[11] But now
+[12] the total distance is longer than it needs to be.
+[13] At low temperatures, each material gave off its own characteristic spectrum,
+[14] mostly in the infrared, but above about 500°C
+[15] all materials started to glow in the same way,
+[16] with an almost identical distribution of light.
+[17] But now I will prove to you
+[18] that this is not the case.
 
 출력:
 If you later find that of all the possible paths, light took the shortest time to get from A to B, I wouldn't think it was optimizing for anything.
 You get all these other reflections right now and this light is just going in all directions.
 Action was useful and an alternative way of solving physics problems, especially when Newton's laws get too cumbersome.
 The hotter the object, the more energy was emitted at every wavelength, and the peak of the distribution shifted to the left.
+But now the total distance is longer than it needs to be.
+At low temperatures, each material gave off its own characteristic spectrum, mostly in the infrared, but above about 500°C all materials started to glow in the same way, with an almost identical distribution of light.
 But now I will prove to you that this is not the case.
 
 ---
