@@ -47,10 +47,22 @@ async function fetchYouTubeTranscript(videoId: string, prefLangs: string[]) {
   if (!res.ok) throw new Error(`YouTube 페이지 로드 실패: ${res.status}`)
   const html = await res.text()
 
-  // 2. ytInitialPlayerResponse 추출
-  const match = html.match(/ytInitialPlayerResponse\s*=\s*(\{.+?\})\s*;[\s\n]*(?:var|const|let|\n|<)/)
-    ?? html.match(/ytInitialPlayerResponse\s*=\s*(\{[\s\S]+?\});/)
-  if (!match) throw new Error('플레이어 데이터를 찾을 수 없습니다. 영상이 존재하는지 확인하세요.')
+  // 2. ytInitialPlayerResponse 추출 (중괄호 depth 계산으로 정확히 추출)
+  const KEY = 'ytInitialPlayerResponse'
+  const keyIdx = html.indexOf(KEY)
+  if (keyIdx === -1) throw new Error('플레이어 데이터를 찾을 수 없습니다.')
+
+  const jsonStart = html.indexOf('{', keyIdx)
+  if (jsonStart === -1) throw new Error('플레이어 JSON 시작점을 찾을 수 없습니다.')
+
+  let depth = 0, jsonEnd = jsonStart
+  for (let i = jsonStart; i < html.length; i++) {
+    if (html[i] === '{') depth++
+    else if (html[i] === '}') {
+      depth--
+      if (depth === 0) { jsonEnd = i; break }
+    }
+  }
 
   let playerResponse: {
     captions?: {
@@ -60,7 +72,7 @@ async function fetchYouTubeTranscript(videoId: string, prefLangs: string[]) {
     }
   }
   try {
-    playerResponse = JSON.parse(match[1])
+    playerResponse = JSON.parse(html.slice(jsonStart, jsonEnd + 1))
   } catch {
     throw new Error('플레이어 데이터 파싱 실패')
   }
