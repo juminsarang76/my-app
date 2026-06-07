@@ -382,44 +382,59 @@ export default function YoutubePage() {
         </div>
       )}
 
-      {/* 영상 정보 + 액션 버튼 */}
-      {items.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
-          {videoTitle && (
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 8 }}>
-              {videoTitle}
-            </div>
-          )}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+      {/* 영상 정보 + 액션 버튼 — 항상 표시 */}
+      <div style={{ marginBottom: 16 }}>
+        {videoTitle && (
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 8 }}>{videoTitle}</div>
+        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {items.length > 0 && (
             <span style={{ fontSize: 12, color: '#64748b', background: '#F1F5F9', padding: '4px 10px', borderRadius: 20 }}>
               총 {items.length}줄 · {lang}
             </span>
-            <button onClick={handleTranslate} disabled={loadingTranslate} style={{ padding: '7px 14px', background: loadingTranslate ? '#e2e8f0' : '#0369A1', color: loadingTranslate ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: loadingTranslate ? 'not-allowed' : 'pointer' }}>
-              {loadingTranslate ? '번역 중...' : '한글 번역'}
+          )}
+          <button onClick={handleTranslate} disabled={loadingTranslate || !items.length} style={{ padding: '7px 14px', background: (!items.length || loadingTranslate) ? '#e2e8f0' : '#0369A1', color: (!items.length || loadingTranslate) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: (!items.length || loadingTranslate) ? 'not-allowed' : 'pointer' }}>
+            {loadingTranslate ? '번역 중...' : '한글 번역'}
+          </button>
+          <button onClick={handleSummary} disabled={loadingSummary || !items.length} style={{ padding: '7px 14px', background: (!items.length || loadingSummary) ? '#e2e8f0' : '#1D9E75', color: (!items.length || loadingSummary) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: (!items.length || loadingSummary) ? 'not-allowed' : 'pointer' }}>
+            {loadingSummary ? '요약 중...' : '한글 요약'}
+          </button>
+          {/* 저장 버튼 — 항상 표시, 자막 없으면 비활성 */}
+          <div style={{ display: 'flex', gap: 6, marginLeft: 'auto', flexWrap: 'wrap', alignItems: 'center' }}>
+            <button onClick={handleNotion} disabled={savingNotion || !items.length} style={{ padding: '7px 14px', background: (savingNotion || !items.length) ? '#e2e8f0' : '#000', color: (savingNotion || !items.length) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: (savingNotion || !items.length) ? 'not-allowed' : 'pointer' }}>
+              {savingNotion ? '저장 중...' : '📓 노션저장'}
             </button>
-            <button onClick={handleSummary} disabled={loadingSummary} style={{ padding: '7px 14px', background: loadingSummary ? '#e2e8f0' : '#1D9E75', color: loadingSummary ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: loadingSummary ? 'not-allowed' : 'pointer' }}>
-              {loadingSummary ? '요약 중...' : '한글 요약'}
-            </button>
-            {/* 저장 버튼 */}
-            <div style={{ display: 'flex', gap: 6, marginLeft: 'auto', flexWrap: 'wrap', alignItems: 'center' }}>
-              <button onClick={handleNotion} disabled={savingNotion} style={{ padding: '7px 14px', background: savingNotion ? '#e2e8f0' : '#000', color: savingNotion ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: savingNotion ? 'not-allowed' : 'pointer' }}>
-                {savingNotion ? '저장 중...' : '📓 노션저장'}
+            <div style={{ display: 'flex', gap: 2 }}>
+              <button onClick={handleGithub} disabled={savingGithub || !items.length} style={{ padding: '7px 12px', background: (savingGithub || !items.length) ? '#e2e8f0' : '#6d28d9', color: (savingGithub || !items.length) ? '#94a3b8' : '#fff', border: 'none', borderRadius: '8px 0 0 8px', fontWeight: 700, fontSize: 12, cursor: (savingGithub || !items.length) ? 'not-allowed' : 'pointer' }}>
+                {savingGithub ? '...' : '🗂 옵시디언저장'}
               </button>
-              <div style={{ display: 'flex', gap: 2 }}>
-                <button onClick={handleGithub} disabled={savingGithub} style={{ padding: '7px 12px', background: savingGithub ? '#e2e8f0' : '#6d28d9', color: savingGithub ? '#94a3b8' : '#fff', border: 'none', borderRadius: '8px 0 0 8px', fontWeight: 700, fontSize: 12, cursor: savingGithub ? 'not-allowed' : 'pointer' }}>
-                  {savingGithub ? '...' : '🗂 옵시디언저장'}
-                </button>
-                <button onClick={() => setShowObsidianSettings(true)} style={{ padding: '7px 8px', background: '#5b21b6', color: '#fff', border: 'none', borderRadius: '0 8px 8px 0', fontSize: 11, cursor: 'pointer' }} title="Obsidian 설정">⚙️</button>
-              </div>
-              <button onClick={handleSaveBoth} disabled={savingNotion || savingGithub} style={{ padding: '7px 14px', background: (savingNotion || savingGithub) ? '#e2e8f0' : '#0369A1', color: (savingNotion || savingGithub) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: (savingNotion || savingGithub) ? 'not-allowed' : 'pointer' }}>
-                {(savingNotion || savingGithub) ? '저장 중...' : '💾 둘다저장'}
-              </button>
+              <button onClick={() => setShowObsidianSettings(true)} style={{ padding: '7px 8px', background: '#5b21b6', color: '#fff', border: 'none', borderRadius: '0 8px 8px 0', fontSize: 11, cursor: 'pointer' }}>⚙️</button>
             </div>
+            <button onClick={handleSaveBoth} disabled={savingNotion || savingGithub || !items.length} style={{ padding: '7px 14px', background: (savingNotion || savingGithub || !items.length) ? '#e2e8f0' : '#0369A1', color: (savingNotion || savingGithub || !items.length) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: (savingNotion || savingGithub || !items.length) ? 'not-allowed' : 'pointer' }}>
+              {(savingNotion || savingGithub) ? '저장 중...' : '💾 둘다저장'}
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* 탭 */}
+      {/* 탭 — 항상 표시 */}
+      <>
+        <div style={{ display: 'flex', borderBottom: '2px solid #E2E8F0', marginBottom: 0 }}>
+          {TABS.map(t => (
+            <button key={t} onClick={() => setTab(t)} style={{
+              padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer',
+              fontWeight: tab === t ? 700 : 400, fontSize: 13,
+              color: tab === t ? '#0369A1' : '#94a3b8',
+              borderBottom: `2px solid ${tab === t ? '#0369A1' : 'transparent'}`,
+              marginBottom: '-2px',
+            }}>{t}</button>
+          ))}
+        </div>
+        {!items.length && !loadingTranscript && (
+          <div style={{ height: 200, border: '1px solid #E2E8F0', borderTop: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: 14 }}>
+            YouTube URL을 입력하고 자막 가져오기를 눌러주세요
+          </div>
+        )}
       {items.length > 0 && (
         <>
           <div style={{ display: 'flex', borderBottom: '2px solid #E2E8F0', marginBottom: 0 }}>
@@ -531,6 +546,7 @@ export default function YoutubePage() {
           )}
         </>
       )}
+      </>
     </div>
   )
 }
