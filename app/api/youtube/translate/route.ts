@@ -40,11 +40,11 @@ async function translateChunk(
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model,
-      messages: [{
-        role: 'user',
-        content: `다음 영어 자막을 한국어로 번역하세요. "번호. 번역문" 형식으로만 출력하세요.\n\n${numbered}`,
-      }],
-      max_tokens: 2000,
+      messages: [
+        { role: 'system', content: '영어→한국어 자막 번역기. 지시한 형식으로만 출력.' },
+        { role: 'user', content: `다음 영어 자막을 한국어로 번역하세요. "번호. 번역문" 형식으로만 출력하세요.\n\n${numbered}` },
+      ],
+      max_tokens: 4000,
       temperature: 0.2,
     }),
     signal: AbortSignal.timeout(12000),
