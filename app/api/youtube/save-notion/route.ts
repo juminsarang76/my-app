@@ -3,21 +3,12 @@ import { NextRequest, NextResponse } from 'next/server'
 // Notion API — 자막을 Notion 페이지로 저장
 // 필요 환경변수: NOTION_API_KEY, NOTION_PAGE_ID (부모 페이지)
 
-// 5문장씩 묶어 단락 배열 생성
-function toParagraphs(sentences: string[], chunkSize = 5): string[] {
-  const result: string[] = []
-  for (let i = 0; i < sentences.length; i += chunkSize) {
-    result.push(sentences.slice(i, i + chunkSize).join(' '))
-  }
-  return result
-}
-
-// 단락 배열 → Notion paragraph 블록 배열 (2000자 제한 대응)
-function toParaBlocks(paragraphs: string[]): object[] {
+// 문장 배열 → Notion paragraph 블록 (문장마다 한 블록, 5문장마다 빈 줄)
+function toParaBlocks(sentences: string[]): object[] {
   const blocks: object[] = []
-  for (const para of paragraphs) {
-    // 2000자 초과 시 분할
-    const chunks = para.match(/[\s\S]{1,1900}/g) ?? [para]
+  sentences.forEach((sentence, i) => {
+    // 문장 하나 = paragraph 블록 하나
+    const chunks = sentence.match(/[\s\S]{1,1900}/g) ?? [sentence]
     for (const chunk of chunks) {
       blocks.push({
         object: 'block',
@@ -25,13 +16,11 @@ function toParaBlocks(paragraphs: string[]): object[] {
         paragraph: { rich_text: [{ type: 'text', text: { content: chunk } }] },
       })
     }
-    // 단락 사이 빈 줄
-    blocks.push({
-      object: 'block',
-      type: 'paragraph',
-      paragraph: { rich_text: [] },
-    })
-  }
+    // 5문장마다 빈 줄
+    if ((i + 1) % 5 === 0) {
+      blocks.push({ object: 'block', type: 'paragraph', paragraph: { rich_text: [] } })
+    }
+  })
   return blocks
 }
 
@@ -81,13 +70,13 @@ export async function POST(req: NextRequest) {
   if (translated?.length) {
     blocks.push({ object: 'block', type: 'heading_2', heading_2: { rich_text: [{ type: 'text', text: { content: '🇰🇷 한글 번역' } }] } })
     const sentences = (items as { text: string }[]).map((item, i) => translated[i] || item.text)
-    blocks.push(...toParaBlocks(toParagraphs(sentences)))
+    blocks.push(...toParaBlocks(sentences))
   }
 
-  // 원문 — 타임스탬프 없이 읽기 편한 단락
+  // 원문 — 타임스탬프 없이 문장별 단락
   blocks.push({ object: 'block', type: 'heading_2', heading_2: { rich_text: [{ type: 'text', text: { content: '📝 원문' } }] } })
   const origSentences = (items as { text: string }[]).map(item => item.text)
-  blocks.push(...toParaBlocks(toParagraphs(origSentences)))
+  blocks.push(...toParaBlocks(origSentences))
 
   // Notion 페이지 생성 (최대 100 블록/요청)
   const res = await fetch('https://api.notion.com/v1/pages', {
