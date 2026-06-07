@@ -411,6 +411,36 @@ export default function YoutubePage() {
     await Promise.allSettled([handleGithub(), handleNotion()])
   }
 
+  // 로컬 Ollama로 번역 (클라이언트에서 직접 호출)
+  async function translateChunkWithOllama(texts: string[], model = 'gemma4'): Promise<string[]> {
+    const numbered = texts.map((t, i) => `${i + 1}. ${t}`).join('\n')
+    const res = await fetch('http://localhost:11434/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: 'Korean translator. Output ONLY numbered translations.' },
+          { role: 'user', content: `Translate to Korean:\n${numbered}` },
+        ],
+        stream: false,
+      }),
+      signal: AbortSignal.timeout(30000),
+    })
+    if (!res.ok) throw new Error(`Ollama ${res.status}`)
+    const data = await res.json()
+    const raw = data.choices?.[0]?.message?.content ?? ''
+    const result = new Array(texts.length).fill('')
+    raw.split('\n').forEach((line: string) => {
+      const m = line.match(/^(\d+)\.\s+(.+)/)
+      if (m) {
+        const idx = parseInt(m[1]) - 1
+        if (idx >= 0 && idx < texts.length) result[idx] = m[2].trim()
+      }
+    })
+    return result.map((t, i) => t || texts[i])
+  }
+
   async function handleTranslate() {
     if (!items.length) {
       setError('번역할 자막이 없습니다. 먼저 자막을 붙여넣거나 가져오세요.')
@@ -447,11 +477,21 @@ export default function YoutubePage() {
         if (res.ok && data.translated?.length) {
           data.translated.forEach((t, k) => { result[startIdx + k] = t || chunk[k].text })
         } else {
-          // 실패한 청크는 원문 유지
-          chunk.forEach((item, k) => { result[startIdx + k] = item.text })
-          // 429 Rate Limit 오류 표시
-          if (res.status === 429 || data.error?.includes('rate')) {
-            setError('⚠️ Groq 일일 번역 한도 초과. Cerebras로 재시도 중...')
+          // 서버 API 모두 실패 → 로컬 Ollama 시도
+          const isRateLimit = res.status === 429 || data.error?.includes('rate') || data.error?.includes('limit')
+          if (isRateLimit || !res.ok) {
+            setError('⚠️ 서버 API 한도 초과 → 로컬 Ollama로 번역 중...')
+            try {
+              const ollamaResult = await translateChunkWithOllama(chunk.map(c => c.text))
+              ollamaResult.forEach((t, k) => { result[startIdx + k] = t || chunk[k].text })
+              setError('') // Ollama 성공 시 오류 메시지 제거
+            } catch {
+              // Ollama도 실패 시 원문 유지
+              chunk.forEach((item, k) => { result[startIdx + k] = item.text })
+              setError('⚠️ 서버 API 한도 초과 + 로컬 Ollama 없음. Ollama 실행: ollama serve')
+            }
+          } else {
+            chunk.forEach((item, k) => { result[startIdx + k] = item.text })
           }
         }
 
