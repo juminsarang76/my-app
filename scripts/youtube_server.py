@@ -89,6 +89,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Access-Control-Allow-Private-Network', 'true')
 
     def log_message(self, fmt, *args):
         print(f"  [{args[1]}] {args[0]}")
