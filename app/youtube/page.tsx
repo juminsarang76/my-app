@@ -18,13 +18,16 @@ export default function YoutubePage() {
   const [translated, setTranslated] = useState<string[]>([])
   const [summary, setSummary] = useState('')
   const [tab, setTab] = useState<Tab>('원문')
+  const [videoTitle, setVideoTitle] = useState('')
   const [loadingTranscript, setLoadingTranscript] = useState(false)
   const [loadingTranslate, setLoadingTranslate] = useState(false)
   const [loadingSummary, setLoadingSummary] = useState(false)
   const [loadingWhisper, setLoadingWhisper] = useState(false)
+  const [savingNotion, setSavingNotion] = useState(false)
   const [error, setError] = useState('')
+  const [toast, setToast] = useState('')
   const [lang, setLang] = useState('')
-  const [noCaption, setNoCaption] = useState(false)  // 자막 없는 영상 여부
+  const [noCaption, setNoCaption] = useState(false)
 
   const leftRef = useRef<HTMLDivElement>(null)
   const rightRef = useRef<HTMLDivElement>(null)
@@ -64,6 +67,11 @@ export default function YoutubePage() {
       setItems(data.items)
       setVideoId(data.videoId)
       setLang(data.lang)
+      // 영상 제목 가져오기 (oEmbed API)
+      try {
+        const oRes = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${data.videoId}&format=json`)
+        if (oRes.ok) { const oData = await oRes.json(); setVideoTitle(oData.title ?? '') }
+      } catch { /* 제목 없으면 videoId 사용 */ }
     } catch (e) {
       const msg = e instanceof Error ? e.message : '자막을 가져오지 못했습니다.'
       setError(msg)
@@ -101,6 +109,62 @@ export default function YoutubePage() {
       setError(e instanceof Error ? e.message : 'Whisper 인식에 실패했습니다.')
     } finally {
       setLoadingWhisper(false)
+    }
+  }
+
+  function makeFilename() {
+    const today = new Date().toISOString().slice(0, 10)
+    const title = videoTitle || videoId
+    return `${title}_${today}`.replace(/[/\\?%*:|"<>]/g, '-')
+  }
+
+  // Obsidian: 마크다운 파일 다운로드
+  function handleObsidian() {
+    if (!items.length) return
+    const fname = makeFilename()
+    let md = `# ${videoTitle || videoId}\n\n`
+    md += `🎬 https://www.youtube.com/watch?v=${videoId}\n`
+    md += `📅 ${new Date().toLocaleDateString('ko-KR')}\n\n`
+
+    if (summary) { md += `## 📋 한글 요약\n\n${summary}\n\n` }
+
+    if (translated.length) {
+      md += `## 🇰🇷 한글 번역\n\n`
+      items.forEach((item, i) => {
+        md += `\`${formatTime(item.start)}\` ${translated[i] || item.text}\n\n`
+      })
+    }
+
+    md += `## 📝 원문 자막\n\n`
+    items.forEach(item => { md += `\`${formatTime(item.start)}\` ${item.text}\n\n` })
+
+    const blob = new Blob([md], { type: 'text/markdown; charset=utf-8' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = `${fname}.md`
+    document.body.appendChild(a); a.click(); document.body.removeChild(a)
+    URL.revokeObjectURL(a.href)
+  }
+
+  // Notion: API 저장
+  async function handleNotion() {
+    if (!items.length) return
+    setSavingNotion(true)
+    try {
+      const res = await fetch('/api/youtube/save-notion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId, videoTitle: makeFilename(), items, translated, summary }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setToast('✅ Notion에 저장됐습니다!')
+      if (data.url) window.open(data.url, '_blank')
+    } catch (e) {
+      setToast(`❌ ${e instanceof Error ? e.message : 'Notion 저장 실패'}`)
+    } finally {
+      setSavingNotion(false)
+      setTimeout(() => setToast(''), 4000)
     }
   }
 
@@ -149,6 +213,14 @@ export default function YoutubePage() {
 
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: 900, margin: '0 auto', padding: '24px 16px' }}>
+
+      {/* 토스트 */}
+      {toast && (
+        <div style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', background: '#1e293b', color: '#fff', padding: '10px 22px', borderRadius: 10, fontSize: 13, zIndex: 1000, boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+          {toast}
+        </div>
+      )}
+
       <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1e293b', marginBottom: 20 }}>
         ▶ 유튜브 자막 보기
       </h1>
@@ -201,24 +273,32 @@ export default function YoutubePage() {
 
       {/* 영상 정보 + 액션 버튼 */}
       {items.length > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 12, color: '#64748b', background: '#F1F5F9', padding: '4px 10px', borderRadius: 20 }}>
-            총 {items.length}줄 · 언어: {lang}
-          </span>
-          <button onClick={handleTranslate} disabled={loadingTranslate} style={{
-            padding: '7px 16px', background: loadingTranslate ? '#e2e8f0' : '#0369A1',
-            color: loadingTranslate ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8,
-            fontWeight: 600, fontSize: 13, cursor: loadingTranslate ? 'not-allowed' : 'pointer',
-          }}>
-            {loadingTranslate ? '번역 중...' : '한글 번역'}
-          </button>
-          <button onClick={handleSummary} disabled={loadingSummary} style={{
-            padding: '7px 16px', background: loadingSummary ? '#e2e8f0' : '#1D9E75',
-            color: loadingSummary ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8,
-            fontWeight: 600, fontSize: 13, cursor: loadingSummary ? 'not-allowed' : 'pointer',
-          }}>
-            {loadingSummary ? '요약 중...' : '한글 요약'}
-          </button>
+        <div style={{ marginBottom: 16 }}>
+          {videoTitle && (
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 8 }}>
+              {videoTitle}
+            </div>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 12, color: '#64748b', background: '#F1F5F9', padding: '4px 10px', borderRadius: 20 }}>
+              총 {items.length}줄 · {lang}
+            </span>
+            <button onClick={handleTranslate} disabled={loadingTranslate} style={{ padding: '7px 14px', background: loadingTranslate ? '#e2e8f0' : '#0369A1', color: loadingTranslate ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: loadingTranslate ? 'not-allowed' : 'pointer' }}>
+              {loadingTranslate ? '번역 중...' : '한글 번역'}
+            </button>
+            <button onClick={handleSummary} disabled={loadingSummary} style={{ padding: '7px 14px', background: loadingSummary ? '#e2e8f0' : '#1D9E75', color: loadingSummary ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: loadingSummary ? 'not-allowed' : 'pointer' }}>
+              {loadingSummary ? '요약 중...' : '한글 요약'}
+            </button>
+            {/* 저장 버튼 */}
+            <div style={{ display: 'flex', gap: 6, marginLeft: 'auto' }}>
+              <button onClick={handleObsidian} style={{ padding: '7px 14px', background: '#6d28d9', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                🗂 Obsidian
+              </button>
+              <button onClick={handleNotion} disabled={savingNotion} style={{ padding: '7px 14px', background: savingNotion ? '#e2e8f0' : '#000', color: savingNotion ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: savingNotion ? 'not-allowed' : 'pointer' }}>
+                {savingNotion ? '저장 중...' : '📓 Notion'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
