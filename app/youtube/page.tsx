@@ -308,14 +308,15 @@ export default function YoutubePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items }),
       })
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
-        throw new Error(err.error ?? `번역 API 오류 (${res.status})`)
+      // 응답 본문 파싱 (빈 응답/타임아웃 대비)
+      let data: { translated?: string[]; error?: string }
+      try {
+        data = await res.json()
+      } catch {
+        throw new Error(`번역 서버 응답 오류 (${res.status}). 자막이 너무 길면 일부만 붙여넣고 다시 시도하세요.`)
       }
-      const data = await res.json()
-      if (!data.translated?.length) {
-        throw new Error('번역 결과가 비어있습니다. 다시 시도해주세요.')
-      }
+      if (!res.ok) throw new Error(data.error ?? `번역 API 오류 (${res.status})`)
+      if (!data.translated?.length) throw new Error('번역 결과가 비어있습니다. 다시 시도해주세요.')
       setTranslated(data.translated)
       setTab('번역')
     } catch (e) {
