@@ -2,62 +2,92 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const maxDuration = 30
 
-// 끊어진 자막 문장을 완성된 문장으로 정리
 export async function POST(req: NextRequest) {
   const groqKey = process.env.GROQ_API_KEY
-  if (!groqKey) return NextResponse.json({ error: 'GROQ_API_KEY 없음' }, { status: 500 })
+  const cerebrasKey = process.env.CEREBRAS_API_KEY
+  if (!groqKey && !cerebrasKey) return NextResponse.json({ error: 'API 키 없음' }, { status: 500 })
 
   const { items } = await req.json()
   if (!items?.length) return NextResponse.json({ error: '자막 없음' }, { status: 400 })
 
-  // 전체 텍스트 추출
   const rawTexts: string[] = items.map((i: { text: string }) => i.text)
-  const fullText = rawTexts.join('\n')
-  const totalDuration = items.reduce(
-    (sum: number, i: { duration: number }) => sum + (i.duration || 5), 0
-  )
+  const totalDuration = items.reduce((s: number, i: { duration: number }) => s + (i.duration || 5), 0)
 
-  const prompt = `다음은 유튜브 자막 텍스트입니다. 자막은 영상 타이밍에 맞춰 줄이 잘려 있어 문장이 중간에 끊기는 경우가 많습니다.
+  // 번호를 붙여서 추적 가능하게
+  const numbered = rawTexts.map((t, i) => `[${i + 1}] ${t}`).join('\n')
 
-규칙:
-1. 끊어진 문장을 전체 맥락을 보고 완성된 문장으로 합쳐주세요
-2. 문장의 내용은 수정하지 마세요 (단어 추가/삭제 금지)
-3. 완성된 문장 하나씩 줄바꿈으로 구분해서 출력하세요
-4. 빈 줄이나 번호 없이 문장만 출력하세요
-5. 짧은 감탄사나 단독 표현([음악], [박수] 등)은 그대로 유지
+  const prompt = `당신은 유튜브 자막 편집 전문가입니다. 아래 자막은 영상 재생 타이밍에 맞춰 짧게 잘려 있어 문장이 중간에 끊깁니다.
 
-원본 자막:
-${fullText}
+**핵심 작업**: 끊어진 자막 줄들을 읽고, 의미상 하나의 완성된 문장으로 이어지는 줄들을 합쳐주세요.
 
-완성된 문장 목록:`
+**판단 기준**:
+- 줄이 전치사(of, in, to, for, with, from, that, which, because, if, when, although...)로 끝나면 → 다음 줄과 합침
+- 줄이 관사(a, an, the)로 끝나면 → 다음 줄과 합침
+- 줄이 쉼표나 접속사(and, but, or, so, yet)로 끝나면 → 다음 줄과 합침
+- 줄이 불완전한 절(주어만 있거나 동사만 있거나)이면 → 다음 줄과 합침
+- 마침표(.), 물음표(?), 느낌표(!)로 끝나면 → 완성된 문장 (새 줄 시작)
 
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 4000,
-      temperature: 0.1,
-    }),
-    signal: AbortSignal.timeout(25000),
-  })
+**출력 규칙**:
+- 완성된 문장만 줄바꿈으로 구분해서 출력
+- 번호([1], [2]...) 없이 문장 텍스트만 출력
+- 단어 추가/삭제/수정 절대 금지 (원문 단어 그대로)
+- [음악], [박수] 등 설명은 그대로 유지
 
-  if (!res.ok) {
-    return NextResponse.json({ error: `Groq 오류: ${res.status}` }, { status: 500 })
+**예시**:
+입력:
+[1] If you later find that of all the possible paths,
+[2] light took the shortest time
+[3] to get from A to B,
+[4] I wouldn't think it was optimizing for anything.
+[5] But now I will prove to you
+
+출력:
+If you later find that of all the possible paths, light took the shortest time to get from A to B, I wouldn't think it was optimizing for anything.
+But now I will prove to you
+
+---
+자막:
+${numbered}
+
+완성된 문장:`
+
+  // Groq 우선, 실패 시 Cerebras
+  const providers = [
+    groqKey && { url: 'https://api.groq.com/openai/v1/chat/completions', key: groqKey, model: 'llama-3.3-70b-versatile' },
+    cerebrasKey && { url: 'https://api.cerebras.ai/v1/chat/completions', key: cerebrasKey, model: 'gpt-oss-120b' },
+  ].filter(Boolean) as { url: string; key: string; model: string }[]
+
+  let normalized: string[] = []
+
+  for (const p of providers) {
+    try {
+      const res = await fetch(p.url, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${p.key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: p.model,
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 4000,
+          temperature: 0.05,
+        }),
+        signal: AbortSignal.timeout(25000),
+      })
+
+      if (!res.ok) { if (res.status === 429) continue; break }
+
+      const data = await res.json()
+      const raw = data.choices?.[0]?.message?.content ?? ''
+      normalized = raw.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0)
+      if (normalized.length > 0) break
+    } catch { continue }
   }
-
-  const data = await res.json()
-  const normalized = (data.choices?.[0]?.message?.content ?? '')
-    .split('\n')
-    .map((l: string) => l.trim())
-    .filter((l: string) => l.length > 0)
 
   if (!normalized.length) {
-    return NextResponse.json({ error: '정규화 결과 없음' }, { status: 500 })
+    // 정규화 실패 시 원문 반환
+    return NextResponse.json({ items, count: items.length })
   }
 
-  // 시간을 비례 배분
+  // 원본 타임스탬프 매핑 (정규화된 문장이 원본의 어느 구간인지 추정)
   const avgDuration = totalDuration / normalized.length
   const normalizedItems = normalized.map((text: string, i: number) => ({
     text,
