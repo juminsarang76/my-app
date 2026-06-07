@@ -484,7 +484,7 @@ export default function YoutubePage() {
               onChange={e => {
                 const val = e.target.value
                 setPasteText(val)
-                if (val.trim().length > 10) {
+                if (val.trim().length > 0) {
                   const parsed = parseSubtitleText(val)
                   if (parsed.length > 0) {
                     setItems(parsed)
@@ -495,7 +495,7 @@ export default function YoutubePage() {
                     setError('')
                     setNoCaption(false)
                   }
-                } else if (!val.trim()) {
+                } else {
                   setItems([])
                 }
               }}
