@@ -21,8 +21,10 @@ export default function YoutubePage() {
   const [loadingTranscript, setLoadingTranscript] = useState(false)
   const [loadingTranslate, setLoadingTranslate] = useState(false)
   const [loadingSummary, setLoadingSummary] = useState(false)
+  const [loadingWhisper, setLoadingWhisper] = useState(false)
   const [error, setError] = useState('')
   const [lang, setLang] = useState('')
+  const [noCaption, setNoCaption] = useState(false)  // 자막 없는 영상 여부
 
   const leftRef = useRef<HTMLDivElement>(null)
   const rightRef = useRef<HTMLDivElement>(null)
@@ -48,6 +50,7 @@ export default function YoutubePage() {
     setItems([])
     setTranslated([])
     setSummary('')
+    setNoCaption(false)
     setLoadingTranscript(true)
     setTab('원문')
     try {
@@ -62,9 +65,42 @@ export default function YoutubePage() {
       setVideoId(data.videoId)
       setLang(data.lang)
     } catch (e) {
-      setError(e instanceof Error ? e.message : '자막을 가져오지 못했습니다.')
+      const msg = e instanceof Error ? e.message : '자막을 가져오지 못했습니다.'
+      setError(msg)
+      // 자막 없는 영상이면 Whisper 옵션 표시
+      if (msg.includes('비활성화') || msg.includes('disabled') || msg.includes('CC')) {
+        setNoCaption(true)
+      }
     } finally {
       setLoadingTranscript(false)
+    }
+  }
+
+  async function handleWhisper() {
+    const vid = videoId || url.trim()
+    if (!vid) return
+    setError('')
+    setNoCaption(false)
+    setItems([])
+    setTranslated([])
+    setSummary("")
+    setLoadingWhisper(true)
+    setTab('원문')
+    try {
+      const res = await fetch('/api/youtube/whisper', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId: vid }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setItems(data.items)
+      setVideoId(data.videoId)
+      setLang(`${data.lang} (Whisper AI)`)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Whisper 인식에 실패했습니다.')
+    } finally {
+      setLoadingWhisper(false)
     }
   }
 
@@ -140,6 +176,26 @@ export default function YoutubePage() {
       {error && (
         <div style={{ padding: '12px 16px', background: '#FEF2F2', color: '#DC2626', borderRadius: 8, fontSize: 13, marginBottom: 16, lineHeight: 1.7, whiteSpace: 'pre-line' }}>
           {error}
+          {noCaption && (
+            <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid #FECACA' }}>
+              <div style={{ fontWeight: 700, marginBottom: 8, color: '#B91C1C' }}>🎙️ Whisper AI로 음성 인식 시도</div>
+              <div style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>
+                자막이 없어도 Groq Whisper AI가 오디오를 직접 분석해 자막을 생성합니다.<br/>
+                약 15분 이하 영상 지원 · 처리 시간 10~30초
+              </div>
+              <button
+                onClick={handleWhisper}
+                disabled={loadingWhisper}
+                style={{
+                  padding: '9px 20px', background: loadingWhisper ? '#e2e8f0' : '#7C3AED',
+                  color: loadingWhisper ? '#94a3b8' : '#fff',
+                  border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: loadingWhisper ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {loadingWhisper ? '🎙️ 음성 인식 중... (최대 30초)' : '🎙️ Whisper AI로 자막 생성'}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
