@@ -236,6 +236,11 @@ export default function YoutubePage() {
     }
   }
 
+  // 둘다 저장
+  async function handleSaveBoth() {
+    await Promise.allSettled([handleGithub(), handleNotion()])
+  }
+
   async function handleTranslate() {
     if (!items.length) return
     setLoadingTranslate(true)
@@ -323,9 +328,13 @@ export default function YoutubePage() {
         </div>
       )}
 
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1e293b', marginBottom: 20 }}>
-        ▶ 유튜브 자막 보기
-      </h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 10 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1e293b', margin: 0 }}>▶ 유튜브 자막 보기</h1>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <a href="/youtube/notion" style={{ padding: '6px 14px', background: '#000', color: '#fff', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 700 }}>📓 Notion 목록</a>
+          <a href="/youtube/obsidian" style={{ padding: '6px 14px', background: '#6d28d9', color: '#fff', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 700 }}>🗂 Obsidian 목록</a>
+        </div>
+      </div>
 
       {/* URL 입력 */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
@@ -392,18 +401,18 @@ export default function YoutubePage() {
               {loadingSummary ? '요약 중...' : '한글 요약'}
             </button>
             {/* 저장 버튼 */}
-            <div style={{ display: 'flex', gap: 6, marginLeft: 'auto', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, marginLeft: 'auto', flexWrap: 'wrap', alignItems: 'center' }}>
+              <button onClick={handleNotion} disabled={savingNotion} style={{ padding: '7px 14px', background: savingNotion ? '#e2e8f0' : '#000', color: savingNotion ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: savingNotion ? 'not-allowed' : 'pointer' }}>
+                {savingNotion ? '저장 중...' : '📓 노션저장'}
+              </button>
               <div style={{ display: 'flex', gap: 2 }}>
-                <button onClick={handleObsidian} style={{ padding: '7px 12px', background: '#6d28d9', color: '#fff', border: 'none', borderRadius: '8px 0 0 8px', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                  🗂 Obsidian
+                <button onClick={handleGithub} disabled={savingGithub} style={{ padding: '7px 12px', background: savingGithub ? '#e2e8f0' : '#6d28d9', color: savingGithub ? '#94a3b8' : '#fff', border: 'none', borderRadius: '8px 0 0 8px', fontWeight: 700, fontSize: 12, cursor: savingGithub ? 'not-allowed' : 'pointer' }}>
+                  {savingGithub ? '...' : '🗂 옵시디언저장'}
                 </button>
                 <button onClick={() => setShowObsidianSettings(true)} style={{ padding: '7px 8px', background: '#5b21b6', color: '#fff', border: 'none', borderRadius: '0 8px 8px 0', fontSize: 11, cursor: 'pointer' }} title="Obsidian 설정">⚙️</button>
               </div>
-              <button onClick={handleGithub} disabled={savingGithub} style={{ padding: '7px 14px', background: savingGithub ? '#e2e8f0' : '#24292f', color: savingGithub ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: savingGithub ? 'not-allowed' : 'pointer' }}>
-                {savingGithub ? '저장 중...' : '🐙 GitHub'}
-              </button>
-              <button onClick={handleNotion} disabled={savingNotion} style={{ padding: '7px 14px', background: savingNotion ? '#e2e8f0' : '#000', color: savingNotion ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: savingNotion ? 'not-allowed' : 'pointer' }}>
-                {savingNotion ? '저장 중...' : '📓 Notion'}
+              <button onClick={handleSaveBoth} disabled={savingNotion || savingGithub} style={{ padding: '7px 14px', background: (savingNotion || savingGithub) ? '#e2e8f0' : '#0369A1', color: (savingNotion || savingGithub) ? '#94a3b8' : '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12, cursor: (savingNotion || savingGithub) ? 'not-allowed' : 'pointer' }}>
+                {(savingNotion || savingGithub) ? '저장 중...' : '💾 둘다저장'}
               </button>
             </div>
           </div>
