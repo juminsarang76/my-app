@@ -52,8 +52,21 @@ async function fetchViaInnerTube(videoId: string, prefLangs: string[]) {
   if (!res.ok) throw new Error(`InnerTube API 실패: ${res.status}`)
   const data = await res.json()
 
-  const tracks: CaptionTrack[] = data?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? []
-  if (!tracks.length) throw new Error('이 영상에는 자막이 없습니다.\n\nWhisper AI로 음성 인식을 시도해보세요.')
+  // 디버그: 실제 응답 구조 확인
+  const captionSection = data?.captions
+  const renderer = captionSection?.playerCaptionsTracklistRenderer
+  const tracks: CaptionTrack[] = renderer?.captionTracks ?? []
+
+  if (!tracks.length) {
+    // 디버그 정보 포함
+    const debugInfo = {
+      hasCaption: !!captionSection,
+      hasRenderer: !!renderer,
+      rendererKeys: renderer ? Object.keys(renderer) : [],
+      videoDetails: data?.videoDetails?.title ?? 'unknown',
+    }
+    throw new Error(`자막 없음. Debug: ${JSON.stringify(debugInfo)}`)
+  }
 
   // 선호 언어 선택
   let selected = tracks[0]
