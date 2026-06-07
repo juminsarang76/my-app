@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { hashPassword } from '@/app/lib/auth'
+import { hashPassword, isAdmin, ALL_MENUS } from '@/app/lib/auth'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,12 +27,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '접근이 거부된 계정입니다.' }, { status: 403 })
   }
 
-  const { data: perms } = await supabase
-    .from('haru_permissions').select('menu_key').eq('user_id', user.id)
+  // Admin은 항상 모든 권한
+  const permissions = isAdmin(user.email)
+    ? ALL_MENUS.map(m => m.key)
+    : await supabase
+        .from('haru_permissions').select('menu_key').eq('user_id', user.id)
+        .then(({ data }) => data?.map(p => p.menu_key) ?? [])
 
   return NextResponse.json({
     id: user.id, name: user.name, email: user.email,
     role: user.role, status: user.status,
-    permissions: perms?.map(p => p.menu_key) ?? [],
+    permissions,
   })
 }
