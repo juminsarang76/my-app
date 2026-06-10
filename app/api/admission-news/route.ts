@@ -1,6 +1,88 @@
 import { NextResponse } from 'next/server'
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY
+const GROQ_API_KEY      = process.env.GROQ_API_KEY
+const CEREBRAS_API_KEY  = process.env.CEREBRAS_API_KEY
+const GEMINI_API_KEY    = process.env.GEMINI_API_KEY
+
+// OpenAI-compatible LLM 호출 (Groq / Cerebras 공용)
+async function callOpenAICompat(
+  baseUrl: string, apiKey: string, model: string, messages: object[], providerName: string
+): Promise<string> {
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, response_format: { type: 'json_object' }, temperature: 0.2, messages }),
+  })
+  if (!res.ok) {
+    const err = await res.text().catch(() => res.statusText)
+    throw new Error(`${providerName} ${res.status}: ${err.slice(0, 120)}`)
+  }
+  const data = await res.json()
+  return data.choices[0].message.content
+}
+
+// Gemini (generateContent API)
+async function callGemini(messages: { role: string; content: string }[]): Promise<string> {
+  const systemMsg = messages.find(m => m.role === 'system')?.content ?? ''
+  const userMsg   = messages.find(m => m.role === 'user')?.content ?? ''
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemMsg }] },
+        contents: [{ role: 'user', parts: [{ text: userMsg }] }],
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
+      }),
+    }
+  )
+  if (!res.ok) {
+    const err = await res.text().catch(() => res.statusText)
+    throw new Error(`Gemini ${res.status}: ${err.slice(0, 120)}`)
+  }
+  const data = await res.json()
+  return data.candidates[0].content.parts[0].text
+}
+
+// 폴백 체인: Groq → Cerebras → Gemini
+async function callLLM(systemPrompt: string, userPrompt: string): Promise<{ text: string; provider: string }> {
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user',   content: userPrompt },
+  ]
+
+  if (GROQ_API_KEY) {
+    try {
+      const text = await callOpenAICompat(
+        'https://api.groq.com/openai/v1', GROQ_API_KEY,
+        'llama-3.3-70b-versatile', messages, 'Groq'
+      )
+      return { text, provider: 'Groq' }
+    } catch (e) {
+      console.warn('Groq 실패, Cerebras 시도:', (e as Error).message)
+    }
+  }
+
+  if (CEREBRAS_API_KEY) {
+    try {
+      const text = await callOpenAICompat(
+        'https://api.cerebras.ai/v1', CEREBRAS_API_KEY,
+        'llama-3.3-70b', messages, 'Cerebras'
+      )
+      return { text, provider: 'Cerebras' }
+    } catch (e) {
+      console.warn('Cerebras 실패, Gemini 시도:', (e as Error).message)
+    }
+  }
+
+  if (GEMINI_API_KEY) {
+    const text = await callGemini(messages)
+    return { text, provider: 'Gemini' }
+  }
+
+  throw new Error('사용 가능한 LLM API 키가 없습니다. GROQ_API_KEY / CEREBRAS_API_KEY / GEMINI_API_KEY 중 하나 이상 필요.')
+}
 
 // 분석·통계 위주 쿼리 — 단편 일정·행사 뉴스 최소화
 const RSS_QUERIES = [
@@ -67,11 +149,7 @@ export async function GET() {
     return true
   }).slice(0, 30)
 
-  if (!GROQ_API_KEY) {
-    return NextResponse.json({ error: 'GROQ_API_KEY 없음' }, { status: 500 })
-  }
-
-  const prompt = `
+  const userPrompt = `
 너는 2027학년도 대한민국 대입 입시 전문 분석가다.
 아래는 2026년 6월 수집된 대입 관련 뉴스 ${recent.length}건이다.
 
@@ -121,34 +199,20 @@ ${recent.map((item, i) => `(${i + 1}) ${item.pubDate ? new Date(item.pubDate).to
 }
 `
 
-  const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${GROQ_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      response_format: { type: 'json_object' },
-      temperature: 0.2,
-      messages: [
-        { role: 'system', content: '당신은 한국 대입 입시 분석 전문가입니다. 지시한 JSON 형식만 반환하세요. 다른 텍스트 없이 JSON만.' },
-        { role: 'user', content: prompt },
-      ],
-    }),
-  })
-
-  if (!groqRes.ok) {
-    return NextResponse.json({ error: `Groq API 오류 ${groqRes.status}` }, { status: 500 })
+  const systemPrompt = '당신은 한국 대입 입시 분석 전문가입니다. 지시한 JSON 형식만 반환하세요. 다른 텍스트 없이 JSON만.'
+  let llmResult: { text: string; provider: string }
+  try {
+    llmResult = await callLLM(systemPrompt, userPrompt)
+  } catch (e) {
+    return NextResponse.json({ error: (e as Error).message }, { status: 500 })
   }
 
-  const groqData = await groqRes.json()
   let analysis: { summary?: string; news?: unknown[]; points?: unknown[] }
   try {
-    analysis = JSON.parse(groqData.choices[0].message.content)
+    analysis = JSON.parse(llmResult.text)
   } catch {
     return NextResponse.json(
-      { error: 'JSON 파싱 실패', raw: groqData.choices[0].message.content },
+      { error: 'JSON 파싱 실패', provider: llmResult.provider, raw: llmResult.text.slice(0, 300) },
       { status: 500 }
     )
   }
@@ -157,6 +221,7 @@ ${recent.map((item, i) => `(${i + 1}) ${item.pubDate ? new Date(item.pubDate).to
     fetchedAt: new Date().toISOString(),
     periodFrom: new Date(june1).toISOString(),
     rawCount: recent.length,
+    provider: llmResult.provider,
     summary: analysis.summary ?? '',
     news: analysis.news ?? [],
     points: analysis.points ?? [],

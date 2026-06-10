@@ -257,7 +257,8 @@ async function doRefresh() {
     document.getElementById('news-section').innerHTML   = renderNews(data.news)
     document.getElementById('points-section').innerHTML = renderPoints(data.points)
 
-    statusEl.textContent = data.summary ? `✓ ${data.summary}` : `✓ ${fmtDate(data.fetchedAt)} 업데이트 완료`
+    const providerLabel = data.provider ? ` (분석: ${data.provider})` : ''
+    statusEl.textContent = data.summary ? `✓ ${data.summary}${providerLabel}` : `✓ ${fmtDate(data.fetchedAt)} 업데이트 완료${providerLabel}`
     document.getElementById('updated-line').textContent = `마지막 업데이트: ${fmtDate(data.fetchedAt)}`
   } catch (e) {
     document.getElementById('news-section').innerHTML   = `<div class="error-box">오류: ${e.message}</div>`
