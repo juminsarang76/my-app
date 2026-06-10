@@ -226,6 +226,26 @@
     color: #94a3b8;
     margin-top: 40px;
   }
+
+  /* 리프레쉬 버튼 */
+  .refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 7px 18px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .refresh-btn:hover { background: rgba(255,255,255,0.3); }
+  .refresh-btn.spinning .icon { animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -235,7 +255,19 @@
   <h1>📰 2027 대입정보 — 5~6월 뉴스</h1>
   <p>민준이 (2027학년도 수능 · 2026.11.19 시행)</p>
   <span class="badge">2026.05~06 기준 · 사실/추론 명시 · 출처 링크 포함</span>
+  <br>
+  <button class="refresh-btn" onclick="handleRefresh(this)">
+    <span class="icon" style="display:inline-block">↻</span> 새로고침
+  </button>
 </header>
+
+<script>
+function handleRefresh(btn) {
+  btn.classList.add('spinning')
+  btn.disabled = true
+  setTimeout(() => location.reload(), 400)
+}
+</script>
 
 <main>
 
