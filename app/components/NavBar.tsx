@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { getStoredUser, AuthUser, ALL_MENUS } from '@/app/lib/auth'
+import { getStoredUser, setStoredUser, AuthUser, ALL_MENUS, isAdmin } from '@/app/lib/auth'
 
 // 권한 불필요한 특수 링크 (항상 표시)
 const SPECIAL_LINKS = [
@@ -16,7 +16,15 @@ export default function NavBar() {
   const [user, setUser] = useState<AuthUser | null>(null)
 
   useEffect(() => {
-    setUser(getStoredUser())
+    const stored = getStoredUser()
+    if (stored && isAdmin(stored.email)) {
+      // admin은 항상 현재 ALL_MENUS 전체로 갱신
+      const updated = { ...stored, permissions: ALL_MENUS.map(m => m.key) }
+      setStoredUser(updated)
+      setUser(updated)
+    } else {
+      setUser(stored)
+    }
   }, [pathname])
 
   // 이 경로들은 자체 헤더가 있어 NavBar 숨김
@@ -31,8 +39,11 @@ export default function NavBar() {
     pathname.startsWith('/garden')
   ) return null
 
+  // admin은 항상 전체 / 일반 유저는 부여된 권한만
   const permittedMenus = user
-    ? ALL_MENUS.filter(m => user.permissions.includes(m.key))
+    ? isAdmin(user.email)
+      ? [...ALL_MENUS]
+      : ALL_MENUS.filter(m => user.permissions.includes(m.key))
     : []
 
   return (

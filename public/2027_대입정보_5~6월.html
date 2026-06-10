@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2027 대입정보 — 5~6월 뉴스 & 전략 변화</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: #f0f7ff;
+    color: #1a2a3a;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+    color: white;
+    text-align: center;
+    padding: 48px 24px 36px;
+  }
+  header .back {
+    display: inline-block;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+  }
+  header .back:hover { color: white; }
+  header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  header p { font-size: 14px; color: rgba(255,255,255,0.85); }
+  header .badge {
+    display: inline-block;
+    margin-top: 14px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  main { max-width: 760px; margin: 0 auto; padding: 36px 20px 80px; }
+
+  /* 안내 박스 */
+  .guide-box {
+    background: #E0F2FE;
+    border: 1px solid #BAE6FD;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+    font-size: 13px;
+    color: #0369a1;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .guide-box .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .guide-box ul { list-style: none; padding: 0; }
+  .guide-box li { margin-bottom: 4px; }
+
+  /* 섹션 레이블 */
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0369a1;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #BAE6FD;
+  }
+
+  /* 뉴스 카드 */
+  .news-card {
+    background: white;
+    border: 1px solid #BAE6FD;
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .news-card .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .news-card .date {
+    font-size: 11px;
+    color: #64748b;
+    background: #f1f5f9;
+    border-radius: 6px;
+    padding: 2px 8px;
+  }
+  .news-card .title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #0f172a;
+  }
+  .news-card .body {
+    font-size: 13.5px;
+    color: #334155;
+    margin-bottom: 10px;
+  }
+  .news-card .source {
+    font-size: 11px;
+    color: #1D9E75;
+    text-decoration: none;
+  }
+  .news-card .source:hover { text-decoration: underline; }
+
+  /* 태그 */
+  .tag {
+    display: inline-block;
+    border-radius: 6px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag-fact    { background: #dcfce7; color: #166534; }
+  .tag-infer   { background: #fef9c3; color: #854d0e; }
+  .tag-change  { background: #fee2e2; color: #991b1b; }
+  .tag-site    { background: #ede9fe; color: #5b21b6; }
+
+  /* 비교 카드 (1~4월 vs 5~6월) */
+  .compare-block {
+    background: white;
+    border: 1px solid #BAE6FD;
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .compare-block .topic {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 14px;
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 520px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+  .compare-col {
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+  .col-before {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+  }
+  .col-after {
+    background: #E0F2FE;
+    border: 1px solid #BAE6FD;
+    color: #0c4a6e;
+  }
+  .col-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .col-before .col-label { color: #94a3b8; }
+  .col-after  .col-label { color: #0369a1; }
+  .compare-col ul { list-style: none; padding: 0; }
+  .compare-col li { margin-bottom: 5px; padding-left: 12px; position: relative; }
+  .compare-col li::before { content: '•'; position: absolute; left: 0; }
+
+  /* 사이트 그리드 */
+  .site-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  @media (max-width: 520px) { .site-grid { grid-template-columns: 1fr; } }
+  .site-card {
+    background: white;
+    border: 1px solid #BAE6FD;
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    transition: box-shadow 0.15s;
+  }
+  .site-card:hover { box-shadow: 0 2px 10px rgba(3,105,161,0.1); }
+  .site-icon { font-size: 22px; flex-shrink: 0; }
+  .site-body .site-name { font-size: 13.5px; font-weight: 600; margin-bottom: 2px; }
+  .site-body .site-desc { font-size: 11px; color: #64748b; }
+
+  /* 주의 박스 */
+  .warn-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #78350f;
+    margin-top: 8px;
+  }
+  .warn-box strong { color: #92400e; }
+
+  /* 업데이트 날짜 */
+  .updated {
+    text-align: right;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/민준입시.html" class="back">← 민준 입시 자료로</a>
+  <h1>📰 2027 대입정보 — 5~6월 뉴스</h1>
+  <p>민준이 (2027학년도 수능 · 2026.11.19 시행)</p>
+  <span class="badge">2026.05~06 기준 · 사실/추론 명시 · 출처 링크 포함</span>
+</header>
+
+<main>
+
+  <!-- 안내 -->
+  <div class="guide-box">
+    <span class="icon">ℹ️</span>
+    <ul>
+      <li><span class="tag tag-fact">사실</span> 공식 발표·보도 근거가 있는 내용</li>
+      <li><span class="tag tag-infer">추론</span> 전문가 분석·입시 학원 해석 (검증 필요)</li>
+      <li><span class="tag tag-change">변화</span> 1~4월 대비 5~6월에 달라진 인식·전략</li>
+    </ul>
+  </div>
+
+
+  <!-- 5~6월 핵심 뉴스 -->
+  <div class="section-label">📋 5~6월 핵심 뉴스</div>
+
+  <div class="news-card">
+    <div class="meta">
+      <span class="date">2026.06.04</span>
+      <span class="tag tag-fact">사실</span>
+    </div>
+    <div class="title">2027학년도 6월 모의평가 시행 — 졸업생 역대 최다</div>
+    <div class="body">
+      평가원 주관 6월 모의평가가 전국 고등학교·지정 학원에서 일제히 시행됐다. 재학생(고3)과 졸업생이 함께 치르는 첫 '실전급' 시험으로, 졸업생 응시자가 <strong>9만 7천여 명</strong>으로 역대 최고치를 기록했다. 체감 난이도는 전반적으로 "보통" 평가가 많았으나, 영어 난이도 평가는 전문가마다 엇갈렸다.
+      <br><br>
+      국어·수학은 작년 수능보다 평이하게 출제됐으나, 일부 전문가는 "실질 체감 난도는 높다"고 분석했다 <span class="tag tag-infer">추론</span>.
+    </div>
+    <a href="https://v.daum.net/v/20260604162217726" class="source" target="_blank">출처: 다음뉴스 — 6월 모의고사 답지·체감 난이도</a>
+    <br>
+    <a href="https://dgmbc.com/NewsArticle/844121" class="source" target="_blank">출처: 대구MBC — 국·영·수 모두 2025 수능 대비 평이</a>
+  </div>
+
+  <div class="news-card">
+    <div class="meta">
+      <span class="date">2026.06.10</span>
+      <span class="tag tag-fact">사실</span>
+      <span class="tag tag-change">변화</span>
+    </div>
+    <div class="title">사탐·확통 쏠림 심화 — "등급 유리해도 표점 불리할 수 있어"</div>
+    <div class="body">
+      6월 모평 이후 사탐(사회탐구)·확률과통계 응시 쏠림이 더욱 두드러졌다. 입시 전문가들은 <strong>"등급은 유리해도 표준점수(표점)가 불리할 수 있다"</strong>고 경고했다. 쏠림 과목일수록 평균이 높아져 같은 원점수라도 표준점수가 낮게 산출되기 때문이다.
+      <br><br>
+      <span class="tag tag-infer">추론</span> 사탐런 과목(생활과 윤리, 사회문화)은 응시자 수준이 낮아 상위권에 유리할 수 있으나, 반대로 최상위권은 과탐 유지가 표준점수 면에서 더 유리할 수 있다.
+    </div>
+    <a href="https://www.newspim.com/news/view/20260610000123" class="source" target="_blank">출처: 뉴스핌 — 사탐·확통 쏠림 뚜렷 (2026.06.10)</a>
+  </div>
+
+  <div class="news-card">
+    <div class="meta">
+      <span class="date">2026.06.05</span>
+      <span class="tag tag-infer">추론</span>
+    </div>
+    <div class="title">6월 모평 이후 대입 전략 — "우선순위 설정하고 취약점 보완해야"</div>
+    <div class="body">
+      입시 전문가들은 6월 모평 결과를 단순한 등급 확인이 아닌 <strong>'수시 지원 라인 점검 도구'</strong>로 활용하라고 조언했다. 국어·수학 성적 하락이 예상보다 크면 수시 비중을 높이고, 예상보다 잘 나왔으면 정시 가능성도 함께 검토할 시점이다.
+      <br><br>
+      <span class="tag tag-infer">추론</span> 진학사 분석에 따르면, 6월 모평 1등급 수험생 중 수능에서 등급이 하락한 비율이 국어 43.6%, 수학 41.5%로 나타났다. 6월 모평 성적이 수능 성적으로 직결되지 않음을 시사한다.
+    </div>
+    <a href="https://www.newspim.com/news/view/20260605000233" class="source" target="_blank">출처: 뉴스핌 — 6월 모평 이후 대입 전략 (2026.06.05)</a>
+    <br>
+    <a href="https://www.jinhak.com/jh/high3/univ-entrance-info/ipsi-analysis/ipsi-strategy/100000448" class="source" target="_blank">출처: 진학사 — 고3↓ N수↑ 사탐↑ 세 가지 수능 전망</a>
+  </div>
+
+  <div class="news-card">
+    <div class="meta">
+      <span class="date">2026.05</span>
+      <span class="tag tag-fact">사실</span>
+    </div>
+    <div class="title">의대까지 번진 사탐런 — 사탐 선택률 80% 돌파 가능성</div>
+    <div class="body">
+      <strong>2026학년도(작년) 수능</strong>에서 사탐과목을 1개 이상 선택한 비율이 이미 77.3%였으며, 2027학년도에는 80%를 넘을 가능성이 전문가들에 의해 거론됐다. 특히 과탐 2과목 응시자가 2024학년도 21만 3천 명(49.8%)에서 2026학년도 10만 7천 명(22.9%)으로 절반 넘게 감소했다.
+      <br><br>
+      서울대·연세대·고려대 등 12개 주요 대학이 수시에서 사탐을 허용하면서 '과탐을 굳이 안 해도 된다'는 인식이 확산됐다 <span class="tag tag-infer">추론</span>.
+    </div>
+    <a href="https://www.newspim.com/news/view/20260306000708" class="source" target="_blank">출처: 뉴스핌 — 의대까지 번진 사탐런 (2026.03.06)</a>
+    <br>
+    <a href="https://sgsg.hankyung.com/article/2026041015711" class="source" target="_blank">출처: 생글생글 — 서·연·고 등 12개대 수시 사탐 효율적 (2026.04.10)</a>
+  </div>
+
+  <div class="news-card">
+    <div class="meta">
+      <span class="date">2026.04.10</span>
+      <span class="tag tag-fact">사실</span>
+    </div>
+    <div class="title">선택과목 대이동 — 과탐 급감·사탐 쏠림에 2027 수능 변수 증가</div>
+    <div class="body">
+      전자신문 분석에 따르면, 자연계 수험생의 과탐 이탈로 탐구 과목 응시 구도가 근본적으로 달라졌다. 과탐·사탐 혼합 응시(사탐 1 + 과탐 1)까지 포함하면 사탐 관련 응시 비중이 80%에 달한다는 분석이다.
+      <br><br>
+      <span class="tag tag-infer">추론</span> 과탐 2과목을 모두 유지하는 수험생 풀이 줄면서 과탐 표준점수가 상대적으로 높아질 수 있다. 최상위권 입장에서는 '역설적으로 과탐이 유리해지는' 상황이 될 수 있다.
+    </div>
+    <a href="https://www.etnews.com/20260410000237" class="source" target="_blank">출처: 전자신문 — 선택과목 대이동 (2026.04.10)</a>
+  </div>
+
+
+  <!-- 1~4월 vs 5~6월 변화 비교 -->
+  <div class="section-label">🔄 1~4월 vs 5~6월 — 달라진 생각</div>
+
+  <div class="compare-block">
+    <div class="topic">🧪 탐구 선택 — 사탐 vs 과탐</div>
+    <div class="compare-grid">
+      <div class="compare-col col-before">
+        <div class="col-label">1~4월 시각</div>
+        <ul>
+          <li>과탐 지정 폐지로 사탐도 가능하다는 인식 시작</li>
+          <li>학원가: "과탐이 어려우면 사탐 고려해볼 만"</li>
+          <li>부모: 아직 과탐 유지 기조 (이공계 지원 대비)</li>
+          <li>서울대 스마트시스템 → 과탐 선호 분위기</li>
+        </ul>
+      </div>
+      <div class="compare-col col-after">
+        <div class="col-label">5~6월 시각 <span class="tag tag-change" style="font-size:10px">변화</span></div>
+        <ul>
+          <li>6월 모평 이후 사탐 전환 논의 본격화</li>
+          <li>학원가: "쏠림 과목은 표점 불리" 경고 동시에 나옴</li>
+          <li>부모: "남들 다 사탐 하면 과탐이 오히려 유리하지 않나?" 혼란</li>
+          <li>전문가: "6월 성적만 보고 과목 바꾸는 건 위험"</li>
+        </ul>
+      </div>
+    </div>
+    <div class="warn-box" style="margin-top:12px">
+      <strong>핵심 판단 기준 (추론):</strong> 서울대·의대처럼 정시 비중이 높고 과탐 가산점이 있는 대학을 목표로 한다면, 사탐 전환보다 <strong>과탐 유지가 표준점수·가산점 모두 유리</strong>할 가능성이 높다. 서울대 스마트시스템과학과 지원자라면 재고 필요.
+    </div>
+  </div>
+
+  <div class="compare-block">
+    <div class="topic">📊 수시 vs 정시 비중 인식</div>
+    <div class="compare-grid">
+      <div class="compare-col col-before">
+        <div class="col-label">1~4월 시각</div>
+        <ul>
+          <li>수시 80% 시대 공식화 (80.3%)</li>
+          <li>학생부 관리가 핵심 변수</li>
+          <li>정시는 N수생 비중이 관건</li>
+        </ul>
+      </div>
+      <div class="compare-col col-after">
+        <div class="col-label">5~6월 시각 <span class="tag tag-change" style="font-size:10px">변화</span></div>
+        <ul>
+          <li>6월 모평 성적에 따라 수시/정시 비중 개인별 재조정 시점</li>
+          <li>N수생 9.7만 명 역대 최다 → 정시 경쟁 더 치열 예상</li>
+          <li>수시 최저기준 맞출 수 있는지 6월 성적으로 판단 가능</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-block">
+    <div class="topic">📝 수능 난이도 예측</div>
+    <div class="compare-grid">
+      <div class="compare-col col-before">
+        <div class="col-label">1~4월 시각</div>
+        <ul>
+          <li>2026 수능이 어렵게 출제됨 → 2027 반사이익 기대</li>
+          <li>"올해는 쉬울 것" 기대감 일부 존재</li>
+        </ul>
+      </div>
+      <div class="compare-col col-after">
+        <div class="col-label">5~6월 시각 <span class="tag tag-change" style="font-size:10px">변화</span></div>
+        <ul>
+          <li>6월 모평 체감 난이도 "보통" → 수능도 비슷하거나 약간 어려울 것으로 예측</li>
+          <li>"쉬운 해는 없다"는 진학사 분석 확산</li>
+          <li>N수생 역대 최다 → 상위권 경쟁 강도 여전</li>
+        </ul>
+      </div>
+    </div>
+    <div class="warn-box" style="margin-top:12px">
+      <span class="tag tag-infer">추론</span> 6월 모평이 다소 평이하게 출제됐으므로 평가원이 9월 또는 수능에서 난이도를 조정할 가능성 있음. 방심 금물.
+    </div>
+  </div>
+
+
+  <!-- 주요 사이트 -->
+  <div class="section-label">🌐 주요 대입 정보 사이트</div>
+
+  <div class="site-grid">
+    <a href="https://www.adiga.kr/" class="site-card" target="_blank">
+      <span class="site-icon">🏛️</span>
+      <div class="site-body">
+        <div class="site-name">대입정보포털 어디가</div>
+        <div class="site-desc">교육부 공식 · 195개 대학 통합 정보</div>
+      </div>
+    </a>
+    <a href="https://www.jinhak.com/" class="site-card" target="_blank">
+      <span class="site-icon">🎯</span>
+      <div class="site-body">
+        <div class="site-name">진학사</div>
+        <div class="site-desc">합격예측 · 입시 전략 분석</div>
+      </div>
+    </a>
+    <a href="https://www.ebsi.co.kr/ebs/ent/entaNg/retrieveEntNgUnivIpsiInfoList.ebs" class="site-card" target="_blank">
+      <span class="site-icon">📡</span>
+      <div class="site-body">
+        <div class="site-name">EBSi 입시정보</div>
+        <div class="site-desc">시험 일정 · 수능 연계 정보</div>
+      </div>
+    </a>
+    <a href="https://www.megastudy.net/entinfo/main/entinfo_popup_251209.asp?tab_no=1" class="site-card" target="_blank">
+      <span class="site-icon">📅</span>
+      <div class="site-body">
+        <div class="site-name">메가스터디 전형일정</div>
+        <div class="site-desc">2027학년도 대입 전형 상세 일정</div>
+      </div>
+    </a>
+    <a href="https://www.nesin.com/" class="site-card" target="_blank">
+      <span class="site-icon">📊</span>
+      <div class="site-body">
+        <div class="site-name">내신닷컴</div>
+        <div class="site-desc">합격 데이터 · 입시 일정표</div>
+      </div>
+    </a>
+    <a href="https://geteduify.com/parent-guide/2027%ED%95%99%EB%85%84%EB%8F%84-%EB%8C%80%EC%9E%85%EC%9D%BC%EC%A0%95-%EC%B4%9D%EC%A0%95%EB%A6%AC-2026-%EC%88%98%EB%8A%A5%C2%B7%EB%AA%A8%EC%9D%98%EA%B3%A0%EC%82%AC-%EC%8A%A4%EC%BC%80%EC%A4%84/" class="site-card" target="_blank">
+      <span class="site-icon">🗺️</span>
+      <div class="site-body">
+        <div class="site-name">2027 대입 일정 총정리</div>
+        <div class="site-desc">수능·모의고사 스케줄 상세</div>
+      </div>
+    </a>
+    <a href="https://riroschool.kr/kceenews/detail/251" class="site-card" target="_blank">
+      <span class="site-icon">📖</span>
+      <div class="site-body">
+        <div class="site-name">리로스쿨 입시매거진</div>
+        <div class="site-desc">2027 대입 바로 알기 가이드</div>
+      </div>
+    </a>
+    <a href="https://sgsg.hankyung.com/article/2026022031801" class="site-card" target="_blank">
+      <span class="site-icon">🏥</span>
+      <div class="site-body">
+        <div class="site-name">생글생글 — 2027 의대 전략</div>
+        <div class="site-desc">수시 사탐 허용 대학 39개 의대 분석</div>
+      </div>
+    </a>
+  </div>
+
+
+  <!-- 서울대 스마트시스템 관점 요약 -->
+  <div class="section-label">🎓 서울대 스마트시스템과학과 관점 요약</div>
+
+  <div class="news-card" style="border-color: #a5f3fc;">
+    <div class="meta">
+      <span class="tag tag-infer">추론</span>
+      <span style="font-size:12px; color:#64748b">6월 모평 이후 판단 기준</span>
+    </div>
+    <div class="title">탐구 과목 전략 — 사탐 전환 여부</div>
+    <div class="body">
+      <strong>서울대 정시</strong>는 수능 위주 전형에서 <strong>과탐 응시자에게 가산점</strong>을 부여한다. 수시(일반전형, 지역균형)도 과탐 응시를 권고하는 구조다.
+      <br><br>
+      6월 모평 이후 사탐 전환을 고려하는 흐름이 생겼으나, 서울대 스마트시스템과학과 목표 시 아래 기준으로 판단:
+      <ul style="margin-top:10px; margin-left:16px; font-size:13px; color:#334155;">
+        <li style="margin-bottom:6px"><span class="tag tag-fact">사실</span> 서울대 정시 — 수학(미적분/기하) + 과탐 응시 시 가산점 존재</li>
+        <li style="margin-bottom:6px"><span class="tag tag-infer">추론</span> 과탐 응시자 감소 → 과탐 표준점수 상대적 상승 가능</li>
+        <li style="margin-bottom:6px"><span class="tag tag-infer">추론</span> 사탐 쏠림으로 생활·사문 표준점수 하락 → 최상위권은 불리</li>
+        <li><span class="tag tag-fact">사실</span> 학원·전문가 공통 의견: "6월 성적만 보고 과탐→사탐 전환은 위험"</li>
+      </ul>
+    </div>
+    <div class="warn-box" style="margin-top:12px">
+      <strong>결론 (추론):</strong> 서울대 스마트시스템 목표 유지 시 과탐 2과목 유지가 합리적. 단, 민준이의 6월 모평 과탐 성적이 기대 이하라면 담임·학원 선생님과 개별 상담 필요.
+    </div>
+  </div>
+
+
+  <p class="updated">페이지 기준일: 2026년 6월 10일 · 다음 업데이트: 9월 모의평가 이후</p>
+
+</main>
+
+</body>
+</html>
