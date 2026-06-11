@@ -17,9 +17,22 @@ interface ApiData {
   monthly: MonthRow[]
   industry: IndRow[]
   industryMonthly?: IndSeries[]
+  industryUrate?: IndSeries[]
   source: string
   demo: boolean
 }
+
+// IndSeries[] → LineChart 형식으로 병합
+function mergeSeries(series: IndSeries[]): Record<string, number | string>[] {
+  if (!series.length) return []
+  const dates = series[0].data.map(d => d.date)
+  return dates.map((date, i) => {
+    const row: Record<string, number | string> = { date }
+    series.forEach(s => { row[s.name] = s.data[i]?.value ?? 0 })
+    return row
+  })
+}
+const IND_COLORS = ['#0369A1','#ec4899','#1D9E75','#f59e0b','#8b5cf6','#06b6d4']
 
 /* ── SVG 라인 차트 (인터랙티브 툴팁 포함) ───────────────── */
 function LineChart({
@@ -332,27 +345,15 @@ export default function EmploymentPage() {
                     colors={['#0369A1']}
                     labels={['취업자 (천명)']}
                   />
-                  {(() => {
-                    const im = data.industryMonthly ?? []
-                    if (!im.length) return null
-                    // 날짜 기준 병합 → LineChart 형식
-                    const dates = im[0].data.map(d => d.date)
-                    const merged = dates.map((date, i) => {
-                      const row: Record<string, number | string> = { date }
-                      im.forEach(s => { row[s.name] = s.data[i]?.value ?? 0 })
-                      return row
-                    })
-                    const IND_COLORS = ['#0369A1','#ec4899','#1D9E75','#f59e0b','#8b5cf6','#06b6d4']
-                    return (
-                      <LineChart
-                        title="주요 산업별 취업자 추이 (단위: 천명)"
-                        data={merged}
-                        keys={im.map(s => s.name)}
-                        colors={im.map((_, i) => IND_COLORS[i % IND_COLORS.length])}
-                        labels={im.map(s => s.name)}
-                      />
-                    )
-                  })()}
+                  {(data.industryMonthly?.length ?? 0) > 0 && (
+                    <LineChart
+                      title="주요 산업별 취업자 추이 (단위: 천명)"
+                      data={mergeSeries(data.industryMonthly!)}
+                      keys={data.industryMonthly!.map(s => s.name)}
+                      colors={data.industryMonthly!.map((_, i) => IND_COLORS[i % IND_COLORS.length])}
+                      labels={data.industryMonthly!.map(s => s.name)}
+                    />
+                  )}
                 </>
               )}
 
@@ -384,6 +385,16 @@ export default function EmploymentPage() {
                     labels={['실업률']}
                     unit="%"
                   />
+                  {(data.industryUrate?.length ?? 0) > 0 && (
+                    <LineChart
+                      title="주요 산업별 실업률 (직전 직장 기준, %)"
+                      data={mergeSeries(data.industryUrate!)}
+                      keys={data.industryUrate!.map(s => s.name)}
+                      colors={data.industryUrate!.map((_, i) => IND_COLORS[i % IND_COLORS.length])}
+                      labels={data.industryUrate!.map(s => s.name)}
+                      unit="%"
+                    />
+                  )}
                 </>
               )}
 

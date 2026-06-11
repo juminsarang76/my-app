@@ -105,6 +105,32 @@ function genIndustryMonthly() {
   return series
 }
 
+// 산업별 실업률(직전 직장 기준, %) — 건설·제조 높고 건강복지 낮음
+const IND_URATE_BASE = [
+  { name: '건설업',           base: 4.2, season: [1.8,1.5,0.6,-0.4,-0.6,-0.4,-0.2,-0.3,-0.4,-0.2,0.6,1.4], drift: -0.02 },
+  { name: '제조업',           base: 3.1, season: [0.6,0.5,0.1,-0.2,-0.3,-0.2,-0.1,-0.1,-0.2,-0.1,0.2,0.5], drift: -0.01 },
+  { name: '도소매·음식·숙박', base: 3.6, season: [0.9,0.7,0.2,-0.3,-0.4,-0.3,-0.2,-0.2,-0.3,-0.1,0.3,0.7], drift: -0.015 },
+  { name: '사업·개인서비스',  base: 2.8, season: [0.5,0.4,0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.2,-0.1,0.2,0.4], drift: -0.01 },
+  { name: '농림어업',         base: 2.0, season: [1.2,1.0,0.3,-0.5,-0.8,-0.7,-0.5,-0.4,-0.5,-0.3,0.4,1.0], drift: 0 },
+  { name: '건강·복지',        base: 1.6, season: [0.3,0.2,0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,0,0.1,0.2],   drift: -0.005 },
+]
+
+function genIndustryUrate() {
+  const series = IND_URATE_BASE.map(s => ({ name: s.name, data: [] as { date: string; value: number }[] }))
+  const years = [2024, 2025, 2026]
+  years.forEach((yr, yi) => {
+    const len = yr === 2026 ? 6 : 12
+    for (let m = 0; m < len; m++) {
+      const date = `${yr}.${String(m + 1).padStart(2, '0')}`
+      IND_URATE_BASE.forEach((s, si) => {
+        const v = s.base + s.season[m] + s.drift * (yi * 12 + m) + (Math.random() - 0.5) * 0.2
+        series[si].data.push({ date, value: +Math.max(0.3, v).toFixed(1) })
+      })
+    }
+  })
+  return series
+}
+
 // ── 실제 KOSIS 호출 ──────────────────────────────────────────────────
 async function fetchReal() {
   const [rows4S, rows13] = await Promise.all([
@@ -179,6 +205,7 @@ export async function GET() {
     monthly:         genMonthly(),
     industry:        genIndustry(),
     industryMonthly: genIndustryMonthly(),
+    industryUrate:   genIndustryUrate(),
     source: 'demo',
     demo: true,
   })
