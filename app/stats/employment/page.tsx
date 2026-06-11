@@ -50,7 +50,8 @@ function LineChart({
 
   // X 레이블: 6개월 간격
   const xLabels = data.reduce<{ i: number; label: string }[]>((acc, d, i) => {
-    if (i % 6 === 0 || i === data.length - 1) acc.push({ i, label: d.date?.slice(0, 7) ?? '' })
+    const dateStr = String(d.date ?? '')
+    if (i % 6 === 0 || i === data.length - 1) acc.push({ i, label: dateStr.slice(0, 7) })
     return acc
   }, [])
 
