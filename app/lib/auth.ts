@@ -13,6 +13,7 @@ export const ALL_MENUS = [
   { key: 'products',  label: '상품',       href: '/products',  desc: 'AI 상품 이미지 기획' },
   { key: 'garden',    label: '가든',       href: '/garden',    desc: '하루꽃 일기' },
   { key: 'youtube',   label: '유튜브 자막', href: '/youtube',   desc: 'YouTube 자막 번역·요약' },
+  { key: 'stats',     label: '통계',        href: '/stats',     desc: '취업·경제 국가통계' },
 ] as const
 
 export type MenuKey = (typeof ALL_MENUS)[number]['key']
