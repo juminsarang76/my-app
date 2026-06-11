@@ -14,6 +14,7 @@ const STAT_CARDS = [
 export default function StatsPage() {
   return (
     <div style={{ fontFamily: 'sans-serif', minHeight: '100vh', background: '#f0f7ff' }}>
+      <style>{`.stat-card-link:hover .stat-card { box-shadow: 0 4px 16px rgba(3,105,161,0.12); transform: translateY(-1px); }`}</style>
       <header style={{
         background: 'linear-gradient(135deg,#0369a1,#0ea5e9)',
         color: '#fff', textAlign: 'center', padding: '48px 24px 36px',
@@ -28,15 +29,12 @@ export default function StatsPage() {
       <main style={{ maxWidth: 720, margin: '0 auto', padding: '40px 20px' }}>
         <div style={{ display: 'grid', gap: 14 }}>
           {STAT_CARDS.map(c => (
-            <Link key={c.href} href={c.href} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div style={{
+            <Link key={c.href} href={c.href} className="stat-card-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="stat-card" style={{
                 background: '#fff', border: '1px solid #BAE6FD', borderRadius: 14,
                 padding: '22px 24px', display: 'flex', alignItems: 'center', gap: 18,
                 transition: 'box-shadow 0.15s',
-              }}
-                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(3,105,161,0.12)')}
-                onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
-              >
+              }}>
                 <div style={{
                   width: 52, height: 52, borderRadius: 12,
                   background: '#EFF8FF', display: 'flex', alignItems: 'center',
