@@ -79,6 +79,32 @@ function genIndustry() {
   ]
 }
 
+// 주요 산업별 월별 추이 (단위: 천명)
+const IND_TREND_BASE = [
+  { name: '제조업',          base: 4480, season: [-60,-40,10,40,50,40,20,30,40,20,-10,-40], drift:  6 },
+  { name: '도소매·음식·숙박', base: 5600, season: [-120,-80,40,90,110,80,60,70,90,60,-30,-90], drift: 10 },
+  { name: '사업·개인서비스',  base: 3760, season: [-50,-30,20,40,50,40,30,40,40,30,0,-30],   drift: 12 },
+  { name: '건강·복지',        base: 2840, season: [10,20,30,40,40,40,40,40,40,40,30,20],     drift: 30 },
+  { name: '건설업',           base: 2110, season: [-90,-70,0,50,70,50,30,40,50,30,-20,-80],  drift: -8 },
+  { name: '농림어업',         base: 1300, season: [-180,-150,-40,80,160,140,100,90,110,60,-80,-160], drift: -2 },
+]
+
+function genIndustryMonthly() {
+  const series = IND_TREND_BASE.map(s => ({ name: s.name, data: [] as { date: string; value: number }[] }))
+  const years = [2024, 2025, 2026]
+  years.forEach((yr, yi) => {
+    const len = yr === 2026 ? 6 : 12
+    for (let m = 0; m < len; m++) {
+      const date = `${yr}.${String(m + 1).padStart(2, '0')}`
+      IND_TREND_BASE.forEach((s, si) => {
+        const value = s.base + s.season[m] + s.drift * (yi * 12 + m) / 6 + Math.round((Math.random() - 0.5) * 30)
+        series[si].data.push({ date, value: Math.round(value) })
+      })
+    }
+  })
+  return series
+}
+
 // ── 실제 KOSIS 호출 ──────────────────────────────────────────────────
 async function fetchReal() {
   const [rows4S, rows13] = await Promise.all([
@@ -115,7 +141,28 @@ async function fetchReal() {
     value: Math.round(vals.reduce((a,b)=>a+b,0)/vals.length),
   })).sort((a,b) => b.value - a.value).slice(0, 11)
 
-  return { monthly, industry }
+  // 산업별 월별 추이 — 전체 기간(202401~202606) 재조회 후 상위 6개 산업
+  const indMonthlyMap: Record<string, { date: string; value: number }[]> = {}
+  try {
+    const rowsAll = await fetchKosis(kosisUrl('DT_1DA7013', 'T10', 'ALL', '202401', '202606'))
+    for (const r of rowsAll) {
+      const nm = r.CLF_NM
+      if (!nm || nm === '전체') continue
+      const date = `${r.PRD_DE.slice(0,4)}.${r.PRD_DE.slice(4)}`
+      indMonthlyMap[nm] ??= []
+      indMonthlyMap[nm].push({ date, value: parseFloat(r.DT.replace(/,/g,'')) })
+    }
+  } catch { /* 월별 산업 실패 시 빈 배열 */ }
+
+  const topNames = industry.slice(0, 6).map(i => i.name)
+  const industryMonthly = topNames
+    .filter(n => indMonthlyMap[n]?.length)
+    .map(name => ({
+      name,
+      data: indMonthlyMap[name].sort((a,b) => a.date.localeCompare(b.date)),
+    }))
+
+  return { monthly, industry, industryMonthly }
 }
 
 // ── Route Handler ────────────────────────────────────────────────────
@@ -129,8 +176,9 @@ export async function GET() {
     }
   }
   return NextResponse.json({
-    monthly:  genMonthly(),
-    industry: genIndustry(),
+    monthly:         genMonthly(),
+    industry:        genIndustry(),
+    industryMonthly: genIndustryMonthly(),
     source: 'demo',
     demo: true,
   })

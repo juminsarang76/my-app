@@ -12,18 +12,20 @@ interface MonthRow {
   erate: number
 }
 interface IndRow { name: string; value: number }
+interface IndSeries { name: string; data: { date: string; value: number }[] }
 interface ApiData {
   monthly: MonthRow[]
   industry: IndRow[]
+  industryMonthly?: IndSeries[]
   source: string
   demo: boolean
 }
 
-/* ── SVG 라인 차트 ──────────────────────────────────────── */
+/* ── SVG 라인 차트 (인터랙티브 툴팁 포함) ───────────────── */
 function LineChart({
   data, keys, colors, labels, unit = '', title,
 }: {
-  data: Record<string, number>[]
+  data: Record<string, number | string>[]
   keys: string[]
   colors: string[]
   labels: string[]
@@ -34,29 +36,42 @@ function LineChart({
   const PAD = { t: 20, r: 20, b: 48, l: 66 }
   const iW = W - PAD.l - PAD.r
   const iH = H - PAD.t - PAD.b
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [hover, setHover] = useState<number | null>(null)
 
-  const allVals = data.flatMap(d => keys.map(k => d[k] ?? 0)).filter(Boolean)
+  const num = (v: number | string | undefined) => (typeof v === 'number' ? v : 0)
+  const allVals = data.flatMap(d => keys.map(k => num(d[k]))).filter(v => v !== 0)
   if (!allVals.length) return null
   const minV = Math.min(...allVals)
   const maxV = Math.max(...allVals)
-  const pad  = (maxV - minV) * 0.08
+  const pad  = (maxV - minV) * 0.08 || 1
   const lo = minV - pad, hi = maxV + pad
 
   const xOf = (i: number) => PAD.l + (i / Math.max(data.length - 1, 1)) * iW
   const yOf = (v: number) => PAD.t + iH - ((v - lo) / (hi - lo)) * iH
 
-  // Y 눈금 5개
   const ticks = Array.from({ length: 5 }, (_, i) => lo + ((hi - lo) * i) / 4)
-
-  // X 레이블: 6개월 간격
   const xLabels = data.reduce<{ i: number; label: string }[]>((acc, d, i) => {
     const dateStr = String(d.date ?? '')
     if (i % 6 === 0 || i === data.length - 1) acc.push({ i, label: dateStr.slice(0, 7) })
     return acc
   }, [])
 
+  // 마우스 → 가장 가까운 데이터 인덱스
+  function handleMove(e: React.MouseEvent) {
+    const svg = svgRef.current
+    if (!svg) return
+    const rect = svg.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * W
+    const ratio = (x - PAD.l) / iW
+    const idx = Math.round(ratio * (data.length - 1))
+    setHover(Math.max(0, Math.min(data.length - 1, idx)))
+  }
+
+  const hoverDate = hover != null ? String(data[hover].date ?? '') : ''
+
   return (
-    <div style={{ marginBottom: 32 }}>
+    <div style={{ marginBottom: 32, position: 'relative' }}>
       <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>{title}</div>
       <div style={{ display: 'flex', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
         {keys.map((k, i) => (
@@ -66,51 +81,78 @@ function LineChart({
           </span>
         ))}
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', overflow: 'visible' }}>
+      <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', overflow: 'visible' }}
+        onMouseMove={handleMove} onMouseLeave={() => setHover(null)}>
         {/* 눈금선 */}
         {ticks.map((t, i) => (
           <g key={i}>
-            <line x1={PAD.l} x2={W - PAD.r} y1={yOf(t)} y2={yOf(t)}
-              stroke="#e2e8f0" strokeWidth="1" />
-            <text x={PAD.l - 6} y={yOf(t) + 4} textAnchor="end"
-              fontSize="10" fill="#94a3b8">
+            <line x1={PAD.l} x2={W - PAD.r} y1={yOf(t)} y2={yOf(t)} stroke="#e2e8f0" strokeWidth="1" />
+            <text x={PAD.l - 6} y={yOf(t) + 4} textAnchor="end" fontSize="10" fill="#94a3b8">
               {Math.round(t).toLocaleString()}{unit}
             </text>
           </g>
         ))}
         {/* X 레이블 */}
         {xLabels.map(({ i, label }) => (
-          <text key={i} x={xOf(i)} y={H - PAD.b + 16}
-            textAnchor="middle" fontSize="10" fill="#94a3b8">{label}</text>
+          <text key={i} x={xOf(i)} y={H - PAD.b + 16} textAnchor="middle" fontSize="10" fill="#94a3b8">{label}</text>
         ))}
-        {/* 데이터 라인 + 점 */}
+        {/* 데이터 라인 */}
         {keys.map((k, ki) => {
-          const pts = data.map((d, i) => `${xOf(i)},${yOf(d[k] ?? 0)}`).join(' ')
+          const pts = data.map((d, i) => `${xOf(i)},${yOf(num(d[k]))}`).join(' ')
           return (
             <g key={k}>
-              <polyline points={pts} fill="none"
-                stroke={colors[ki]} strokeWidth="2.2" strokeLinejoin="round" />
+              <polyline points={pts} fill="none" stroke={colors[ki]} strokeWidth="2.2" strokeLinejoin="round" />
               {data.map((d, i) => (
-                <circle key={i} cx={xOf(i)} cy={yOf(d[k] ?? 0)} r="3"
+                <circle key={i} cx={xOf(i)} cy={yOf(num(d[k]))} r="3"
                   fill={colors[ki]} opacity={i % 3 === 0 ? 1 : 0} />
               ))}
             </g>
           )
         })}
         {/* 축 */}
-        <line x1={PAD.l} x2={PAD.l} y1={PAD.t} y2={H - PAD.b}
-          stroke="#cbd5e1" strokeWidth="1" />
-        <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b}
-          stroke="#cbd5e1" strokeWidth="1" />
+        <line x1={PAD.l} x2={PAD.l} y1={PAD.t} y2={H - PAD.b} stroke="#cbd5e1" strokeWidth="1" />
+        <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} stroke="#cbd5e1" strokeWidth="1" />
+        {/* 호버 크로스헤어 + 강조점 */}
+        {hover != null && (
+          <g>
+            <line x1={xOf(hover)} x2={xOf(hover)} y1={PAD.t} y2={H - PAD.b}
+              stroke="#0369A1" strokeWidth="1" strokeDasharray="4 3" opacity="0.5" />
+            {keys.map((k, ki) => (
+              <circle key={k} cx={xOf(hover)} cy={yOf(num(data[hover][k]))} r="4.5"
+                fill="#fff" stroke={colors[ki]} strokeWidth="2.5" />
+            ))}
+          </g>
+        )}
       </svg>
+      {/* 툴팁 */}
+      {hover != null && (
+        <div style={{
+          position: 'absolute', top: 34,
+          left: `${(xOf(hover) / W) * 100}%`,
+          transform: `translateX(${hover > data.length / 2 ? '-105%' : '8px'})`,
+          background: '#0f172a', color: '#fff', borderRadius: 8,
+          padding: '8px 12px', fontSize: 12, pointerEvents: 'none',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.2)', zIndex: 5, whiteSpace: 'nowrap',
+        }}>
+          <div style={{ fontWeight: 700, marginBottom: 4, color: '#bae6fd' }}>{hoverDate}</div>
+          {keys.map((k, ki) => (
+            <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: colors[ki], display: 'inline-block' }} />
+              {labels[ki]}: <b>{num(data[hover][k]).toLocaleString()}{unit || '천'}</b>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
-/* ── SVG 가로 막대 차트 ─────────────────────────────────── */
+/* ── SVG 가로 막대 차트 (툴팁 포함) ─────────────────────── */
 function BarChart({ data, title }: { data: IndRow[]; title: string }) {
   const sorted = [...data].sort((a, b) => b.value - a.value)
   const max = sorted[0]?.value ?? 1
+  const total = sorted.reduce((a, b) => a + b.value, 0)
+  const [hover, setHover] = useState<string | null>(null)
   const COLORS = [
     '#0369A1','#0ea5e9','#38bdf8','#7dd3fc','#bae6fd',
     '#1D9E75','#34d399','#6ee7b7','#a7f3d0',
@@ -121,24 +163,41 @@ function BarChart({ data, title }: { data: IndRow[]; title: string }) {
     <div style={{ marginBottom: 32 }}>
       <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', marginBottom: 12 }}>{title}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {sorted.map((row, i) => (
-          <div key={row.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 100, fontSize: 12, color: '#475569', textAlign: 'right', flexShrink: 0 }}>
-              {row.name}
+        {sorted.map((row, i) => {
+          const pct = ((row.value / total) * 100).toFixed(1)
+          const on = hover === row.name
+          return (
+            <div key={row.name}
+              onMouseEnter={() => setHover(row.name)} onMouseLeave={() => setHover(null)}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, position: 'relative', cursor: 'default' }}>
+              <div style={{ width: 100, fontSize: 12, color: '#475569', textAlign: 'right', flexShrink: 0 }}>
+                {row.name}
+              </div>
+              <div style={{ flex: 1, background: '#f1f5f9', borderRadius: 4, height: 22, position: 'relative' }}>
+                <div style={{
+                  width: `${(row.value / max) * 100}%`,
+                  background: COLORS[i % COLORS.length],
+                  height: '100%', borderRadius: 4,
+                  transition: 'width 0.6s ease, filter 0.15s',
+                  filter: on ? 'brightness(1.1)' : 'none',
+                }} />
+                {on && (
+                  <div style={{
+                    position: 'absolute', top: -38, left: '50%', transform: 'translateX(-50%)',
+                    background: '#0f172a', color: '#fff', borderRadius: 8, padding: '6px 10px',
+                    fontSize: 12, whiteSpace: 'nowrap', pointerEvents: 'none', zIndex: 5,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  }}>
+                    <b>{row.name}</b> · {row.value.toLocaleString()}천명 · 비중 {pct}%
+                  </div>
+                )}
+              </div>
+              <div style={{ width: 60, fontSize: 12, color: '#0369A1', fontWeight: 600, flexShrink: 0 }}>
+                {row.value.toLocaleString()}천
+              </div>
             </div>
-            <div style={{ flex: 1, background: '#f1f5f9', borderRadius: 4, height: 22, position: 'relative' }}>
-              <div style={{
-                width: `${(row.value / max) * 100}%`,
-                background: COLORS[i % COLORS.length],
-                height: '100%', borderRadius: 4,
-                transition: 'width 0.6s ease',
-              }} />
-            </div>
-            <div style={{ width: 60, fontSize: 12, color: '#0369A1', fontWeight: 600, flexShrink: 0 }}>
-              {row.value.toLocaleString()}천
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
@@ -265,13 +324,36 @@ export default function EmploymentPage() {
             <div style={{ background: '#fff', border: '1px solid #BAE6FD', borderRadius: 14, padding: '24px 20px' }}>
 
               {activeTab === 'total' && (
-                <LineChart
-                  title="월별 취업자 수 (단위: 천명)"
-                  data={data.monthly as unknown as Record<string,number>[]}
-                  keys={['total']}
-                  colors={['#0369A1']}
-                  labels={['취업자 (천명)']}
-                />
+                <>
+                  <LineChart
+                    title="월별 취업자 수 (단위: 천명)"
+                    data={data.monthly as unknown as Record<string,number>[]}
+                    keys={['total']}
+                    colors={['#0369A1']}
+                    labels={['취업자 (천명)']}
+                  />
+                  {(() => {
+                    const im = data.industryMonthly ?? []
+                    if (!im.length) return null
+                    // 날짜 기준 병합 → LineChart 형식
+                    const dates = im[0].data.map(d => d.date)
+                    const merged = dates.map((date, i) => {
+                      const row: Record<string, number | string> = { date }
+                      im.forEach(s => { row[s.name] = s.data[i]?.value ?? 0 })
+                      return row
+                    })
+                    const IND_COLORS = ['#0369A1','#ec4899','#1D9E75','#f59e0b','#8b5cf6','#06b6d4']
+                    return (
+                      <LineChart
+                        title="주요 산업별 취업자 추이 (단위: 천명)"
+                        data={merged}
+                        keys={im.map(s => s.name)}
+                        colors={im.map((_, i) => IND_COLORS[i % IND_COLORS.length])}
+                        labels={im.map(s => s.name)}
+                      />
+                    )
+                  })()}
+                </>
               )}
 
               {activeTab === 'gender' && (
