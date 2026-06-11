@@ -19,6 +19,7 @@ interface ApiData {
   industryMonthly?: IndSeries[]
   industryUrate?: IndSeries[]
   ageMonthly?: IndSeries[]
+  restYouth?: { date: string; value: number }[]
   source: string
   demo: boolean
 }
@@ -534,18 +535,29 @@ export default function EmploymentPage() {
               )}
 
               {activeTab === 'compare' && (
-                (data.ageMonthly?.length ?? 0) > 0 ? (
-                  <StackedBarChart
-                    title="나이별 취업자 비교 (누적, 단위: 천명)"
-                    series={data.ageMonthly!}
-                    colors={IND_COLORS}
-                    unit="천"
-                  />
-                ) : (
-                  <div style={{ color: '#94a3b8', fontSize: 13, padding: '20px 0' }}>
-                    나이별 데이터가 없습니다.
-                  </div>
-                )
+                <>
+                  {(data.ageMonthly?.length ?? 0) > 0 ? (
+                    <StackedBarChart
+                      title="나이별 취업자 비교 (누적, 단위: 천명)"
+                      series={data.ageMonthly!}
+                      colors={IND_COLORS}
+                      unit="천"
+                    />
+                  ) : (
+                    <div style={{ color: '#94a3b8', fontSize: 13, padding: '20px 0' }}>
+                      나이별 데이터가 없습니다.
+                    </div>
+                  )}
+                  {(data.restYouth?.length ?? 0) > 0 && (
+                    <LineChart
+                      title="20대 '쉬었음' 인구 (단위: 천명)"
+                      data={data.restYouth as unknown as Record<string,number>[]}
+                      keys={['value']}
+                      colors={['#ef4444']}
+                      labels={["20대 쉬었음"]}
+                    />
+                  )}
+                </>
               )}
 
               {activeTab === 'rate' && (

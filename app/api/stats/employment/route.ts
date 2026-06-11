@@ -156,6 +156,22 @@ function genAgeMonthly() {
   return series
 }
 
+// 20대 '쉬었음' 인구 (단위: 천명) — 증가 추세, 겨울 소폭 상승
+function genRestYouth() {
+  const BASE = 400, SEASON = [25,20,5,-10,-15,-5,5,0,-5,5,15,25], DRIFT = 2.4
+  const data: { date: string; value: number }[] = []
+  const years = [2024, 2025, 2026]
+  years.forEach((yr, yi) => {
+    const len = yr === 2026 ? 6 : 12
+    for (let m = 0; m < len; m++) {
+      const date = `${yr}.${String(m + 1).padStart(2, '0')}`
+      const v = BASE + SEASON[m] + DRIFT * (yi * 12 + m) + (Math.random() - 0.5) * 12
+      data.push({ date, value: Math.round(v) })
+    }
+  })
+  return data
+}
+
 // ── 실제 KOSIS 호출 ──────────────────────────────────────────────────
 async function fetchReal() {
   const [rows4S, rows13] = await Promise.all([
@@ -232,6 +248,7 @@ export async function GET() {
     industryMonthly: genIndustryMonthly(),
     industryUrate:   genIndustryUrate(),
     ageMonthly:      genAgeMonthly(),
+    restYouth:       genRestYouth(),
     source: 'demo',
     demo: true,
   })
