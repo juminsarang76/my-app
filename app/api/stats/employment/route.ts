@@ -131,6 +131,31 @@ function genIndustryUrate() {
   return series
 }
 
+// 나이별 취업자 (단위: 천명)
+const AGE_BASE = [
+  { name: '15~29세', base: 3780, season: [-90,-70,30,70,80,60,40,50,70,40,-30,-80], drift: -12 },
+  { name: '30~39세', base: 5460, season: [-40,-30,10,30,40,30,20,30,30,20,0,-30],   drift:  4 },
+  { name: '40~49세', base: 6280, season: [-30,-20,10,20,30,20,20,20,20,20,0,-20],   drift: -3 },
+  { name: '50~59세', base: 6390, season: [-40,-30,10,30,40,30,20,30,30,20,0,-30],   drift:  6 },
+  { name: '60세 이상', base: 6480, season: [-200,-160,-40,90,170,150,110,100,120,70,-80,-180], drift: 24 },
+]
+
+function genAgeMonthly() {
+  const series = AGE_BASE.map(s => ({ name: s.name, data: [] as { date: string; value: number }[] }))
+  const years = [2024, 2025, 2026]
+  years.forEach((yr, yi) => {
+    const len = yr === 2026 ? 6 : 12
+    for (let m = 0; m < len; m++) {
+      const date = `${yr}.${String(m + 1).padStart(2, '0')}`
+      AGE_BASE.forEach((s, si) => {
+        const v = s.base + s.season[m] + s.drift * (yi * 12 + m) / 6 + Math.round((Math.random() - 0.5) * 25)
+        series[si].data.push({ date, value: Math.round(v) })
+      })
+    }
+  })
+  return series
+}
+
 // ── 실제 KOSIS 호출 ──────────────────────────────────────────────────
 async function fetchReal() {
   const [rows4S, rows13] = await Promise.all([
@@ -206,6 +231,7 @@ export async function GET() {
     industry:        genIndustry(),
     industryMonthly: genIndustryMonthly(),
     industryUrate:   genIndustryUrate(),
+    ageMonthly:      genAgeMonthly(),
     source: 'demo',
     demo: true,
   })

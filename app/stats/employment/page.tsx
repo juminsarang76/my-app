@@ -18,6 +18,7 @@ interface ApiData {
   industry: IndRow[]
   industryMonthly?: IndSeries[]
   industryUrate?: IndSeries[]
+  ageMonthly?: IndSeries[]
   source: string
   demo: boolean
 }
@@ -348,17 +349,27 @@ function KpiCard({ label, value, unit, sub, color = '#0369A1' }: {
 }
 
 /* ── 메인 페이지 ────────────────────────────────────────── */
+interface NewsItem { date: string; title: string; body: string; sourceTitle?: string; sourceUrl?: string }
+interface NewsData { fetchedAt: string; count: number; provider?: string; summary: string; news: NewsItem[] }
+
 export default function EmploymentPage() {
   const [data, setData] = useState<ApiData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [activeTab, setActiveTab] = useState<'total' | 'gender' | 'rate' | 'industry'>('total')
+  const [activeTab, setActiveTab] = useState<'total' | 'compare' | 'rate' | 'industry'>('total')
+  const [news, setNews] = useState<NewsData | null>(null)
+  const [newsLoading, setNewsLoading] = useState(true)
 
   useEffect(() => {
     fetch('/api/stats/employment')
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false) })
       .catch(e => { setError(e.message); setLoading(false) })
+
+    fetch('/api/stats/employment-news')
+      .then(r => r.json())
+      .then(d => { setNews(d); setNewsLoading(false) })
+      .catch(() => setNewsLoading(false))
   }, [])
 
   const latest = data?.monthly.at(-1)
@@ -366,7 +377,7 @@ export default function EmploymentPage() {
 
   const tabs: { key: typeof activeTab; label: string }[] = [
     { key: 'total',    label: '취업자 추이' },
-    { key: 'gender',   label: '성별 비교' },
+    { key: 'compare',  label: '비교' },
     { key: 'rate',     label: '고용률·실업률' },
     { key: 'industry', label: '산업별' },
   ]
@@ -432,6 +443,60 @@ export default function EmploymentPage() {
               />
             </div>
 
+            {/* 일주일 내 최신 뉴스 요약 */}
+            <div style={{
+              background: '#fff', border: '1px solid #BAE6FD', borderRadius: 14,
+              padding: '18px 20px', marginBottom: 28,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <span style={{ fontSize: 16 }}>📰</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>최근 1주일 고용 뉴스</span>
+                {news?.provider && (
+                  <span style={{ fontSize: 10, padding: '2px 7px', borderRadius: 10, background: '#EFF8FF', color: '#0369A1' }}>
+                    {news.provider} 요약
+                  </span>
+                )}
+              </div>
+
+              {newsLoading && (
+                <div style={{ color: '#94a3b8', fontSize: 13, padding: '8px 0' }}>뉴스 불러오는 중…</div>
+              )}
+
+              {!newsLoading && news && (
+                <>
+                  {news.summary && (
+                    <div style={{
+                      background: '#E0F2FE', borderRadius: 8, padding: '10px 14px',
+                      fontSize: 13, color: '#0c4a6e', marginBottom: 14, lineHeight: 1.6,
+                    }}>
+                      💡 {news.summary}
+                    </div>
+                  )}
+                  {news.news.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {news.news.map((n, i) => (
+                        <div key={i} style={{ borderLeft: '3px solid #BAE6FD', paddingLeft: 12 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                            <span style={{ fontSize: 10, color: '#64748b', background: '#f1f5f9', borderRadius: 5, padding: '1px 6px' }}>{n.date}</span>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{n.title}</span>
+                          </div>
+                          <div style={{ fontSize: 12, color: '#475569', marginBottom: 3 }}>{n.body}</div>
+                          {n.sourceUrl && (
+                            <a href={n.sourceUrl} target="_blank" rel="noreferrer"
+                              style={{ fontSize: 11, color: '#1D9E75', textDecoration: 'none' }}>
+                              ↗ {n.sourceTitle || '원문'}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ color: '#94a3b8', fontSize: 13 }}>최근 1주일 내 관련 뉴스가 없습니다.</div>
+                  )}
+                </>
+              )}
+            </div>
+
             {/* 탭 */}
             <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: '2px solid #E2E8F0' }}>
               {tabs.map(t => (
@@ -468,14 +533,19 @@ export default function EmploymentPage() {
                 </>
               )}
 
-              {activeTab === 'gender' && (
-                <LineChart
-                  title="성별 취업자 수 (단위: 천명)"
-                  data={data.monthly as unknown as Record<string,number>[]}
-                  keys={['male', 'female']}
-                  colors={['#0369A1', '#ec4899']}
-                  labels={['남성', '여성']}
-                />
+              {activeTab === 'compare' && (
+                (data.ageMonthly?.length ?? 0) > 0 ? (
+                  <StackedBarChart
+                    title="나이별 취업자 비교 (누적, 단위: 천명)"
+                    series={data.ageMonthly!}
+                    colors={IND_COLORS}
+                    unit="천"
+                  />
+                ) : (
+                  <div style={{ color: '#94a3b8', fontSize: 13, padding: '20px 0' }}>
+                    나이별 데이터가 없습니다.
+                  </div>
+                )
               )}
 
               {activeTab === 'rate' && (
