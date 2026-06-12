@@ -413,28 +413,10 @@ export default function MdJobPage() {
       </header>
 
       <main style={{ maxWidth: 820, margin: '0 auto', padding: '28px 20px 80px' }}>
-        {/* 탭 */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '2px solid #E2E8F0' }}>
-          {([
-            { key: 'company', label: '🏢 기업 분석 리포트' },
-            { key: 'voc',     label: '💬 리뷰·VOC 분석' },
-          ] as const).map(t => (
-            <button key={t.key} onClick={() => setTab(t.key)} style={{
-              padding: '11px 20px', border: 'none', background: 'none', cursor: 'pointer',
-              fontSize: 14, fontWeight: tab === t.key ? 700 : 400,
-              color: tab === t.key ? '#0369A1' : '#94a3b8',
-              borderBottom: `2px solid ${tab === t.key ? '#0369A1' : 'transparent'}`,
-              marginBottom: '-2px',
-            }}>{t.label}</button>
-          ))}
-        </div>
-
-        {tab === 'company' ? <CompanyTab /> : <VocTab />}
-
-        {/* MD 아티클 */}
-        <div style={{ marginTop: 48 }}>
+        {/* ArticleMD — 마크다운 아티클 뷰어 */}
+        <div style={{ marginBottom: 32 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: '#0369A1', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-            📄 MD 아티클
+            📄 ArticleMD
             <span style={{ flex: 1, height: 1, background: '#BAE6FD' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -455,6 +437,24 @@ export default function MdJobPage() {
             ))}
           </div>
         </div>
+
+        {/* 탭 */}
+        <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '2px solid #E2E8F0' }}>
+          {([
+            { key: 'company', label: '🏢 기업 분석 리포트' },
+            { key: 'voc',     label: '💬 리뷰·VOC 분석' },
+          ] as const).map(t => (
+            <button key={t.key} onClick={() => setTab(t.key)} style={{
+              padding: '11px 20px', border: 'none', background: 'none', cursor: 'pointer',
+              fontSize: 14, fontWeight: tab === t.key ? 700 : 400,
+              color: tab === t.key ? '#0369A1' : '#94a3b8',
+              borderBottom: `2px solid ${tab === t.key ? '#0369A1' : 'transparent'}`,
+              marginBottom: '-2px',
+            }}>{t.label}</button>
+          ))}
+        </div>
+
+        {tab === 'company' ? <CompanyTab /> : <VocTab />}
       </main>
     </div>
   )
