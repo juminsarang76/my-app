@@ -390,12 +390,6 @@ function VocTab() {
 }
 
 /* ── 메인 페이지 ────────────────────────────────────────── */
-const ARTICLES = [
-  { href: '/MD/AI주도자_조직전환전략.md', icon: '🤖', title: 'AI는 도구가 아닌 주도자다', desc: '기업 리더가 지금 설계해야 할 조직 전환 전략 · 경희대 김상윤 교수 강의 기반' },
-  { href: '/MD/AI리터러시_AI리더십전략.md', icon: '📚', title: 'AI 리터러시가 기업 생존을 결정한다', desc: 'AI 리더십 전략 · 경희대 김상윤 교수 / 한국AI리터러시아카데미 원장' },
-  { href: '/MD/반도체트렌드.md', icon: '🔬', title: '반도체 패권 전쟁의 현주소', desc: '기술·시장·지정학 트렌드 · 고려대 신창환 교수 강의 기반' },
-]
-
 export default function MdJobPage() {
   const [tab, setTab] = useState<'company' | 'voc'>('company')
 
@@ -413,31 +407,6 @@ export default function MdJobPage() {
       </header>
 
       <main style={{ maxWidth: 820, margin: '0 auto', padding: '28px 20px 80px' }}>
-        {/* ArticleMD — 마크다운 아티클 뷰어 */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#0369A1', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-            📄 ArticleMD
-            <span style={{ flex: 1, height: 1, background: '#BAE6FD' }} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {ARTICLES.map(a => (
-              <a key={a.href} href={a.href} target="_blank" rel="noreferrer"
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 14, background: '#fff',
-                  border: '1px solid #BAE6FD', borderRadius: 12, padding: '14px 18px',
-                  textDecoration: 'none', color: 'inherit',
-                }}>
-                <span style={{ width: 40, height: 40, borderRadius: 10, background: '#EFF8FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>{a.icon}</span>
-                <span style={{ flex: 1 }}>
-                  <span style={{ display: 'block', fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{a.title}</span>
-                  <span style={{ display: 'block', fontSize: 11.5, color: '#64748b' }}>{a.desc}</span>
-                </span>
-                <span style={{ fontSize: 16, color: '#0369A1', flexShrink: 0 }}>›</span>
-              </a>
-            ))}
-          </div>
-        </div>
-
         {/* 탭 */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '2px solid #E2E8F0' }}>
           {([
