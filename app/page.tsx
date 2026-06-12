@@ -8,7 +8,8 @@ import { getStoredUser, setStoredUser, clearStoredUser, ALL_MENUS, isAdmin, Auth
 const SPECIAL_MENUS = [
   { key: 'minjun',  label: '민준입시', href: '/민준입시.html', desc: '민준 입시 정보' },
   { key: 'lecture', label: '강의',     href: '/강의.html',     desc: '강의 자료' },
-  { key: 'mdjob',   label: 'MD',       href: '/mdjob',         desc: 'MD 취업준비 · 기업분석/VOC' },
+  { key: 'mdjob',   label: 'MDjob',    href: '/mdjob',         desc: 'MD 취업준비 · 기업분석/VOC' },
+  { key: 'articlemd', label: 'ArticleMD', href: '/articlemd',   desc: '마크다운 아티클 뷰어' },
 ]
 
 export default function HomePage() {
