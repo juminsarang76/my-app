@@ -1,88 +1,5 @@
 import { NextResponse } from 'next/server'
-
-const GROQ_API_KEY      = process.env.GROQ_API_KEY
-const CEREBRAS_API_KEY  = process.env.CEREBRAS_API_KEY
-const GEMINI_API_KEY    = process.env.GEMINI_API_KEY
-
-// OpenAI-compatible LLM 호출 (Groq / Cerebras 공용)
-async function callOpenAICompat(
-  baseUrl: string, apiKey: string, model: string, messages: object[], providerName: string
-): Promise<string> {
-  const res = await fetch(`${baseUrl}/chat/completions`, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model, response_format: { type: 'json_object' }, temperature: 0.2, messages }),
-  })
-  if (!res.ok) {
-    const err = await res.text().catch(() => res.statusText)
-    throw new Error(`${providerName} ${res.status}: ${err.slice(0, 120)}`)
-  }
-  const data = await res.json()
-  return data.choices[0].message.content
-}
-
-// Gemini (generateContent API)
-async function callGemini(messages: { role: string; content: string }[]): Promise<string> {
-  const systemMsg = messages.find(m => m.role === 'system')?.content ?? ''
-  const userMsg   = messages.find(m => m.role === 'user')?.content ?? ''
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemMsg }] },
-        contents: [{ role: 'user', parts: [{ text: userMsg }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
-      }),
-    }
-  )
-  if (!res.ok) {
-    const err = await res.text().catch(() => res.statusText)
-    throw new Error(`Gemini ${res.status}: ${err.slice(0, 120)}`)
-  }
-  const data = await res.json()
-  return data.candidates[0].content.parts[0].text
-}
-
-// 폴백 체인: Groq → Cerebras → Gemini
-async function callLLM(systemPrompt: string, userPrompt: string): Promise<{ text: string; provider: string }> {
-  const messages = [
-    { role: 'system', content: systemPrompt },
-    { role: 'user',   content: userPrompt },
-  ]
-
-  if (GROQ_API_KEY) {
-    try {
-      const text = await callOpenAICompat(
-        'https://api.groq.com/openai/v1', GROQ_API_KEY,
-        'llama-3.3-70b-versatile', messages, 'Groq'
-      )
-      return { text, provider: 'Groq' }
-    } catch (e) {
-      console.warn('Groq 실패, Cerebras 시도:', (e as Error).message)
-    }
-  }
-
-  if (CEREBRAS_API_KEY) {
-    try {
-      const text = await callOpenAICompat(
-        'https://api.cerebras.ai/v1', CEREBRAS_API_KEY,
-        'llama-3.3-70b', messages, 'Cerebras'
-      )
-      return { text, provider: 'Cerebras' }
-    } catch (e) {
-      console.warn('Cerebras 실패, Gemini 시도:', (e as Error).message)
-    }
-  }
-
-  if (GEMINI_API_KEY) {
-    const text = await callGemini(messages)
-    return { text, provider: 'Gemini' }
-  }
-
-  throw new Error('사용 가능한 LLM API 키가 없습니다. GROQ_API_KEY / CEREBRAS_API_KEY / GEMINI_API_KEY 중 하나 이상 필요.')
-}
+import { callLLM, searchGoogleNews } from '@/app/lib/llm'
 
 // 분석·통계 위주 쿼리 — 단편 일정·행사 뉴스 최소화
 const RSS_QUERIES = [
@@ -92,29 +9,6 @@ const RSS_QUERIES = [
   '수능 난이도 예측 분석 2027',
   '대입 N수생 재수 통계 2027',
 ]
-
-interface RSSItem {
-  title: string
-  link: string
-  pubDate: string
-  description: string
-}
-
-function parseRSS(xml: string): RSSItem[] {
-  const items: RSSItem[] = []
-  const matches = xml.matchAll(/<item>([\s\S]*?)<\/item>/g)
-  for (const m of matches) {
-    const c = m[1]
-    const cdata = (s: string) => s?.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, '$1').trim() ?? ''
-    const tag = (name: string) => cdata(c.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)<\\/${name}>`))?.[1] ?? '')
-    const title = tag('title')
-    const link = (c.match(/<link>(.*?)<\/link>/) ?? c.match(/<link\s+href="([^"]+)"/))?.[1]?.trim() ?? ''
-    const pubDate = tag('pubDate') || tag('published') || tag('updated')
-    const description = tag('description').replace(/<[^>]+>/g, '').slice(0, 400)
-    if (title && link) items.push({ title, link, pubDate, description })
-  }
-  return items
-}
 
 // 단편 뉴스 키워드 — 해당 제목은 건너뜀
 const SKIP_PATTERNS = [
@@ -127,14 +21,7 @@ export async function GET() {
   const now = new Date()
   const june1 = new Date(`${now.getFullYear()}-06-01T00:00:00+09:00`).getTime()
 
-  const fetches = await Promise.allSettled(
-    RSS_QUERIES.map(q =>
-      fetch(
-        `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=ko&gl=KR&ceid=KR:ko`,
-        { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124' }, next: { revalidate: 0 } }
-      ).then(r => r.text()).then(parseRSS)
-    )
-  )
+  const fetches = await Promise.allSettled(RSS_QUERIES.map(q => searchGoogleNews(q)))
 
   const allItems = fetches.flatMap(r => r.status === 'fulfilled' ? r.value : [])
 

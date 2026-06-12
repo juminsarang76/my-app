@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server'
+import { callLLM, searchGoogleNews } from '@/app/lib/llm'
 
 export const dynamic = 'force-dynamic'
-
-const GROQ_API_KEY     = process.env.GROQ_API_KEY
-const CEREBRAS_API_KEY = process.env.CEREBRAS_API_KEY
-const GEMINI_API_KEY   = process.env.GEMINI_API_KEY
 
 const RSS_QUERIES = [
   '고용 취업자 통계',
@@ -13,76 +10,11 @@ const RSS_QUERIES = [
   '청년 고용 일자리',
 ]
 
-interface RSSItem { title: string; link: string; pubDate: string; description: string }
-
-function parseRSS(xml: string): RSSItem[] {
-  const items: RSSItem[] = []
-  for (const m of xml.matchAll(/<item>([\s\S]*?)<\/item>/g)) {
-    const c = m[1]
-    const cdata = (s: string) => s?.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, '$1').trim() ?? ''
-    const tag = (name: string) => cdata(c.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)<\\/${name}>`))?.[1] ?? '')
-    const title = tag('title')
-    const link = (c.match(/<link>(.*?)<\/link>/) ?? c.match(/<link\s+href="([^"]+)"/))?.[1]?.trim() ?? ''
-    const pubDate = tag('pubDate') || tag('published')
-    const description = tag('description').replace(/<[^>]+>/g, '').slice(0, 300)
-    if (title && link) items.push({ title, link, pubDate, description })
-  }
-  return items
-}
-
-async function callOpenAICompat(baseUrl: string, key: string, model: string, msgs: object[], name: string) {
-  const res = await fetch(`${baseUrl}/chat/completions`, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model, response_format: { type: 'json_object' }, temperature: 0.2, messages: msgs }),
-  })
-  if (!res.ok) throw new Error(`${name} ${res.status}`)
-  return (await res.json()).choices[0].message.content
-}
-
-async function callGemini(msgs: { role: string; content: string }[]) {
-  const sys = msgs.find(m => m.role === 'system')?.content ?? ''
-  const usr = msgs.find(m => m.role === 'user')?.content ?? ''
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: sys }] },
-        contents: [{ role: 'user', parts: [{ text: usr }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
-      }),
-    }
-  )
-  if (!res.ok) throw new Error(`Gemini ${res.status}`)
-  return (await res.json()).candidates[0].content.parts[0].text
-}
-
-async function callLLM(sys: string, usr: string): Promise<{ text: string; provider: string }> {
-  const msgs = [{ role: 'system', content: sys }, { role: 'user', content: usr }]
-  if (GROQ_API_KEY) {
-    try { return { text: await callOpenAICompat('https://api.groq.com/openai/v1', GROQ_API_KEY, 'llama-3.3-70b-versatile', msgs, 'Groq'), provider: 'Groq' } }
-    catch (e) { console.warn('Groq 실패:', (e as Error).message) }
-  }
-  if (CEREBRAS_API_KEY) {
-    try { return { text: await callOpenAICompat('https://api.cerebras.ai/v1', CEREBRAS_API_KEY, 'llama-3.3-70b', msgs, 'Cerebras'), provider: 'Cerebras' } }
-    catch (e) { console.warn('Cerebras 실패:', (e as Error).message) }
-  }
-  if (GEMINI_API_KEY) return { text: await callGemini(msgs), provider: 'Gemini' }
-  throw new Error('사용 가능한 LLM API 키 없음')
-}
-
 export async function GET() {
   const now = Date.now()
   const weekAgo = now - 7 * 24 * 60 * 60 * 1000
 
-  const fetches = await Promise.allSettled(
-    RSS_QUERIES.map(q =>
-      fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=ko&gl=KR&ceid=KR:ko`,
-        { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124' }, next: { revalidate: 0 } }
-      ).then(r => r.text()).then(parseRSS)
-    )
-  )
+  const fetches = await Promise.allSettled(RSS_QUERIES.map(q => searchGoogleNews(q)))
   const all = fetches.flatMap(r => r.status === 'fulfilled' ? r.value : [])
 
   const seen = new Set<string>()

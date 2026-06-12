@@ -9,7 +9,7 @@ import { getStoredUser, setStoredUser, AuthUser, ALL_MENUS, isAdmin } from '@/ap
 const SPECIAL_LINKS = [
   { href: '/민준입시.html', label: '민준입시', key: 'minjun' },
   { href: '/강의.html',     label: '강의',     key: 'lecture' },
-  { href: '/MDJob.html',    label: 'MD',       key: 'mdjob' },
+  { href: '/mdjob',         label: 'MD',       key: 'mdjob' },
 ]
 
 export default function NavBar() {
