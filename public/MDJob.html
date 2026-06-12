@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MD 문서</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: #f0f7ff;
+    color: #1a2a3a;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+    color: white;
+    text-align: center;
+    padding: 48px 24px 36px;
+  }
+  header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  header p { font-size: 15px; color: rgba(255,255,255,0.85); }
+
+  main { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0369a1;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .card-grid { display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: white;
+    border: 1px solid #bae6fd;
+    border-radius: 14px;
+    padding: 18px 22px;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(3,105,161,0.12);
+    transform: translateY(-1px);
+  }
+
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: #eff8ff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .card-body { flex: 1; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .card-desc { font-size: 12px; color: #64748b; }
+  .card-arrow { font-size: 18px; color: #0369a1; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📝 MD 문서</h1>
+  <p>마크다운 아티클·작업물 모음</p>
+</header>
+
+<main>
+  <div class="section-label">📄 아티클 리스트</div>
+  <div class="card-grid">
+
+    <a href="MD/AI주도자_조직전환전략.md" target="_blank" class="card">
+      <div class="card-icon">🤖</div>
+      <div class="card-body">
+        <div class="card-title">AI는 도구가 아닌 주도자다</div>
+        <div class="card-desc">기업 리더가 지금 설계해야 할 조직 전환 전략 · 경희대 김상윤 교수 강의 기반</div>
+      </div>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <a href="MD/AI리터러시_AI리더십전략.md" target="_blank" class="card">
+      <div class="card-icon">📚</div>
+      <div class="card-body">
+        <div class="card-title">AI 리터러시가 기업 생존을 결정한다</div>
+        <div class="card-desc">AI 리더십 전략 · 경희대 김상윤 교수 / 한국AI리터러시아카데미 원장</div>
+      </div>
+      <span class="card-arrow">›</span>
+    </a>
+
+    <a href="MD/반도체트렌드.md" target="_blank" class="card">
+      <div class="card-icon">🔬</div>
+      <div class="card-body">
+        <div class="card-title">반도체 패권 전쟁의 현주소</div>
+        <div class="card-desc">기술·시장·지정학 트렌드 · 고려대 신창환 교수 강의 기반</div>
+      </div>
+      <span class="card-arrow">›</span>
+    </a>
+
+  </div>
+</main>
+
+</body>
+</html>
