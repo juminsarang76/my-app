@@ -1,17 +1,34 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 /* ── 타입 ───────────────────────────────────────────────── */
+interface Financials {
+  revenue: string
+  operatingProfit: string
+  headcount: string
+  direction: string[]
+  source: string
+  note: string
+}
+interface SeriesPoint { period: string; revenue: number | null; profit: number | null; employees: number | null }
+interface FinancialCharts { quarterly: SeriesPoint[]; yearly: SeriesPoint[] }
+
 interface CompanyReport {
   company: string
   summary: string
   categories: { name: string; brands: string[] }[]
   recentIssues: { date: string; title: string; body: string; sourceTitle: string; sourceUrl: string }[]
   positioning: { competitors: string[]; strengths: string[]; weaknesses: string[] }
+  financials?: Financials
   coverLetter: { topic: string; point: string; example: string }[]
   interviewQs: { question: string; intent: string; tip: string }[]
   provider: string
   docCount: number
+  jdSource?: string
+  jdUrlError?: string
+  financialCharts?: FinancialCharts | null
+  dartUsed?: boolean
+  isSample?: boolean
   error?: string
 }
 
@@ -56,13 +73,191 @@ function ProviderBadge({ provider }: { provider?: string }) {
   )
 }
 
+/* ── 재무 라인 차트 (경량, 호버 툴팁) ───────────────────── */
+function FinLineChart({
+  data, keys, colors, labels, unit, title,
+}: {
+  data: SeriesPoint[]
+  keys: ('revenue' | 'profit' | 'employees')[]
+  colors: string[]
+  labels: string[]
+  unit: string
+  title: string
+}) {
+  const W = 700, H = 220
+  const PAD = { t: 18, r: 16, b: 42, l: 70 }
+  const iW = W - PAD.l - PAD.r
+  const iH = H - PAD.t - PAD.b
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [hover, setHover] = useState<number | null>(null)
+
+  const vals = data.flatMap(d => keys.map(k => d[k])).filter((v): v is number => v != null)
+  if (!vals.length) return null
+  const minV = Math.min(...vals, 0)
+  const maxV = Math.max(...vals)
+  const pad = (maxV - minV) * 0.08 || 1
+  const lo = minV - pad, hi = maxV + pad
+
+  const xOf = (i: number) => PAD.l + (i / Math.max(data.length - 1, 1)) * iW
+  const yOf = (v: number) => PAD.t + iH - ((v - lo) / (hi - lo)) * iH
+  const ticks = Array.from({ length: 5 }, (_, i) => lo + ((hi - lo) * i) / 4)
+  const step = Math.max(1, Math.ceil(data.length / 8))
+
+  function handleMove(e: React.MouseEvent) {
+    const svg = svgRef.current
+    if (!svg) return
+    const rect = svg.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * W
+    const idx = Math.round(((x - PAD.l) / iW) * (data.length - 1))
+    setHover(Math.max(0, Math.min(data.length - 1, idx)))
+  }
+
+  return (
+    <div style={{ marginBottom: 24, position: 'relative' }}>
+      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>{title}</div>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 6, flexWrap: 'wrap' }}>
+        {keys.map((k, i) => (
+          <span key={k} style={{ fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ width: 18, height: 3, background: colors[i], display: 'inline-block', borderRadius: 2 }} />
+            {labels[i]}
+          </span>
+        ))}
+      </div>
+      <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', overflow: 'visible' }}
+        onMouseMove={handleMove} onMouseLeave={() => setHover(null)}>
+        {ticks.map((t, i) => (
+          <g key={i}>
+            <line x1={PAD.l} x2={W - PAD.r} y1={yOf(t)} y2={yOf(t)} stroke="#e2e8f0" strokeWidth="1" />
+            <text x={PAD.l - 6} y={yOf(t) + 4} textAnchor="end" fontSize="10" fill="#94a3b8">
+              {Math.round(t).toLocaleString()}
+            </text>
+          </g>
+        ))}
+        {data.map((d, i) => (i % step === 0 || i === data.length - 1) && (
+          <text key={i} x={xOf(i)} y={H - PAD.b + 16} textAnchor="middle" fontSize="10" fill="#94a3b8">{d.period}</text>
+        ))}
+        {keys.map((k, ki) => {
+          // null은 건너뛰고 연속 구간별 polyline
+          const segs: string[][] = [[]]
+          data.forEach((d, i) => {
+            const v = d[k]
+            if (v == null) { if (segs[segs.length - 1].length) segs.push([]) }
+            else segs[segs.length - 1].push(`${xOf(i)},${yOf(v)}`)
+          })
+          return (
+            <g key={k}>
+              {segs.filter(s => s.length > 1).map((s, si) => (
+                <polyline key={si} points={s.join(' ')} fill="none" stroke={colors[ki]} strokeWidth="2.2" strokeLinejoin="round" />
+              ))}
+              {data.map((d, i) => d[k] != null && (
+                <circle key={i} cx={xOf(i)} cy={yOf(d[k]!)} r="3" fill={colors[ki]} />
+              ))}
+            </g>
+          )
+        })}
+        <line x1={PAD.l} x2={PAD.l} y1={PAD.t} y2={H - PAD.b} stroke="#cbd5e1" strokeWidth="1" />
+        <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} stroke="#cbd5e1" strokeWidth="1" />
+        {hover != null && (
+          <line x1={xOf(hover)} x2={xOf(hover)} y1={PAD.t} y2={H - PAD.b}
+            stroke="#0369A1" strokeWidth="1" strokeDasharray="4 3" opacity="0.5" />
+        )}
+      </svg>
+      {hover != null && (
+        <div style={{
+          position: 'absolute', top: 30,
+          left: `${(xOf(hover) / W) * 100}%`,
+          transform: `translateX(${hover > data.length / 2 ? '-105%' : '8px'})`,
+          background: '#0f172a', color: '#fff', borderRadius: 8,
+          padding: '7px 11px', fontSize: 12, pointerEvents: 'none',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.2)', zIndex: 5, whiteSpace: 'nowrap',
+        }}>
+          <div style={{ fontWeight: 700, marginBottom: 3, color: '#bae6fd' }}>{data[hover].period}</div>
+          {keys.map((k, ki) => (
+            <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: colors[ki], display: 'inline-block' }} />
+              {labels[ki]}: <b>{data[hover][k] != null ? `${data[hover][k]!.toLocaleString()}${unit}` : '-'}</b>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ── 예시 리포트 (첫 진입 시 표시) ──────────────────────── */
+const SAMPLE_REPORT: CompanyReport = {
+  isSample: true,
+  company: '올리브영 (예시)',
+  summary: '뷰티·생활건강 분야 1위 H&B 플랫폼 — 자체 브랜드와 옴니채널 강점',
+  categories: [
+    { name: '화장품·뷰티', brands: ['바이오힐보', '브링그린', '웨이크메이크'] },
+    { name: '생활건강', brands: ['딜라이트 프로젝트', '식품·건강기능식품'] },
+  ],
+  recentIssues: [
+    { date: '2026.06.12', title: 'AI 시대 브랜드 생존 공식 바뀌었다', body: '올리브영 입점 K뷰티 브랜드들의 AI 마케팅 전환 가속. 큐레이션 경쟁력이 핵심 화두로.', sourceTitle: '예시 기사', sourceUrl: '' },
+    { date: '2026.06.10', title: '여름 시즌 선케어 기획전 확대', body: '자외선차단제 카테고리 전년 대비 30% 성장, 글로벌 K뷰티 수요 지속.', sourceTitle: '예시 기사', sourceUrl: '' },
+    { date: '2026.06.08', title: '외국인 관광객 매출 비중 확대', body: '명동·홍대 상권 중심으로 외국인 매출 비중 상승, 옴니채널 전략 강화.', sourceTitle: '예시 기사', sourceUrl: '' },
+  ],
+  positioning: {
+    competitors: ['다이소', '무신사 뷰티', '쿠팡 로켓럭셔리'],
+    strengths: ['전국 1,300+ 매장 옴니채널 네트워크', '신진 브랜드 발굴·큐레이션 역량', '오늘드림 즉시배송'],
+    weaknesses: ['다이소 저가 뷰티 추격', '온라인 전용 플랫폼 대비 가격 경쟁력'],
+  },
+  financials: {
+    revenue: '2024년 4.8조원 (전년比 +25%)',
+    operatingProfit: '약 4,600억원 — 견조한 성장세',
+    headcount: '약 4,400명, 매장 확장과 함께 증가 추세',
+    direction: ['글로벌 K뷰티 플랫폼 확장', '자체 브랜드(PB) 강화', '옴니채널 고도화'],
+    source: '뉴스 기반 추정',
+    note: '예시 데이터입니다',
+  },
+  financialCharts: {
+    quarterly: [
+      { period: '2024.3Q', revenue: 12100, profit: 1150, employees: 4250 },
+      { period: '2024.4Q', revenue: 13400, profit: 1290, employees: 4320 },
+      { period: '2025.1Q', revenue: 12800, profit: 1210, employees: 4360 },
+      { period: '2025.2Q', revenue: 13900, profit: 1340, employees: 4410 },
+      { period: '2025.3Q', revenue: 14200, profit: 1390, employees: 4450 },
+      { period: '2025.4Q', revenue: 15600, profit: 1520, employees: 4490 },
+      { period: '2026.1Q', revenue: 14900, profit: 1450, employees: 4530 },
+      { period: '2026.2Q', revenue: 15800, profit: 1560, employees: 4570 },
+    ],
+    yearly: [
+      { period: '2017', revenue: 14600, profit: 1010, employees: 2900 },
+      { period: '2018', revenue: 16600, profit: 860, employees: 3100 },
+      { period: '2019', revenue: 19600, profit: 880, employees: 3300 },
+      { period: '2020', revenue: 18700, profit: 1000, employees: 3350 },
+      { period: '2021', revenue: 21200, profit: 1380, employees: 3500 },
+      { period: '2022', revenue: 27800, profit: 2710, employees: 3700 },
+      { period: '2023', revenue: 38700, profit: 4660, employees: 3950 },
+      { period: '2024', revenue: 48000, profit: 5900, employees: 4400 },
+      { period: '2025', revenue: 56500, profit: 7100, employees: 4500 },
+    ],
+  },
+  coverLetter: [
+    { topic: '트렌드 큐레이션 역량', point: '올리브영의 핵심 경쟁력은 신진 브랜드 발굴', example: '"고객 리뷰 데이터를 분석해 차세대 인기 카테고리를 예측해본 경험이 있습니다."' },
+    { topic: '옴니채널 이해', point: '오늘드림 등 O2O 전략과 연결', example: '"온·오프라인 구매 여정을 직접 비교 체험하며 옴니채널 UX 개선점을 정리했습니다."' },
+    { topic: '데이터 기반 상품 기획', point: 'MD 직무의 핵심 — 발주·재고 최적화', example: '"판매 데이터 기반으로 시즌 수요를 예측하는 사이드 프로젝트를 진행했습니다."' },
+  ],
+  interviewQs: [
+    { question: '최근 주목하는 뷰티 트렌드와 그 이유는?', intent: '카테고리 감각·시장 관심도 확인', tip: '구체적 브랜드·수치와 함께 올리브영 매대 관찰 경험 연결' },
+    { question: '신규 브랜드 입점을 결정한다면 어떤 기준으로 평가하겠는가?', intent: 'MD 의사결정 프레임 확인', tip: '시장성·차별성·마진·운영 역량 4축으로 구조화해 답변' },
+    { question: '재고가 과다하게 남은 상품을 어떻게 처리하겠는가?', intent: '실무 문제해결 능력', tip: '할인 행사·번들링·채널 전환 등 단계별 방안 제시' },
+    { question: '다이소 뷰티의 추격에 어떻게 대응해야 한다고 보는가?', intent: '경쟁 환경 분석력', tip: '가격이 아닌 큐레이션·경험 가치로 차별화 논리 전개' },
+  ],
+  provider: '',
+  docCount: 0,
+}
+
 /* ── 기업 분석 탭 ───────────────────────────────────────── */
 function CompanyTab() {
   const [company, setCompany] = useState('')
   const [jd, setJd] = useState('')
+  const [jdUrl, setJdUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [report, setReport] = useState<CompanyReport | null>(null)
   const [error, setError] = useState('')
+  const [chartMode, setChartMode] = useState<'quarterly' | 'yearly'>('quarterly')
 
   async function generate() {
     if (!company.trim() || loading) return
@@ -71,7 +266,11 @@ function CompanyTab() {
       const res = await fetch('/api/mdjob/company-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ company: company.trim(), jd: jd.trim() || undefined }),
+        body: JSON.stringify({
+          company: company.trim(),
+          jd: jd.trim() || undefined,
+          jdUrl: jdUrl.trim() || undefined,
+        }),
       })
       const data = await res.json()
       if (!res.ok || data.error) throw new Error(data.error || `오류 ${res.status}`)
@@ -82,6 +281,12 @@ function CompanyTab() {
       setLoading(false)
     }
   }
+
+  // 표시 데이터: 실제 결과 없으면 예시
+  const shown = report ?? SAMPLE_REPORT
+  const isSample = !report
+  const charts = shown.financialCharts
+  const chartData = charts ? (chartMode === 'quarterly' ? charts.quarterly : charts.yearly) : []
 
   return (
     <div>
@@ -105,6 +310,21 @@ function CompanyTab() {
             rows={4}
             style={{ width: '100%', padding: '10px 14px', border: '1.5px solid #BAE6FD', borderRadius: 10, fontSize: 13, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }} />
         </div>
+        <div style={{ marginBottom: 14 }}>
+          <label style={{ fontSize: 13, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 6 }}>
+            채용공고 링크 <span style={{ color: '#94a3b8', fontWeight: 400 }}>— 선택, URL만 넣으면 본문을 자동으로 가져옴</span>
+          </label>
+          <input value={jdUrl} onChange={e => setJdUrl(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && generate()}
+            placeholder="https://www.wanted.co.kr/wd/12345"
+            style={{
+              width: '100%', padding: '10px 14px', borderRadius: 10, fontSize: 13, outline: 'none',
+              border: `1.5px solid ${jdUrl.trim() && !/^https?:\/\//.test(jdUrl.trim()) ? '#fca5a5' : '#BAE6FD'}`,
+            }} />
+          {jdUrl.trim() && !/^https?:\/\//.test(jdUrl.trim()) && (
+            <div style={{ fontSize: 11, color: '#ef4444', marginTop: 4 }}>http:// 또는 https:// 로 시작하는 URL을 입력하세요</div>
+          )}
+        </div>
         <button onClick={generate} disabled={loading || !company.trim()}
           style={{
             padding: '11px 28px', background: loading ? '#94a3b8' : '#1D9E75', color: '#fff',
@@ -127,22 +347,42 @@ function CompanyTab() {
         </div>
       )}
 
-      {report && !loading && (
-        <>
+      {!loading && (
+        <div style={isSample ? { opacity: 0.75 } : undefined}>
           {/* 총평 */}
           <div style={{ background: '#E0F2FE', border: '1px solid #BAE6FD', borderRadius: 14, padding: '16px 20px', marginBottom: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <span style={{ fontSize: 16, fontWeight: 800, color: '#0c4a6e' }}>{report.company}</span>
-              <ProviderBadge provider={report.provider} />
-              <span style={{ fontSize: 10, color: '#64748b' }}>자료 {report.docCount}건 기반</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 16, fontWeight: 800, color: '#0c4a6e' }}>{shown.company}</span>
+              {isSample ? (
+                <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 10, background: '#fef9c3', color: '#854d0e', fontWeight: 700 }}>예시</span>
+              ) : (
+                <>
+                  <ProviderBadge provider={shown.provider} />
+                  <span style={{ fontSize: 10, color: '#64748b' }}>자료 {shown.docCount}건 기반</span>
+                  {shown.dartUsed && <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 10, background: '#dcfce7', color: '#166534', fontWeight: 600 }}>DART 공시</span>}
+                  {(shown.jdSource === 'url' || shown.jdSource === 'both') && <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 10, background: '#ede9fe', color: '#5b21b6', fontWeight: 600 }}>JD 반영됨</span>}
+                </>
+              )}
             </div>
-            <div style={{ fontSize: 14, color: '#0c4a6e', lineHeight: 1.6 }}>💡 {report.summary}</div>
+            <div style={{ fontSize: 14, color: '#0c4a6e', lineHeight: 1.6 }}>💡 {shown.summary}</div>
+            {isSample && (
+              <div style={{ fontSize: 12, color: '#854d0e', marginTop: 8 }}>
+                ⬆ 기업명을 입력하고 리포트를 생성하면 실제 분석으로 교체됩니다.
+              </div>
+            )}
           </div>
+
+          {/* JD URL 추출 실패 경고 */}
+          {!isSample && shown.jdUrlError && (
+            <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: '12px 16px', fontSize: 12.5, color: '#78350f', marginBottom: 14 }}>
+              ⚠️ 채용공고 본문 추출 실패 ({shown.jdUrlError}) — 사이트가 차단했거나 JS 렌더링 페이지입니다. JD를 텍스트로 붙여넣으면 더 정확해집니다.
+            </div>
+          )}
 
           {/* ① 카테고리/브랜드 */}
           <SectionCard title="주력 카테고리 · 대표 브랜드" icon="🏷️">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {(report.categories ?? []).map((cat, i) => (
+              {(shown.categories ?? []).map((cat, i) => (
                 <div key={i}>
                   <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0369A1', marginBottom: 6 }}>{cat.name}</div>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -153,10 +393,86 @@ function CompanyTab() {
             </div>
           </SectionCard>
 
+          {/* ①.5 재무·인력·주력 방향 */}
+          {shown.financials && (
+            <SectionCard title="재무·인력·주력 방향" icon="📈">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 10, marginBottom: 14 }}>
+                {([
+                  { label: '매출', value: shown.financials.revenue, color: '#0369A1' },
+                  { label: '영업이익', value: shown.financials.operatingProfit, color: '#1D9E75' },
+                  { label: '인력 동향', value: shown.financials.headcount, color: '#8b5cf6' },
+                ]).map(item => {
+                  const noData = !item.value || item.value.includes('자료 부족')
+                  return (
+                    <div key={item.label} style={{
+                      background: noData ? '#f8fafc' : '#fff', border: '1px solid #e2e8f0',
+                      borderRadius: 10, padding: '12px 14px',
+                    }}>
+                      <div style={{ fontSize: 11, color: '#64748b', marginBottom: 4 }}>{item.label}</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: noData ? '#94a3b8' : item.color, lineHeight: 1.5 }}>
+                        {item.value || '자료 부족'}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 6 }}>주력 방향</div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {(shown.financials.direction ?? []).map((d, i) => <Chip key={i} text={d} color="#0c4a6e" bg="#E0F2FE" />)}
+                </div>
+              </div>
+              <div style={{ fontSize: 10.5, color: '#94a3b8' }}>
+                출처: {shown.financials.source}{shown.financials.source !== 'DART 공시' && ' — 정확한 수치는 공시 확인'}
+                {shown.financials.note && ` · ${shown.financials.note}`}
+              </div>
+
+              {/* 재무 추이 그래프 */}
+              {charts && chartData.length > 0 ? (
+                <div style={{ marginTop: 18, borderTop: '1px solid #f1f5f9', paddingTop: 16 }}>
+                  <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
+                    {([
+                      { key: 'quarterly', label: '최근 2년 분기별' },
+                      { key: 'yearly',    label: '최근 10년 연별' },
+                    ] as const).map(m => (
+                      <button key={m.key} onClick={() => setChartMode(m.key)} style={{
+                        padding: '6px 14px', borderRadius: 16, fontSize: 12, cursor: 'pointer',
+                        fontWeight: chartMode === m.key ? 700 : 400,
+                        background: chartMode === m.key ? '#0369A1' : '#f1f5f9',
+                        color: chartMode === m.key ? '#fff' : '#64748b',
+                        border: 'none',
+                      }}>{m.label}</button>
+                    ))}
+                  </div>
+                  <FinLineChart
+                    title="매출 · 영업이익 (단위: 억원)"
+                    data={chartData}
+                    keys={['revenue', 'profit']}
+                    colors={['#0369A1', '#1D9E75']}
+                    labels={['매출', '영업이익']}
+                    unit="억원"
+                  />
+                  <FinLineChart
+                    title="종업원수 (단위: 명)"
+                    data={chartData}
+                    keys={['employees']}
+                    colors={['#8b5cf6']}
+                    labels={['종업원수']}
+                    unit="명"
+                  />
+                </div>
+              ) : !isSample && (
+                <div style={{ marginTop: 14, fontSize: 12, color: '#94a3b8' }}>
+                  📉 공시 시계열 데이터 없음 (비상장 또는 DART 미등록 기업)
+                </div>
+              )}
+            </SectionCard>
+          )}
+
           {/* ② 최근 이슈 */}
           <SectionCard title="최근 신상품·캠페인·이슈" icon="📰">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {(report.recentIssues ?? []).map((n, i) => (
+              {(shown.recentIssues ?? []).map((n, i) => (
                 <div key={i} style={{ borderLeft: '3px solid #BAE6FD', paddingLeft: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                     {n.date && <span style={{ fontSize: 10, color: '#64748b', background: '#f1f5f9', borderRadius: 5, padding: '1px 6px' }}>{n.date}</span>}
@@ -178,13 +494,13 @@ function CompanyTab() {
             <div style={{ marginBottom: 14 }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 6 }}>주요 경쟁사</div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {(report.positioning?.competitors ?? []).map((c, i) => <Chip key={i} text={c} color="#475569" bg="#f1f5f9" />)}
+                {(shown.positioning?.competitors ?? []).map((c, i) => <Chip key={i} text={c} color="#475569" bg="#f1f5f9" />)}
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 12 }}>
               <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, padding: '12px 16px' }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#166534', marginBottom: 8 }}>💪 강점</div>
-                {(report.positioning?.strengths ?? []).map((s, i) => (
+                {(shown.positioning?.strengths ?? []).map((s, i) => (
                   <div key={i} style={{ fontSize: 12.5, color: '#14532d', marginBottom: 5, paddingLeft: 10, position: 'relative' }}>
                     <span style={{ position: 'absolute', left: 0 }}>•</span>{s}
                   </div>
@@ -192,7 +508,7 @@ function CompanyTab() {
               </div>
               <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 10, padding: '12px 16px' }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#9f1239', marginBottom: 8 }}>⚠️ 약점·과제</div>
-                {(report.positioning?.weaknesses ?? []).map((w, i) => (
+                {(shown.positioning?.weaknesses ?? []).map((w, i) => (
                   <div key={i} style={{ fontSize: 12.5, color: '#881337', marginBottom: 5, paddingLeft: 10, position: 'relative' }}>
                     <span style={{ position: 'absolute', left: 0 }}>•</span>{w}
                   </div>
@@ -204,7 +520,7 @@ function CompanyTab() {
           {/* ④ 자소서 소재 */}
           <SectionCard title="자소서 소재" icon="✍️">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {(report.coverLetter ?? []).map((c, i) => (
+              {(shown.coverLetter ?? []).map((c, i) => (
                 <div key={i} style={{ background: '#f8fafc', borderRadius: 10, padding: '12px 16px' }}>
                   <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0369A1', marginBottom: 4 }}>{i + 1}. {c.topic}</div>
                   <div style={{ fontSize: 12.5, color: '#475569', marginBottom: 6 }}>🔗 {c.point}</div>
@@ -219,7 +535,7 @@ function CompanyTab() {
           {/* ⑤ 면접 예상질문 */}
           <SectionCard title="직무 기반 면접 예상질문" icon="🎤">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {(report.interviewQs ?? []).map((q, i) => (
+              {(shown.interviewQs ?? []).map((q, i) => (
                 <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: 10, padding: '12px 16px' }}>
                   <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>Q{i + 1}. {q.question}</div>
                   <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>🎯 의도: {q.intent}</div>
@@ -228,7 +544,7 @@ function CompanyTab() {
               ))}
             </div>
           </SectionCard>
-        </>
+        </div>
       )}
     </div>
   )

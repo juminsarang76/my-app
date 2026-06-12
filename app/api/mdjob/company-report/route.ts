@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { callLLM, searchGoogleNews } from '@/app/lib/llm'
+import { fetchDartFinancials, fetchDartTimeseries, DartSummary } from '@/app/lib/dart'
 
 export const dynamic = 'force-dynamic'
 
@@ -60,20 +61,65 @@ async function searchGoogle(query: string, limit = 8): Promise<SearchDoc[]> {
   }))
 }
 
+// ── 채용공고 URL 본문 추출 ───────────────────────────────────────────
+
+async function fetchJdFromUrl(url: string): Promise<{ text: string | null; error?: string }> {
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124' },
+      signal: AbortSignal.timeout(10000),
+    })
+    if (!res.ok) return { text: null, error: `페이지 응답 ${res.status}` }
+    const html = await res.text()
+
+    // 메타 설명 (SPA 대응 — 메타에 JD 요약이 있는 경우 많음)
+    const meta = [
+      html.match(/<meta[^>]+property="og:description"[^>]+content="([^"]*)"/i)?.[1],
+      html.match(/<meta[^>]+name="description"[^>]+content="([^"]*)"/i)?.[1],
+    ].filter(Boolean).join(' ')
+
+    // 본문 추출: script/style/nav/header/footer 제거 → 태그 strip → 공백 정규화
+    const body = html
+      .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<(nav|header|footer)[\s\S]*?<\/\1>/gi, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+    const text = `${meta} ${body}`.trim().slice(0, 3000)
+    if (text.length < 300) {
+      return { text: null, error: '본문이 너무 짧음 (JS 렌더링 사이트로 추정)' }
+    }
+    return { text }
+  } catch (e) {
+    return { text: null, error: (e as Error).message.slice(0, 80) }
+  }
+}
+
 // ── Route Handler ────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-  const { company, jd } = await req.json().catch(() => ({}))
+  const { company, jd, jdUrl } = await req.json().catch(() => ({}))
   if (!company?.trim()) {
     return NextResponse.json({ error: '기업명을 입력하세요.' }, { status: 400 })
   }
   const c = company.trim()
 
-  // 병렬 수집 — 실패한 소스는 건너뜀
+  // 병렬 수집 — 검색 + JD URL + DART (실패한 소스는 건너뜀)
+  const jdUrlPromise = jdUrl?.trim() && /^https?:\/\//.test(jdUrl.trim())
+    ? fetchJdFromUrl(jdUrl.trim())
+    : Promise.resolve({ text: null as string | null })
+  const dartSummaryPromise = fetchDartFinancials(c)
+  const dartChartsPromise  = fetchDartTimeseries(c)
+
   const results = await Promise.allSettled([
     searchNaver('news', c),
     searchNaver('news', `${c} 신상품 출시`, 5),
     searchNaver('news', `${c} 캠페인 마케팅`, 5),
+    searchNaver('news', `${c} 매출 영업이익 실적`, 6),
+    searchNaver('news', `${c} 채용 조직 인력 확대`, 5),
     searchNaver('shop', c, 10),
     searchNaver('blog', `${c} 후기`, 5),
     searchKakaoWeb(`${c} MD 머천다이저`),
@@ -81,6 +127,14 @@ export async function POST(req: NextRequest) {
   ])
   const docs = results.flatMap(r => r.status === 'fulfilled' ? r.value : [])
   const failedSources = results.filter(r => r.status === 'rejected').length
+
+  const jdFetch = await jdUrlPromise
+  const dartSummary: DartSummary | null = await dartSummaryPromise.catch(() => null)
+  const dartCharts = await dartChartsPromise.catch(() => null)
+
+  // JD 병합 (붙여넣기 + URL 추출, 합계 4,000자)
+  const jdText: string = [jd?.trim(), jdFetch.text].filter(Boolean).join('\n\n---\n\n').slice(0, 4000)
+  const jdSource = jd?.trim() && jdFetch.text ? 'both' : jd?.trim() ? 'text' : jdFetch.text ? 'url' : 'none'
 
   if (!docs.length) {
     return NextResponse.json({ error: '검색 결과가 없습니다. 기업명을 확인해주세요.' }, { status: 502 })
@@ -95,19 +149,30 @@ export async function POST(req: NextRequest) {
     return true
   }).slice(0, 40)
 
+  // DART 공시 수치 블록 (있으면 프롬프트에 주입 — LLM이 우선 사용)
+  const eok = (n: number | null) => n == null ? '?' : n >= 10000 ? `${(n / 10000).toFixed(1)}조원` : `${n.toLocaleString()}억원`
+  const dartBlock = dartSummary ? `
+[공시 확정 수치 — DART ${dartSummary.year}년 사업보고서 (${dartSummary.corpName}${dartSummary.stockCode ? ', 상장' : ''})]
+- 매출액: ${eok(dartSummary.revenueEok)} (전년 ${eok(dartSummary.revenuePrevEok)})
+- 영업이익: ${eok(dartSummary.profitEok)} (전년 ${eok(dartSummary.profitPrevEok)})
+- 직원수: ${dartSummary.employees?.toLocaleString() ?? '?'}명
+` : ''
+
   const userPrompt = `
 당신은 유통/커머스 MD(머천다이저) 직무 취업 컨설턴트다.
 아래는 "${c}"에 대해 수집한 실제 검색 자료 ${unique.length}건이다.
 
 [검색 자료]
 ${unique.map((d, i) => `(${i + 1}) [${d.source}]${d.date ? ` ${d.date}` : ''}\n제목: ${d.title}\n내용: ${d.body}\nURL: ${d.url}`).join('\n\n')}
-${jd?.trim() ? `\n[지원 채용공고(JD)]\n${jd.trim().slice(0, 3000)}\n` : ''}
+${dartBlock}
+${jdText ? `\n[지원 채용공고(JD)]\n${jdText}\n` : ''}
 
 [작업 지시]
 위 검색 자료에 근거해서 MD 직무 지원자 관점의 기업 분석 리포트를 작성하라.
 - 검색 자료에 없는 내용은 지어내지 말 것. 자료가 부족한 항목은 일반적으로 알려진 사실만 보수적으로 기술.
 - recentIssues는 검색 자료의 실제 기사에서만 뽑고 sourceUrl을 반드시 해당 자료의 URL로 채울 것.
-${jd?.trim() ? '- coverLetter와 interviewQs는 JD의 요구 역량에 맞춰 작성할 것.' : ''}
+- financials: ${dartSummary ? '위 [공시 확정 수치]를 그대로 사용하고 source를 "DART 공시"로 표기.' : '검색 자료에 명시된 수치만 사용하고 source를 "뉴스 기반 추정"으로 표기. 수치가 없으면 "자료 부족" 명시 — 추정 금지.'}
+${jdText ? '- coverLetter와 interviewQs는 JD의 요구 역량에 맞춰 작성할 것.' : ''}
 
 [출력 JSON — 이 형식만, 다른 텍스트 금지]
 {
@@ -123,6 +188,14 @@ ${jd?.trim() ? '- coverLetter와 interviewQs는 JD의 요구 역량에 맞춰 �
     "competitors": ["주요 경쟁사 2~4개"],
     "strengths": ["MD 관점 강점 2~4개 (구체적으로)"],
     "weaknesses": ["MD 관점 약점·과제 2~3개"]
+  },
+  "financials": {
+    "revenue": "최근 매출 (예: 2024년 29조원, 전년比 -1.5%)",
+    "operatingProfit": "영업이익 동향 (흑자전환·증감 등)",
+    "headcount": "인력수 및 증감 동향",
+    "direction": ["주력 방향·전략 2~4개"],
+    "source": "DART 공시" 또는 "뉴스 기반 추정",
+    "note": "자료 부족 항목이 있으면 명시, 없으면 빈 문자열"
   },
   "coverLetter": [
     { "topic": "자소서 소재", "point": "이 기업과 연결되는 포인트", "example": "자소서에 쓸 수 있는 예시 문장 1개" }
@@ -153,6 +226,10 @@ categories 2~3개, recentIssues 3~5개, coverLetter 3개, interviewQs 4~5개.
     provider: llm.provider,
     docCount: unique.length,
     failedSources,
+    jdSource,
+    jdUrlError: jdUrl?.trim() && !jdFetch.text ? (jdFetch as { error?: string }).error ?? '추출 실패' : undefined,
+    financialCharts: dartCharts,
+    dartUsed: !!dartSummary,
     fetchedAt: new Date().toISOString(),
   })
 }
