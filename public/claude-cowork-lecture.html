@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claude Cowork 강의 — 라이브 진행 자료</title>
+<style>
+  :root{
+    --bg:#0f1117; --panel:#171a23; --panel2:#1f2330; --line:#2a2f3d;
+    --text:#e7e9ee; --muted:#9aa3b2; --accent:#6366f1;
+    --c-전반:#6366f1; --c-초급:#10b981; --c-중급:#f59e0b; --c-고급:#ef4444;
+    --code:#0b0d13;
+    --font:'Pretendard','Malgun Gothic','Apple SD Gothic Neo','Segoe UI',sans-serif;
+  }
+  body.light{
+    --bg:#f6f7fb; --panel:#ffffff; --panel2:#f0f2f7; --line:#e2e6ee;
+    --text:#1b1f2a; --muted:#5a6473; --code:#f3f5fa;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+  /* Top bar */
+  header{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line);flex:0 0 auto;}
+  header .brand{font-weight:800;font-size:17px;white-space:nowrap;}
+  header .brand small{font-weight:500;color:var(--muted);margin-left:8px;font-size:12px;}
+  header .spacer{flex:1;}
+  .trackpick{display:flex;gap:6px;align-items:center;}
+  .trackpick label{font-size:12px;color:var(--muted);margin-right:2px;}
+  .btn{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 11px;font-size:13px;cursor:pointer;font-family:var(--font);}
+  .btn:hover{border-color:var(--accent);}
+  .btn.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .iconbtn{padding:6px 9px;}
+
+  /* Layout */
+  .wrap{flex:1;display:flex;min-height:0;}
+  nav{width:280px;flex:0 0 280px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:10px 0;transition:flex-basis .2s ease,width .2s ease;}
+  body.nav-collapsed nav{flex-basis:0;width:0;padding:0;border-right:0;overflow:hidden;}
+  nav .lvl{padding:12px 16px 4px;font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;}
+  nav a{display:flex;gap:8px;align-items:center;padding:8px 16px;font-size:13.5px;color:var(--text);text-decoration:none;cursor:pointer;border-left:3px solid transparent;}
+  nav a:hover{background:var(--panel2);}
+  nav a.active{background:var(--panel2);border-left-color:var(--lc);font-weight:700;}
+  nav a .dot{width:8px;height:8px;border-radius:50%;background:var(--lc);flex:0 0 auto;}
+  nav a .badge{font-size:10px;color:var(--muted);margin-left:auto;}
+
+  main{flex:1;overflow-y:auto;padding:0;position:relative;}
+  .slide{max-width:1080px;margin:0 auto;padding:34px 46px 56px;}
+  .chiphead{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .lvlchip{font-size:13px;font-weight:800;padding:4px 12px;border-radius:999px;color:#fff;}
+  .typechip{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px;}
+  h1.title{font-size:34px;line-height:1.25;margin:6px 0 4px;font-weight:800;}
+  .tagline{color:var(--muted);font-size:16px;margin:0 0 26px;}
+
+  section.block{margin:0 0 26px;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .block > .bh{display:flex;align-items:center;gap:9px;padding:13px 18px;font-weight:800;font-size:15px;border-bottom:1px solid var(--line);background:var(--panel2);}
+  .block .bh .lead{font-size:18px;}
+  .block .body{padding:16px 18px;font-size:15.5px;line-height:1.72;}
+  .block .body ul{margin:6px 0;padding-left:22px;}
+  .block .body li{margin:4px 0;}
+  .block .body code{background:var(--code);padding:2px 6px;border-radius:5px;font-size:13.5px;}
+  .conceptrow{margin-bottom:14px;}
+  .conceptrow:last-child{margin-bottom:0;}
+  .conceptrow .ch{font-weight:700;font-size:16px;margin-bottom:3px;}
+
+  /* steps */
+  ol.steps{list-style:none;counter-reset:s;margin:0;padding:0;}
+  ol.steps>li{counter-increment:s;position:relative;padding:0 0 16px 46px;margin:0;}
+  ol.steps>li:before{content:counter(s);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px;}
+  ol.steps>li:not(:last-child):after{content:"";position:absolute;left:14px;top:30px;bottom:2px;width:2px;background:var(--line);}
+  ol.steps .st{font-weight:700;font-size:15.5px;}
+  ol.steps .sd{color:var(--text);font-size:14.5px;line-height:1.65;margin-top:2px;}
+  pre.prompt{position:relative;background:var(--code);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:11px 13px;margin:9px 0 0;overflow-x:auto;font-size:13px;line-height:1.55;white-space:pre-wrap;}
+  pre.prompt:before{content:"💬 입력 예시";display:block;font-family:var(--font);color:var(--muted);font-size:11px;margin-bottom:6px;}
+  .copybtn{position:absolute;top:8px;right:8px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer;font-family:var(--font);line-height:1.2;}
+  .copybtn:hover{border-color:var(--accent);color:var(--text);}
+  .copybtn.done{color:#3fb950;border-color:#3fb95066;}
+
+  /* screenshots */
+  .shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+  .shot{border:1.5px dashed var(--line);border-radius:10px;padding:10px;text-align:center;background:var(--panel2);}
+  .shot img{max-width:100%;border-radius:6px;display:block;margin:0 auto 6px;}
+  .shot .ph{color:var(--muted);font-size:13px;padding:26px 8px;}
+  .shot .cap{font-size:12px;color:var(--muted);margin-top:4px;}
+
+  /* reveal toggles */
+  .revealbox .body{display:none;}
+  .revealbox.open .body{display:block;}
+  .revealbox .bh{cursor:pointer;user-select:none;justify-content:space-between;}
+  .revealbox .bh .rt{font-size:12px;color:var(--muted);font-weight:600;}
+  .hintblock{border-color:#caa24533;}
+  .hintblock .bh{color:#e3b341;}
+  .resultblock .bh{color:#3fb950;}
+  .hint-li{margin:6px 0;}
+
+  /* tracks */
+  .tracktabs{display:flex;gap:6px;padding:12px 18px 0;flex-wrap:wrap;}
+  .tracktab{border:1px solid var(--line);background:var(--panel2);border-radius:9px 9px 0 0;padding:8px 14px;cursor:pointer;font-size:13.5px;font-weight:700;color:var(--muted);}
+  .tracktab.on{color:var(--text);border-bottom-color:var(--panel);background:var(--panel);}
+  .trackpane{display:none;padding:4px 18px 18px;}
+  .trackpane.on{display:block;}
+  .trackpane .kv{margin:9px 0;}
+  .trackpane .kv b{display:inline-block;min-width:90px;color:var(--muted);font-weight:700;}
+
+  /* footer nav */
+  .navbar{display:flex;align-items:center;gap:14px;padding:11px 24px;background:var(--panel);border-top:1px solid var(--line);flex:0 0 auto;}
+  .navbar .prog{font-size:13px;color:var(--muted);}
+  .navbar .prog b{color:var(--text);}
+  .navbar .spacer{flex:1;}
+  .hk{font-size:11.5px;color:var(--muted);}
+  .hk kbd{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:11px;}
+
+  .empty{padding:60px;text-align:center;color:var(--muted);}
+  @media print{nav,header,.navbar{display:none;}main{overflow:visible;}.revealbox .body{display:block!important;}}
+</style>
+</head>
+<body>
+<header>
+  <button class="btn iconbtn" id="navBtn" title="메뉴 접기/펼치기 (B)">☰</button>
+  <div class="brand">🗿 Claude Cowork 강의<small>라이브 진행용</small></div>
+  <div class="spacer"></div>
+  <div class="trackpick">
+    <label>트랙</label>
+    <button class="btn trackbtn on" data-tr="all">전체</button>
+    <button class="btn trackbtn" data-tr="A">💼 직장인</button>
+    <button class="btn trackbtn" data-tr="B">🚀 1인기업</button>
+    <button class="btn trackbtn" data-tr="C">🎓 취준생</button>
+  </div>
+  <button class="btn iconbtn" id="themeBtn" title="라이트/다크 (D)">🌗</button>
+  <button class="btn iconbtn" id="fsBtn" title="전체화면 (F)">⛶</button>
+</header>
+
+<div class="wrap">
+  <nav id="nav"></nav>
+  <main id="main">
+    <div class="empty" id="empty">강의 데이터를 불러오는 중… (data/part-*.js 파일이 같은 폴더의 data/ 안에 있어야 합니다)</div>
+  </main>
+</div>
+
+<footer class="navbar">
+  <span class="prog" id="prog">—</span>
+  <button class="btn" id="prevB">← 이전</button>
+  <button class="btn" id="nextB">다음 →</button>
+  <span class="spacer"></span>
+  <span class="hk"><kbd>←</kbd><kbd>→</kbd> 이동 · <kbd>H</kbd> 힌트 · <kbd>R</kbd> 결과 · <kbd>F</kbd> 전체화면</span>
+</footer>
+
+<!-- 강의 콘텐츠 데이터 (강의자료에서 추출, 레벨별 분할 로드) -->
+<script src="data/part-overview.js"></script>
+<script src="data/part-beginner.js"></script>
+<script src="data/part-intermediate.js"></script>
+<script src="data/part-advanced.js"></script>
+
+<script>
+(function(){
+  "use strict";
+  var LEVELS = [
+    {id:"전반", label:"전반 개요", emoji:"🧭"},
+    {id:"초급", label:"초급",       emoji:"🌱"},
+    {id:"중급", label:"중급",       emoji:"⚙️"},
+    {id:"고급", label:"고급",       emoji:"🚀"}
+  ];
+  var LCOLOR = {"전반":"#6366f1","초급":"#10b981","중급":"#f59e0b","고급":"#ef4444"};
+
+  // 강의자료 기준 병합 (페이지 수 고정 없음 — 챕터 수에 따라 동적)
+  var chapters = [].concat(
+    window.PART_OVERVIEW||[],
+    window.PART_BEGINNER||[],
+    window.PART_INTERMEDIATE||[],
+    window.PART_ADVANCED||[]
+  );
+  if(!chapters.length){ return; }
+  document.getElementById("empty").style.display="none";
+
+  var state = { idx:0, track:"all" };
+  var main = document.getElementById("main");
+  var nav = document.getElementById("nav");
+
+  function esc(s){return (s==null?"":String(s));}
+  function arr(x){return Array.isArray(x)?x:(x==null?[]:[x]);}
+  function promptBlock(text){
+    return '<pre class="prompt"><button class="copybtn" type="button" data-c="'+encodeURIComponent(text)+'" title="복사">📋 복사</button>'+esc(text).replace(/</g,"&lt;")+'</pre>';
+  }
+
+  function progressLabel(i){
+    var ch=chapters[i], lvl=ch.level;
+    var same=chapters.filter(function(c){return c.level===lvl;});
+    return lvl+" · "+(same.indexOf(ch)+1)+"/"+same.length;
+  }
+
+  function buildNav(){
+    nav.innerHTML="";
+    LEVELS.forEach(function(L){
+      var inLvl = chapters.map(function(c,i){return {c:c,i:i};}).filter(function(o){return o.c.level===L.id;});
+      if(!inLvl.length) return;
+      var h=document.createElement("div"); h.className="lvl"; h.textContent=L.emoji+" "+L.label; nav.appendChild(h);
+      inLvl.forEach(function(o){
+        var a=document.createElement("a");
+        a.style.setProperty("--lc",LCOLOR[L.id]);
+        a.dataset.i=o.i;
+        var t = o.c.type==="practice"?"실습":(o.c.type==="principle"?"원리":(o.c.type==="ui"?"UI":"개요"));
+        a.innerHTML='<span class="dot"></span><span>'+esc(o.c.title)+'</span><span class="badge">'+t+'</span>';
+        a.onclick=function(){go(o.i);};
+        nav.appendChild(a);
+      });
+    });
+  }
+
+  function block(lead,title,bodyHtml){
+    if(!bodyHtml) return "";
+    return '<section class="block"><div class="bh"><span class="lead">'+lead+'</span><span>'+title+'</span></div>'+
+      '<div class="body">'+bodyHtml+'</div></section>';
+  }
+  function revealBlock(lead,title,bodyHtml){
+    if(!bodyHtml) return "";
+    return '<section class="block revealbox '+(lead==="💡"?"hintblock":"resultblock")+'">'+
+      '<div class="bh" onclick="this.parentNode.classList.toggle(\'open\')">'+
+      '<span><span class="lead">'+lead+'</span> '+title+'</span><span class="rt">클릭하여 보기 ▾</span></div>'+
+      '<div class="body">'+bodyHtml+'</div></section>';
+  }
+  function principleHtml(ch){
+    var p=arr(ch.principle); if(!p.length) return "";
+    return p.map(function(c){
+      if(typeof c==="string") return '<div class="conceptrow">'+c+'</div>';
+      return '<div class="conceptrow">'+(c.h?'<div class="ch">'+esc(c.h)+'</div>':'')+'<div>'+esc(c.body)+'</div></div>';
+    }).join("");
+  }
+  function materialHtml(ch){
+    var m=arr(ch.material); if(!m.length) return "";
+    return '<ol class="steps">'+m.map(function(s){
+      if(typeof s==="string") return '<li><div class="st">'+s+'</div></li>';
+      return '<li><div class="st">'+esc(s.t)+'</div>'+(s.d?'<div class="sd">'+esc(s.d)+'</div>':'')+
+        (s.prompt?promptBlock(s.prompt):'')+'</li>';
+    }).join("")+'</ol>';
+  }
+  function shotsHtml(ch){
+    var s=arr(ch.screenshots); if(!s.length) return "";
+    return '<div class="shots">'+s.map(function(o){
+      var file=(o.file||o.path||"").replace(/^.*[\\\/]/,"");
+      var src=file?("../assets/"+file):"";
+      return '<div class="shot">'+
+        (src?'<img src="'+src+'" alt="" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'block\';" /><div class="ph" style="display:none">📸 '+esc(o.caption)+'</div>':
+              '<div class="ph">📸 '+esc(o.caption)+'</div>')+
+        '<div class="cap">'+esc(file||o.caption)+'</div></div>';
+    }).join("")+'</div>';
+  }
+  function listHtml(items){
+    var a=arr(items); if(!a.length) return "";
+    return '<ul>'+a.map(function(x){return '<li class="hint-li">'+esc(x)+'</li>';}).join("")+'</ul>';
+  }
+  function tracksHtml(ch){
+    var t=ch.tracks; if(!t) return "";
+    var defs=[["A","💼 Track A · 직장인"],["B","🚀 Track B · 1인기업가"],["C","🎓 Track C · 취준생"]].filter(function(d){return t[d[0]];});
+    if(!defs.length) return "";
+    var act=(state.track!=="all" && t[state.track])?state.track:defs[0][0];
+    var tabs=defs.map(function(d){return '<div class="tracktab'+(d[0]===act?" on":"")+'" data-tr="'+d[0]+'">'+d[1]+'</div>';}).join("");
+    var panes=defs.map(function(d){
+      var v=t[d[0]],rows="";
+      if(v.situation) rows+='<div class="kv"><b>상황</b> '+esc(v.situation)+'</div>';
+      if(v.output)    rows+='<div class="kv"><b>만들 것</b> '+esc(v.output)+'</div>';
+      if(v.prompt)    rows+=promptBlock(v.prompt);
+      if(v.check)     rows+='<div class="kv"><b>체크포인트</b> '+esc(v.check)+'</div>';
+      return '<div class="trackpane'+(d[0]===act?" on":"")+'" data-tr="'+d[0]+'">'+rows+'</div>';
+    }).join("");
+    return '<section class="block"><div class="bh"><span class="lead">🧭</span><span>트랙별 실습 분기</span></div>'+
+      '<div class="tracktabs">'+tabs+'</div>'+panes+'</section>';
+  }
+
+  function render(){
+    var ch=chapters[state.idx];
+    var color=LCOLOR[ch.level]||"#6366f1";
+    var typeLabel=ch.type==="practice"?"실습":(ch.type==="principle"?"원리":(ch.type==="ui"?"UI 설명":"개요"));
+    var html='<div class="slide">';
+    html+='<div class="chiphead"><span class="lvlchip" style="background:'+color+'">'+ch.level+'</span><span class="typechip">'+typeLabel+'</span></div>';
+    html+='<h1 class="title">'+esc(ch.title)+'</h1>';
+    if(ch.tagline) html+='<p class="tagline">'+esc(ch.tagline)+'</p>';
+    html+=block("📚","원리 · 핵심 개념", principleHtml(ch));
+    html+=block("🧪","실습 자료 · 진행 단계", materialHtml(ch));
+    var sh=shotsHtml(ch); if(sh) html+=block("📸","화면 / 스크린샷", sh);
+    html+=revealBlock("💡","힌트 (막힐 때 펼치기)", listHtml(ch.hints));
+    html+=revealBlock("✅","실습 결과 (예상 결과 확인)", listHtml(ch.results));
+    html+=tracksHtml(ch);
+    html+='</div>';
+    main.innerHTML=html; main.scrollTop=0;
+    document.getElementById("prog").innerHTML='<b>'+progressLabel(state.idx)+'</b> &nbsp;·&nbsp; '+esc(ch.title);
+    Array.prototype.forEach.call(main.querySelectorAll(".tracktab"),function(tab){
+      tab.onclick=function(){
+        var tr=tab.dataset.tr, sec=tab.closest("section");
+        sec.querySelectorAll(".tracktab").forEach(function(x){x.classList.toggle("on",x.dataset.tr===tr);});
+        sec.querySelectorAll(".trackpane").forEach(function(x){x.classList.toggle("on",x.dataset.tr===tr);});
+      };
+    });
+    Array.prototype.forEach.call(nav.querySelectorAll("a"),function(a){a.classList.toggle("active",+a.dataset.i===state.idx);});
+    var actA=nav.querySelector("a.active"); if(actA) actA.scrollIntoView({block:"nearest"});
+  }
+  function go(i){ if(i<0||i>=chapters.length) return; state.idx=i; render(); }
+
+  Array.prototype.forEach.call(document.querySelectorAll(".trackbtn"),function(b){
+    b.onclick=function(){ state.track=b.dataset.tr;
+      document.querySelectorAll(".trackbtn").forEach(function(x){x.classList.toggle("on",x===b);}); render(); };
+  });
+  function copyFallback(txt,cb){try{var ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();document.execCommand("copy");document.body.removeChild(ta);cb(true);}catch(e){cb(false);}}
+  main.addEventListener("click",function(e){
+    var b=e.target.closest?e.target.closest(".copybtn"):null; if(!b) return;
+    var txt=decodeURIComponent(b.getAttribute("data-c")||"");
+    var flash=function(ok){var o="📋 복사";b.textContent=ok?"✓ 복사됨":"복사 실패";b.classList.toggle("done",ok);setTimeout(function(){b.textContent=o;b.classList.remove("done");},1400);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){flash(true);},function(){copyFallback(txt,flash);});}
+    else copyFallback(txt,flash);
+  });
+  document.getElementById("navBtn").onclick=function(){document.body.classList.toggle("nav-collapsed");};
+  document.getElementById("prevB").onclick=function(){go(state.idx-1);};
+  document.getElementById("nextB").onclick=function(){go(state.idx+1);};
+  document.getElementById("themeBtn").onclick=function(){document.body.classList.toggle("light");};
+  document.getElementById("fsBtn").onclick=function(){ if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();} else {document.exitFullscreen&&document.exitFullscreen();} };
+  document.addEventListener("keydown",function(e){
+    if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA") return;
+    if(e.key==="ArrowRight"||e.key==="PageDown"){go(state.idx+1);e.preventDefault();}
+    else if(e.key==="ArrowLeft"||e.key==="PageUp"){go(state.idx-1);e.preventDefault();}
+    else if(e.key==="h"||e.key==="H"){var b=main.querySelector(".hintblock");if(b)b.classList.toggle("open");}
+    else if(e.key==="r"||e.key==="R"){var b2=main.querySelector(".resultblock");if(b2)b2.classList.toggle("open");}
+    else if(e.key==="f"||e.key==="F"){document.getElementById("fsBtn").click();}
+    else if(e.key==="d"||e.key==="D"){document.body.classList.toggle("light");}
+    else if(e.key==="b"||e.key==="B"){document.body.classList.toggle("nav-collapsed");}
+  });
+
+  buildNav(); render();
+})();
+</script>
+</body>
+</html>
