@@ -3,14 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getStoredUser, setStoredUser, clearStoredUser, ALL_MENUS, isAdmin, AuthUser } from '@/app/lib/auth'
-
-const SPECIAL_MENUS = [
-  { key: 'minjun',  label: '민준입시', href: '/민준입시.html', desc: '민준 입시 정보' },
-  { key: 'lecture', label: '강의',     href: '/강의.html',     desc: '강의 자료' },
-  { key: 'mdjob',   label: 'MDjob',    href: '/mdjob',         desc: 'MD 취업준비 · 기업분석/VOC' },
-  { key: 'articlemd', label: 'ArticleMD', href: '/articlemd',   desc: '마크다운 아티클 뷰어' },
-]
+import { getStoredUser, setStoredUser, clearStoredUser, fetchFreshUser, ALL_MENUS, isAdmin, AuthUser } from '@/app/lib/auth'
 
 export default function HomePage() {
   const router = useRouter()
@@ -18,18 +11,15 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const stored = getStoredUser()
     setMounted(true)
-
-    if (stored && isAdmin(stored.email)) {
-      // admin: 항상 현재 ALL_MENUS 전체로 갱신 (새 메뉴 추가 시 자동 반영)
-      const updatedUser = { ...stored, permissions: ALL_MENUS.map(m => m.key) }
-      setStoredUser(updatedUser)
-      setUser(updatedUser)
-    } else {
-      // 일반 유저: 기존 권한 그대로 승계 (Supabase에서 명시 부여된 권한만 유지)
-      setUser(stored)
-    }
+    const stored = getStoredUser()
+    if (!stored) { setUser(null); return }
+    // 낙관적 표시 후 서버 최신 권한으로 교체 (관리자 권한 변경 즉시 반영)
+    setUser(stored)
+    fetchFreshUser(stored).then(fresh => {
+      setStoredUser(fresh)
+      setUser(fresh)
+    })
   }, [])
 
   function handleLogout() {
@@ -112,18 +102,6 @@ export default function HomePage() {
             </div>
           </>
         )}
-
-        {/* 항상 표시 — 로그인 여부 무관 */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 14, marginTop: user && permittedMenus.length > 0 ? 14 : 0 }}>
-          {SPECIAL_MENUS.map(menu => (
-            <Link key={menu.key} href={menu.href} style={{ textDecoration: 'none' }}>
-              <div style={{ padding: '22px 20px', background: '#fff', border: '1.5px solid #BAE6FD', borderRadius: 12, cursor: 'pointer' }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0369A1', marginBottom: 6 }}>{menu.label}</div>
-                <div style={{ fontSize: 12, color: '#64748b' }}>{menu.desc}</div>
-              </div>
-            </Link>
-          ))}
-        </div>
       </section>
     </div>
   )

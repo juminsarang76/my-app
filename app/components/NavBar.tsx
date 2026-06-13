@@ -3,15 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { getStoredUser, setStoredUser, AuthUser, ALL_MENUS, isAdmin } from '@/app/lib/auth'
-
-// 권한 불필요한 특수 링크 (항상 표시)
-const SPECIAL_LINKS = [
-  { href: '/민준입시.html', label: '민준입시', key: 'minjun' },
-  { href: '/강의.html',     label: '강의',     key: 'lecture' },
-  { href: '/mdjob',         label: 'MDjob',    key: 'mdjob' },
-  { href: '/articlemd',     label: 'ArticleMD', key: 'articlemd' },
-]
+import { getStoredUser, setStoredUser, fetchFreshUser, AuthUser, ALL_MENUS, isAdmin } from '@/app/lib/auth'
 
 export default function NavBar() {
   const pathname = usePathname()
@@ -19,14 +11,13 @@ export default function NavBar() {
 
   useEffect(() => {
     const stored = getStoredUser()
-    if (stored && isAdmin(stored.email)) {
-      // admin은 항상 현재 ALL_MENUS 전체로 갱신
-      const updated = { ...stored, permissions: ALL_MENUS.map(m => m.key) }
-      setStoredUser(updated)
-      setUser(updated)
-    } else {
-      setUser(stored)
-    }
+    if (!stored) { setUser(null); return }
+    // 낙관적 표시 후 서버 최신 권한으로 교체 (관리자 권한 변경 즉시 반영)
+    setUser(stored)
+    fetchFreshUser(stored).then(fresh => {
+      setStoredUser(fresh)
+      setUser(fresh)
+    })
   }, [pathname])
 
   // 이 경로들은 자체 헤더가 있어 NavBar 숨김
@@ -62,12 +53,6 @@ export default function NavBar() {
           <Link key={m.key} href={m.href}
             style={{ fontSize: 13, color: '#0369A1', textDecoration: 'none', padding: '5px 10px', borderRadius: 6 }}>
             {m.label}
-          </Link>
-        ))}
-        {SPECIAL_LINKS.map(l => (
-          <Link key={l.key} href={l.href}
-            style={{ fontSize: 13, color: '#0369A1', textDecoration: 'none', padding: '5px 10px', borderRadius: 6 }}>
-            {l.label}
           </Link>
         ))}
       </div>

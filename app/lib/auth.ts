@@ -14,6 +14,10 @@ export const ALL_MENUS = [
   { key: 'garden',    label: '가든',       href: '/garden',    desc: '하루꽃 일기' },
   { key: 'youtube',   label: '유튜브 자막', href: '/youtube',   desc: 'YouTube 자막 번역·요약' },
   { key: 'stats',     label: '통계',        href: '/stats',     desc: '취업·경제 국가통계' },
+  { key: 'minjun',    label: '민준입시',    href: '/민준입시.html', desc: '민준 입시 정보' },
+  { key: 'lecture',   label: '강의',        href: '/강의.html',     desc: '강의 자료' },
+  { key: 'mdjob',     label: 'MDjob',       href: '/mdjob',         desc: 'MD 취업준비 · 기업분석/VOC' },
+  { key: 'articlemd', label: 'ArticleMD',   href: '/articlemd',     desc: '마크다운 아티클 뷰어' },
 ] as const
 
 export type MenuKey = (typeof ALL_MENUS)[number]['key']
@@ -53,4 +57,26 @@ export function clearStoredUser() {
 
 export function isAdmin(email: string) {
   return email.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+}
+
+// 서버에서 최신 권한을 가져와 갱신한다.
+// admin은 항상 ALL_MENUS 전체. 일반 유저는 Supabase에 승인된 권한만.
+// 실패 시 기존 stored 값을 그대로 반환(메뉴가 갑자기 비지 않도록).
+export async function fetchFreshUser(stored: AuthUser): Promise<AuthUser> {
+  if (isAdmin(stored.email)) {
+    return { ...stored, permissions: ALL_MENUS.map(m => m.key) }
+  }
+  try {
+    const res = await fetch(`/api/auth/me?email=${encodeURIComponent(stored.email)}`, { cache: 'no-store' })
+    if (!res.ok) return stored
+    const data = await res.json()
+    if (!data || data.error) return stored
+    return {
+      ...stored,
+      name: data.name ?? stored.name,
+      permissions: Array.isArray(data.permissions) ? data.permissions : stored.permissions,
+    }
+  } catch {
+    return stored
+  }
 }
