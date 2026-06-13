@@ -20,8 +20,10 @@ interface CompanyReport {
   recentIssues: { date: string; title: string; body: string; sourceTitle: string; sourceUrl: string }[]
   positioning: { competitors: string[]; strengths: string[]; weaknesses: string[] }
   financials?: Financials
-  coverLetter: { topic: string; point: string; example: string }[]
-  interviewQs: { question: string; intent: string; tip: string }[]
+  coverLetter: { topic: string; point: string; starGuide?: string; example: string; tip?: string }[]
+  interviewQs: { category?: string; question: string; intent: string; answerFrame?: string; tip?: string; avoid?: string; fromReview?: boolean }[]
+  careerDocCount?: number
+  careerError?: string
   provider: string
   docCount: number
   jdSource?: string
@@ -242,15 +244,15 @@ const SAMPLE_REPORT: CompanyReport = {
     ],
   },
   coverLetter: [
-    { topic: '트렌드 큐레이션 역량', point: '올리브영의 핵심 경쟁력은 신진 브랜드 발굴', example: '"고객 리뷰 데이터를 분석해 차세대 인기 카테고리를 예측해본 경험이 있습니다."' },
-    { topic: '옴니채널 이해', point: '오늘드림 등 O2O 전략과 연결', example: '"온·오프라인 구매 여정을 직접 비교 체험하며 옴니채널 UX 개선점을 정리했습니다."' },
-    { topic: '데이터 기반 상품 기획', point: 'MD 직무의 핵심 — 발주·재고 최적화', example: '"판매 데이터 기반으로 시즌 수요를 예측하는 사이드 프로젝트를 진행했습니다."' },
+    { topic: '트렌드 큐레이션 역량', point: '올리브영의 핵심 경쟁력은 신진 브랜드 발굴', starGuide: 'S: 특정 카테고리 유행 직전 상황 → T: 수요 예측 필요 → A: 리뷰·SNS 데이터 분석 → R: 예측 적중 사례', example: '"고객 리뷰 데이터를 분석해 차세대 인기 카테고리를 예측해본 경험이 있습니다."', tip: '단순 관심이 아닌 실제 데이터 분석 경험으로 차별화' },
+    { topic: '옴니채널 이해', point: '오늘드림 등 O2O 전략과 연결', starGuide: 'S: 온·오프 채널 비교 경험 → T: 차이점 파악 → A: 직접 체험·기록 → R: 개선 인사이트 도출', example: '"온·오프라인 구매 여정을 직접 비교 체험하며 옴니채널 UX 개선점을 정리했습니다."', tip: '매장 방문 경험을 구체적 지점명과 함께 언급' },
+    { topic: '데이터 기반 상품 기획', point: 'MD 직무의 핵심 — 발주·재고 최적화', starGuide: 'S: 수요 변동이 큰 상황 → T: 적정 발주량 결정 → A: 판매 데이터 분석 → R: 재고 회전율 개선', example: '"판매 데이터 기반으로 시즌 수요를 예측하는 사이드 프로젝트를 진행했습니다."', tip: '엑셀·SQL 등 사용 도구를 명시해 실무 즉시투입 가능성 어필' },
   ],
   interviewQs: [
-    { question: '최근 주목하는 뷰티 트렌드와 그 이유는?', intent: '카테고리 감각·시장 관심도 확인', tip: '구체적 브랜드·수치와 함께 올리브영 매대 관찰 경험 연결' },
-    { question: '신규 브랜드 입점을 결정한다면 어떤 기준으로 평가하겠는가?', intent: 'MD 의사결정 프레임 확인', tip: '시장성·차별성·마진·운영 역량 4축으로 구조화해 답변' },
-    { question: '재고가 과다하게 남은 상품을 어떻게 처리하겠는가?', intent: '실무 문제해결 능력', tip: '할인 행사·번들링·채널 전환 등 단계별 방안 제시' },
-    { question: '다이소 뷰티의 추격에 어떻게 대응해야 한다고 보는가?', intent: '경쟁 환경 분석력', tip: '가격이 아닌 큐레이션·경험 가치로 차별화 논리 전개' },
+    { category: '직무역량', question: '최근 주목하는 뷰티 트렌드와 그 이유는?', intent: '카테고리 감각·시장 관심도 확인', answerFrame: '트렌드 명명 → 수치·근거 → 올리브영 매대에서의 관찰 → MD로서의 시사점 순으로 답변', avoid: '근거 없이 "요즘 유행이라서" 식의 막연한 답변' },
+    { category: '직무역량', question: '신규 브랜드 입점을 결정한다면 어떤 기준으로 평가하겠는가?', intent: 'MD 의사결정 프레임 확인', answerFrame: '시장성·차별성·마진·운영 역량 4축으로 구조화하고 각 축의 판단 근거 제시', avoid: '한 가지 기준만 나열하거나 직감에 의존하는 답변' },
+    { category: '기업이해', question: '다이소 뷰티의 추격에 어떻게 대응해야 한다고 보는가?', intent: '경쟁 환경 분석력', answerFrame: '가격이 아닌 큐레이션·경험 가치로 차별화 논리 전개, 구체적 실행 아이디어 1개 제시', avoid: '다이소를 무시하거나 가격 인하로 맞서자는 답변' },
+    { category: '인성·상황', question: '재고가 과다하게 남은 상품을 어떻게 처리하겠는가?', intent: '실무 문제해결 능력', answerFrame: '원인 분석 → 할인·번들링·채널 전환 단계별 방안 → 재발 방지책 순', avoid: '무조건 폐기하거나 책임 회피성 답변' },
   ],
   provider: '',
   docCount: 0,
@@ -545,14 +547,32 @@ function CompanyTab() {
 
           {/* ④ 자소서 소재 */}
           <SectionCard title="자소서 소재" icon="✍️">
+            {!isSample && shown.careerError && (
+              <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#78350f', marginBottom: 12 }}>
+                ⚠️ 자소서·면접 자료 생성 일부 실패 ({shown.careerError}) — 다시 생성해 보세요.
+              </div>
+            )}
+            {!isSample && (shown.careerDocCount ?? 0) > 0 && (
+              <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 12 }}>
+                실제 면접 후기·합격 자소서 자료 {shown.careerDocCount}건 분석 기반
+              </div>
+            )}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {(shown.coverLetter ?? []).map((c, i) => (
-                <div key={i} style={{ background: '#f8fafc', borderRadius: 10, padding: '12px 16px' }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0369A1', marginBottom: 4 }}>{i + 1}. {c.topic}</div>
-                  <div style={{ fontSize: 12.5, color: '#475569', marginBottom: 6 }}>🔗 {c.point}</div>
-                  <div style={{ fontSize: 12.5, color: '#0c4a6e', background: '#E0F2FE', borderRadius: 8, padding: '8px 12px', fontStyle: 'italic' }}>
+                <div key={i} style={{ background: '#f8fafc', borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0369A1', marginBottom: 5 }}>{i + 1}. {c.topic}</div>
+                  <div style={{ fontSize: 12.5, color: '#475569', marginBottom: 8 }}>🔗 {c.point}</div>
+                  {c.starGuide && (
+                    <div style={{ fontSize: 12, color: '#5b21b6', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: 8, padding: '8px 12px', marginBottom: 8 }}>
+                      <b>STAR 가이드</b> — {c.starGuide}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 12.5, color: '#0c4a6e', background: '#E0F2FE', borderRadius: 8, padding: '8px 12px', fontStyle: 'italic', marginBottom: c.tip ? 8 : 0 }}>
                     &ldquo;{c.example}&rdquo;
                   </div>
+                  {c.tip && (
+                    <div style={{ fontSize: 12, color: '#166534' }}>💡 차별화: {c.tip}</div>
+                  )}
                 </div>
               ))}
             </div>
@@ -562,10 +582,31 @@ function CompanyTab() {
           <SectionCard title="직무 기반 면접 예상질문" icon="🎤">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {(shown.interviewQs ?? []).map((q, i) => (
-                <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: 10, padding: '12px 16px' }}>
+                <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: 10, padding: '13px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                    {q.category && (
+                      <span style={{
+                        fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                        background: q.category === '직무역량' ? '#dbeafe' : q.category === '기업이해' ? '#dcfce7' : '#fef9c3',
+                        color:      q.category === '직무역량' ? '#1d4ed8' : q.category === '기업이해' ? '#166534' : '#854d0e',
+                      }}>{q.category}</span>
+                    )}
+                    {q.fromReview && (
+                      <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#fee2e2', color: '#991b1b' }}>
+                        기출 (후기 기반)
+                      </span>
+                    )}
+                  </div>
                   <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>Q{i + 1}. {q.question}</div>
                   <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>🎯 의도: {q.intent}</div>
-                  <div style={{ fontSize: 12, color: '#166534' }}>💡 팁: {q.tip}</div>
+                  {(q.answerFrame || q.tip) && (
+                    <div style={{ fontSize: 12, color: '#0c4a6e', background: '#f0f9ff', borderRadius: 8, padding: '7px 11px', marginBottom: q.avoid ? 5 : 0 }}>
+                      🧭 답변 골격: {q.answerFrame || q.tip}
+                    </div>
+                  )}
+                  {q.avoid && (
+                    <div style={{ fontSize: 11.5, color: '#9f1239' }}>🚫 피할 답변: {q.avoid}</div>
+                  )}
                 </div>
               ))}
             </div>

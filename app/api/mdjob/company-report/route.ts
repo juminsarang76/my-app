@@ -135,6 +135,17 @@ export async function POST(req: NextRequest) {
   const docs = results.flatMap(r => r.status === 'fulfilled' ? r.value : [])
   const failedSources = results.filter(r => r.status === 'rejected').length
 
+  // 커리어 전용 검색 — 실제 면접 후기·합격 자소서·직무 정보
+  const careerResults = await Promise.allSettled([
+    searchNaver('blog', `${c} 면접 후기 질문`, 8),
+    searchNaver('blog', `${c} 자소서 합격`, 6),
+    searchNaver('blog', `${c} MD 직무 현직자`, 5),
+    searchKakaoWeb(`${c} 면접 질문 후기`, 6),
+    searchKakaoWeb(`${c} 자기소개서 항목`, 4),
+    searchGoogle(`${c} 면접 후기`, 5),
+  ])
+  const careerDocs = careerResults.flatMap(r => r.status === 'fulfilled' ? r.value : [])
+
   const jdFetch = await jdUrlPromise
   const dartSummary: DartSummary | null = await dartSummaryPromise.catch(() => null)
   const dartCharts = await dartChartsPromise.catch(() => null)
@@ -180,7 +191,6 @@ ${jdText ? `\n[지원 채용공고(JD)]\n${jdText}\n` : ''}
 - recentIssues는 검색 자료의 실제 기사에서만 뽑고 sourceUrl을 반드시 해당 자료의 URL로 채울 것.
 - financials: ${dartSummary ? '위 [공시 확정 수치]를 그대로 사용하고 source를 "DART 공시"로 표기.' : '검색 자료에 명시된 수치만 사용하고 source를 "뉴스 기반 추정"으로 표기. 수치가 없으면 "자료 부족" 명시 — 추정 금지.'}
 ${!dartCharts ? `- newsTimeseries: 검색 자료(기사)에 등장하는 "${c}"의 연도별 매출·영업이익 수치를 모두 모아 yearly 배열로 정리하라 (예: "2023년 매출 3조9천억" → {"period":"2023","revenue":39000,"profit":...}). 반기 실적 기사가 있으면 half 배열에도 정리 (period는 "2025.H1" 형식). 단위는 억원 숫자. 기사에 없는 연도·항목은 null. 기사에 수치가 전혀 없으면 빈 배열 — 절대 추정으로 채우지 말 것.` : ''}
-${jdText ? '- coverLetter와 interviewQs는 JD의 요구 역량에 맞춰 작성할 것.' : ''}
 
 [출력 JSON — 이 형식만, 다른 텍스트 금지]
 {
@@ -204,33 +214,95 @@ ${jdText ? '- coverLetter와 interviewQs는 JD의 요구 역량에 맞춰 작성
     "direction": ["주력 방향·전략 2~4개"],
     "source": "DART 공시" 또는 "뉴스 기반 추정",
     "note": "자료 부족 항목이 있으면 명시, 없으면 빈 문자열"
-  },${!dartCharts ? `
+  }${!dartCharts ? `,
   "newsTimeseries": {
     "yearly": [ { "period": "2023", "revenue": 39000, "profit": 4660, "employees": null } ],
     "half":   [ { "period": "2025.H1", "revenue": null, "profit": null, "employees": null } ]
-  },` : ''}
-  "coverLetter": [
-    { "topic": "자소서 소재", "point": "이 기업과 연결되는 포인트", "example": "자소서에 쓸 수 있는 예시 문장 1개" }
-  ],
-  "interviewQs": [
-    { "question": "면접 예상 질문", "intent": "출제 의도", "tip": "답변 방향 팁" }
-  ]
+  }` : ''}
 }
-categories 2~3개, recentIssues 3~5개, coverLetter 3개, interviewQs 4~5개.
+categories 2~3개, recentIssues 3~5개.
 `
 
-  let llm: { text: string; provider: string }
-  try {
-    llm = await callLLM('당신은 유통/커머스 MD 직무 전문 취업 컨설턴트입니다. 지시한 JSON 형식만 반환하세요.', userPrompt)
-  } catch (e) {
-    return NextResponse.json({ error: (e as Error).message }, { status: 500 })
+  // ── 커리어 전용 프롬프트 (자소서·면접 — 면접 후기·합격 자소서 자료 기반) ──
+  const careerPrompt = `
+당신은 유통/커머스 MD(머천다이저) 직무 전문 취업 컨설턴트다.
+"${c}" MD 직무 지원자를 위한 자소서 소재와 면접 예상질문을 만들어라.
+
+[실제 면접 후기·자소서 관련 검색 자료 ${careerDocs.length}건]
+${careerDocs.map((d, i) => `(${i + 1}) [${d.source}]\n제목: ${d.title}\n내용: ${d.body}`).join('\n\n')}
+
+[기업 관련 최신 기사 요약]
+${unique.slice(0, 12).map(d => `- ${d.title}`).join('\n')}
+${dartBlock}
+${jdText ? `\n[지원 채용공고(JD) 전문]\n${jdText}\n` : ''}
+
+[작업 지시]
+1. coverLetter (자소서 소재 5개):
+   - ${jdText ? 'JD의 요구 역량·우대사항을 1:1로 매핑해' : '기업의 사업 방향에 맞춰'} 각기 다른 역량을 어필하는 소재 5개
+   - 각 소재마다: 기업/JD 연결 포인트, STAR 구조 가이드(어떤 상황-과제-행동-결과 경험을 쓰면 좋은지), 실제 자소서에 쓸 수 있는 예시 문단(2~3문장), 차별화 팁
+2. interviewQs (면접 예상질문 9개):
+   - category를 "직무역량" 4개 / "기업이해" 3개 / "인성·상황" 2개로 배분
+   - 검색 자료에 실제 면접 후기 질문이 있으면 우선 반영하고 fromReview를 true로 표시
+   - 각 질문마다: 출제 의도, 답변 골격(어떤 구조·내용으로 답해야 하는지 2~3문장), 피해야 할 답변
+
+[출력 JSON — 이 형식만, 다른 텍스트 금지]
+{
+  "coverLetter": [
+    {
+      "topic": "소재 주제",
+      "point": "기업/JD와 연결되는 포인트",
+      "starGuide": "S(상황)-T(과제)-A(행동)-R(결과)로 어떤 경험을 풀면 좋은지 안내",
+      "example": "자소서에 쓸 수 있는 예시 문단 (2~3문장)",
+      "tip": "다른 지원자와 차별화하는 팁"
+    }
+  ],
+  "interviewQs": [
+    {
+      "category": "직무역량",
+      "question": "면접 예상 질문",
+      "intent": "출제 의도",
+      "answerFrame": "답변 골격 (구조·핵심 포인트 2~3문장)",
+      "avoid": "피해야 할 답변 유형",
+      "fromReview": false
+    }
+  ]
+}
+coverLetter 정확히 5개, interviewQs 정확히 9개.
+`
+
+  // 메인 리포트 + 커리어(자소서·면접) 병렬 호출
+  const SYS = '당신은 유통/커머스 MD 직무 전문 취업 컨설턴트입니다. 지시한 JSON 형식만 반환하세요.'
+  const [mainRes, careerRes] = await Promise.allSettled([
+    callLLM(SYS, userPrompt),
+    callLLM(SYS, careerPrompt),
+  ])
+
+  if (mainRes.status === 'rejected') {
+    return NextResponse.json({ error: (mainRes.reason as Error).message }, { status: 500 })
   }
+  const llm = mainRes.value
 
   let report: Record<string, unknown>
   try {
     report = JSON.parse(llm.text)
   } catch {
     return NextResponse.json({ error: 'LLM 응답 파싱 실패', provider: llm.provider }, { status: 500 })
+  }
+
+  // 커리어 결과 병합 (실패 시 빈 배열 — 리포트는 유지)
+  let careerError: string | undefined
+  if (careerRes.status === 'fulfilled') {
+    try {
+      const career = JSON.parse(careerRes.value.text)
+      report.coverLetter = career.coverLetter ?? []
+      report.interviewQs = career.interviewQs ?? []
+    } catch { careerError = '자소서·면접 생성 파싱 실패' }
+  } else {
+    careerError = (careerRes.reason as Error).message?.slice(0, 100)
+  }
+  if (careerError) {
+    report.coverLetter ??= []
+    report.interviewQs ??= []
   }
 
   // 차트: DART 우선, 없으면 뉴스에서 추출한 시계열 (연별 + 반기별)
@@ -253,6 +325,8 @@ categories 2~3개, recentIssues 3~5개, coverLetter 3개, interviewQs 4~5개.
     financialCharts,
     chartSource: dartCharts ? 'dart' : financialCharts ? 'news' : null,
     dartUsed: !!dartSummary,
+    careerDocCount: careerDocs.length,
+    careerError,
     fetchedAt: new Date().toISOString(),
   })
 }
