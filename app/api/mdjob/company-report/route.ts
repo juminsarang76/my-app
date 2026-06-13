@@ -124,6 +124,8 @@ export async function POST(req: NextRequest) {
     searchNaver('news', `${c} 신상품 출시`, 5),
     searchNaver('news', `${c} 캠페인 마케팅`, 5),
     searchNaver('news', `${c} 매출 영업이익 실적`, 6),
+    searchNaver('news', `${c} 연매출 연간 실적 전년`, 6),
+    searchNaver('news', `${c} 상반기 실적 영업이익`, 5),
     searchNaver('news', `${c} 채용 조직 인력 확대`, 5),
     searchNaver('shop', c, 10),
     searchNaver('blog', `${c} 후기`, 5),
@@ -177,6 +179,7 @@ ${jdText ? `\n[지원 채용공고(JD)]\n${jdText}\n` : ''}
 - 검색 자료에 없는 내용은 지어내지 말 것. 자료가 부족한 항목은 일반적으로 알려진 사실만 보수적으로 기술.
 - recentIssues는 검색 자료의 실제 기사에서만 뽑고 sourceUrl을 반드시 해당 자료의 URL로 채울 것.
 - financials: ${dartSummary ? '위 [공시 확정 수치]를 그대로 사용하고 source를 "DART 공시"로 표기.' : '검색 자료에 명시된 수치만 사용하고 source를 "뉴스 기반 추정"으로 표기. 수치가 없으면 "자료 부족" 명시 — 추정 금지.'}
+${!dartCharts ? `- newsTimeseries: 검색 자료(기사)에 등장하는 "${c}"의 연도별 매출·영업이익 수치를 모두 모아 yearly 배열로 정리하라 (예: "2023년 매출 3조9천억" → {"period":"2023","revenue":39000,"profit":...}). 반기 실적 기사가 있으면 half 배열에도 정리 (period는 "2025.H1" 형식). 단위는 억원 숫자. 기사에 없는 연도·항목은 null. 기사에 수치가 전혀 없으면 빈 배열 — 절대 추정으로 채우지 말 것.` : ''}
 ${jdText ? '- coverLetter와 interviewQs는 JD의 요구 역량에 맞춰 작성할 것.' : ''}
 
 [출력 JSON — 이 형식만, 다른 텍스트 금지]
@@ -201,7 +204,11 @@ ${jdText ? '- coverLetter와 interviewQs는 JD의 요구 역량에 맞춰 작성
     "direction": ["주력 방향·전략 2~4개"],
     "source": "DART 공시" 또는 "뉴스 기반 추정",
     "note": "자료 부족 항목이 있으면 명시, 없으면 빈 문자열"
-  },
+  },${!dartCharts ? `
+  "newsTimeseries": {
+    "yearly": [ { "period": "2023", "revenue": 39000, "profit": 4660, "employees": null } ],
+    "half":   [ { "period": "2025.H1", "revenue": null, "profit": null, "employees": null } ]
+  },` : ''}
   "coverLetter": [
     { "topic": "자소서 소재", "point": "이 기업과 연결되는 포인트", "example": "자소서에 쓸 수 있는 예시 문장 1개" }
   ],
@@ -226,6 +233,16 @@ categories 2~3개, recentIssues 3~5개, coverLetter 3개, interviewQs 4~5개.
     return NextResponse.json({ error: 'LLM 응답 파싱 실패', provider: llm.provider }, { status: 500 })
   }
 
+  // 차트: DART 우선, 없으면 뉴스에서 추출한 시계열 (연별 + 반기별)
+  interface NewsPoint { period: string; revenue: number | null; profit: number | null; employees: number | null }
+  const newsTs = report.newsTimeseries as { yearly?: NewsPoint[]; half?: NewsPoint[] } | undefined
+  delete report.newsTimeseries
+  const hasNum = (arr?: NewsPoint[]) => (arr ?? []).filter(p => p.revenue != null || p.profit != null)
+  const newsYearly = hasNum(newsTs?.yearly).sort((a, b) => a.period.localeCompare(b.period))
+  const newsHalf   = hasNum(newsTs?.half).sort((a, b) => a.period.localeCompare(b.period))
+  const financialCharts = dartCharts
+    ?? (newsYearly.length || newsHalf.length ? { quarterly: newsHalf, yearly: newsYearly } : null)
+
   return NextResponse.json({
     ...report,
     provider: llm.provider,
@@ -233,7 +250,8 @@ categories 2~3개, recentIssues 3~5개, coverLetter 3개, interviewQs 4~5개.
     failedSources,
     jdSource,
     jdUrlError: jdUrl?.trim() && !jdFetch.text ? (jdFetch as { error?: string }).error ?? '추출 실패' : undefined,
-    financialCharts: dartCharts,
+    financialCharts,
+    chartSource: dartCharts ? 'dart' : financialCharts ? 'news' : null,
     dartUsed: !!dartSummary,
     fetchedAt: new Date().toISOString(),
   })

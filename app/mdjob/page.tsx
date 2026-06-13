@@ -27,6 +27,7 @@ interface CompanyReport {
   jdSource?: string
   jdUrlError?: string
   financialCharts?: FinancialCharts | null
+  chartSource?: 'dart' | 'news' | null
   dartUsed?: boolean
   isSample?: boolean
   error?: string
@@ -73,8 +74,8 @@ function ProviderBadge({ provider }: { provider?: string }) {
   )
 }
 
-/* ── 재무 라인 차트 (경량, 호버 툴팁) ───────────────────── */
-function FinLineChart({
+/* ── 재무 바 차트 (그룹드 바, 호버 툴팁) ────────────────── */
+function FinBarChart({
   data, keys, colors, labels, unit, title,
 }: {
   data: SeriesPoint[]
@@ -84,7 +85,7 @@ function FinLineChart({
   unit: string
   title: string
 }) {
-  const W = 700, H = 220
+  const W = 700, H = 240
   const PAD = { t: 18, r: 16, b: 42, l: 70 }
   const iW = W - PAD.l - PAD.r
   const iH = H - PAD.t - PAD.b
@@ -93,23 +94,31 @@ function FinLineChart({
 
   const vals = data.flatMap(d => keys.map(k => d[k])).filter((v): v is number => v != null)
   if (!vals.length) return null
+  // 음수(영업적자) 포함 스케일, 0 기준선 포함
   const minV = Math.min(...vals, 0)
-  const maxV = Math.max(...vals)
+  const maxV = Math.max(...vals, 0)
   const pad = (maxV - minV) * 0.08 || 1
-  const lo = minV - pad, hi = maxV + pad
+  const lo = minV < 0 ? minV - pad : 0
+  const hi = maxV + pad
 
-  const xOf = (i: number) => PAD.l + (i / Math.max(data.length - 1, 1)) * iW
+  const n = data.length
+  const bandW = iW / n
+  const groupW = Math.min(bandW * 0.72, 56)
+  const barW = groupW / keys.length
+  const xBand = (i: number) => PAD.l + bandW * i + bandW / 2
   const yOf = (v: number) => PAD.t + iH - ((v - lo) / (hi - lo)) * iH
+  const y0 = yOf(0)
+
   const ticks = Array.from({ length: 5 }, (_, i) => lo + ((hi - lo) * i) / 4)
-  const step = Math.max(1, Math.ceil(data.length / 8))
+  const step = Math.max(1, Math.ceil(n / 10))
 
   function handleMove(e: React.MouseEvent) {
     const svg = svgRef.current
     if (!svg) return
     const rect = svg.getBoundingClientRect()
     const x = ((e.clientX - rect.left) / rect.width) * W
-    const idx = Math.round(((x - PAD.l) / iW) * (data.length - 1))
-    setHover(Math.max(0, Math.min(data.length - 1, idx)))
+    const idx = Math.floor((x - PAD.l) / bandW)
+    setHover(Math.max(0, Math.min(n - 1, idx)))
   }
 
   return (
@@ -118,7 +127,7 @@ function FinLineChart({
       <div style={{ display: 'flex', gap: 12, marginBottom: 6, flexWrap: 'wrap' }}>
         {keys.map((k, i) => (
           <span key={k} style={{ fontSize: 11.5, display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ width: 18, height: 3, background: colors[i], display: 'inline-block', borderRadius: 2 }} />
+            <span style={{ width: 12, height: 12, background: colors[i], display: 'inline-block', borderRadius: 3 }} />
             {labels[i]}
           </span>
         ))}
@@ -133,40 +142,38 @@ function FinLineChart({
             </text>
           </g>
         ))}
-        {data.map((d, i) => (i % step === 0 || i === data.length - 1) && (
-          <text key={i} x={xOf(i)} y={H - PAD.b + 16} textAnchor="middle" fontSize="10" fill="#94a3b8">{d.period}</text>
+        {data.map((d, i) => (i % step === 0 || i === n - 1) && (
+          <text key={i} x={xBand(i)} y={H - PAD.b + 16} textAnchor="middle" fontSize="10" fill="#94a3b8">{d.period}</text>
         ))}
-        {keys.map((k, ki) => {
-          // null은 건너뛰고 연속 구간별 polyline
-          const segs: string[][] = [[]]
-          data.forEach((d, i) => {
-            const v = d[k]
-            if (v == null) { if (segs[segs.length - 1].length) segs.push([]) }
-            else segs[segs.length - 1].push(`${xOf(i)},${yOf(v)}`)
-          })
+        {/* 바 */}
+        {data.map((d, i) => {
+          const on = hover === i
           return (
-            <g key={k}>
-              {segs.filter(s => s.length > 1).map((s, si) => (
-                <polyline key={si} points={s.join(' ')} fill="none" stroke={colors[ki]} strokeWidth="2.2" strokeLinejoin="round" />
-              ))}
-              {data.map((d, i) => d[k] != null && (
-                <circle key={i} cx={xOf(i)} cy={yOf(d[k]!)} r="3" fill={colors[ki]} />
-              ))}
+            <g key={i}>
+              {keys.map((k, ki) => {
+                const v = d[k]
+                if (v == null) return null
+                const x = xBand(i) - groupW / 2 + ki * barW
+                const yTop = v >= 0 ? yOf(v) : y0
+                const h = Math.abs(yOf(v) - y0)
+                return (
+                  <rect key={k} x={x} y={yTop} width={Math.max(barW - 2, 2)} height={Math.max(h, 1)}
+                    fill={colors[ki]} rx="2"
+                    opacity={hover == null || on ? 1 : 0.45} />
+                )
+              })}
             </g>
           )
         })}
+        {/* 0 기준선 + 축 */}
+        <line x1={PAD.l} x2={W - PAD.r} y1={y0} y2={y0} stroke="#94a3b8" strokeWidth="1" />
         <line x1={PAD.l} x2={PAD.l} y1={PAD.t} y2={H - PAD.b} stroke="#cbd5e1" strokeWidth="1" />
-        <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} stroke="#cbd5e1" strokeWidth="1" />
-        {hover != null && (
-          <line x1={xOf(hover)} x2={xOf(hover)} y1={PAD.t} y2={H - PAD.b}
-            stroke="#0369A1" strokeWidth="1" strokeDasharray="4 3" opacity="0.5" />
-        )}
       </svg>
       {hover != null && (
         <div style={{
           position: 'absolute', top: 30,
-          left: `${(xOf(hover) / W) * 100}%`,
-          transform: `translateX(${hover > data.length / 2 ? '-105%' : '8px'})`,
+          left: `${(xBand(hover) / W) * 100}%`,
+          transform: `translateX(${hover > n / 2 ? '-105%' : '8px'})`,
           background: '#0f172a', color: '#fff', borderRadius: 8,
           padding: '7px 11px', fontSize: 12, pointerEvents: 'none',
           boxShadow: '0 4px 12px rgba(0,0,0,0.2)', zIndex: 5, whiteSpace: 'nowrap',
@@ -174,7 +181,7 @@ function FinLineChart({
           <div style={{ fontWeight: 700, marginBottom: 3, color: '#bae6fd' }}>{data[hover].period}</div>
           {keys.map((k, ki) => (
             <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: colors[ki], display: 'inline-block' }} />
+              <span style={{ width: 8, height: 8, borderRadius: 2, background: colors[ki], display: 'inline-block' }} />
               {labels[ki]}: <b>{data[hover][k] != null ? `${data[hover][k]!.toLocaleString()}${unit}` : '-'}</b>
             </div>
           ))}
@@ -286,7 +293,15 @@ function CompanyTab() {
   const shown = report ?? SAMPLE_REPORT
   const isSample = !report
   const charts = shown.financialCharts
-  const chartData = charts ? (chartMode === 'quarterly' ? charts.quarterly : charts.yearly) : []
+  const isNewsChart = shown.chartSource === 'news'
+  // 선택 모드에 데이터 없으면 반대 모드로 자동 전환
+  const effectiveMode = charts
+    ? ((chartMode === 'quarterly' ? charts.quarterly : charts.yearly).length ? chartMode
+       : (chartMode === 'quarterly' ? 'yearly' : 'quarterly'))
+    : chartMode
+  const chartData = charts ? (effectiveMode === 'quarterly' ? charts.quarterly : charts.yearly) : []
+  const shortLabel = isNewsChart ? '반기별' : '최근 2년 분기별'
+  const longLabel  = isNewsChart ? '연별'   : '최근 10년 연별'
 
   return (
     <div>
@@ -430,21 +445,27 @@ function CompanyTab() {
               {/* 재무 추이 그래프 */}
               {charts && chartData.length > 0 ? (
                 <div style={{ marginTop: 18, borderTop: '1px solid #f1f5f9', paddingTop: 16 }}>
-                  <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
+                  <div style={{ display: 'flex', gap: 6, marginBottom: 14, alignItems: 'center', flexWrap: 'wrap' }}>
                     {([
-                      { key: 'quarterly', label: '최근 2년 분기별' },
-                      { key: 'yearly',    label: '최근 10년 연별' },
+                      { key: 'quarterly', label: shortLabel, empty: !charts.quarterly.length },
+                      { key: 'yearly',    label: longLabel,  empty: !charts.yearly.length },
                     ] as const).map(m => (
-                      <button key={m.key} onClick={() => setChartMode(m.key)} style={{
-                        padding: '6px 14px', borderRadius: 16, fontSize: 12, cursor: 'pointer',
-                        fontWeight: chartMode === m.key ? 700 : 400,
-                        background: chartMode === m.key ? '#0369A1' : '#f1f5f9',
-                        color: chartMode === m.key ? '#fff' : '#64748b',
+                      <button key={m.key} onClick={() => !m.empty && setChartMode(m.key)} disabled={m.empty} style={{
+                        padding: '6px 14px', borderRadius: 16, fontSize: 12,
+                        cursor: m.empty ? 'default' : 'pointer', opacity: m.empty ? 0.4 : 1,
+                        fontWeight: effectiveMode === m.key ? 700 : 400,
+                        background: effectiveMode === m.key ? '#0369A1' : '#f1f5f9',
+                        color: effectiveMode === m.key ? '#fff' : '#64748b',
                         border: 'none',
                       }}>{m.label}</button>
                     ))}
+                    {isNewsChart && (
+                      <span style={{ fontSize: 10.5, color: '#854d0e', background: '#fef9c3', borderRadius: 10, padding: '2px 8px' }}>
+                        뉴스 기사 기반 추정치
+                      </span>
+                    )}
                   </div>
-                  <FinLineChart
+                  <FinBarChart
                     title="매출 · 영업이익 (단위: 억원)"
                     data={chartData}
                     keys={['revenue', 'profit']}
@@ -452,7 +473,7 @@ function CompanyTab() {
                     labels={['매출', '영업이익']}
                     unit="억원"
                   />
-                  <FinLineChart
+                  <FinBarChart
                     title="종업원수 (단위: 명)"
                     data={chartData}
                     keys={['employees']}
@@ -460,10 +481,15 @@ function CompanyTab() {
                     labels={['종업원수']}
                     unit="명"
                   />
+                  {isNewsChart && (
+                    <div style={{ fontSize: 10.5, color: '#94a3b8' }}>
+                      ※ 비상장(DART 미공시) 기업 — 언론 보도 수치를 모은 추정 그래프입니다. 정확한 수치는 감사보고서 확인.
+                    </div>
+                  )}
                 </div>
               ) : !isSample && (
                 <div style={{ marginTop: 14, fontSize: 12, color: '#94a3b8' }}>
-                  📉 공시 시계열 데이터 없음 (비상장 또는 DART 미등록 기업)
+                  📉 시계열 데이터 없음 (공시·기사 모두 수치 미확인)
                 </div>
               )}
             </SectionCard>
