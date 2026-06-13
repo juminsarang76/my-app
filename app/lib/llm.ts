@@ -22,28 +22,34 @@ async function callOpenAICompat(
   return data.choices[0].message.content
 }
 
-// Gemini (generateContent API)
+// Gemini (generateContent API) — 모델 단종 대비 다중 모델 순회
+const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest']
+
 async function callGemini(messages: { role: string; content: string }[]): Promise<string> {
   const systemMsg = messages.find(m => m.role === 'system')?.content ?? ''
   const userMsg   = messages.find(m => m.role === 'user')?.content ?? ''
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemMsg }] },
-        contents: [{ role: 'user', parts: [{ text: userMsg }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
-      }),
+  let lastErr = ''
+  for (const model of GEMINI_MODELS) {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemMsg }] },
+          contents: [{ role: 'user', parts: [{ text: userMsg }] }],
+          generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
+        }),
+      }
+    )
+    if (res.ok) {
+      const data = await res.json()
+      return data.candidates[0].content.parts[0].text
     }
-  )
-  if (!res.ok) {
-    const err = await res.text().catch(() => res.statusText)
-    throw new Error(`Gemini ${res.status}: ${err.slice(0, 120)}`)
+    lastErr = `${model} ${res.status}: ${(await res.text().catch(() => res.statusText)).slice(0, 100)}`
+    if (res.status !== 404) break  // 404(모델 없음)만 다음 모델 시도
   }
-  const data = await res.json()
-  return data.candidates[0].content.parts[0].text
+  throw new Error(`Gemini ${lastErr}`)
 }
 
 // 폴백 체인: Groq → Cerebras → Gemini

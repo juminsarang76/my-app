@@ -65,8 +65,13 @@ async function searchGoogle(query: string, limit = 8): Promise<SearchDoc[]> {
 
 async function fetchJdFromUrl(url: string): Promise<{ text: string | null; error?: string }> {
   try {
+    // 풀 브라우저 헤더 필요 — 일부 채용 사이트(올리브영 등)는 축약 UA에 500 반환
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124' },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'ko-KR,ko;q=0.9,en;q=0.8',
+      },
       signal: AbortSignal.timeout(10000),
     })
     if (!res.ok) return { text: null, error: `페이지 응답 ${res.status}` }
