@@ -1,11 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '@/app/lib/supabase'
 import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate, getKSTHour } from '@/app/lib/news'
 import { sendKakaoMessage } from '@/app/lib/kakao'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-)
 
 export async function GET(req: Request) {
   try {
