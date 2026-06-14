@@ -80,8 +80,8 @@ async function callCerebras(prompt: string): Promise<string> {
 // 순서대로 시도, 429/503 → 다음 프로바이더
 async function callAI(prompt: string): Promise<{ text: string; provider: string }> {
   const providers: [string, (p: string) => Promise<string>][] = [
-    ['Groq', callGroq],
     ['Gemini', callGemini],
+    ['Groq', callGroq],
     ['Cerebras', callCerebras],
   ]
   const errors: string[] = []

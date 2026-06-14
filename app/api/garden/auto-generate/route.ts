@@ -1,38 +1,23 @@
 import { NextResponse } from 'next/server'
+import { callLLM } from '@/app/lib/llm'
 
 export const maxDuration = 30
 
-// 오늘의 꽃 선택 + 문장 생성 (Groq) → 꽃 이미지 생성 (Pollinations)
+// 오늘의 꽃 선택 + 문장 생성 (Gemini→Groq→Cerebras) → 꽃 이미지 생성 (Pollinations)
 export async function POST() {
-  const groqKey = process.env.GROQ_API_KEY
-  if (!groqKey) return NextResponse.json({ error: 'GROQ_API_KEY 없음' }, { status: 500 })
-
-  // 1. Groq로 오늘의 꽃 이름 + 문장 생성
-  const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${groqKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [{
-        role: 'user',
-        content: `오늘 날짜에 어울리는 아름다운 꽃 하나를 선택하고 아래 JSON 형식으로만 응답하세요.
+  // 1. 오늘의 꽃 이름 + 문장 생성
+  let raw = ''
+  try {
+    const { text } = await callLLM(
+      '당신은 감성적인 꽃 큐레이터입니다. 지시한 JSON 형식만 반환하세요.',
+      `오늘 날짜에 어울리는 아름다운 꽃 하나를 선택하고 아래 JSON 형식으로만 응답하세요.
 설명 없이 JSON만 반환하세요.
 {"flowerName":"꽃 이름(한국어, 예: 장미/수국/튤립/라벤더/백합/벚꽃/국화)","sentence":"이 꽃을 보며 오늘 하루를 아름답게 시작하는 감성적인 한 문장(50자 이내, 직접 창작)"}`,
-      }],
-      max_tokens: 150,
-      temperature: 0.9,
-    }),
-  })
-
-  if (!groqRes.ok) {
-    return NextResponse.json({ error: 'Groq 오류' }, { status: 500 })
+    )
+    raw = text.trim()
+  } catch {
+    return NextResponse.json({ error: 'AI 오류' }, { status: 500 })
   }
-
-  const groqData = await groqRes.json()
-  const raw = groqData.choices?.[0]?.message?.content?.trim() ?? ''
 
   let flowerName = '장미'
   let sentence = ''

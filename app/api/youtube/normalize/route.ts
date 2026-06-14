@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { callLLMText } from '@/app/lib/llm'
 
 export const maxDuration = 30
 
 export async function POST(req: NextRequest) {
-  const groqKey = process.env.GROQ_API_KEY
-  const cerebrasKey = process.env.CEREBRAS_API_KEY
-  if (!groqKey && !cerebrasKey) return NextResponse.json({ error: 'API 키 없음' }, { status: 500 })
-
   const { items } = await req.json()
   if (!items?.length) return NextResponse.json({ error: '자막 없음' }, { status: 400 })
 
@@ -85,36 +82,12 @@ ${numbered}
 
 완성된 문장:`
 
-  // Groq 우선, 실패 시 Cerebras
-  const providers = [
-    groqKey && { url: 'https://api.groq.com/openai/v1/chat/completions', key: groqKey, model: 'llama-3.3-70b-versatile' },
-    cerebrasKey && { url: 'https://api.cerebras.ai/v1/chat/completions', key: cerebrasKey, model: 'gpt-oss-120b' },
-  ].filter(Boolean) as { url: string; key: string; model: string }[]
-
+  // Gemini(1순위) → Groq → Cerebras 폴백은 callLLMText 내부에서 처리
   let normalized: string[] = []
-
-  for (const p of providers) {
-    try {
-      const res = await fetch(p.url, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${p.key}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: p.model,
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: 4000,
-          temperature: 0.05,
-        }),
-        signal: AbortSignal.timeout(25000),
-      })
-
-      if (!res.ok) { if (res.status === 429) continue; break }
-
-      const data = await res.json()
-      const raw = data.choices?.[0]?.message?.content ?? ''
-      normalized = raw.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0)
-      if (normalized.length > 0) break
-    } catch { continue }
-  }
+  try {
+    const { text: raw } = await callLLMText('', prompt, { maxTokens: 4000, temperature: 0.05 })
+    normalized = raw.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0)
+  } catch { /* 실패 시 원문 반환 */ }
 
   if (!normalized.length) {
     // 정규화 실패 시 원문 반환

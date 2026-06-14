@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
 {"name":"이름","sentence":"오늘의 문장"}`
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
             { inlineData: { mimeType: data.image_mime ?? 'image/jpeg', data: data.image_data } },
           ],
         }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 200 },
+        generationConfig: { temperature: 0.7, maxOutputTokens: 200, responseMimeType: 'application/json', thinkingConfig: { thinkingBudget: 0 } },
       }),
     },
   )

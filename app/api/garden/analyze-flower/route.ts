@@ -87,7 +87,38 @@ export async function POST(req: NextRequest) {
     } catch { /* 다음 방법으로 */ }
   }
 
-  // ── 2순위: Groq Vision (llama-4 등) ──
+  // ── 2순위: Gemini Vision (유료 우선) ──
+  if (geminiKey) {
+    for (const model of ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest']) {
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { text: `꽃 이름(한국어), 꽃말, 감성 문장(10단어↑, 70자↓) JSON만 반환: {"name":"꽃이름 (꽃말)","sentence":"문장"}` },
+                  { inlineData: { mimeType: mime ?? 'image/jpeg', data: base64 } },
+                ],
+              }],
+              generationConfig: { temperature: 0.7, maxOutputTokens: 200, responseMimeType: 'application/json', thinkingConfig: { thinkingBudget: 0 } },
+            }),
+            signal: AbortSignal.timeout(20000),
+          },
+        )
+        if (res.ok) {
+          const data = await res.json()
+          const raw = (data.candidates?.[0]?.content?.parts?.[0]?.text ?? '').trim()
+          const result = parseJson(raw)
+          if (result) return NextResponse.json({ ...result, flowerName: result.name, source: `gemini:${model}` })
+        } else if (res.status !== 404) break  // 404만 다음 모델
+      } catch { /* 다음 */ }
+    }
+  }
+
+  // ── 3순위: Groq Vision (llama-4 등) ──
   if (groqKey) {
     for (const model of [
       'meta-llama/llama-4-scout-17b-16e-instruct',
@@ -122,37 +153,6 @@ JSON만 반환: {"name":"꽃이름 (꽃말)","sentence":"오늘의 문장"}`,
           if (result) return NextResponse.json({ ...result, flowerName: result.name, source: `groq-vision:${model}` })
         }
       } catch { /* 다음 모델 */ }
-    }
-  }
-
-  // ── 3순위: Gemini Vision ──
-  if (geminiKey) {
-    for (const model of ['gemini-1.5-flash-8b', 'gemini-1.5-flash']) {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{
-                parts: [
-                  { text: `꽃 이름(한국어), 꽃말, 감성 문장(10단어↑, 70자↓) JSON만 반환: {"name":"꽃이름 (꽃말)","sentence":"문장"}` },
-                  { inlineData: { mimeType: mime ?? 'image/jpeg', data: base64 } },
-                ],
-              }],
-              generationConfig: { temperature: 0.7, maxOutputTokens: 200 },
-            }),
-            signal: AbortSignal.timeout(20000),
-          },
-        )
-        if (res.ok) {
-          const data = await res.json()
-          const raw = (data.candidates?.[0]?.content?.parts?.[0]?.text ?? '').trim()
-          const result = parseJson(raw)
-          if (result) return NextResponse.json({ ...result, flowerName: result.name, source: `gemini:${model}` })
-        }
-      } catch { /* 다음 */ }
     }
   }
 

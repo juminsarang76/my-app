@@ -1,3 +1,5 @@
+import { callLLM } from './llm'
+
 export type NewsItem = {
   title: string
   link: string
@@ -109,21 +111,8 @@ overall_summary는 5줄 이내, 각 카테고리 요약은 각 3줄 이내로 �
   "geeks_summaries": ["요약1", "요약2", "요약3", "요약4", "요약5"]
 }`
 
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
-    }),
-  })
-
-  const data = await res.json()
-  const text = data.choices[0].message.content.replace(/```json|```/g, '').trim()
+  const { text: rawText } = await callLLM('당신은 뉴스 요약 전문가입니다. 지시한 JSON 형식만 반환하세요.', prompt)
+  const text = rawText.replace(/```json|```/g, '').trim()
   const parsed = JSON.parse(text)
 
   return {

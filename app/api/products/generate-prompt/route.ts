@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { callLLMText } from '@/app/lib/llm'
 
 export async function POST(req: NextRequest) {
   const { productName, features, price, targetCustomer, imageStyle, platforms, competitors } =
@@ -21,29 +22,10 @@ ${competitors ? `Competitors / differentiators: ${competitors}` : ''}
 
 Write a photorealistic product photography prompt optimized for the above.`
 
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userContent },
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-    }),
-  })
-
-  if (!res.ok) {
-    const err = await res.text()
-    return NextResponse.json({ error: err }, { status: 500 })
+  try {
+    const { text } = await callLLMText(systemPrompt, userContent, { temperature: 0.7, maxTokens: 500 })
+    return NextResponse.json({ prompt: text.trim() })
+  } catch (e) {
+    return NextResponse.json({ error: (e as Error).message }, { status: 500 })
   }
-
-  const data = await res.json()
-  const prompt = data.choices?.[0]?.message?.content?.trim() ?? ''
-  return NextResponse.json({ prompt })
 }
