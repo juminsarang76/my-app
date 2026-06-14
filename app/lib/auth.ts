@@ -9,7 +9,7 @@ export const ALL_MENUS = [
   { key: 'todos',     label: '할 일',      href: '/todos',     desc: '개인 할 일 관리' },
   { key: 'battery',   label: '배터리',     href: '/battery',   desc: '배터리 현황' },
   { key: 'jinju',     label: '진주',       href: '/jinju',     desc: '진주 관련 정보' },
-  { key: 'jungdeung', label: '중등부',     href: '/jungdeung', desc: '중등부 찬양 선곡' },
+  { key: 'jungdeung', label: '교회',       href: '/jungdeung', desc: '교회 — 찬양 선곡 · 가정예배' },
   { key: 'products',  label: '상품',       href: '/products',  desc: 'AI 상품 이미지 기획' },
   { key: 'garden',    label: '가든',       href: '/garden',    desc: '하루꽃 일기' },
   { key: 'youtube',   label: '유튜브 자막', href: '/youtube',   desc: 'YouTube 자막 번역·요약' },

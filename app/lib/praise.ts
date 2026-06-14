@@ -336,3 +336,16 @@ export function getPraiseByDate(date: string): WeeklyPraise | undefined {
 export function getAllPraiseDates(): WeeklyPraise[] {
   return [...PRAISE_WEEKS].sort((a, b) => b.date.localeCompare(a.date))
 }
+
+// 곡명으로 등록된 찬양 검색 (가정예배 악보 재사용) — 부분 일치
+export function findPraiseSong(title: string): PraiseSong | undefined {
+  const q = title.replace(/\s/g, '')
+  for (const week of PRAISE_WEEKS) {
+    const hit = week.songs.find(s => {
+      const t = s.title.replace(/\s/g, '')
+      return t === q || t.includes(q) || q.includes(t)
+    })
+    if (hit) return hit
+  }
+  return undefined
+}

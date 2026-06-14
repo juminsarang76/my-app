@@ -38,6 +38,20 @@ export async function searchNaver(type: NaverType, query: string, display = 8): 
   }))
 }
 
+// 네이버 이미지 검색 → 상위 이미지 URL (악보 등)
+export async function naverImage(query: string, display = 5): Promise<{ imageUrl: string; thumbnail: string } | null> {
+  if (!NAVER_ID || !NAVER_SECRET) return null
+  const res = await fetch(
+    `https://openapi.naver.com/v1/search/image.json?query=${encodeURIComponent(query)}&display=${display}&sort=sim&filter=large`,
+    { headers: { 'X-Naver-Client-Id': NAVER_ID, 'X-Naver-Client-Secret': NAVER_SECRET }, next: { revalidate: 0 } }
+  )
+  if (!res.ok) return null
+  const data = await res.json()
+  const top = (data.items ?? [])[0] as Record<string, string> | undefined
+  if (!top?.link) return null
+  return { imageUrl: top.link, thumbnail: top.thumbnail ?? top.link }
+}
+
 // 카카오 웹문서 검색 → SearchDoc[]
 export async function searchKakaoWeb(query: string, size = 6): Promise<SearchDoc[]> {
   if (!KAKAO_KEY) return []
