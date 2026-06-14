@@ -1,5 +1,5 @@
 import { supabase } from '@/app/lib/supabase'
-import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate } from '@/app/lib/news'
+import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate } from '@/app/lib/ai/news'
 
 
 // GET: 가장 최근 실시간요약 조회

@@ -1,65 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callLLM, searchGoogleNews } from '@/app/lib/llm'
-import { fetchDartFinancials, fetchDartTimeseries, DartSummary } from '@/app/lib/dart'
+import { callLLM } from '@/app/lib/ai/llm'
+import { searchNaver, searchKakaoWeb, searchGoogleDocs as searchGoogle } from '@/app/lib/ai/search'
+import { fetchDartFinancials, fetchDartTimeseries, DartSummary } from '@/app/lib/finance/dart'
 
 export const dynamic = 'force-dynamic'
-
-const NAVER_ID     = process.env.NAVER_CLIENT_ID
-const NAVER_SECRET = process.env.NAVER_CLIENT_SECRET
-const KAKAO_KEY    = process.env.KAKAO_REST_API_KEY
-
-// ── 검색 소스 (모듈화 — 추후 Tavily/Brave 추가 용이) ────────────────
-
-interface SearchDoc { source: string; title: string; body: string; url: string; date?: string }
-
-const stripTags = (s: string) => s.replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').trim()
-
-// 네이버 검색 (news / blog / shop 공용)
-async function searchNaver(type: 'news' | 'blog' | 'shop', query: string, display = 8): Promise<SearchDoc[]> {
-  if (!NAVER_ID || !NAVER_SECRET) return []
-  const res = await fetch(
-    `https://openapi.naver.com/v1/search/${type}.json?query=${encodeURIComponent(query)}&display=${display}&sort=${type === 'news' ? 'date' : 'sim'}`,
-    { headers: { 'X-Naver-Client-Id': NAVER_ID, 'X-Naver-Client-Secret': NAVER_SECRET }, next: { revalidate: 0 } }
-  )
-  if (!res.ok) throw new Error(`Naver ${type} ${res.status}`)
-  const data = await res.json()
-  return (data.items ?? []).map((it: Record<string, string>) => ({
-    source: `네이버 ${type === 'news' ? '뉴스' : type === 'blog' ? '블로그' : '쇼핑'}`,
-    title: stripTags(it.title ?? ''),
-    body: stripTags(it.description ?? '') + (type === 'shop' ? ` (가격: ${it.lprice}원, 카테고리: ${[it.category1, it.category2, it.category3].filter(Boolean).join('>')}, 브랜드: ${it.brand || it.maker || '-'})` : ''),
-    url: it.link ?? '',
-    date: it.pubDate ? new Date(it.pubDate).toLocaleDateString('ko-KR') : undefined,
-  }))
-}
-
-// 카카오 웹문서 검색
-async function searchKakaoWeb(query: string, size = 6): Promise<SearchDoc[]> {
-  if (!KAKAO_KEY) return []
-  const res = await fetch(
-    `https://dapi.kakao.com/v2/search/web?query=${encodeURIComponent(query)}&size=${size}`,
-    { headers: { Authorization: `KakaoAK ${KAKAO_KEY}` }, next: { revalidate: 0 } }
-  )
-  if (!res.ok) throw new Error(`Kakao web ${res.status}`)
-  const data = await res.json()
-  return (data.documents ?? []).map((d: Record<string, string>) => ({
-    source: '카카오 웹문서',
-    title: stripTags(d.title ?? ''),
-    body: stripTags(d.contents ?? ''),
-    url: d.url ?? '',
-  }))
-}
-
-// Google News RSS
-async function searchGoogle(query: string, limit = 8): Promise<SearchDoc[]> {
-  const items = await searchGoogleNews(query)
-  return items.slice(0, limit).map(it => ({
-    source: 'Google News',
-    title: it.title,
-    body: it.description,
-    url: it.link,
-    date: it.pubDate ? new Date(it.pubDate).toLocaleDateString('ko-KR') : undefined,
-  }))
-}
 
 // ── 채용공고 URL 본문 추출 ───────────────────────────────────────────
 

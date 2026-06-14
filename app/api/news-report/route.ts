@@ -1,5 +1,5 @@
 import { supabase } from '@/app/lib/supabase'
-import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate, getKSTHour } from '@/app/lib/news'
+import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate, getKSTHour } from '@/app/lib/ai/news'
 import { sendKakaoMessage } from '@/app/lib/kakao'
 
 

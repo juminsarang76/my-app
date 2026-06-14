@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { callLLM, searchGoogleNews } from '@/app/lib/llm'
+import { callLLM } from '@/app/lib/ai/llm'
+import { searchGoogleNews } from '@/app/lib/ai/search'
 
 export const dynamic = 'force-dynamic'
 

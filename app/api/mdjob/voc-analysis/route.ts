@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callLLM } from '@/app/lib/llm'
+import { callLLM } from '@/app/lib/ai/llm'
 
 export const dynamic = 'force-dynamic'
 

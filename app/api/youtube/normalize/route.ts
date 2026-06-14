@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callLLMText } from '@/app/lib/llm'
+import { callLLMText } from '@/app/lib/ai/llm'
 
 export const maxDuration = 30
 

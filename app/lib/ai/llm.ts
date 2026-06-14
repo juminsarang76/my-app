@@ -1,6 +1,6 @@
 // 공용 LLM 호출 — Gemini(유료, 1순위) → Groq → Cerebras 폴백 체인
 // JSON 모드(callLLM)와 평문 모드(callLLMText) 모두 지원
-// + Google News RSS 파서
+// (검색·RSS 파서는 ./search 로 분리)
 
 const GROQ_API_KEY     = process.env.GROQ_API_KEY
 const CEREBRAS_API_KEY = process.env.CEREBRAS_API_KEY
@@ -115,45 +115,12 @@ async function callChat(
   throw new Error('사용 가능한 LLM API 키가 없습니다. GEMINI_API_KEY / GROQ_API_KEY / CEREBRAS_API_KEY 중 하나 이상 필요.')
 }
 
-// JSON 응답 (기존 시그니처 유지)
-export function callLLM(systemPrompt: string, userPrompt: string) {
-  return callChat(systemPrompt, userPrompt, { json: true })
+// JSON 응답 (temperature/maxTokens 등 opts 선택)
+export function callLLM(systemPrompt: string, userPrompt: string, opts: Omit<ChatOpts, 'json'> = {}) {
+  return callChat(systemPrompt, userPrompt, { ...opts, json: true })
 }
 
 // 평문 응답
 export function callLLMText(systemPrompt: string, userPrompt: string, opts: ChatOpts = {}) {
   return callChat(systemPrompt, userPrompt, { ...opts, json: false })
-}
-
-// ── Google News RSS 파서 ─────────────────────────────────────────────
-export interface RSSItem {
-  title: string
-  link: string
-  pubDate: string
-  description: string
-}
-
-export function parseRSS(xml: string): RSSItem[] {
-  const items: RSSItem[] = []
-  for (const m of xml.matchAll(/<item>([\s\S]*?)<\/item>/g)) {
-    const c = m[1]
-    const cdata = (s: string) => s?.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, '$1').trim() ?? ''
-    const tag = (name: string) => cdata(c.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)<\\/${name}>`))?.[1] ?? '')
-    const title = tag('title')
-    const link = (c.match(/<link>(.*?)<\/link>/) ?? c.match(/<link\s+href="([^"]+)"/))?.[1]?.trim() ?? ''
-    const pubDate = tag('pubDate') || tag('published') || tag('updated')
-    const description = tag('description').replace(/<[^>]+>/g, '').slice(0, 400)
-    if (title && link) items.push({ title, link, pubDate, description })
-  }
-  return items
-}
-
-// Google News RSS 검색 (키 불필요)
-export async function searchGoogleNews(query: string): Promise<RSSItem[]> {
-  const res = await fetch(
-    `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=ko&gl=KR&ceid=KR:ko`,
-    { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124' }, next: { revalidate: 0 } }
-  )
-  if (!res.ok) throw new Error(`Google News RSS ${res.status}`)
-  return parseRSS(await res.text())
 }

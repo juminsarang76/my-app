@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {
   getKiwoomToken, getCachedTokenExpiry, kiwoomAccount, kiwoomBase, kiwoomConfigured, parseEnv,
-} from '@/app/lib/kiwoom'
+} from '@/app/lib/finance/kiwoom'
 
 export const dynamic = 'force-dynamic'
 

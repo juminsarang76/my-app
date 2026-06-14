@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { callLLM, searchGoogleNews } from '@/app/lib/llm'
+import { callLLM } from '@/app/lib/ai/llm'
+import { searchGoogleNews } from '@/app/lib/ai/search'
 
 // 분석·통계 위주 쿼리 — 단편 일정·행사 뉴스 최소화
 const RSS_QUERIES = [

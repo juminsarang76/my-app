@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callKiwoomTR, parseKiwoomNum, kiwoomConfigured, parseEnv } from '@/app/lib/kiwoom'
+import { callKiwoomTR, parseKiwoomNum, kiwoomConfigured, parseEnv } from '@/app/lib/finance/kiwoom'
 
 export const dynamic = 'force-dynamic'
 

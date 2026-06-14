@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { callLLM } from '@/app/lib/ai/llm'
+import { naverSearch as naverShopRaw } from '@/app/lib/ai/search'
 
 const PROMPT = `당신은 대한민국 최고의 중학교 학생 패션 전문가입니다.
 에이블리(Ably)·무신사(Musinsa) 현재 인기 아이템 기반으로 조사합니다.
@@ -10,93 +12,9 @@ const PROMPT = `당신은 대한민국 최고의 중학교 학생 패션 전문�
 반드시 한글과 영어만 사용. 한자(漢字) 절대 사용 금지. JSON만 반환, 다른 텍스트 금지:
 {"summary":"2026 중학교 여학생 패션 트렌드 전체 요약 2문장","categories":[{"category":"상의","icon":"👕","items":[{"아이템":"상품명만(사이트명 제외)","사진설명":"색상·소재·핏 시각묘사","설명":"체형 맞는 이유와 코디법","출처":"에이블리","검색어":"상품명만 키워드(사이트명 제외)"}]}]}`
 
-// ── AI 프로바이더 ──────────────────────────────────────────
-// 공통 에러: status 포함해서 throw
-class AIError extends Error {
-  constructor(public status: number, message: string) { super(message) }
-}
-
-// OpenAI 호환 형식(Groq, Cerebras) 공통 호출 — prompt 파라미터로 분리
-async function callOpenAICompat(url: string, apiKey: string, model: string, prompt: string): Promise<string> {
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      max_tokens: 4096,
-    }),
-  })
-  if (!res.ok) throw new AIError(res.status, `${url} → ${res.status}`)
-  const data = await res.json()
-  return (data.choices?.[0]?.message?.content ?? '').trim()
-}
-
-async function callGroq(prompt: string): Promise<string> {
-  return callOpenAICompat(
-    'https://api.groq.com/openai/v1/chat/completions',
-    process.env.GROQ_API_KEY ?? '',
-    'llama-3.3-70b-versatile',
-    prompt,
-  )
-}
-
-async function callGemini(prompt: string): Promise<string> {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 4096,
-          responseMimeType: 'application/json',
-          thinkingConfig: { thinkingBudget: 0 },
-        },
-      }),
-    }
-  )
-  if (!res.ok) throw new AIError(res.status, `Gemini → ${res.status}`)
-  const data = await res.json()
-  const parts: { text?: string; thought?: boolean }[] = data.candidates?.[0]?.content?.parts ?? []
-  const text = parts.filter(p => !p.thought).map(p => p.text ?? '').join('').trim()
-    || parts.map(p => p.text ?? '').join('').trim()
-  if (!text) throw new AIError(500, 'Gemini 응답 없음')
-  return text
-}
-
-async function callCerebras(prompt: string): Promise<string> {
-  return callOpenAICompat(
-    'https://api.cerebras.ai/v1/chat/completions',
-    process.env.CEREBRAS_API_KEY ?? '',
-    'qwen-3-235b-a22b-instruct-2507',
-    prompt,
-  )
-}
-
-// 순서대로 시도, 429/503 → 다음 프로바이더
-async function callAI(prompt: string): Promise<{ text: string; provider: string }> {
-  const providers: [string, (p: string) => Promise<string>][] = [
-    ['Gemini', callGemini],
-    ['Groq', callGroq],
-    ['Cerebras', callCerebras],
-  ]
-  const errors: string[] = []
-  for (const [name, fn] of providers) {
-    try {
-      const text = await fn(prompt)
-      return { text, provider: name }
-    } catch (e) {
-      const status = e instanceof AIError ? e.status : 0
-      errors.push(`${name}(${status})`)
-      if (status === 429 || status === 503 || status === 0) continue
-      break
-    }
-  }
-  throw new Error(`모든 AI 서비스 한도 초과: ${errors.join(' → ')}`)
+// AI 호출 — 공용 callLLM(Gemini→Groq→Cerebras, JSON 모드) 사용
+function callAI(prompt: string): Promise<{ text: string; provider: string }> {
+  return callLLM('', prompt, { temperature: 0.7, maxTokens: 4096 })
 }
 
 // ── 유틸 ──────────────────────────────────────────────────
@@ -180,22 +98,9 @@ const NAVER_SEARCH_FALLBACK = 'https://search.shopping.naver.com/search/all?quer
 
 type NaverResult = { imageUrl: string | null; productUrl: string | null }
 
-type NaverItem = { title: string; link: string; image: string; mallName: string }
-
 async function naverShoppingSearch(query: string, preferMall?: string): Promise<NaverResult> {
   try {
-    const res = await fetch(
-      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(query)}&display=10&sort=sim`,
-      {
-        headers: {
-          'X-Naver-Client-Id': process.env.NAVER_CLIENT_ID ?? '',
-          'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET ?? '',
-        },
-      }
-    )
-    if (!res.ok) return { imageUrl: null, productUrl: null }
-    const data = await res.json()
-    const items: NaverItem[] = data.items ?? []
+    const items = await naverShopRaw('shop', query, 10)
     if (!items.length) return { imageUrl: null, productUrl: null }
 
     // 쇼핑몰명 필터 (무신사/에이블리 우선)
@@ -205,7 +110,7 @@ async function naverShoppingSearch(query: string, preferMall?: string): Promise<
     }
     const aliases = preferMall ? (MALL_ALIASES[preferMall] ?? []) : []
     const matched = aliases.length
-      ? items.find(i => aliases.some(a => i.mallName?.toLowerCase().includes(a.toLowerCase())))
+      ? items.find(i => aliases.some(a => (i.mallName ?? '').toLowerCase().includes(a.toLowerCase())))
       : null
     const item = matched ?? items[0]
 
