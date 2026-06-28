@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.106.0",
     "@distube/ytdl-core": "^4.16.12",
     "@supabase/supabase-js": "^2.105.3",
     "adm-zip": "^0.5.17",

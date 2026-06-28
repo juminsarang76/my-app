@@ -1,39 +1,51 @@
-// 공용 LLM 호출 — Claude(1순위) → Gemini → Groq → Cerebras 폴백 체인
+// 공용 LLM 호출 — Claude CLI(구독, 1순위) → Gemini → Groq → Cerebras 폴백 체인
 // JSON 모드(callLLM)와 평문 모드(callLLMText) 모두 지원
 // (검색·RSS 파서는 ./search 로 분리)
 
-import Anthropic from '@anthropic-ai/sdk'
+import { spawn } from 'child_process'
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
 const GROQ_API_KEY      = process.env.GROQ_API_KEY
 const CEREBRAS_API_KEY  = process.env.CEREBRAS_API_KEY
 const GEMINI_API_KEY    = process.env.GEMINI_API_KEY
 
-// Anthropic Claude (공식 SDK) — Sonnet 4.6
-async function callAnthropic(messages: { role: string; content: string }[], opts: ChatOpts): Promise<string> {
-  const systemMsg = messages.find(m => m.role === 'system')?.content ?? ''
-  const userMsg   = messages.find(m => m.role === 'user')?.content ?? ''
-  const client = new Anthropic({ apiKey: ANTHROPIC_API_KEY })
-  const res = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: opts.maxTokens ?? 8192,
-    // JSON 모드: 스키마 없이 시스템 지시로 강제 (callers가 JSON.parse)
-    system: opts.json
-      ? `${systemMsg}\n\n반드시 유효한 JSON만 출력하세요. 설명, 머리말, 코드펜스(\`\`\`) 없이 JSON 값 하나만 반환합니다.`
-      : systemMsg,
-    messages: [{ role: 'user', content: userMsg }],
-  })
-  const text = res.content
-    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-    .map(b => b.text).join('').trim()
-  // 혹시 코드펜스가 붙으면 제거
-  return text.replace(/^```(?:json)?\s*/i, '').replace(/```$/i, '').trim()
-}
+// Claude Code CLI 헤드리스 호출 — 별도 API 키 없이 기존 Claude 구독 사용량으로 동작.
+// claude CLI가 설치·로그인된 환경(로컬 PC 등)에서만 작동하며, 없으면(예: Vercel) ENOENT로
+// 즉시 실패해 다음 프로바이더로 폴백된다. USE_CLAUDE_CLI=1 일 때만 시도.
+const CLAUDE_CLI_ENABLED = process.env.USE_CLAUDE_CLI === '1'
+const CLAUDE_CLI_BIN     = process.env.CLAUDE_CLI_PATH || 'claude'
+const CLAUDE_CLI_MODEL   = process.env.CLAUDE_CLI_MODEL || 'sonnet'
 
 export interface ChatOpts {
   json?: boolean          // true면 JSON 응답 강제
   maxTokens?: number
   temperature?: number
+}
+
+function callClaudeCLI(messages: { role: string; content: string }[], opts: ChatOpts): Promise<string> {
+  const system = messages.find(m => m.role === 'system')?.content ?? ''
+  const user   = messages.find(m => m.role === 'user')?.content ?? ''
+  const jsonNote = opts.json
+    ? '\n\n반드시 유효한 JSON 값 하나만 출력하세요. 설명·머리말·코드펜스(```) 없이 JSON만.'
+    : ''
+  const prompt = `${system ? system + '\n\n' : ''}${user}${jsonNote}`
+
+  return new Promise<string>((resolve, reject) => {
+    const child = spawn(CLAUDE_CLI_BIN, ['-p', '--model', CLAUDE_CLI_MODEL], {
+      timeout: 120000,
+      windowsHide: true,
+    })
+    let out = '', err = ''
+    child.stdout.on('data', d => { out += d })
+    child.stderr.on('data', d => { err += d })
+    child.on('error', reject)  // ENOENT(예: Vercel) → 다음 프로바이더로 폴백
+    child.on('close', code => {
+      const text = out.replace(/^```(?:json)?\s*/i, '').replace(/```$/i, '').trim()
+      if (code === 0 && text) resolve(text)
+      else reject(new Error(`claude CLI exit=${code} ${err.slice(0, 150)}`))
+    })
+    child.stdin.write(prompt)
+    child.stdin.end()
+  })
 }
 
 // OpenAI-compatible LLM 호출 (Groq / Cerebras 공용)
@@ -99,7 +111,7 @@ async function callGemini(messages: { role: string; content: string }[], opts: C
   throw new Error(`Gemini ${lastErr}`)
 }
 
-// 폴백 체인: Claude(1순위) → Gemini → Groq → Cerebras
+// 폴백 체인: Claude CLI(구독, 1순위) → Gemini → Groq → Cerebras
 async function callChat(
   systemPrompt: string, userPrompt: string, opts: ChatOpts
 ): Promise<{ text: string; provider: string }> {
@@ -108,11 +120,11 @@ async function callChat(
     { role: 'user',   content: userPrompt },
   ]
 
-  if (ANTHROPIC_API_KEY) {
+  if (CLAUDE_CLI_ENABLED) {
     try {
-      return { text: await callAnthropic(messages, opts), provider: 'Claude' }
+      return { text: await callClaudeCLI(messages, opts), provider: 'Claude(구독)' }
     } catch (e) {
-      console.warn('Claude 실패, Gemini 시도:', (e as Error).message)
+      console.warn('Claude CLI 실패, Gemini 시도:', (e as Error).message)
     }
   }
 
