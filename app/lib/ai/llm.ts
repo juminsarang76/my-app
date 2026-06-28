@@ -1,10 +1,34 @@
-// 공용 LLM 호출 — Gemini(유료, 1순위) → Groq → Cerebras 폴백 체인
+// 공용 LLM 호출 — Claude(1순위) → Gemini → Groq → Cerebras 폴백 체인
 // JSON 모드(callLLM)와 평문 모드(callLLMText) 모두 지원
 // (검색·RSS 파서는 ./search 로 분리)
 
-const GROQ_API_KEY     = process.env.GROQ_API_KEY
-const CEREBRAS_API_KEY = process.env.CEREBRAS_API_KEY
-const GEMINI_API_KEY   = process.env.GEMINI_API_KEY
+import Anthropic from '@anthropic-ai/sdk'
+
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
+const GROQ_API_KEY      = process.env.GROQ_API_KEY
+const CEREBRAS_API_KEY  = process.env.CEREBRAS_API_KEY
+const GEMINI_API_KEY    = process.env.GEMINI_API_KEY
+
+// Anthropic Claude (공식 SDK) — Sonnet 4.6
+async function callAnthropic(messages: { role: string; content: string }[], opts: ChatOpts): Promise<string> {
+  const systemMsg = messages.find(m => m.role === 'system')?.content ?? ''
+  const userMsg   = messages.find(m => m.role === 'user')?.content ?? ''
+  const client = new Anthropic({ apiKey: ANTHROPIC_API_KEY })
+  const res = await client.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: opts.maxTokens ?? 8192,
+    // JSON 모드: 스키마 없이 시스템 지시로 강제 (callers가 JSON.parse)
+    system: opts.json
+      ? `${systemMsg}\n\n반드시 유효한 JSON만 출력하세요. 설명, 머리말, 코드펜스(\`\`\`) 없이 JSON 값 하나만 반환합니다.`
+      : systemMsg,
+    messages: [{ role: 'user', content: userMsg }],
+  })
+  const text = res.content
+    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+    .map(b => b.text).join('').trim()
+  // 혹시 코드펜스가 붙으면 제거
+  return text.replace(/^```(?:json)?\s*/i, '').replace(/```$/i, '').trim()
+}
 
 export interface ChatOpts {
   json?: boolean          // true면 JSON 응답 강제
@@ -75,7 +99,7 @@ async function callGemini(messages: { role: string; content: string }[], opts: C
   throw new Error(`Gemini ${lastErr}`)
 }
 
-// 폴백 체인: Gemini(1순위) → Groq → Cerebras
+// 폴백 체인: Claude(1순위) → Gemini → Groq → Cerebras
 async function callChat(
   systemPrompt: string, userPrompt: string, opts: ChatOpts
 ): Promise<{ text: string; provider: string }> {
@@ -83,6 +107,14 @@ async function callChat(
     { role: 'system', content: systemPrompt },
     { role: 'user',   content: userPrompt },
   ]
+
+  if (ANTHROPIC_API_KEY) {
+    try {
+      return { text: await callAnthropic(messages, opts), provider: 'Claude' }
+    } catch (e) {
+      console.warn('Claude 실패, Gemini 시도:', (e as Error).message)
+    }
+  }
 
   if (GEMINI_API_KEY) {
     try {
