@@ -13,16 +13,18 @@ const THRESHOLD_SAVE   = 70
 const GD_EPOCHS        = 2000
 const GD_RECORD_EVERY  = 20
 const GD_LRS           = [0.001, 0.01, 0.1]
+const GD_MAX_SAMPLES   = 2000        // GD 손실 곡선 시연용 상한 (정규방정식은 전체 데이터 사용)
+const SEED_TRAIN       = 20100101    // 합성 레이블 재현용 시드 (학습셋)
+const SEED_TEST        = 20250101    // 합성 레이블 재현용 시드 (검증셋)
 
 // ── 시각 헬퍼 ─────────────────────────────────────────────
 
-function getUltraSrtBaseTime() {
-  const kst  = new Date(Date.now() + 9 * 3_600_000)
-  const h = kst.getUTCHours(), m = kst.getUTCMinutes()
-  const adjH = m < 10 ? (h - 1 + 24) % 24 : h
+// 현재 KST 날짜·시각 (표시용). Open-Meteo current를 사용하므로 기상청 초단기실황 시각 보정은 불필요.
+function getKSTStamp() {
+  const kst = new Date(Date.now() + 9 * 3_600_000)
   return {
     base_date: kst.toISOString().slice(0, 10).replace(/-/g, ''),
-    base_time: String(adjH).padStart(2, '0') + '00',
+    base_time: String(kst.getUTCHours()).padStart(2, '0') + '00',
   }
 }
 
@@ -30,9 +32,23 @@ function isoDate(d: Date) { return d.toISOString().slice(0, 10) }
 
 // ── 난수 ──────────────────────────────────────────────────
 
-function randn(): number {
-  const u1 = Math.max(1e-10, Math.random())
-  return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * Math.random())
+// 시드 고정 PRNG (mulberry32) — 매 요청 동일한 합성 레이블을 재현하기 위함
+function mulberry32(seed: number): () => number {
+  let s = seed >>> 0
+  return () => {
+    s = (s + 0x6d2b79f5) | 0
+    let t = Math.imul(s ^ (s >>> 15), 1 | s)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+// 표준정규 난수 (Box-Muller) — 주어진 균등난수 생성기를 사용
+function makeRandn(rng: () => number): () => number {
+  return () => {
+    const u1 = Math.max(1e-10, rng())
+    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * rng())
+  }
 }
 
 // ── 선형 대수 ─────────────────────────────────────────────
@@ -129,7 +145,7 @@ async function fetchOpenMeteo(start: string, end: string) {
   }
 }
 
-function buildSamples(times: string[], temps: (number|null)[], humidities: (number|null)[], rainfalls: (number|null)[]) {
+function buildSamples(times: string[], temps: (number|null)[], humidities: (number|null)[], rainfalls: (number|null)[], randn: () => number) {
   const X: number[][] = [], y: number[] = [], dates: string[] = []
   for (let i = 0; i < times.length; i++) {
     const t = temps[i], h = humidities[i], r = rainfalls[i] ?? 0
@@ -158,7 +174,7 @@ export async function GET() {
   const steps: StepDetail[] = []
 
   // ── Step 1: 현재 날씨 — Open-Meteo (API 키 불필요) ───
-  const { base_date: ud, base_time: ut } = getUltraSrtBaseTime()
+  const { base_date: ud, base_time: ut } = getKSTStamp()
   let curTemp = 20, curHumidity = 60, curRainfall = 0
 
   try {
@@ -192,7 +208,7 @@ export async function GET() {
 
   try {
     const { times, temps, humidities, rainfalls } = await fetchOpenMeteo('2010-01-01', '2024-12-31')
-    const built = buildSamples(times, temps, humidities, rainfalls)
+    const built = buildSamples(times, temps, humidities, rainfalls, makeRandn(mulberry32(SEED_TRAIN)))
     trainX = built.X; trainY = built.y; trainDates = built.dates
 
     const rainyDays = trainX.filter(r => r[3] > 0).length
@@ -200,7 +216,7 @@ export async function GET() {
     const tMax = Math.max(...trainX.map(r => r[1])).toFixed(1)
     const rMax = Math.max(...trainX.map(r => r[3])).toFixed(1)
 
-    steps.push({ step: 2, label: '2010~2024년 Training Set 수집 (10년)', status: 'ok',
+    steps.push({ step: 2, label: '2010~2024년 Training Set 수집 (15년)', status: 'ok',
       request: 'Open-Meteo Archive API — 2010-01-01 ~ 2024-12-31 일별 날씨',
       received: `${trainX.length}일 샘플 — 기온 ${tMin}~${tMax}°C / 강수 있는 날 ${rainyDays}일 / 최대 ${rMax}mm`,
       functions: ['fetchOpenMeteo()', 'buildSamples()', 'randn() — Box-Muller'],
@@ -222,8 +238,9 @@ export async function GET() {
   const trainMSE = mse(trainX, trainY, weights)
 
   // 3-B: 특성 표준화 후 경사하강법 (lr별 비교)
-  const means = [1, 2, 3].map(col => colStats(trainX, col).mean)
-  const stds  = [1, 2, 3].map(col => colStats(trainX, col).std)
+  const stats = [1, 2, 3].map(col => colStats(trainX, col))   // 열별 통계 1회만 계산
+  const means = stats.map(s => s.mean)
+  const stds  = stats.map(s => s.std)
 
   const X_scaled = trainX.map(row => [
     1,
@@ -232,11 +249,16 @@ export async function GET() {
     (row[3] - means[2]) / stds[2],
   ])
 
+  // GD는 손실 곡선 시연용 → 학습셋이 크면 균등 샘플링해 연산 비용을 낮춘다 (정규방정식은 전체 사용)
+  const gdStride = Math.max(1, Math.ceil(X_scaled.length / GD_MAX_SAMPLES))
+  const X_gd = X_scaled.filter((_, i) => i % gdStride === 0)
+  const y_gd = trainY.filter((_, i) => i % gdStride === 0)
+
   const lossCurves: LossCurve[] = []
   let   bestGdWeights: number[] = []
 
   for (const lr of GD_LRS) {
-    const { weights: wScaled, losses } = gradientDescent(X_scaled, trainY, lr, GD_EPOCHS, GD_RECORD_EVERY)
+    const { weights: wScaled, losses } = gradientDescent(X_gd, y_gd, lr, GD_EPOCHS, GD_RECORD_EVERY)
     const wOriginal = descaleWeights(wScaled, means, stds)
     lossCurves.push({ lr, data: losses })
     if (lr === 0.1) bestGdWeights = wOriginal
@@ -260,7 +282,7 @@ export async function GET() {
 
   try {
     const { times, temps, humidities, rainfalls } = await fetchOpenMeteo('2025-01-01', '2025-12-31')
-    const built = buildSamples(times, temps, humidities, rainfalls)
+    const built = buildSamples(times, temps, humidities, rainfalls, makeRandn(mulberry32(SEED_TEST)))
     testX = built.X; testY = built.y; testDates = built.dates
 
     const testMSE    = mse(testX, testY, weights)

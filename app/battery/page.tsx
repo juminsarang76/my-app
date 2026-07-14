@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -55,7 +54,7 @@ function SectionTitle({ title, sub }: { title: string; sub?: string }) {
   )
 }
 
-function ChartTitle({ children }: { children: string }) {
+function ChartTitle({ children }: { children: React.ReactNode }) {
   return <p style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>{children}</p>
 }
 
@@ -119,10 +118,7 @@ export default function BatteryPage() {
     setLoading(true); setData(null); setSteps([])
     try {
       const json = await fetch('/api/battery').then(r => r.json()) as ApiResult
-      for (const s of json.steps) {
-        await new Promise(r => setTimeout(r, 500))
-        setSteps(prev => [...prev, s])
-      }
+      setSteps(json.steps)
       setData(json)
     } catch {
       setSteps([{ step: 1, label: 'API 연결', status: 'error', message: '서버 오류' }])
@@ -204,7 +200,7 @@ export default function BatteryPage() {
             <code style={{ background: '#f1f5f9', padding: '1px 6px', borderRadius: 4, fontSize: 11 }}>
               efficiency = 100 − 0.5·T − 0.2·H − 0.3·R + ε
             </code>
-            &nbsp; 2024 학습 → 2025 검증 → 오늘 예측
+            &nbsp; 2010~2024 학습 → 2025 검증 → 오늘 예측
           </p>
         </div>
         <button onClick={load} disabled={loading} style={{
@@ -395,7 +391,7 @@ export default function BatteryPage() {
         {/* ══ Step 2: Training Set 시각화 ════════════════ */}
         <div style={{ marginBottom: 32 }}>
           <SectionTitle
-            title="Step 2 — 2010~2024년 Training Set (10년)"
+            title="Step 2 — 2010~2024년 Training Set (15년)"
             sub={`Open-Meteo Archive · ${data.trainSamples.length}일 샘플 · 강수일 ${data.trainSamples.filter(s=>s.rainfall>0).length}일 포함`}
           />
 
@@ -408,13 +404,13 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                   <XAxis dataKey="x" tick={{ fontSize: 8 }} interval={4} />
                   <YAxis tick={{ fontSize: 8 }} />
-                  <Tooltip formatter={(v:number,_,p) => [`${v}일 (${p.payload.pct}%)`, '기온']} />
+                  <Tooltip formatter={(v, _n, p) => [`${v}일 (${p.payload.pct}%)`, '기온']} />
                   <Bar dataKey="y" name="일수" fill="#b91c1c">
                     <LabelList
                       dataKey="pct"
                       position="top"
                       style={{ fontSize: 7, fill: '#7f1d1d' }}
-                      formatter={(v:number) => v >= 1 ? `${v}%` : ''}
+                      formatter={(v) => Number(v) >= 1 ? `${v}%` : ''}
                     />
                   </Bar>
                 </BarChart>
@@ -428,13 +424,13 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                   <XAxis dataKey="x" tick={{ fontSize: 8 }} interval={0} />
                   <YAxis tick={{ fontSize: 8 }} />
-                  <Tooltip formatter={(v:number,_,p) => [`${v}일 (${p.payload.pct}%)`, '강수']} />
+                  <Tooltip formatter={(v, _n, p) => [`${v}일 (${p.payload.pct}%)`, '강수']} />
                   <Bar dataKey="y" name="강수일수" fill="#1d4ed8">
                     <LabelList
                       dataKey="pct"
                       position="top"
                       style={{ fontSize: 7, fill: '#1e3a8a' }}
-                      formatter={(v:number) => v >= 0.5 ? `${v}%` : ''}
+                      formatter={(v) => Number(v) >= 0.5 ? `${v}%` : ''}
                     />
                   </Bar>
                 </BarChart>
@@ -449,7 +445,7 @@ export default function BatteryPage() {
                   <XAxis dataKey="x" name="기온" unit="°C" tick={{ fontSize: 8 }} type="number" domain={['auto','auto']} />
                   <YAxis dataKey="y" name="효율" unit="%" tick={{ fontSize: 8 }} domain={[0,100]} />
                   <ZAxis dataKey="z" range={[10,60]} name="습도" />
-                  <Tooltip formatter={(v:number,n:string) => [n==='효율'?`${v}%`:n==='기온'?`${v}°C`:`${v}%`,n]} />
+                  <Tooltip formatter={(v, n) => [n==='효율'?`${v}%`:n==='기온'?`${v}°C`:`${v}%`,n]} />
                   <ReferenceLine y={80} stroke="#16a34a" strokeDasharray="3 2" />
                   <ReferenceLine y={70} stroke="#d97706" strokeDasharray="3 2" />
                   <Scatter data={tempScatter} fill="#f97316" fillOpacity={0.45} />
@@ -492,7 +488,7 @@ export default function BatteryPage() {
                         tickLine={false}
                         axisLine={false}
                       />
-                      <Tooltip labelFormatter={l => String(l)} formatter={(v:number) => [`${v}`, ylabels[idx]]} />
+                      <Tooltip labelFormatter={l => String(l)} formatter={(v) => [`${v}`, ylabels[idx]]} />
                       <Bar dataKey={key} fill={colors[idx]} maxBarSize={3} isAnimationActive={false} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -540,7 +536,7 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="epoch" tick={{ fontSize: 8 }} />
                   <YAxis tick={{ fontSize: 8 }} scale="log" domain={['auto','auto']} />
-                  <Tooltip formatter={(v:number,k:string) => [`${v.toFixed(3)}`, k.replace('lr','lr=')]} />
+                  <Tooltip formatter={(v, k) => [`${Number(v).toFixed(3)}`, String(k).replace('lr','lr=')]} />
                   <Legend wrapperStyle={{ fontSize: 9 }} formatter={v => v.replace('lr','lr=')} />
                   <ReferenceLine y={data.training.trainMSE} stroke="#000" strokeDasharray="4 2"
                     label={{ value:'NE', position:'right', fontSize:9 }} />
@@ -574,7 +570,7 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="x" name="실제" unit="%" tick={{ fontSize: 8 }} type="number" domain={['auto','auto']} />
                   <YAxis dataKey="y" name="예측" unit="%" tick={{ fontSize: 8 }} domain={['auto','auto']} />
-                  <Tooltip formatter={(v:number,n:string) => [`${v}%`,n]} />
+                  <Tooltip formatter={(v, n) => [`${v}%`,n]} />
                   <Legend wrapperStyle={{ fontSize: 9 }} />
                   <ReferenceLine segment={[{x:50,y:50},{x:100,y:100}]} stroke="#dc2626" strokeDasharray="4 2" />
                   <Scatter name="정규방정식" data={gdNeScat} fill="#0369a1" fillOpacity={0.3} r={2} />
@@ -599,7 +595,7 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="date" tickFormatter={(v:string) => v.slice(5)+'월'} tick={{ fontSize: 9 }} />
                   <YAxis domain={[50,100]} tick={{ fontSize: 9 }} unit="%" />
-                  <Tooltip formatter={(v:number,n:string) => [`${v}%`, n==='predicted'?'예측':'실제']} />
+                  <Tooltip formatter={(v, n) => [`${v}%`, n==='predicted'?'예측':'실제']} />
                   <Legend wrapperStyle={{ fontSize: 10 }} formatter={v => v==='predicted'?'예측':'실제 레이블'} />
                   <Line type="monotone" dataKey="predicted" stroke="#0369a1" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                   <Line type="monotone" dataKey="actual"    stroke="#f97316" strokeWidth={1.5} strokeDasharray="5 3" dot={false} />
@@ -615,7 +611,7 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="x" name="실제" unit="%" tick={{ fontSize: 9 }} type="number" domain={['auto','auto']} />
                   <YAxis dataKey="y" name="예측" unit="%" tick={{ fontSize: 9 }} domain={['auto','auto']} />
-                  <Tooltip formatter={(v:number,n:string) => [`${v}%`,n]} />
+                  <Tooltip formatter={(v, n) => [`${v}%`,n]} />
                   <ReferenceLine segment={[{x:50,y:50},{x:100,y:100}]} stroke="#dc2626" strokeDasharray="4 2"
                     label={{ value:'완벽 예측', fontSize:9, position:'insideTopLeft' }} />
                   <Scatter name="2025 검증" data={testPredScat} fill="#0369a1" fillOpacity={0.3} r={2} />
@@ -643,7 +639,8 @@ export default function BatteryPage() {
                   <div style={{ fontSize: 10, color: '#64748b', marginTop: 8, fontFamily: 'monospace', lineHeight: 1.5 }}>
                     {data.training.learnedWeights.intercept.toFixed(2)}<br />
                     + ({data.training.learnedWeights.temp.toFixed(4)})×{data.weather.temp}<br />
-                    + ({data.training.learnedWeights.humidity.toFixed(4)})×{data.weather.humidity}
+                    + ({data.training.learnedWeights.humidity.toFixed(4)})×{data.weather.humidity}<br />
+                    + ({data.training.learnedWeights.rainfall.toFixed(4)})×{data.weather.rainfall}
                   </div>
                 </div>
 
@@ -656,7 +653,7 @@ export default function BatteryPage() {
                     ['강수량',      `${data.weather.rainfall} mm`],
                     ['예측 효율',   `${data.efficiency} %`],
                     ['충전 방식',   data.action],
-                    ['학습 데이터', `2024년 ${data.trainSamples.length}일`],
+                    ['학습 데이터', `2010~2024년 ${data.trainSamples.length}일`],
                     ['검증 데이터', `2025년 ${data.testSamples.length}일`],
                     ['훈련 RMSE',  `${trainRMSE} %`],
                     ['테스트 RMSE', `${testRMSE} %`],
@@ -701,7 +698,7 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="label" tick={{ fontSize: 8 }} />
                   <YAxis domain={[50,100]} tick={{ fontSize: 8 }} unit="%" />
-                  <Tooltip formatter={(v:number,n:string) => [`${v}%`, n==='learned'?'학습':'기준']} />
+                  <Tooltip formatter={(v, n) => [`${v}%`, n==='learned'?'학습':'기준']} />
                   <Legend wrapperStyle={{ fontSize: 8 }} formatter={v => v==='learned'?'학습 모델':'기준 모델'} />
                   <ReferenceLine y={80} stroke="#16a34a" strokeDasharray="3 2" />
                   <ReferenceLine y={70} stroke="#d97706" strokeDasharray="3 2" />
@@ -719,7 +716,7 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="x" name="기온" unit="°C" tick={{ fontSize: 8 }} type="number" domain={['auto','auto']} />
                   <YAxis dataKey="y" name="효율" unit="%" tick={{ fontSize: 8 }} domain={[50,100]} />
-                  <Tooltip formatter={(v:number,n:string) => [n==='효율'?`${v}%`:`${v}°C`,n]} />
+                  <Tooltip formatter={(v, n) => [n==='효율'?`${v}%`:`${v}°C`,n]} />
                   <Legend wrapperStyle={{ fontSize: 8 }} />
                   <ReferenceLine y={80} stroke="#16a34a" strokeDasharray="3 2" />
                   <ReferenceLine y={70} stroke="#d97706" strokeDasharray="3 2" />
@@ -738,7 +735,7 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="date" tickFormatter={(v:string) => v.slice(5)+'월'} tick={{ fontSize: 8 }} />
                   <YAxis domain={[50,100]} tick={{ fontSize: 8 }} unit="%" />
-                  <Tooltip formatter={(v:number,n:string) => [`${v}%`, n==='predicted'?'예측':'실제']} />
+                  <Tooltip formatter={(v, n) => [`${v}%`, n==='predicted'?'예측':'실제']} />
                   <Legend wrapperStyle={{ fontSize: 8 }} formatter={v => v==='predicted'?'예측':'실제'} />
                   <Line type="monotone" dataKey="predicted" stroke="#0369a1" strokeWidth={1.5} dot={{ r: 2 }} />
                   <Line type="monotone" dataKey="actual"    stroke="#f97316" strokeWidth={1} strokeDasharray="5 3" dot={false} />
@@ -771,7 +768,7 @@ export default function BatteryPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="name" tick={{ fontSize: 9 }} />
                   <YAxis tick={{ fontSize: 9 }} />
-                  <Tooltip formatter={(v:number) => [`${v.toFixed(3)}`, 'MSE']} />
+                  <Tooltip formatter={(v) => [`${Number(v).toFixed(3)}`, 'MSE']} />
                   <Bar dataKey="value" name="MSE" radius={[4,4,0,0]}>
                     {mseData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   </Bar>
