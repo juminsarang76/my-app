@@ -2,30 +2,30 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-type Word = { ko: string; th: string; vi: string; my: string; id: string };
-type Lang = "th" | "vi" | "my" | "id";
+type Lang = "th" | "vi" | "my" | "id" | "km" | "uk" | "zh" | "ar";
+type Word = { ko: string } & Record<Lang, string>;
 
 const WORDS: Word[] = [
-  { ko: "일", th: "งาน", vi: "công việc", my: "အလုပ်", id: "pekerjaan" },
-  { ko: "병원", th: "โรงพยาบาล", vi: "bệnh viện", my: "ဆေးရုံ", id: "rumah sakit" },
-  { ko: "약", th: "ยา", vi: "thuốc", my: "ဆေး", id: "obat" },
-  { ko: "안전", th: "ความปลอดภัย", vi: "an toàn", my: "ဘေးကင်းရေး", id: "keselamatan" },
-  { ko: "월급", th: "เงินเดือน", vi: "tiền lương", my: "လစာ", id: "gaji" },
-  { ko: "계약서", th: "สัญญา", vi: "hợp đồng", my: "စာချုပ်", id: "kontrak" },
-  { ko: "휴가", th: "วันหยุด", vi: "ngày nghỉ", my: "အားလပ်ရက်", id: "cuti" },
-  { ko: "공장", th: "โรงงาน", vi: "nhà máy", my: "စက်ရုံ", id: "pabrik" },
-  { ko: "기숙사", th: "หอพัก", vi: "ký túc xá", my: "အဆောင်", id: "asrama" },
-  { ko: "사장님", th: "เจ้านาย", vi: "ông chủ", my: "သူဌေး", id: "bos" },
-  { ko: "가족", th: "ครอบครัว", vi: "gia đình", my: "မိသားစု", id: "keluarga" },
-  { ko: "시간", th: "เวลา", vi: "thời gian", my: "အချိန်", id: "waktu" },
-  { ko: "내일", th: "พรุ่งนี้", vi: "ngày mai", my: "မနက်ဖြန်", id: "besok" },
-  { ko: "밥", th: "ข้าว", vi: "cơm", my: "ထမင်း", id: "nasi" },
-  { ko: "물", th: "น้ำ", vi: "nước", my: "ရေ", id: "air" },
-  { ko: "돈", th: "เงิน", vi: "tiền", my: "ပိုက်ဆံ", id: "uang" },
-  { ko: "위험", th: "อันตราย", vi: "nguy hiểm", my: "အန္တရာယ်", id: "bahaya" },
-  { ko: "조심", th: "ระวัง", vi: "cẩn thận", my: "သတိထား", id: "hati-hati" },
-  { ko: "친구", th: "เพื่อน", vi: "bạn bè", my: "သူငယ်ချင်း", id: "teman" },
-  { ko: "고향", th: "บ้านเกิด", vi: "quê hương", my: "ဇာတိ", id: "kampung halaman" },
+  { ko: "일", th: "งาน", vi: "công việc", my: "အလုပ်", id: "pekerjaan", km: "ការងារ", uk: "робота", zh: "工作", ar: "عمل" },
+  { ko: "병원", th: "โรงพยาบาล", vi: "bệnh viện", my: "ဆေးရုံ", id: "rumah sakit", km: "មន្ទីរពេទ្យ", uk: "лікарня", zh: "医院", ar: "مستشفى" },
+  { ko: "약", th: "ยา", vi: "thuốc", my: "ဆေး", id: "obat", km: "ថ្នាំ", uk: "ліки", zh: "药", ar: "دواء" },
+  { ko: "안전", th: "ความปลอดภัย", vi: "an toàn", my: "ဘေးကင်းရေး", id: "keselamatan", km: "សុវត្ថិភាព", uk: "безпека", zh: "安全", ar: "سلامة" },
+  { ko: "월급", th: "เงินเดือน", vi: "tiền lương", my: "လစာ", id: "gaji", km: "ប្រាក់ខែ", uk: "зарплата", zh: "工资", ar: "راتب" },
+  { ko: "계약서", th: "สัญญา", vi: "hợp đồng", my: "စာချုပ်", id: "kontrak", km: "កិច្ចសន្យា", uk: "контракт", zh: "合同", ar: "عقد" },
+  { ko: "휴가", th: "วันหยุด", vi: "ngày nghỉ", my: "အားလပ်ရက်", id: "cuti", km: "ថ្ងៃឈប់សម្រាក", uk: "відпустка", zh: "休假", ar: "إجازة" },
+  { ko: "공장", th: "โรงงาน", vi: "nhà máy", my: "စက်ရုံ", id: "pabrik", km: "រោងចក្រ", uk: "завод", zh: "工厂", ar: "مصنع" },
+  { ko: "기숙사", th: "หอพัก", vi: "ký túc xá", my: "အဆောင်", id: "asrama", km: "កន្លែងស្នាក់នៅ", uk: "гуртожиток", zh: "宿舍", ar: "سكن العمال" },
+  { ko: "사장님", th: "เจ้านาย", vi: "ông chủ", my: "သူဌေး", id: "bos", km: "ថៅកែ", uk: "начальник", zh: "老板", ar: "مدير" },
+  { ko: "가족", th: "ครอบครัว", vi: "gia đình", my: "မိသားစု", id: "keluarga", km: "គ្រួសារ", uk: "сім'я", zh: "家人", ar: "عائلة" },
+  { ko: "시간", th: "เวลา", vi: "thời gian", my: "အချိန်", id: "waktu", km: "ពេលវេលា", uk: "час", zh: "时间", ar: "وقت" },
+  { ko: "내일", th: "พรุ่งนี้", vi: "ngày mai", my: "မနက်ဖြန်", id: "besok", km: "ថ្ងៃស្អែក", uk: "завтра", zh: "明天", ar: "غداً" },
+  { ko: "밥", th: "ข้าว", vi: "cơm", my: "ထမင်း", id: "nasi", km: "បាយ", uk: "рис", zh: "米饭", ar: "أرز" },
+  { ko: "물", th: "น้ำ", vi: "nước", my: "ရေ", id: "air", km: "ទឹក", uk: "вода", zh: "水", ar: "ماء" },
+  { ko: "돈", th: "เงิน", vi: "tiền", my: "ပိုက်ဆံ", id: "uang", km: "លុយ", uk: "гроші", zh: "钱", ar: "مال" },
+  { ko: "위험", th: "อันตราย", vi: "nguy hiểm", my: "အန္တရာယ်", id: "bahaya", km: "គ្រោះថ្នាក់", uk: "небезпека", zh: "危险", ar: "خطر" },
+  { ko: "조심", th: "ระวัง", vi: "cẩn thận", my: "သတိထား", id: "hati-hati", km: "ប្រយ័ត្ន", uk: "обережно", zh: "小心", ar: "انتبه" },
+  { ko: "친구", th: "เพื่อน", vi: "bạn bè", my: "သူငယ်ချင်း", id: "teman", km: "មិត្តភក្តិ", uk: "друг", zh: "朋友", ar: "صديق" },
+  { ko: "고향", th: "บ้านเกิด", vi: "quê hương", my: "ဇာတိ", id: "kampung halaman", km: "ស្រុកកំណើត", uk: "рідний край", zh: "家乡", ar: "مسقط الرأس" },
 ];
 
 const LANGS: [Lang, string][] = [
@@ -33,6 +33,10 @@ const LANGS: [Lang, string][] = [
   ["vi", "Tiếng Việt"],
   ["my", "မြန်မာ"],
   ["id", "Indonesia"],
+  ["km", "ខ្មែរ"],
+  ["uk", "Українська"],
+  ["zh", "中文"],
+  ["ar", "العربية"],
 ];
 
 const shuffle = <T,>(a: T[]) => {
@@ -90,12 +94,12 @@ export default function QuizPage() {
           힌트 언어를 고르세요 · Choose your language
         </p>
 
-        <div className="mb-4 flex gap-1.5">
+        <div className="mb-4 grid grid-cols-4 gap-1.5">
           {LANGS.map(([code, label]) => (
             <button
               key={code}
               onClick={() => { setLang(code); start(); }}
-              className="flex-1 rounded-xl border px-1 py-2 text-[13px] font-bold"
+              className="rounded-xl border px-1 py-2 text-[12.5px] font-bold"
               style={
                 lang === code
                   ? { borderColor: "#4fc4b0", background: "#1c332e", color: "#4fc4b0" }
@@ -172,7 +176,7 @@ export default function QuizPage() {
 
         <p className="mt-4 text-center text-[11px] leading-relaxed" style={{ color: "#93a8a3" }}>
           이 앱은 클로드(Claude)에게 한 문장으로 부탁해 만들었습니다 —<br />
-          &quot;TOPIK 단어 20개로 4개 언어 힌트 퀴즈 앱 만들어줘&quot;
+          &quot;TOPIK 단어 20개로 8개 언어 힌트 퀴즈 앱 만들어줘&quot;
         </p>
       </div>
     </div>
