@@ -1,33 +1,33 @@
 {
+  "total": 57,
   "chapters": [
     {
-      "slide": 1,
-      "label": "오프닝"
+      "label": "오프닝",
+      "slide": 1
     },
     {
-      "slide": 5,
-      "label": "1부 AI란 무엇인가"
+      "label": "1부 AI란 무엇인가",
+      "slide": 5
     },
     {
-      "slide": 17,
-      "label": "2부 일상이 바뀐다"
+      "label": "2부 일상이 바뀐다",
+      "slide": 17
     },
     {
-      "slide": 24,
-      "label": "3부 일터가 바뀐다"
+      "label": "3부 일터가 바뀐다",
+      "slide": 24
     },
     {
-      "slide": 31,
-      "label": "4부 세상이 바뀐다"
+      "label": "4부 세상이 바뀐다",
+      "slide": 31
     },
     {
-      "slide": 38,
-      "label": "5부 클로드 사용법"
+      "label": "5부 클로드 사용법",
+      "slide": 38
     },
     {
-      "slide": 49,
-      "label": "6부 우리가 해야 할 것들"
+      "label": "6부 우리가 해야 할 것들",
+      "slide": 49
     }
-  ],
-  "total": 57
+  ]
 }
