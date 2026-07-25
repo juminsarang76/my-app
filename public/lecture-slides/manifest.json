@@ -29,17 +29,5 @@
       "label": "6부 우리가 해야 할 것들",
       "slide": 49
     }
-  ],
-  "videos": [
-    {
-      "slide": 25,
-      "url": "https://www.youtube.com/watch?v=Tnylnmji47Q",
-      "label": "다크팩토리 영상"
-    },
-    {
-      "slide": 26,
-      "url": "https://www.youtube.com/watch?v=Vsi97LlkKaI",
-      "label": "조선소 로봇 영상"
-    }
   ]
 }
