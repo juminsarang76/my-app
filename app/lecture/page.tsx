@@ -5,6 +5,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const src = (n: number) => `/lecture-slides/slide-${String(n).padStart(2, "0")}.png`;
 
 type Chapter = { slide: number; label: string };
+type Video = { slide: number; url: string; label: string };
+const FALLBACK_VIDEOS: Video[] = [
+  { slide: 25, url: "https://www.youtube.com/watch?v=Tnylnmji47Q", label: "다크팩토리 영상" },
+  { slide: 26, url: "https://www.youtube.com/watch?v=Vsi97LlkKaI", label: "조선소 로봇 영상" },
+];
 const FALLBACK: { total: number; chapters: Chapter[] } = {
   total: 53,
   chapters: [
@@ -22,6 +27,7 @@ export default function LecturePage() {
   const [cur, setCur] = useState(1);
   const [TOTAL, setTotal] = useState(FALLBACK.total);
   const [CHAPTERS, setChapters] = useState<Chapter[]>(FALLBACK.chapters);
+  const [VIDEOS, setVideos] = useState<Video[]>(FALLBACK_VIDEOS);
 
   useEffect(() => {
     fetch("/lecture-slides/manifest.json")
@@ -29,6 +35,7 @@ export default function LecturePage() {
       .then((m) => {
         if (m?.total) setTotal(m.total);
         if (Array.isArray(m?.chapters)) setChapters(m.chapters);
+        if (Array.isArray(m?.videos)) setVideos(m.videos);
       })
       .catch(() => {});
   }, []);
@@ -109,6 +116,21 @@ export default function LecturePage() {
         className="absolute inset-y-0 right-0 w-3/4 cursor-e-resize"
         onClick={() => { go(cur + 1); poke(); }}
       />
+
+      {/* 영상 링크 (PNG라 슬라이드 내 하이퍼링크가 죽으므로 실제 버튼 오버레이) */}
+      {VIDEOS.filter((v) => v.slide === cur).map((v) => (
+        <a
+          key={v.url}
+          href={v.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="absolute right-4 top-10 z-10 flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold shadow-lg transition-transform hover:scale-105"
+          style={{ background: "#2AD5C0", color: "#0B1214" }}
+        >
+          ▶ 영상 보기 — {v.label}
+        </a>
+      ))}
 
       {/* 하단 바 */}
       <div
