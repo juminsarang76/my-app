@@ -78,12 +78,18 @@ export default function LecturePage() {
         poke();
       }}
     >
-      {/* 슬라이드 */}
+      {/* 슬라이드 (등장 애니메이션: 페이드인 + 미세 줌) */}
+      <style>{`
+        @keyframes slideIn { 0% { opacity: 0; transform: scale(0.985); } 12% { opacity: 1; } 100% { opacity: 1; transform: scale(1.012); } }
+        @media (prefers-reduced-motion: reduce) { .slide-anim { animation: none !important; } }
+      `}</style>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        key={cur}
         src={src(cur)}
         alt={`슬라이드 ${cur} / ${TOTAL}`}
-        className="absolute inset-0 h-full w-full object-contain"
+        className="slide-anim absolute inset-0 h-full w-full object-contain"
+        style={{ animation: "slideIn 16s ease-out both" }}
         draggable={false}
       />
       {/* 다음 슬라이드 미리 로드 */}
