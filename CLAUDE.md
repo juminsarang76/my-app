@@ -47,6 +47,7 @@ Path alias `@/*` → project root (e.g. `@/app/lib/news`).
 | `/reports/[date]` | Server | 정기요약 상세 — `date` param matches Supabase `date` column |
 | `/realtime` | Client | 실시간요약 — auto-POSTs `/api/realtime-report` on mount, shows result, "카카오톡 전송" button calls `/api/send-kakao` |
 | `/stocks` | Server | 증시지수 — Yahoo Finance data, TradingView links, 5 min revalidate |
+| `/ipsi-news` | Client | 오늘 입시뉴스 — `/api/admission-news/daily` 조회, 카카오톡 전송 |
 | `/photos` | Server | 플레이스홀더 |
 
 ### 정적 문서 (`public/`)

@@ -17,7 +17,9 @@ export const ALL_MENUS = [
   { key: 'minjun',    label: '민준입시',    href: '/docs/minjun/민준입시.html', desc: '민준 입시 정보' },
   { key: 'lecture',   label: '강의',        href: '/docs/lecture/강의.html',     desc: '강의 자료' },
   { key: 'mdjob',     label: 'MDjob',       href: '/mdjob',         desc: 'MD 취업준비 · 기업분석/VOC' },
-  { key: 'univ',      label: '입시전쟁',    href: '/univ/입시전쟁.html', desc: '2027 수시 실전 — 입결 · 진단 · 오늘 입시뉴스' },
+  { key: 'ipsinews',  label: '오늘 입시뉴스', href: '/ipsi-news', desc: '2027 대입 뉴스 — 매일 밤 10시 자동 수집' },
+  // public/univ/ 는 개인정보라 커밋·배포에서 제외돼 있다 — 로컬 개발서버에서만 열린다
+  { key: 'univ',      label: '입시전쟁',    href: '/univ/입시전쟁.html', desc: '2027 수시 실전 — 입결 · 진단 (내 PC에서만 열림)' },
   { key: 'articlemd', label: 'ArticleMD',   href: '/articlemd',     desc: '마크다운 아티클 뷰어' },
 ] as const
 
