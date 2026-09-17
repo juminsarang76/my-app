@@ -7,6 +7,7 @@ export async function GET() {
     .from('reports')
     .select('id, date, summary')
     .not('date', 'like', 'rt_%')
+    .not('date', 'like', 'ipsi_%')
     .order('date', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -23,6 +24,7 @@ export async function DELETE(req: NextRequest) {
       .delete()
       .or('summary.is.null,summary.eq.')
       .not('date', 'like', 'rt_%')
+      .not('date', 'like', 'ipsi_%')
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ success: true })
   }

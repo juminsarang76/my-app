@@ -2,9 +2,11 @@ import { sendKakaoMessage } from '@/app/lib/kakao'
 
 export async function POST(req: Request) {
   try {
-    const { summary, date } = await req.json()
+    const { summary, date, title, link } = await req.json()
+    const heading = title ?? '양자뉴스 실시간요약'
+    const more = link ?? `${process.env.NEXT_PUBLIC_API_URL}/realtime`
     await sendKakaoMessage(
-      `[양자뉴스 실시간요약 ${date}]\n\n${summary}\n\n자세히 보기: ${process.env.NEXT_PUBLIC_API_URL}/realtime`
+      `[${heading} ${date}]\n\n${summary}\n\n자세히 보기: ${more}`
     )
     return Response.json({ success: true })
   } catch (error: unknown) {

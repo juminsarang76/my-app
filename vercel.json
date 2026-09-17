@@ -5,8 +5,8 @@
       "schedule": "0 21 * * *"
     },
     {
-      "path": "/api/news-report?hour=12",
-      "schedule": "0 3 * * *"
+      "path": "/api/admission-news/daily?run=1",
+      "schedule": "0 13 * * *"
     }
   ]
 }

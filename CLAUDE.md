@@ -10,17 +10,19 @@ Node.js is **not in the system PATH**. Use absolute paths via the Bash tool:
 
 ```bash
 # Dev server
-"/c/Program Files/nodejs/node.exe" "./node_modules/.bin/next" dev
+"/c/Program Files/nodejs/node.exe" "./node_modules/next/dist/bin/next" dev
 
 # Type check (no output = no errors)
 "/c/Program Files/nodejs/node.exe" "./node_modules/typescript/bin/tsc" --noEmit
 
 # Build
-"/c/Program Files/nodejs/node.exe" "./node_modules/.bin/next" build
+"/c/Program Files/nodejs/node.exe" "./node_modules/next/dist/bin/next" build
 
 # Lint
-"/c/Program Files/nodejs/node.exe" "./node_modules/.bin/eslint" .
+"/c/Program Files/nodejs/node.exe" "./node_modules/eslint/bin/eslint.js" .
 ```
+
+`node_modules/.bin/` 안의 파일은 sh 래퍼(`#!/bin/sh`)라 node.exe로 직접 실행하면 `SyntaxError`가 납니다. 위처럼 패키지의 실제 JS 진입점을 쓰세요.
 
 PowerShell aliases `curl` → `Invoke-WebRequest`. Use `curl.exe` for HTTP requests in PowerShell.  
 Path alias `@/*` → project root (e.g. `@/app/lib/news`).
@@ -47,6 +49,36 @@ Path alias `@/*` → project root (e.g. `@/app/lib/news`).
 | `/stocks` | Server | 증시지수 — Yahoo Finance data, TradingView links, 5 min revalidate |
 | `/photos` | Server | 플레이스홀더 |
 
+### 정적 문서 (`public/`)
+
+허브 HTML이 같은 폴더의 형제 파일을 상대경로로 링크한다. **파일을 옮기면 허브 링크와 `ALL_MENUS`의 href를 함께 고쳐야 한다.**
+
+```
+public/
+├── univ/              ← 입시전쟁 계열 (개인정보 — .gitignore·.vercelignore 로 제외, 로컬 전용)
+│   └── 입시전쟁.html   허브. 13개 형제 문서 + "오늘 입시뉴스" 섹션
+├── docs/
+│   ├── minjun/        민준입시.html 허브 + 2027 대입 자료
+│   │   └── snu/       SNU 스마트시스템과학과 9개
+│   ├── lecture/       강의.html 허브 + 강의 자료
+│   └── wow/
+├── MD/                ← `/articlemd` 가 참조. 옮기지 말 것
+├── lecture-slides/    ← `/lecture` 가 manifest.json 참조. 옮기지 말 것
+└── *.svg
+```
+
+`univ/입시전쟁.html`은 `a[data-web]` 링크를 claude.ai 아티팩트로 치환하는 스크립트를 갖고 있으나, `/univ/` 경로에서 서빙될 때는 형제 파일이 함께 있으므로 치환을 건너뛴다.
+
+### Vercel 크론 (`vercel.json`)
+
+| 스케줄(UTC) | KST | 경로 |
+|---|---|---|
+| `0 21 * * *` | 06:00 | `/api/news-report?hour=06` |
+| `0 13 * * *` | 22:00 | `/api/admission-news/daily?run=1` |
+
+`?hour=` 파라미터는 라우트가 읽지 않는다 (`getKSTHour()`로 직접 판단) — 남은 `?hour=06`도 표식일 뿐이다.
+Hobby 플랜은 크론 2개가 상한이므로 더 추가하려면 기존 것을 빼야 한다.
+
 ### API routes
 
 | Route | Methods | Notes |
@@ -55,7 +87,10 @@ Path alias `@/*` → project root (e.g. `@/app/lib/news`).
 | `/api/news-report` | GET | 정기요약 생성. KST 06:00–12:00 제한; `?force=true`로 우회 가능 |
 | `/api/realtime-report` | GET | 최신 `rt_` 행 조회 |
 | `/api/realtime-report` | POST | 수집 → 요약 → Supabase 저장. Kakao 전송 없음 |
-| `/api/send-kakao` | POST | `{ summary, date }` body → Kakao Talk 전송 |
+| `/api/send-kakao` | POST | `{ summary, date, title?, link? }` body → Kakao Talk 전송. `title`/`link` 생략 시 실시간요약 문구 |
+| `/api/admission-news` | GET | 2027 대입 뉴스 분석 (6월~오늘, 저장 없음) |
+| `/api/admission-news/daily` | GET | 최신 `ipsi_` 행 조회 — `입시전쟁.html`이 호출 |
+| `/api/admission-news/daily?run=1` | GET | 오늘 입시뉴스 수집 → 요약 → 저장 → Kakao 전송. Vercel 크론이 매일 KST 22:00 호출 (Vercel 크론은 GET만 보내므로 생성도 GET) |
 
 ### Shared lib (`app/lib/`)
 
@@ -64,6 +99,12 @@ Path alias `@/*` → project root (e.g. `@/app/lib/news`).
 - `summarizeNews(news)` — Groq API 호출, 전체 5줄·카테고리 3줄 이내 요약 반환
 - `buildReportPayload(news, summary)` — Supabase upsert용 객체 생성. **`ionq_news: []` 포함 필수** (NOT NULL 제약)
 - `getKSTDate()` / `getKSTHour()` — UTC+9 변환
+
+**`admission.ts`** — 오늘 입시뉴스 파이프라인:
+- `fetchTodayAdmissionNews()` — Google News RSS 5개 쿼리 병렬 수집. 최근 36시간·중복·공지성 제목 필터
+- `summarizeAdmissionNews(news)` — LLM 호출, 전체 3줄 + 건별 120자 요약·태그(통계/분석/유리/불리/결정)
+- `buildAdmissionPayload(digest)` — `reports` upsert용. 항목은 **`quantum_news` 컬럼에 담는다** (테이블 공용 사용)
+- `admissionKey(date)` — `ipsi_YYYY-MM-DD`
 
 **`kakao.ts`** — `sendKakaoMessage(text)`: 401 응답 시 refresh token으로 자동 재발급 후 1회 재시도.
 
@@ -81,10 +122,10 @@ Path alias `@/*` → project root (e.g. `@/app/lib/news`).
 ### Supabase `reports` table
 
 ```
-date         text UNIQUE  -- 정기: "YYYY-MM-DD" / 실시간: "rt_YYYY-MM-DD_HHMM"
+date         text UNIQUE  -- 정기: "YYYY-MM-DD" / 실시간: "rt_YYYY-MM-DD_HHMM" / 오늘입시뉴스: "ipsi_YYYY-MM-DD"
 summary      text
 ionq_news    jsonb NOT NULL DEFAULT '[]'   ← 레거시. upsert 시 반드시 [] 포함
-quantum_news jsonb
+quantum_news jsonb                            ← ipsi_ 행에서는 입시뉴스 항목이 여기 들어간다
 youtube_news jsonb
 yozm_news    jsonb
 geeks_news   jsonb

@@ -14,9 +14,10 @@ export const ALL_MENUS = [
   { key: 'garden',    label: '가든',       href: '/garden',    desc: '하루꽃 일기' },
   { key: 'youtube',   label: '유튜브 자막', href: '/youtube',   desc: 'YouTube 자막 번역·요약' },
   { key: 'stats',     label: '통계',        href: '/stats',     desc: '취업·경제 국가통계' },
-  { key: 'minjun',    label: '민준입시',    href: '/민준입시.html', desc: '민준 입시 정보' },
-  { key: 'lecture',   label: '강의',        href: '/강의.html',     desc: '강의 자료' },
+  { key: 'minjun',    label: '민준입시',    href: '/docs/minjun/민준입시.html', desc: '민준 입시 정보' },
+  { key: 'lecture',   label: '강의',        href: '/docs/lecture/강의.html',     desc: '강의 자료' },
   { key: 'mdjob',     label: 'MDjob',       href: '/mdjob',         desc: 'MD 취업준비 · 기업분석/VOC' },
+  { key: 'univ',      label: '입시전쟁',    href: '/univ/입시전쟁.html', desc: '2027 수시 실전 — 입결 · 진단 · 오늘 입시뉴스' },
   { key: 'articlemd', label: 'ArticleMD',   href: '/articlemd',     desc: '마크다운 아티클 뷰어' },
 ] as const
 
