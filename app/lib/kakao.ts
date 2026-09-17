@@ -6,9 +6,14 @@ async function refreshToken(): Promise<string> {
       grant_type: 'refresh_token',
       client_id: process.env.KAKAO_REST_API_KEY!,
       refresh_token: process.env.KAKAO_REFRESH_TOKEN!,
+      // 콘솔에서 클라이언트 시크릿을 켠 경우에만 필요
+      ...(process.env.KAKAO_CLIENT_SECRET ? { client_secret: process.env.KAKAO_CLIENT_SECRET } : {}),
     }),
   })
-  if (!res.ok) throw new Error(`Kakao token refresh failed: ${res.status}`)
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`Kakao token refresh failed: ${res.status} ${body.slice(0, 200)}`)
+  }
   const data = await res.json()
   return data.access_token as string
 }

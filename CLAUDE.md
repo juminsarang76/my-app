@@ -147,4 +147,6 @@ geeks_news   jsonb
 
 `.env.local` 필수 키: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `KAKAO_REST_API_KEY`, `KAKAO_ACCESS_TOKEN`, `KAKAO_REFRESH_TOKEN`, `GROQ_API_KEY`, `NEXT_PUBLIC_API_URL`
 
+콘솔에서 **클라이언트 시크릿**을 켠 경우 `KAKAO_CLIENT_SECRET`을 추가한다. 환경변수가 있을 때만 토큰 요청에 실려 나가므로, 끈 상태면 넣지 않아도 된다.
+
 Kakao 액세스 토큰 유효기간 6시간, 리프레시 토큰 60일. 만료 시 OAuth 인가 코드 흐름(`kauth.kakao.com/oauth/authorize`)으로 재발급.

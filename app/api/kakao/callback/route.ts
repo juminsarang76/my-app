@@ -30,6 +30,8 @@ export async function GET(req: NextRequest) {
       client_id: process.env.KAKAO_REST_API_KEY!,
       redirect_uri: redirectUri,
       code,
+      // 카카오 콘솔에서 클라이언트 시크릿을 켠 경우에만 필요 (끄면 환경변수 없이 동작)
+      ...(process.env.KAKAO_CLIENT_SECRET ? { client_secret: process.env.KAKAO_CLIENT_SECRET } : {}),
     }),
   })
 
