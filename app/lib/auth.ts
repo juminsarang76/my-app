@@ -32,6 +32,8 @@ export interface AuthUser {
   role: UserRole
   status: UserStatus
   permissions: string[]
+  // 로그인 시 서버가 서명해 발급한 세션 토큰 (관리자 API·본인 조회 인가에 사용)
+  token?: string
 }
 
 export function hashPassword(pwd: string): string {
@@ -68,7 +70,10 @@ export async function fetchFreshUser(stored: AuthUser): Promise<AuthUser> {
     return { ...stored, permissions: ALL_MENUS.map(m => m.key) }
   }
   try {
-    const res = await fetch(`/api/auth/me?email=${encodeURIComponent(stored.email)}`, { cache: 'no-store' })
+    const res = await fetch(`/api/auth/me?email=${encodeURIComponent(stored.email)}`, {
+      cache: 'no-store',
+      headers: stored.token ? { authorization: `Bearer ${stored.token}` } : {},
+    })
     if (!res.ok) return stored
     const data = await res.json()
     if (!data || data.error) return stored

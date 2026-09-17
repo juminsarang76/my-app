@@ -1,9 +1,16 @@
 import { supabase } from '@/app/lib/supabase'
 import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate, getKSTHour } from '@/app/lib/ai/news'
 import { sendKakaoMessage } from '@/app/lib/kakao'
+import { isCronAuthorized } from '@/app/lib/cron'
 
 
 export async function GET(req: Request) {
+  // 이 라우트는 GET 호출만으로 생성·저장·카카오 전송을 수행하므로 크론 외 호출을 막는다.
+  // 수동 실행 시에는 Authorization: Bearer $CRON_SECRET 헤더가 필요하다.
+  if (!isCronAuthorized(req)) {
+    return Response.json({ error: 'unauthorized' }, { status: 401 })
+  }
+
   try {
     const force = new URL(req.url).searchParams.get('force') === 'true'
     const hour = getKSTHour()

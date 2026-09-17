@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/app/lib/supabase'
 import { ADMIN_EMAIL } from '@/app/lib/auth'
+import { requireAdmin } from '@/app/lib/admin-guard'
 
 
 export async function GET(req: NextRequest) {
-  const adminEmail = req.headers.get('x-admin-email') ?? ''
-  if (adminEmail.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-    return NextResponse.json({ error: '권한 없음' }, { status: 403 })
-  }
+  const denied = requireAdmin(req)
+  if (denied) return denied
 
   const { data: users } = await supabase
     .from('haru_users')

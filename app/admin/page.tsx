@@ -15,7 +15,7 @@ export default function AdminPage() {
   const router = useRouter()
   const [users, setUsers] = useState<HaruUser[]>([])
   const [loading, setLoading] = useState(true)
-  const [adminEmail, setAdminEmail] = useState('')
+  const [adminToken, setAdminToken] = useState('')
   const [tab, setTab] = useState<Tab>('pending')
   const [approveTarget, setApproveTarget] = useState<HaruUser | null>(null)
   const [selectedMenus, setSelectedMenus] = useState<string[]>([])
@@ -24,12 +24,12 @@ export default function AdminPage() {
   useEffect(() => {
     const user = getStoredUser()
     if (!user || !isAdmin(user.email)) { router.push('/'); return }
-    setAdminEmail(user.email)
-    loadUsers(user.email)
+    setAdminToken(user.token ?? '')
+    loadUsers(user.token ?? '')
   }, [router])
 
-  async function loadUsers(email: string) {
-    const res = await fetch('/api/admin/users', { headers: { 'x-admin-email': email } })
+  async function loadUsers(token: string) {
+    const res = await fetch('/api/admin/users', { headers: { authorization: 'Bearer ' + token } })
     if (res.ok) setUsers(await res.json())
     setLoading(false)
   }
@@ -39,7 +39,7 @@ export default function AdminPage() {
     setBusy(true)
     await fetch('/api/admin/approve', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      headers: { 'Content-Type': 'application/json', authorization: 'Bearer ' + adminToken },
       body: JSON.stringify({ user_id: approveTarget.id, menu_keys: selectedMenus }),
     })
     setUsers(prev => prev.map(u => u.id !== approveTarget.id ? u : { ...u, status: 'approved', permissions: selectedMenus }))
@@ -51,7 +51,7 @@ export default function AdminPage() {
     if (!confirm('이 사용자를 거부하시겠습니까?')) return
     await fetch('/api/admin/reject', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      headers: { 'Content-Type': 'application/json', authorization: 'Bearer ' + adminToken },
       body: JSON.stringify({ user_id: userId }),
     })
     setUsers(prev => prev.map(u => u.id !== userId ? u : { ...u, status: 'rejected', permissions: [] }))
@@ -61,7 +61,7 @@ export default function AdminPage() {
     if (!confirm('이 사용자를 완전히 삭제하시겠습니까? 복구할 수 없습니다.')) return
     await fetch('/api/admin/delete-user', {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      headers: { 'Content-Type': 'application/json', authorization: 'Bearer ' + adminToken },
       body: JSON.stringify({ user_id: userId }),
     })
     setUsers(prev => prev.filter(u => u.id !== userId))
@@ -71,7 +71,7 @@ export default function AdminPage() {
     if (!confirm('승인을 재설정하시겠습니까? 권한이 초기화되고 대기 중 상태로 변경됩니다.')) return
     await fetch('/api/admin/reset-user', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      headers: { 'Content-Type': 'application/json', authorization: 'Bearer ' + adminToken },
       body: JSON.stringify({ user_id: userId }),
     })
     setUsers(prev => prev.map(u => u.id !== userId ? u : { ...u, status: 'pending', permissions: [] }))
@@ -80,7 +80,7 @@ export default function AdminPage() {
   async function togglePermission(userId: string, menuKey: string, granted: boolean) {
     await fetch('/api/admin/permissions', {
       method: granted ? 'DELETE' : 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      headers: { 'Content-Type': 'application/json', authorization: 'Bearer ' + adminToken },
       body: JSON.stringify({ user_id: userId, menu_key: menuKey }),
     })
     setUsers(prev => prev.map(u => u.id !== userId ? u : {

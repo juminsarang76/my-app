@@ -7,6 +7,7 @@ import {
 } from '@/app/lib/ai/admission'
 import { getKSTDate } from '@/app/lib/ai/news'
 import { sendKakaoMessage } from '@/app/lib/kakao'
+import { isCronAuthorized } from '@/app/lib/cron'
 
 // GET         — 가장 최근 오늘입시뉴스 조회 (입시전쟁.html이 호출)
 // GET ?run=1  — 수집 → 요약 → 저장 → 카카오 전송 (Vercel 크론이 매일 KST 22:00 호출)
@@ -24,6 +25,10 @@ export async function GET(req: Request) {
       .maybeSingle()
 
     return Response.json(data ?? null)
+  }
+
+  if (!isCronAuthorized(req)) {
+    return Response.json({ error: 'unauthorized' }, { status: 401 })
   }
 
   try {

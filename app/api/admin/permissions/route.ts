@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/app/lib/supabase'
-import { ADMIN_EMAIL } from '@/app/lib/auth'
+import { requireAdmin } from '@/app/lib/admin-guard'
 
-
-function checkAdmin(req: NextRequest) {
-  return (req.headers.get('x-admin-email') ?? '').toLowerCase() === ADMIN_EMAIL.toLowerCase()
-}
 
 // 권한 부여
 export async function POST(req: NextRequest) {
-  if (!checkAdmin(req)) return NextResponse.json({ error: '권한 없음' }, { status: 403 })
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { user_id, menu_key } = await req.json()
   const { error } = await supabase
     .from('haru_permissions')
@@ -20,7 +17,8 @@ export async function POST(req: NextRequest) {
 
 // 권한 취소
 export async function DELETE(req: NextRequest) {
-  if (!checkAdmin(req)) return NextResponse.json({ error: '권한 없음' }, { status: 403 })
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { user_id, menu_key } = await req.json()
   const { error } = await supabase
     .from('haru_permissions')

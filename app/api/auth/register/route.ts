@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/app/lib/supabase'
 import { ADMIN_EMAIL, ALL_MENUS, hashPassword } from '@/app/lib/auth'
+import { createSessionToken } from '@/app/lib/session'
 
 
 export async function POST(req: NextRequest) {
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         id: existing.id, name: name.trim(), email: lowerEmail,
         role: 'viewer', status: 'pending', permissions: [],
+        token: createSessionToken(lowerEmail),
       })
     }
     // 대기 중 or 승인됨은 이미 등록
@@ -61,6 +63,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     id: userId, name: name.trim(), email: lowerEmail,
     role, status, permissions: perms?.map(p => p.menu_key) ?? [],
+    token: createSessionToken(lowerEmail),
   })
 }
 

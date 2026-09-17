@@ -131,6 +131,19 @@ yozm_news    jsonb
 geeks_news   jsonb
 ```
 
+### 보안
+
+- **인가**: 로그인 시 서버가 HMAC-SHA256 으로 서명한 세션 토큰을 발급한다(`app/lib/session.ts`, TTL 14일).
+  관리자 라우트는 `app/lib/admin-guard.ts`의 `requireAdmin(req)`로 `Authorization: Bearer <token>`을 검증한다.
+  예전의 `x-admin-email` 헤더 방식은 누구나 위조할 수 있어 제거했다. **다시 도입하지 말 것.**
+- `AUTH_SECRET` 미설정 시 관리자 라우트는 503으로 닫힌다 (fail-closed).
+- **DB 접근**: 전부 서버 측이다. `SUPABASE_SERVICE_ROLE_KEY`가 있으면 그것을 쓰고 없으면 publishable 키로 폴백한다.
+  RLS 적용은 `supabase-rls.sql` 참고 — **서비스 키 설정·배포 후에** 실행해야 한다.
+- **크론 라우트**: `CRON_SECRET`이 설정돼 있으면 `Authorization: Bearer`를 검증한다(`app/lib/cron.ts`).
+  `/api/news-report`와 `/api/admission-news/daily?run=1`은 호출만으로 LLM·카카오·DB 쓰기를 유발하므로 외부 노출을 막는다.
+  수동 실행 시에도 같은 헤더가 필요하다.
+- 보안 헤더는 `next.config.ts`의 `headers()`에서 전 경로에 적용한다.
+
 ### Color palette
 
 | 영역 | 값 |
