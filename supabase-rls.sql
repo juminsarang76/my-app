@@ -8,8 +8,9 @@
 -- service_role 은 RLS를 우회하므로 별도 정책이 필요 없다.
 --
 -- 실행 전 반드시:
---   1) Vercel 과 .env.local 에 SUPABASE_SERVICE_ROLE_KEY 를 먼저 설정하고 재배포할 것
---      (Supabase 대시보드 → Project Settings → API → service_role secret)
+--   1) Vercel 과 .env.local 에 SUPABASE_SECRET_KEY 를 먼저 설정하고 재배포할 것
+--      (Supabase 대시보드 → Project Settings → API Keys → Secret keys)
+--      레거시 JWT 형식을 쓰면 SUPABASE_SERVICE_ROLE_KEY 로 넣어도 된다.
 --   2) 그 다음 이 스크립트를 SQL Editor 에서 실행할 것
 --   순서를 바꾸면 앱이 DB를 못 읽어 즉시 장애가 난다.
 
