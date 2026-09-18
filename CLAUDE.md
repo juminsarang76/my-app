@@ -48,6 +48,7 @@ Path alias `@/*` → project root (e.g. `@/app/lib/news`).
 | `/realtime` | Client | 실시간요약 — auto-POSTs `/api/realtime-report` on mount, shows result, "카카오톡 전송" button calls `/api/send-kakao` |
 | `/stocks` | Server | 증시지수 — Yahoo Finance data, TradingView links, 5 min revalidate |
 | `/ipsi-news` | Client | 오늘 입시뉴스 — `/api/admission-news/daily` 조회, 카카오톡 전송 |
+| `/password` | Client | 비밀번호 변경 — 본인 세션 토큰으로 인가 |
 | `/photos` | Server | 플레이스홀더 |
 
 ### 정적 문서 (`public/`)
@@ -89,6 +90,7 @@ Hobby 플랜은 크론 2개가 상한이므로 더 추가하려면 기존 것을
 | `/api/realtime-report` | GET | 최신 `rt_` 행 조회 |
 | `/api/realtime-report` | POST | 수집 → 요약 → Supabase 저장. Kakao 전송 없음 |
 | `/api/send-kakao` | POST | `{ summary, date, title?, link? }` body → Kakao Talk 전송. `title`/`link` 생략 시 실시간요약 문구 |
+| `/api/auth/change-password` | POST | 본인 비밀번호 변경. `Authorization: Bearer <세션토큰>` 필요 |
 | `/api/admission-news` | GET | 2027 대입 뉴스 분석 (6월~오늘, 저장 없음) |
 | `/api/admission-news/daily` | GET | 최신 `ipsi_` 행 조회 — `입시전쟁.html`이 호출 |
 | `/api/admission-news/daily?run=1` | GET | 오늘 입시뉴스 수집 → 요약 → 저장 → Kakao 전송. Vercel 크론이 매일 KST 22:00 호출 (Vercel 크론은 GET만 보내므로 생성도 GET) |
@@ -143,6 +145,8 @@ geeks_news   jsonb
 - **크론 라우트**: `CRON_SECRET`이 설정돼 있으면 `Authorization: Bearer`를 검증한다(`app/lib/cron.ts`).
   `/api/news-report`와 `/api/admission-news/daily?run=1`은 호출만으로 LLM·카카오·DB 쓰기를 유발하므로 외부 노출을 막는다.
   수동 실행 시에도 같은 헤더가 필요하다.
+- **비밀번호**: `app/lib/password.ts`. 신규는 `scrypt$<salt>$<derived>` 형식으로 저장한다.
+  기존 솔트 없는 SHA-256 해시는 로그인에 성공하는 순간 자동으로 scrypt 로 교체된다(`needsUpgrade`) — 별도 마이그레이션 불필요.
 - 보안 헤더는 `next.config.ts`의 `headers()`에서 전 경로에 적용한다.
 
 ### Color palette

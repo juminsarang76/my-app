@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/app/lib/supabase'
-import { ADMIN_EMAIL, ALL_MENUS, hashPassword } from '@/app/lib/auth'
+import { ADMIN_EMAIL, ALL_MENUS } from '@/app/lib/auth'
+import { hashPassword, validatePassword } from '@/app/lib/password'
 import { createSessionToken } from '@/app/lib/session'
 
 
@@ -9,6 +10,9 @@ export async function POST(req: NextRequest) {
   if (!name?.trim() || !email?.trim() || !password?.trim()) {
     return NextResponse.json({ error: '이름, 이메일, 비밀번호를 모두 입력하세요.' }, { status: 400 })
   }
+
+  const invalid = validatePassword(password)
+  if (invalid) return NextResponse.json({ error: invalid }, { status: 400 })
 
   const lowerEmail = email.trim().toLowerCase()
   const adminUser = isAdminEmail(lowerEmail)

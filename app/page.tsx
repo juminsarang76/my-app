@@ -60,6 +60,7 @@ export default function HomePage() {
               {isAdmin(user.email) && (
                 <Link href="/admin" style={{ fontSize: 12, padding: '5px 12px', background: '#1e293b', color: '#fff', borderRadius: 6, textDecoration: 'none', fontWeight: 600 }}>관리자</Link>
               )}
+              <Link href="/password" style={{ fontSize: 12, padding: '5px 12px', background: 'none', border: '1px solid #CBD5E1', borderRadius: 6, color: '#64748b', textDecoration: 'none', fontWeight: 600 }}>비밀번호</Link>
               <button onClick={handleLogout} style={{ fontSize: 12, padding: '5px 12px', background: 'none', border: '1px solid #CBD5E1', borderRadius: 6, color: '#64748b', cursor: 'pointer' }}>로그아웃</button>
             </>
           ) : (
