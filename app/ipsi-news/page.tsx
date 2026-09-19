@@ -9,6 +9,7 @@ type Item = {
   press: string
   summary: string
   tags: string[]
+  alsoReported?: string[]
 }
 
 type Digest = {
@@ -139,7 +140,12 @@ export default function IpsiNewsPage() {
                 >
                   {n.title}
                 </a>
-                {n.press && <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 3 }}>{n.press}</div>}
+                {n.press && (
+                  <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 3 }}>
+                    {n.press}
+                    {n.alsoReported?.length ? ` · 외 ${n.alsoReported.length}개 매체` : ''}
+                  </div>
+                )}
                 {n.summary && (
                   <p style={{ fontSize: 13.5, color: '#475569', lineHeight: 1.7, margin: '8px 0 0' }}>{n.summary}</p>
                 )}

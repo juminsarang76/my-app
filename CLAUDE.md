@@ -104,8 +104,10 @@ Hobby 플랜은 크론 2개가 상한이므로 더 추가하려면 기존 것을
 - `getKSTDate()` / `getKSTHour()` — UTC+9 변환
 
 **`admission.ts`** — 오늘 입시뉴스 파이프라인:
-- `fetchTodayAdmissionNews()` — Google News RSS 5개 쿼리 병렬 수집. 최근 36시간·중복·공지성 제목 필터
-- `summarizeAdmissionNews(news)` — LLM 호출, 전체 3줄 + 건별 120자 요약·태그(통계/분석/유리/불리/결정)
+- `fetchTodayAdmissionNews()` — Google News RSS 5개 쿼리 병렬 수집. 최근 36시간·공지성 제목 필터.
+  **중복 제거 1겹**: 제목 글자 바이그램 자카드 유사도 0.45 이상이면 같은 기사로 보고 버린다 (매체별 표현 차이 흡수)
+- `summarizeAdmissionNews(news)` — LLM 호출, 전체 3줄 + 건별 120자 요약·태그(통계/분석/유리/불리/결정).
+  **중복 제거 2겹**: 같은 사안을 다룬 기사를 LLM이 하나로 묶는다(`duplicates`). 대표 기사만 남고 나머지 매체명은 `alsoReported` 로 들어간다
 - `buildAdmissionPayload(digest)` — `reports` upsert용. 항목은 **`quantum_news` 컬럼에 담는다** (테이블 공용 사용)
 - `admissionKey(date)` — `ipsi_YYYY-MM-DD`
 
