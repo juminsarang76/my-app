@@ -6,7 +6,7 @@ import {
   admissionKey,
 } from '@/app/lib/ai/admission'
 import { getKSTDate } from '@/app/lib/ai/news'
-import { sendKakaoMessage } from '@/app/lib/kakao'
+import { sendKakaoMessage, lastKakaoSend } from '@/app/lib/kakao'
 import { isCronAuthorized } from '@/app/lib/cron'
 
 // 수집 → LLM → 저장 → 카카오 전송까지 이어지므로 기본 10초로는 중간에 끊긴다
@@ -27,7 +27,8 @@ export async function GET(req: Request) {
       .limit(1)
       .maybeSingle()
 
-    return Response.json(data ?? null)
+    // 전송이 조용히 실패해도 알 수 있도록 마지막 발송 결과를 함께 내려준다
+    return Response.json(data ? { ...data, lastSend: await lastKakaoSend() } : null)
   }
 
   if (!isCronAuthorized(req)) {
@@ -54,7 +55,10 @@ export async function GET(req: Request) {
       const top = digest.items.slice(0, 3)
         .map((n, i) => `${i + 1}. ${n.title}\n${n.link}`)
         .join('\n\n')
-      await sendKakaoMessage(`[오늘 입시뉴스 ${date}]\n\n${digest.overall}\n\n${top}`)
+      await sendKakaoMessage(
+        `[오늘 입시뉴스 ${date}]\n\n${digest.overall}\n\n${top}`,
+        `오늘 입시뉴스 ${date}`,
+      )
       kakao = 'sent'
     } catch (e) {
       kakao = `failed: ${e instanceof Error ? e.message : String(e)}`

@@ -12,11 +12,14 @@ type Item = {
   alsoReported?: string[]
 }
 
+type SendState = { ok: boolean; at: string; label: string; error?: string }
+
 type Digest = {
   date: string
   summary: string
   quantum_news: Item[]   // reports 테이블 공용 사용 — ipsi_ 행에서는 입시뉴스가 여기 담긴다
   created_at?: string
+  lastSend?: SendState | null
 }
 
 // 태그별 색 — 판단이 갈리는 유리/불리만 강조하고 나머지는 중립으로 둔다
@@ -102,6 +105,19 @@ export default function IpsiNewsPage() {
       {sendResult === 'error' && (
         <div style={{ background: '#FEE2E2', border: '1px solid #FECACA', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#B91C1C' }}>
           전송에 실패했습니다. 카카오 토큰이 만료됐을 수 있습니다.
+        </div>
+      )}
+
+      {/* 자동 발송이 실패하면 아무도 모른 채 며칠이 지나므로 화면에 남긴다 */}
+      {digest?.lastSend && !digest.lastSend.ok && (
+        <div style={{ background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#92400E' }}>
+          마지막 자동 발송이 실패했습니다 — {digest.lastSend.label || '카카오톡 전송'} ·{' '}
+          {new Date(digest.lastSend.at).toLocaleString('ko-KR')}
+          {digest.lastSend.error && (
+            <div style={{ marginTop: 4, fontSize: 12, color: '#B45309', wordBreak: 'break-all' }}>
+              {digest.lastSend.error.slice(0, 160)}
+            </div>
+          )}
         </div>
       )}
 

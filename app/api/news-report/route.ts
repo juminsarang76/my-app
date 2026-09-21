@@ -38,7 +38,8 @@ export async function GET(req: Request) {
 
     const reportUrl = `${process.env.NEXT_PUBLIC_API_URL}/reports/${date}`
     await sendKakaoMessage(
-      `[양자뉴스 정기요약 ${date}]\n\n${summary.overall}\n\n리포트 보기: ${reportUrl}`
+      `[양자뉴스 정기요약 ${date}]\n\n${summary.overall}\n\n리포트 보기: ${reportUrl}`,
+      `정기요약 ${date}`,
     )
 
     return Response.json({ success: true, report })

@@ -114,7 +114,15 @@ Hobby 플랜은 크론 2개가 상한이므로 더 추가하려면 기존 것을
 - `buildAdmissionPayload(digest)` — `reports` upsert용. 항목은 **`quantum_news` 컬럼에 담는다** (테이블 공용 사용)
 - `admissionKey(date)` — `ipsi_YYYY-MM-DD`
 
-**`kakao.ts`** — `sendKakaoMessage(text)`: 401 응답 시 refresh token으로 자동 재발급 후 1회 재시도.
+**`kakao.ts`** — `sendKakaoMessage(text, label?)`:
+- 토큰은 `app_state` 의 `kakao_token` 에 저장된 값을 우선 쓰고, 만료 1분 전이면 미리 갱신한다.
+  저장된 값이 없을 때만 환경변수로 시작한다 — 갱신 결과를 버리지 않으므로 환경변수가 낡아도 계속 동작한다.
+  카카오가 새 refresh token 을 주면(잔여 기간이 짧을 때) 그것으로 갈아끼운다.
+- 성공·실패를 `app_state` 의 `kakao_last_send` 에 남긴다. `/ipsi-news` 가 실패 시 배지로 띄운다.
+  **자동 발송 실패는 예전에 아무 흔적 없이 사라졌다.**
+
+**`state.ts`** — `app_state` 키-값 저장소(`getState`/`setState`). 테이블이 없으면 조용히 건너뛴다.
+  생성은 `supabase-app-state.sql` 참고.
 
 ### News sources
 
