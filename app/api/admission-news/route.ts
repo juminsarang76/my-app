@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { callLLM } from '@/app/lib/ai/llm'
 import { searchGoogleNews } from '@/app/lib/ai/search'
 
+// 수집 → LLM → 저장 → 카카오 전송까지 이어지므로 기본 10초로는 중간에 끊긴다
+export const maxDuration = 60
+
 // 분석·통계 위주 쿼리 — 단편 일정·행사 뉴스 최소화
 const RSS_QUERIES = [
   '수능 사탐 과탐 표준점수 유불리 2027',

@@ -9,6 +9,9 @@ import { getKSTDate } from '@/app/lib/ai/news'
 import { sendKakaoMessage } from '@/app/lib/kakao'
 import { isCronAuthorized } from '@/app/lib/cron'
 
+// 수집 → LLM → 저장 → 카카오 전송까지 이어지므로 기본 10초로는 중간에 끊긴다
+export const maxDuration = 60
+
 // GET         — 가장 최근 오늘입시뉴스 조회 (입시전쟁.html이 호출)
 // GET ?run=1  — 수집 → 요약 → 저장 → 카카오 전송 (Vercel 크론이 매일 KST 22:00 호출)
 //               Vercel 크론은 GET만 보내므로 생성도 GET에 둔다.

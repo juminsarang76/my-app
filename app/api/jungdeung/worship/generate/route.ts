@@ -3,6 +3,9 @@ import { callLLM } from '@/app/lib/ai/llm'
 import { naverImage } from '@/app/lib/ai/search'
 import { findPraiseSong } from '@/app/lib/praise'
 
+// LLM 호출이 있어 기본 10초로는 부족하다
+export const maxDuration = 30
+
 export const dynamic = 'force-dynamic'
 
 // 주일 저녁 가정예배 순서 생성

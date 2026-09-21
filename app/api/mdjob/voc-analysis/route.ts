@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { callLLM } from '@/app/lib/ai/llm'
 
+// LLM 호출이 있어 기본 10초로는 부족하다
+export const maxDuration = 30
+
 export const dynamic = 'force-dynamic'
 
 const MAX_CHARS = 15000

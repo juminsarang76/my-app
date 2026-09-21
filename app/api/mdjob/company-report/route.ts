@@ -3,6 +3,9 @@ import { callLLM } from '@/app/lib/ai/llm'
 import { searchNaver, searchKakaoWeb, searchGoogleDocs as searchGoogle } from '@/app/lib/ai/search'
 import { fetchDartFinancials, fetchDartTimeseries, DartSummary } from '@/app/lib/finance/dart'
 
+// LLM 호출이 있어 기본 10초로는 부족하다
+export const maxDuration = 30
+
 export const dynamic = 'force-dynamic'
 
 // ── 채용공고 URL 본문 추출 ───────────────────────────────────────────

@@ -1,6 +1,9 @@
 import { supabase } from '@/app/lib/supabase'
 import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate } from '@/app/lib/ai/news'
 
+// 수집 → LLM → 저장 → 카카오 전송까지 이어지므로 기본 10초로는 중간에 끊긴다
+export const maxDuration = 60
+
 
 // GET: 가장 최근 실시간요약 조회
 export async function GET() {

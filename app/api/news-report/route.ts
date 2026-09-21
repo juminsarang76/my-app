@@ -3,6 +3,9 @@ import { fetchAllNews, summarizeNews, buildReportPayload, getKSTDate, getKSTHour
 import { sendKakaoMessage } from '@/app/lib/kakao'
 import { isCronAuthorized } from '@/app/lib/cron'
 
+// 수집 → LLM → 저장 → 카카오 전송까지 이어지므로 기본 10초로는 중간에 끊긴다
+export const maxDuration = 60
+
 
 export async function GET(req: Request) {
   // 이 라우트는 GET 호출만으로 생성·저장·카카오 전송을 수행하므로 크론 외 호출을 막는다.

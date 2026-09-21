@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { callLLM } from '@/app/lib/ai/llm'
 import { naverSearch as naverShopRaw } from '@/app/lib/ai/search'
 
+// LLM 호출이 있어 기본 10초로는 부족하다
+export const maxDuration = 30
+
 const PROMPT = `당신은 대한민국 최고의 중학교 학생 패션 전문가입니다.
 에이블리(Ably)·무신사(Musinsa) 현재 인기 아이템 기반으로 조사합니다.
 

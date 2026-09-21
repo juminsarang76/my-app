@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { callLLMText } from '@/app/lib/ai/llm'
 
+// LLM 호출이 있어 기본 10초로는 부족하다
+export const maxDuration = 30
+
 export async function POST(req: NextRequest) {
   const { productName, features, price, targetCustomer, imageStyle, platforms, competitors } =
     await req.json()
