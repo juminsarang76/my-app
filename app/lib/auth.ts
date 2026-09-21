@@ -1,5 +1,3 @@
-import { createHash } from 'crypto'
-
 export const ADMIN_EMAIL = 'juminsarang76@gmail.com'
 
 export const ALL_MENUS = [
@@ -14,6 +12,7 @@ export const ALL_MENUS = [
   { key: 'garden',    label: '가든',       href: '/garden',    desc: '하루꽃 일기' },
   { key: 'youtube',   label: '유튜브 자막', href: '/youtube',   desc: 'YouTube 자막 번역·요약' },
   { key: 'stats',     label: '통계',        href: '/stats',     desc: '취업·경제 국가통계' },
+  { key: 'interview', label: '면접준비',     href: '/docs/minjun/면접준비.html', desc: '서울대 지역균형 면접 — 교수 연구 · 예상 질문' },
   { key: 'minjun',    label: '민준입시',    href: '/docs/minjun/민준입시.html', desc: '민준 입시 정보' },
   { key: 'lecture',   label: '강의',        href: '/docs/lecture/강의.html',     desc: '강의 자료' },
   { key: 'mdjob',     label: 'MDjob',       href: '/mdjob',         desc: 'MD 취업준비 · 기업분석/VOC' },
@@ -38,9 +37,8 @@ export interface AuthUser {
   token?: string
 }
 
-export function hashPassword(pwd: string): string {
-  return createHash('sha256').update(pwd).digest('hex')
-}
+// 비밀번호 해싱·검증은 app/lib/password.ts 로 옮겼다 (scrypt + 솔트).
+// 예전의 솔트 없는 SHA-256 구현은 제거했으니 되살리지 말 것.
 
 const STORAGE_KEY = 'haru_user'
 

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>서울대 스마트시스템과학과 — 지역균형 면접 대비</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#f7f5f2; --raised:#ffffff; --sunken:#efebe4;
+    --ink:#1d1b17; --ink2:#54504a; --muted:#8b857b;
+    --line:#e3ddd3; --line2:#cfc6b8;
+    --accent:#1D9E75; --warn:#B45309; --warnbg:#FEF3C7; --warnline:#FDE68A;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#15130f; --raised:#1e1b16; --sunken:#100e0b;
+      --ink:#f2eee6; --ink2:#c7bfb2; --muted:#8a8377;
+      --line:#332e26; --line2:#443d32;
+      --accent:#4ade80; --warn:#FCD34D; --warnbg:#2a2010; --warnline:#4a3a14;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#15130f; --raised:#1e1b16; --sunken:#100e0b;
+    --ink:#f2eee6; --ink2:#c7bfb2; --muted:#8a8377;
+    --line:#332e26; --line2:#443d32;
+    --accent:#4ade80; --warn:#FCD34D; --warnbg:#2a2010; --warnline:#4a3a14;
+    color-scheme: dark;
+  }
+
+  *{ box-sizing:border-box; }
+  body{ background:var(--paper); color:var(--ink); margin:0;
+        font-family:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif; line-height:1.65; }
+  .wrap{ max-width:780px; margin:0 auto; padding:48px 20px 90px; }
+
+  h1,h2,h3{ font-family:"Gowun Batang","Noto Serif KR",serif; margin:0; text-wrap:balance; }
+  header.page{ margin-bottom:30px; padding-bottom:22px; border-bottom:1px solid var(--line); }
+  header.page .eyebrow{ font-size:12.5px; letter-spacing:.14em; color:var(--muted); font-weight:600; margin:0 0 10px; }
+  header.page h1{ font-size:31px; font-weight:700; margin-bottom:10px; }
+  header.page .sub{ color:var(--ink2); font-size:15px; max-width:62ch; margin:0; }
+
+  .dday{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  .dday div{ background:var(--raised); border:1px solid var(--line); border-radius:10px; padding:10px 15px; }
+  .dday .k{ font-size:11.5px; color:var(--muted); font-weight:600; letter-spacing:.06em; }
+  .dday .v{ font-size:17px; font-weight:700; margin-top:2px; }
+
+  h2.sec{ font-size:21px; font-weight:700; margin:44px 0 6px; }
+  h2.sec + .lede{ color:var(--ink2); font-size:14px; margin:0 0 18px; }
+
+  .card{ background:var(--raised); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-bottom:12px; }
+  .callout{ background:var(--warnbg); border:1px solid var(--warnline); border-radius:10px; padding:14px 17px; margin:16px 0; font-size:14px; color:var(--warn); line-height:1.7; }
+  .callout b{ color:var(--warn); }
+
+  table{ width:100%; border-collapse:collapse; font-size:14px; margin:6px 0 4px; }
+  th,td{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ font-size:12px; color:var(--muted); font-weight:700; letter-spacing:.04em; }
+  .tw{ overflow-x:auto; }
+
+  .prof{ background:var(--raised); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:10px; }
+  .prof summary{ cursor:pointer; list-style:none; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .prof summary::-webkit-details-marker{ display:none; }
+  .prof .nm{ font-size:16px; font-weight:700; }
+  .prof .fld{ font-size:12.5px; color:var(--muted); }
+  .prof .mx{ margin-left:auto; font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .prof ul{ margin:12px 0 0; padding-left:18px; }
+  .prof li{ font-size:13.5px; color:var(--ink2); margin-bottom:7px; line-height:1.6; }
+  .prof li .jr{ color:var(--muted); font-size:12px; }
+  .hook{ margin-top:12px; padding:11px 13px; background:var(--sunken); border-radius:8px; font-size:13px; color:var(--ink2); }
+  .hook b{ color:var(--ink); }
+
+  .q{ border-left:3px solid var(--accent); padding:2px 0 2px 14px; margin:14px 0; }
+  .q .qt{ font-weight:700; font-size:14.5px; }
+  .q .qa{ font-size:13.5px; color:var(--ink2); margin-top:5px; }
+
+  footer{ margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); line-height:1.8; }
+  a{ color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <p class="eyebrow">서울대 스마트시스템과학과 · 2027학년도 수시</p>
+    <h1>지역균형전형 면접 대비</h1>
+    <p class="sub">지역균형 면접은 제시문을 푸는 시험이 아니라 <b>학생부를 놓고 나누는 대화</b>다.
+       기출문제가 없는 대신, 내가 써낸 것과 지원한 학과를 얼마나 아는지가 그대로 드러난다.</p>
+    <div class="dday">
+      <div><div class="k">면접일</div><div class="v" id="d-date">2026-12-04</div></div>
+      <div><div class="k">남은 기간</div><div class="v" id="d-left">—</div></div>
+      <div><div class="k">반영 비율</div><div class="v">1단계 70 + 면접 30</div></div>
+    </div>
+  </header>
+
+  <h2 class="sec">1. 지역균형 면접은 무엇이 다른가</h2>
+  <p class="lede">같은 서울대 면접이라도 전형에 따라 성격이 완전히 다르다. 준비 방향이 갈리는 지점이다.</p>
+
+  <div class="tw"><table>
+    <tr><th>구분</th><th>지역균형전형</th><th>일반전형</th></tr>
+    <tr>
+      <td><b>방식</b></td>
+      <td>학생부 기반 <b>개별 맞춤 질문</b></td>
+      <td>제시문 기반 구술</td>
+    </tr>
+    <tr>
+      <td><b>평가</b></td>
+      <td>서류 내용 확인 + 기본 학업 소양</td>
+      <td>문제 해결력 · 논리적·창의적 사고</td>
+    </tr>
+    <tr>
+      <td><b>기출문제</b></td>
+      <td><b>없음</b> — 사람마다 질문이 다르다</td>
+      <td>공개됨 (7개 과목 분류)</td>
+    </tr>
+    <tr>
+      <td><b>시간</b></td>
+      <td>준비 없이 바로 질의응답</td>
+      <td>준비 30~45분 + 면접 15분</td>
+    </tr>
+    <tr>
+      <td><b>비중</b></td>
+      <td>면접 30%</td>
+      <td>면접 50%</td>
+    </tr>
+  </table></div>
+
+  <div class="callout">
+    <b>기출문제를 찾지 말 것.</b> 지역균형 면접에는 정해진 문제가 없다.
+    질문은 <b>내 학생부에서 나온다.</b> 따라서 준비는 "예상 문제 풀이"가 아니라
+    <b>내가 3년간 써낸 내용을 전부 설명할 수 있게 만드는 일</b>이다.
+    특히 세특·동아리·탐구 보고서에 적힌 용어 중 <b>스스로 설명 못 하는 단어가 하나라도 있으면 그게 질문이 된다.</b>
+  </div>
+
+  <h2 class="sec">2. 학과를 아는가 — 교수 9인의 지금 연구</h2>
+  <p class="lede">"왜 이 학과인가"에 답하려면 이 학과가 <b>실제로 무엇을 하는 곳인지</b> 알아야 한다.
+     아래는 2025~2026년에 실제로 나온 논문이다. 오래된 소개자료가 아니라 지금 굴러가는 연구다.</p>
+
+  <div class="callout">
+    <b>먼저 알아둘 구조.</b> 스마트시스템과학과는 한 건물에 모인 학과가 아니라
+    농업생명과학대학의 <b>여러 학부에서 교수가 모인 융합 학과</b>다.
+    작물·바이오시스템공학·농생명공학·농경제사회학부·조경지역시스템공학부가 함께 들어와 있다.
+    "농대인데 왜 AI를 하나요"라는 질문의 답이 여기에 있다.
+  </div>
+
+  <details class="prof" open>
+    <summary><span class="nm">김광수</span><span class="fld">학과장 · 작물생태정보 · 농림생물자원학부</span><span class="mx">h-index 17 · 인용 1,456</span></summary>
+    <ul>
+      <li>IoT 저사양 기기에서 실시간 토양 파라미터에 <b>칼만 필터</b>를 적용해 평가 <span class="jr">— Scientific Reports, 2025</span></li>
+      <li>유역 규모 <b>관개용수 필요량</b> 산정을 위한 새 토양 데이터 집계법 <span class="jr">— J. Environmental Management, 2025</span></li>
+      <li>기후변화가 <b>콩 수량</b>에 미치는 공간 영향 평가용 토양 데이터 집계법 개발 <span class="jr">— Computers and Electronics in Agriculture, 2025</span></li>
+      <li><b>AgMIP 작물모델 보정 프로토콜</b> 평가와 새 진단 검사 <span class="jr">— European J. Agronomy, 2025</span></li>
+      <li>복잡지형 강수 추정 — PRISM에 인공신경망·레이더 결합 <span class="jr">— Atmospheric Research, 2024</span></li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> 작물 모델은 이 학과의 뿌리다.
+      "기후 데이터로 수확량을 예측한다"는 말이 구체적으로 무엇인지 —
+      토양 데이터를 어떻게 모으고, 모델을 어떻게 보정하는지가 최근 연구의 핵심이다.</div>
+  </details>
+
+  <details class="prof">
+    <summary><span class="nm">김학진</span><span class="fld">정밀농업 · 센서/제어 · 바이오시스템공학부</span><span class="mx">h-index 27 · 인용 2,530</span></summary>
+    <ul>
+      <li>저고도 드론 영상 + 객체인식으로 <b>녹차 새싹 감지·공간 지도화</b> <span class="jr">— Smart Agricultural Technology, 2026</span></li>
+      <li>행잉거터 단위 <b>증발산량 측정 기반 관개 제어</b> (온실 수경재배 토마토) <span class="jr">— J. Biosystems Engineering, 2026</span></li>
+      <li>이온선택전극 정밀 양분관리로 <b>식물공장 자원효율·환경영향</b> 평가 <span class="jr">— Agronomy, 2026</span></li>
+      <li>CNN + 레일 모니터링으로 <b>토마토 개체별 증발산량</b> 추정 <span class="jr">— Computers and Electronics in Agriculture, 2025</span></li>
+      <li><b>자율주행 이앙기</b>의 빠른 선회 헤드랜드 제어 전략 <span class="jr">— Computers and Electronics in Agriculture, 2025</span></li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> 학과에서 가장 "공학"에 가까운 축.
+      드론·센서·자율주행이 실제로 밭과 온실에서 돌아가는 사례다.
+      로봇이나 자동화에 관심을 밝혔다면 이 연구실 이름이 나와야 자연스럽다.</div>
+  </details>
+
+  <details class="prof">
+    <summary><span class="nm">유경록</span><span class="fld">동물세포공학 · 줄기세포 · 농생명공학부</span><span class="mx">h-index 28 · 인용 2,623</span></summary>
+    <ul>
+      <li>질환 유래 <b>간 오가노이드</b> 전임상 스크리닝 — 모자반에서 항섬유화 후보 발굴 <span class="jr">— Scientific Reports, 2026</span></li>
+      <li>돼지 장 오가노이드의 <b>PEDV 감염 반응</b> 전사체 프로파일링 <span class="jr">— J. Animal Science and Technology, 2026</span></li>
+      <li>나노그래핀옥사이드로 대식세포 극성 조절해 <b>급성 GVHD 완화</b> <span class="jr">— Advanced Science, 2025</span></li>
+      <li>조작 <b>세포외소포</b>로 T세포 재프로그래밍 (PD-1·PHB1 표적) <span class="jr">— Signal Transduction and Targeted Therapy, 2025</span></li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> 학과에서 인용 지표가 가장 높다.
+      "스마트 = 농기계"라는 오해를 깨는 축 — 세포·오가노이드도 이 학과 안에 있다.
+      생명과학 세특이 강하다면 여기와 연결된다.</div>
+  </details>
+
+  <details class="prof">
+    <summary><span class="nm">김태형</span><span class="fld">AI · 컴퓨터비전 · 바이오시스템공학부</span><span class="mx">h-index 11 · 인용 530</span></summary>
+    <ul>
+      <li><b>LeafVision</b> — 식물병 분류를 위한 자기지도 농업 비전 파운데이션 모델 <span class="jr">— Engineering Applications of AI, 2026</span></li>
+      <li><b>비지도 도메인 적응</b>으로 실험실↔현장 간극 해소 (식물병 진단) <span class="jr">— Ecological Informatics, 2026</span></li>
+      <li>이미지 기반 머신러닝으로 <b>맞춤형 토양수분 관리</b> <span class="jr">— PLoS ONE, 2026</span></li>
+      <li>턱관절 전방변위 스크리닝용 2단계 딥러닝 <span class="jr">— Scientific Reports, 2026</span></li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> AI를 가장 직접적으로 다루는 교수.
+      주목할 점은 <b>"실험실에서 되던 모델이 실제 밭에서는 안 된다"</b>는 문제를 정면으로 다룬다는 것 —
+      도메인 적응·파운데이션 모델이 그 답이다. AI에 관심 있다고 말할 때 이 지점을 짚으면 깊이가 다르게 들린다.</div>
+  </details>
+
+  <details class="prof">
+    <summary><span class="nm">김형석</span><span class="fld">원격탐사 · 광합성 · 농림생물자원학부</span><span class="mx">h-index 21 · 인용 2,143</span></summary>
+    <ul>
+      <li><b>태양유도 엽록소 형광(SIF)</b>으로 광합성 센싱 — 엽록체에서 지구 규모까지 <span class="jr">— Annual Review of Plant Biology, 2026</span></li>
+      <li>중분광 영상 SIF로 <b>스트레스 하 식물 생리 변화</b> 탐지 <span class="jr">— Remote Sensing of Environment, 2026</span></li>
+      <li>순간 엽록소 형광으로 <b>벼 도열병 피해 조기 정량화</b> <span class="jr">— Plant Methods, 2025</span></li>
+      <li>SIF 양자수율로 <b>개체 간 경쟁</b> 하 벼 생육 동태 포착 <span class="jr">— Remote Sensing of Environment, 2025</span></li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> <i>Annual Review of Plant Biology</i>는 해당 분야 최고 권위 리뷰지다.
+      거기에 리뷰를 쓴다는 건 그 분야를 정리하는 위치에 있다는 뜻.
+      "식물이 내는 미약한 빛을 위성으로 읽어 광합성을 본다"는 개념 하나만 이해해도 할 말이 생긴다.</div>
+  </details>
+
+  <details class="prof">
+    <summary><span class="nm">안태인</span><span class="fld">시설원예 · 식물공장 · 농림생물자원학부</span><span class="mx">h-index 16 · 인용 961</span></summary>
+    <ul>
+      <li>광합성 연구를 위한 <b>LLM 기반 지식그래프 시스템</b> 설계·평가 <span class="jr">— IEEE Access, 2026</span></li>
+      <li>이온당량 농도비 기반 <b>양분 관리 시스템</b> 개발 <span class="jr">— Computers and Electronics in Agriculture, 2025</span></li>
+      <li>녹색광→적색광 변환으로 <b>파프리카 광합성·수량 향상</b> <span class="jr">— Horticulture Environment and Biotechnology, 2025</span></li>
+      <li>이온선택전극 기반 모니터링·투입 채널 제어 시스템 <span class="jr">— Acta Horticulturae, 2025</span></li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> 2026년에 <b>LLM을 연구 도구로 쓴 논문</b>이 나왔다.
+      생성형 AI가 농업 연구에 들어온 실제 사례라 시의성이 높다.
+      "AI를 농업에 어떻게 쓰나"라는 질문에 가장 최신 답을 줄 수 있는 지점.</div>
+  </details>
+
+  <details class="prof">
+    <summary><span class="nm">최종우</span><span class="fld">디지털농업 · 기술경영 · 농경제사회학부</span><span class="mx">신임 · 디지털농업과기술경영 연구실</span></summary>
+    <ul>
+      <li>애그테크·리테일테크·푸드테크가 <b>농식품 산업에 미치는 영향</b> 분석</li>
+      <li>스마트팜 확대 과정의 <b>정부–생산자 정보 비대칭성</b> 문제 연구</li>
+      <li><b>게임이론·행동경제학</b>으로 농식품 기업의 기술경영 전략 분석</li>
+      <li>한국농촌경제연구원 부연구위원 → 경상국립대 조교수·부교수 → 서울대 부임</li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> 기술이 아니라 <b>사람과 제도</b>를 다루는 축.
+      "기술이 좋아도 농가가 안 쓰면 소용없다"는 문제의식이 여기 있다.
+      공학 일색으로 답하지 않고 이 관점을 섞으면 학과 이해도가 넓어 보인다.</div>
+  </details>
+
+  <details class="prof">
+    <summary><span class="nm">한희</span><span class="fld">산림경영 · 산림정책 · 농림생물자원학부</span><span class="mx">h-index 10 · 인용 320</span></summary>
+    <ul>
+      <li>지속가능 산림경영에 대한 <b>프레이밍 효과</b>와 대중 지지·행동 반응 <span class="jr">— Environmental Policy and Governance, 2026</span></li>
+      <li>개정 <b>PDCA 프레임워크</b>로 한국 산림녹화 성공을 재조명 <span class="jr">— Environmental Management, 2026</span></li>
+      <li>한국 <b>소나무림의 경제적·공익적 가치</b> 평가 <span class="jr">— Forest Science and Technology, 2026</span></li>
+      <li>산림조사에서 작은 나무 누락으로 생기는 <b>표본 선택 편의</b> <span class="jr">— PLoS ONE, 2025</span></li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> 탄소중립·산림의 공익가치와 직결된다.
+      표본 선택 편의 연구는 <b>"데이터를 잘못 모으면 결론이 틀어진다"</b>는 통계적 문제의식이라,
+      탐구 활동에서 데이터 편향을 다뤘다면 연결하기 좋다.</div>
+  </details>
+
+  <details class="prof">
+    <summary><span class="nm">김연욱</span><span class="fld">기후지능농업시스템공학 · 조경·지역시스템공학부</span><span class="mx">2025.09 부임 (신임)</span></summary>
+    <ul>
+      <li>연구실: <b>기후지능농업시스템공학</b> (Climate Smart Agricultural Systems Engineering)</li>
+      <li>기후 데이터로 <b>작물 수량 손실 위험</b>을 평가</li>
+      <li>담당 과목: 지역기후시스템공학 · 농업방재공학 · 농업시스템 모델링과 지속가능성 평가 · 기후변화와 농업기상재해</li>
+      <li>서울대 작물과학 학·석·박사 → 독일 <b>ZALF</b> 연구소 박사후연구원 → 2025년 9월 서울대 부임</li>
+    </ul>
+    <div class="hook"><b>면접 연결고리 ·</b> <b>가장 최근에 온 교수라 기존 소개자료에는 거의 안 나온다.</b>
+      이 이름을 알고 있으면 "최근까지 찾아봤구나"가 드러난다.
+      기후 재해와 농업 피해를 다루므로 기후변화 관련 탐구와 직접 이어진다.</div>
+  </details>
+
+  <h2 class="sec">3. 나올 수밖에 없는 질문</h2>
+  <p class="lede">개별 질문이라 예측은 불가능하지만, <b>구조상 반드시 나오는 유형</b>은 있다.</p>
+
+  <div class="card">
+    <div class="q">
+      <div class="qt">이 학과에 왜 지원했나요?</div>
+      <div class="qa">거의 확실히 나온다. "농업에 관심이 있어서"로는 부족하다.
+        <b>위 교수 중 누구의 어떤 연구가 내 관심과 이어지는지</b>를 한 명만이라도 구체적으로 말할 수 있어야 한다.</div>
+    </div>
+    <div class="q">
+      <div class="qt">생활기록부의 이 활동, 구체적으로 무엇을 했나요?</div>
+      <div class="qa">면접의 본체다. 세특·동아리·보고서에서 <b>본인이 쓴 용어를 스스로 정의</b>할 수 있어야 한다.
+        "제가 썼지만 잘 기억이…"는 가장 치명적인 답이다.</div>
+    </div>
+    <div class="q">
+      <div class="qt">그 탐구에서 어려웠던 점과 해결 과정은?</div>
+      <div class="qa">결과가 아니라 <b>과정</b>을 본다. 실패하거나 예상과 달랐던 지점을 솔직히 말하고,
+        거기서 무엇을 바꿨는지로 이어가는 편이 매끄럽다.</div>
+    </div>
+    <div class="q">
+      <div class="qt">스마트농업이 정확히 뭐라고 생각하나요?</div>
+      <div class="qa">학과 이름에 대한 질문. 센서·AI로 끝내지 말고
+        <b>데이터 수집 → 모델 → 의사결정</b>까지 한 줄로 꿰면 좋다.
+        최종우 교수의 "기술이 있어도 농가가 안 쓰면 소용없다" 관점을 덧붙이면 시야가 넓어 보인다.</div>
+    </div>
+    <div class="q">
+      <div class="qt">입학하면 무엇을 하고 싶나요?</div>
+      <div class="qa">막연한 포부보다 <b>구체적인 과목명·연구실</b>이 낫다.
+        위 담당 과목들(예: 농업방재공학, 농업시스템 모델링)을 알고 있으면 답이 단단해진다.</div>
+    </div>
+  </div>
+
+  <h2 class="sec">4. 남은 기간 운용</h2>
+  <p class="lede">수능(11/19)이 먼저고 면접(12/04)이 뒤다. 순서가 정해져 있다.</p>
+
+  <div class="tw"><table>
+    <tr><th>시기</th><th>할 일</th></tr>
+    <tr><td><b>지금 ~ 수능</b></td>
+      <td>면접 준비는 <b>하루 10분</b>이면 충분하다. 학생부를 소리 내어 읽으며
+          설명 못 하는 용어에 표시만 해둔다. 주력은 수능이다.</td></tr>
+    <tr><td><b>수능 직후 ~ 11월 말</b></td>
+      <td>표시해둔 용어를 전부 설명 가능하게 만든다. 학과 교수 연구를 이 문서로 정리한다.
+          모의면접은 이 시기에.</td></tr>
+    <tr><td><b>12/01 ~ 12/03</b></td>
+      <td>새 내용을 넣지 않는다. 지원 동기·핵심 활동 3개만 반복해서 말로 뱉는다.</td></tr>
+    <tr><td><b>12/04</b></td>
+      <td>면접. 9개 전형 중 <b>유일한 면접</b>이다.</td></tr>
+  </table></div>
+
+  <div class="callout">
+    <b>가장 흔한 실패.</b> 답을 외워 가는 것. 지역균형 면접은 학생부를 놓고
+    <b>꼬리 질문</b>이 이어지는 구조라, 외운 답은 두 번째 질문에서 무너진다.
+    외우지 말고 <b>설명할 수 있게</b> 만들어야 한다.
+  </div>
+
+  <footer>
+    출처 — 면접 방식: 서울대 입학본부 2027학년도 수시모집 안내 ·
+    교수 연구: <a href="https://snu.elsevierpure.com/" target="_blank" rel="noopener">SNU Pure</a> 등재 논문(2024~2026) ·
+    학과 정보: <a href="https://cals.snu.ac.kr/academics/undergraduate?deptidx=55" target="_blank" rel="noopener">서울대 농업생명과학대학</a><br>
+    지표(h-index·인용수)는 Scopus 기준이며 조회 시점에 따라 달라진다. 정리 2026-09-21.
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    var t = new Date(2026, 11, 4); t.setHours(0,0,0,0);
+    var n = new Date(); n.setHours(0,0,0,0);
+    var k = Math.round((t - n) / 86400000);
+    var el = document.getElementById('d-left');
+    el.textContent = k > 0 ? 'D-' + k + '일' : (k === 0 ? '오늘' : '종료');
+  })();
+</script>
+</body>
+</html>

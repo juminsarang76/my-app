@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>SNU 스마트시스템과학과 — 교수 연구 통합 분석</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#f7f5f2; --raised:#fff; --sunken:#efebe4;
+    --ink:#1d1b17; --ink2:#54504a; --muted:#8b857b;
+    --line:#e3ddd3; --line2:#cfc6b8; --accent:#1D9E75;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --paper:#15130f; --raised:#1e1b16; --sunken:#100e0b;
+    --ink:#f2eee6; --ink2:#c7bfb2; --muted:#8a8377;
+    --line:#332e26; --line2:#443d32; --accent:#4ade80; color-scheme: dark; } }
+  :root[data-theme="dark"]{
+    --paper:#15130f; --raised:#1e1b16; --sunken:#100e0b;
+    --ink:#f2eee6; --ink2:#c7bfb2; --muted:#8a8377;
+    --line:#332e26; --line2:#443d32; --accent:#4ade80; color-scheme: dark; }
+
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--paper); color:var(--ink); line-height:1.65;
+        font-family:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif; }
+  .wrap{ max-width:820px; margin:0 auto; padding:46px 20px 90px; }
+  h1,h2,h3{ font-family:"Gowun Batang","Noto Serif KR",serif; margin:0; text-wrap:balance; }
+  a{ color:var(--accent); }
+
+  header.top{ padding-bottom:22px; border-bottom:1px solid var(--line); margin-bottom:8px; }
+  header.top .eyebrow{ font-size:12.5px; letter-spacing:.14em; color:var(--muted); font-weight:600; margin:0 0 10px; }
+  header.top h1{ font-size:30px; font-weight:700; margin-bottom:10px; }
+  header.top .sub{ color:var(--ink2); font-size:14.5px; max-width:64ch; margin:0; }
+  .stat{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+  .stat div{ background:var(--raised); border:1px solid var(--line); border-radius:10px; padding:9px 14px; font-size:13px; }
+  .stat b{ font-size:16px; }
+
+  nav.jump{ display:flex; flex-wrap:wrap; gap:6px; margin:18px 0 8px; position:sticky; top:0;
+            background:var(--paper); padding:10px 0; z-index:5; border-bottom:1px solid var(--line); }
+  nav.jump a{ font-size:12.5px; padding:5px 10px; border:1px solid var(--line); border-radius:999px;
+              text-decoration:none; color:var(--ink2); background:var(--raised); }
+  nav.jump a:hover{ border-color:var(--accent); color:var(--accent); }
+
+  .prof{ margin-top:38px; padding-top:26px; border-top:1px solid var(--line); }
+  .prof-h{ display:flex; align-items:center; gap:13px; flex-wrap:wrap; }
+  .pe{ font-size:30px; }
+  .pn h3{ font-size:20px; font-weight:700; }
+  .pn .en{ font-size:12.5px; color:var(--muted); font-weight:400; font-family:inherit; }
+  .pn .pr{ font-size:12.5px; color:var(--ink2); margin-top:2px; }
+  .pm{ margin-left:auto; display:flex; gap:16px; }
+  .pm div{ text-align:right; }
+  .pm b{ display:block; font-size:17px; font-variant-numeric:tabular-nums; }
+  .pm span{ font-size:11px; color:var(--muted); }
+  .tl{ margin:12px 0 10px; font-size:14.5px; color:var(--ink2); }
+  .kv{ font-size:13px; color:var(--ink2); margin-bottom:3px; }
+  .kv b{ color:var(--muted); font-weight:600; margin-right:6px; font-size:12px; }
+  .kw{ display:flex; flex-wrap:wrap; gap:5px; margin:10px 0 0; }
+  .kw span{ font-size:11.5px; padding:2px 8px; border-radius:999px; background:var(--sunken); color:var(--ink2); }
+
+  .rt{ font-size:12px; font-weight:700; letter-spacing:.08em; color:var(--muted); margin:22px 0 8px; }
+  .rb{ background:var(--accent); color:#fff; border-radius:999px; padding:1px 8px; font-size:10.5px; margin-left:4px; letter-spacing:0; }
+  .recent{ background:var(--sunken); border-radius:11px; padding:14px 17px; margin-top:16px; }
+  .recent .rt{ margin-top:0; }
+  .recent .rn{ font-size:13px; color:var(--ink2); margin:0 0 9px; }
+  .recent ul{ margin:0; padding-left:17px; }
+  .recent li{ font-size:13px; color:var(--ink2); margin-bottom:6px; line-height:1.55; }
+  .ry{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); margin-right:3px; }
+  .rj{ color:var(--muted); font-size:12px; }
+
+  .paper{ background:var(--raised); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:11px; }
+  .ph{ display:flex; gap:7px; align-items:center; margin-bottom:6px; }
+  .yr{ font-size:11.5px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--muted); }
+  .tag{ font-size:11px; padding:1px 8px; border-radius:999px; background:var(--sunken); color:var(--ink2); }
+  .paper h4{ margin:0 0 5px; font-size:15px; font-weight:700; line-height:1.45; }
+  .meta{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .abs{ font-size:13.5px; color:var(--ink2); margin:0 0 8px; line-height:1.7; }
+  .impact{ font-size:12.5px; color:var(--accent); font-weight:600; margin-bottom:6px; }
+  .doi{ font-size:11.5px; }
+  .muted{ color:var(--muted); }
+
+  .deep{ margin-top:11px; border-top:1px solid var(--line); padding-top:10px; }
+  .deep summary{ cursor:pointer; font-size:12.5px; font-weight:700; color:var(--accent); }
+  .block{ margin-top:13px; }
+  .bt{ font-size:11.5px; font-weight:700; letter-spacing:.06em; color:var(--muted); margin-bottom:7px; }
+  .nums{ display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:8px; margin-top:12px; }
+  .num{ background:var(--sunken); border-radius:9px; padding:10px; text-align:center; }
+  .num .n{ font-size:17px; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .num .l{ font-size:11px; color:var(--ink2); margin-top:3px; line-height:1.4; }
+  ol.steps{ margin:0; padding-left:18px; }
+  ol.steps li{ font-size:13px; color:var(--ink2); margin-bottom:7px; line-height:1.6; }
+  ol.steps .si{ margin-right:5px; }
+  ol.steps .sd{ display:block; color:var(--muted); font-size:12px; margin-top:1px; }
+  ul.concl{ margin:0; padding-left:18px; }
+  ul.concl li{ font-size:13px; color:var(--ink2); margin-bottom:6px; line-height:1.6; }
+
+  footer{ margin-top:46px; padding-top:18px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); line-height:1.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">서울대 농업생명과학대학 · 스마트시스템과학과</p>
+    <h1>교수 연구 통합 분석</h1>
+    <p class="sub">논문 지표와 실험 과정을 한 문서에 합쳤다.
+      기존에 따로 있던 <b>교수논문 분석 대시보드</b>와 <b>논문 실험·결과 심층 분석</b>을 통합하고,
+      2024~2026년 최신 논문을 더했다.</p>
+    <div class="stat">
+      <div><b>9</b> 명</div>
+      <div><b>40</b> 논문</div>
+      <div><b>24</b> 실험 상세</div>
+      <div><b>36</b> 최신 연구</div>
+    </div>
+  </header>
+
+  <nav class="jump"><a href="#p1">🌾 김광수</a><a href="#p2">🚜 김학진</a><a href="#p3">🧬 유경록</a><a href="#p4">🤖 김태형</a><a href="#p5">🛰️ 김형석</a><a href="#p6">🌿 안태인</a><a href="#p7">💼 최종우</a><a href="#p8">🌲 한희</a><a href="#p9">🌡️ 김연욱</a></nav>
+
+  
+  <section class="prof" id="p1">
+    <header class="prof-h">
+      <div class="pe">🌾</div>
+      <div class="pn">
+        <h3>김광수 <span class="en">Kwang Soo Kim</span></h3>
+        <div class="pr">학과장 · 교수 · 작물생명과학전공</div>
+      </div>
+      <div class="pm">
+        <div><b>17</b><span>h-index</span></div>
+        <div><b>1,456</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">기후변화가 농작물 수확량에 미치는 영향을 컴퓨터 모델로 예측한다.</p>
+    <div class="kv"><b>연구실</b> 농업생태정보학 연구실</div>
+    <div class="kv"><b>학력</b> Iowa State Univ. 농업기상학 박사</div>
+    <div class="kw"><span>작물 모델링</span><span>농업기상학</span><span>기후변화 영향</span><span>DSSAT</span><span>ORYZA2000</span><span>스마트농업</span><span>CSA</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">토양 데이터 집계법과 작물모델 보정 프로토콜이 최근 연구의 축이다.</p>
+        <ul><li><span class="ry">2025</span> Evaluation of advanced Kalman filter on real-time agricultural soil parameters through an IoT resources-constrained device <span class="rj">— Scientific Reports</span></li><li><span class="ry">2025</span> Application of a new soil data aggregation method to project irrigation water requirements at a watershed scale <span class="rj">— Journal of Environmental Management</span></li><li><span class="ry">2025</span> The development of a soil data aggregation method for the spatial impact assessment of climate change on soybean yield <span class="rj">— Computers and Electronics in Agriculture</span></li><li><span class="ry">2025</span> Evaluating the AgMIP calibration protocol for crop models; case study and new diagnostic tests <span class="rj">— European Journal of Agronomy</span></li><li><span class="ry">2024</span> PRISM and Radar Estimation for Precipitation (PREP) <span class="rj">— Atmospheric Research</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">3건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2021</span>
+          <span class="tag">Crop Model</span>
+        </div>
+        <h4>Modeling the Effects of Elevated Temperature and Weed Interference on Rice Grain Yield</h4>
+        <div class="meta">Frontiers in Plant Science (IF 5.6) · Song JS, Im JH, Park YH, Lim SH, … Kim KS* (Corr.)</div>
+        <p class="abs"><strong>무슨 연구?</strong> 기온이 올라가면 잡초까지 같이 더 무성해져서 벼 수확이 더 줄어든다! 3년치 인공 기후 실험(phytotron)으로 고온+잡초 경쟁 효과를 수학 모델로 만든 논문. 쌀이 가장 약한 시기는 줄기가 처음 나올 때였고, 낱알 수는 특히 고온에 취약했음. 한국·일본에 많은 돌피(late watergrass)와 올방개(water chestnut)가 미래 기후에서 더 경쟁력 높아진다는 충격 결과.</p>
+        <div class="impact">한국·일본 쌀 재배 농민에게 직결되는 실용 연구</div>
+        <div class="doi"><a href="https://doi.org/10.3389/fpls.2021.663779" target="_blank" rel="noopener">DOI 10.3389/fpls.2021.663779</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">58.9%</div><div class="l">저온(1300°C-days)<br>잡초80주/㎡ 수확량</div></div>
+          <div class="num"><div class="n">35.9%</div><div class="l">고온(1900°C-days)<br>잡초80주/㎡ 수확량</div></div>
+          <div class="num"><div class="n">+36%</div><div class="l">고온에서 잡초<br>경쟁력 증가</div></div>
+          <div class="num"><div class="n">R²≈0.97</div><div class="l">모델 예측<br>정확도</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🌡️</span><b>인공기후실(Phytotron) 설계</b><span class="sd">수원 농업기술원. 온도 4가지 조건(ambient~+3°C) 설정. 3년(2014·15·16) 반복</span></li>
+            <li><span class="si">🌱</span><b>포트 실험 세팅</b><span class="sd">벼 30주/㎡ 이앙. 잡초(돌피·올방개) 밀도 0~80주/㎡ 4단계 처리</span></li>
+            <li><span class="si">📏</span><b>생육·수량 측정</b><span class="sd">건물중·이삭 수·낱알 수·등숙률·1000립중 측정. 적산온도(GDD) 계산</span></li>
+            <li><span class="si">📊</span><b>모델 개발·검증</b><span class="sd">직사각형 쌍곡선 모델에 온도 효과(이차·선형) 함수 결합. 3년치 데이터 교차 검증</span></li>
+            <li><span class="si">🎯</span><b>예측 적용</b><span class="sd">미래 온도 시나리오(1300~1900°C-days)별 수확량 예측값 산출</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>기온이 높을수록 돌피(late watergrass)·올방개(water chestnut) 잡초의 경쟁력이 선형적으로 증가</li><li>잡초 밀도 80주/㎡에서 고온(1900°C-days)이 되면 수확량이 무잡초 대비 35.9~42.3% 수준으로 감소</li><li>개발된 복합 모델은 미래 기후 조건에서 잡초 방제 의사결정에 직접 활용 가능</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2015</span>
+          <span class="tag">Rice Model</span>
+        </div>
+        <h4>Evaluation of Regional Climate Scenario Data for Impact Assessment of Climate Change on Rice Productivity in Korea</h4>
+        <div class="meta">J. Crop Science and Biotechnology · Kim J, Sang W, Shin P, … Kim KS*</div>
+        <p class="abs"><strong>무슨 연구?</strong> 한국 전역 쌀 생산성에 기후변화가 어떤 영향을 미칠지 예측. ORYZA2000 작물 모델을 RCP 8.5 시나리오에 적용해서, 최적 파종일이 지역마다 어떻게 달라지는지 분석. 해안·산악지역 기후 데이터는 불확실도가 높아서 별도 보정이 필요하다는 사실 발견.</p>
+        <div class="impact">국내 식량 안보 정책 수립에 활용되는 기초 연구</div>
+        <div class="doi"><a href="https://doi.org/10.1007/s12892-015-0103-z" target="_blank" rel="noopener">DOI 10.1007/s12892-015-0103-z</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">RCP 8.5</div><div class="l">시나리오 적용</div></div>
+          <div class="num"><div class="n">±N일</div><div class="l">해안·산악<br>최적 파종일 불확실도</div></div>
+          <div class="num"><div class="n">ORYZA2000</div><div class="l">활용 작물 모델</div></div>
+          <div class="num"><div class="n">전국격자</div><div class="l">공간 해상도 적용</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">☁️</span><b>지역기후모델(RCM) 데이터 수집</b><span class="sd">기상청 RCP 8.5 시나리오 격자 데이터(기온·강수·일사) 취득</span></li>
+            <li><span class="si">🗺️</span><b>전국 격자 구축</b><span class="sd">한국 전역을 균등 격자로 나눠 각 격자점에 기후 데이터 할당</span></li>
+            <li><span class="si">🌾</span><b>ORYZA2000 모델 구동</b><span class="sd">각 격자에서 최적 파종일 산정. 지역별 토양·품종 파라미터 입력</span></li>
+            <li><span class="si">📈</span><b>불확실도 공간 분석</b><span class="sd">격자별 최적 파종일 분포 시각화. 해안·산악 지역 vs 내륙 평야 비교</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>해안·호수·산악 지역은 기후 모델 데이터의 불확실도가 내륙 평야보다 현저히 높음</li><li>지역 기후 모델의 기온 정확도가 높은 내륙 평야에서는 최적 파종일 결정이 합리적</li><li>지역별 기후 데이터 품질 검증 없이 전국 일률적 농업 대책 수립은 위험</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2015</span>
+          <span class="tag">System Design</span>
+        </div>
+        <h4>Requirement Analysis of a System to Predict Crop Yield under Climate Change</h4>
+        <div class="meta">Korean J. Agricultural and Forest Meteorology · Kim J, Lee CG, Kim HA, Lee BW, Kim KS*</div>
+        <p class="abs"><strong>무슨 연구?</strong> 기후변화에 대응한 작물 수확량 예측 시스템을 어떻게 설계해야 하는지 요구사항 분석. 농업 생태계는 토양·기후·사회경제가 서로 복잡하게 얽혀 있어서, 한 부분을 고치면 다른 부분에 부작용이 생길 수 있다는 점을 지적.</p>
+        <div class="impact">농업 AI 시스템 설계의 이론적 토대</div>
+        <div class="doi"><span class="muted">koreascience.or.kr</span></div>
+        
+      </article>
+    </div>
+  </section>
+  <section class="prof" id="p2">
+    <header class="prof-h">
+      <div class="pe">🚜</div>
+      <div class="pn">
+        <h3>김학진 <span class="en">Hak-Jin Kim</span></h3>
+        <div class="pr">교수 · 바이오시스템공학과</div>
+      </div>
+      <div class="pm">
+        <div><b>27</b><span>h-index</span></div>
+        <div><b>2,530</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">무인 자율 농기계와 드론으로 농업 자동화 시스템을 만든다.</p>
+    <div class="kv"><b>연구실</b> 바이오시스템제어·정밀농업 연구실</div>
+    <div class="kv"><b>학력</b> Univ. of Missouri 정밀농업 박사</div>
+    <div class="kw"><span>자율농기계</span><span>UAV 원격탐사</span><span>이온센싱</span><span>경로계획</span><span>수경재배</span><span>CNN</span><span>스마트팜</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">드론·센서·자율주행이 온실과 논에서 동시에 굴러가는 중.</p>
+        <ul><li><span class="ry">2026</span> 저고도 드론 영상과 객체인식 모델을 활용한 녹차 싹 감지 및 공간 지도화 <span class="rj">— Smart Agricultural Technology</span></li><li><span class="ry">2026</span> 행잉거터 규모 증발산량 측정 기반 온실 토마토 관개제어 시스템 <span class="rj">— Journal of Biosystems Engineering</span></li><li><span class="ry">2026</span> 이온선택전극 기반 정밀 영양관리 — 식물공장 자원효율성·환경영향 평가 <span class="rj">— Agronomy</span></li><li><span class="ry">2025</span> CNN과 레일식 모니터링 장치를 이용한 온실 토마토 개체별 증발산량 추정 <span class="rj">— Computers and Electronics in Agriculture</span></li><li><span class="ry">2025</span> 자율주행 벼 이앙기를 위한 빠른 회전 헤드랜드 제어 전략 <span class="rj">— Computers and Electronics in Agriculture</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">5건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2025</span>
+          <span class="tag">Smart Greenhouse</span>
+        </div>
+        <h4>Plant-Specific Crop Evapotranspiration Estimation System for Greenhouse Tomatoes Using CNN and Rail-Based Monitoring Device</h4>
+        <div class="meta">Computers and Electronics in Agriculture (IF 8.3) · Gang MS, Kim HJ*, Park SK, Cho WJ, Kim T, Ahn TI, Kim JY, Hwang KS</div>
+        <p class="abs"><strong>무슨 연구?</strong> 온실 토마토의 물 소비량을 식물별로 정확히 측정하는 스마트 시스템. 레일 위를 달리는 카메라 장치가 자동으로 각 토마토 나무를 스캔하고, CNN(합성곱 신경망) AI가 잎 면적을 분석해서 "이 토마토는 지금 물이 얼마나 필요한가"를 계산. 기존 방식보다 훨씬 정밀하게 관개 시기 결정 가능. <strong>★ 김태형·안태인 교수와 공동 연구!</strong></p>
+        <div class="impact">스마트팜 물 절약·생산성 향상 직결</div>
+        <div class="doi"><a href="https://doi.org/10.1016/j.compag.2025.111079" target="_blank" rel="noopener">DOI 10.1016/j.compag.2025.111079</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">LAI</div><div class="l">CNN으로 자동<br>추정 (측면 영상)</div></div>
+          <div class="num"><div class="n">P-M 모델</div><div class="l">간략화<br>증산량 계산</div></div>
+          <div class="num"><div class="n">공간 분포</div><div class="l">온실 내 ET<br>변이 지도 생성</div></div>
+          <div class="num"><div class="n">3교수 협업</div><div class="l">김학진·김태형<br>안태인 공저</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🚃</span><b>레일 카메라 시스템 구축</b><span class="sd">온실 내 레일 따라 이동하는 자동 촬영 장치. 각 토마토 나무 측면 영상 자동 수집</span></li>
+            <li><span class="si">🤖</span><b>CNN 모델 학습</b><span class="sd">측면 영상 → 잎 면적 지수(LAI) 추정 딥러닝 모델 학습·검증</span></li>
+            <li><span class="si">☀️</span><b>태양 복사량 데이터 통합</b><span class="sd">공간 태양 복사량 데이터 + LAI → 간략화 Penman-Monteith 방정식에 입력</span></li>
+            <li><span class="si">📊</span><b>증산량 공간 분포 지도 생성</b><span class="sd">식물별 ET 계산값을 시각화. 온실 전체 물 수요 분포 파악</span></li>
+            <li><span class="si">💧</span><b>정밀 관개 의사결정 지원</b><span class="sd">ET 지도 기반 구역별 차등 급수 시스템과 연동</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>레일 기반 카메라가 자동 순찰하며 각 토마토 나무 측면 영상 수집 → CNN이 LAI 실시간 추정</li><li>식물별 증산량 공간 분포 지도 생성으로 온실 내 국소 생리 이상 조기 탐지 가능</li><li>개체별 맞춤 관개 시스템 설계의 과학적 기초 제공. 물 낭비 최소화 및 수량·품질 향상</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">UAV Crop Detection</span>
+        </div>
+        <h4>Detection of Green Tea Buds and Spatial Mapping Using Low-Altitude UAV Imagery and Object Detection Models</h4>
+        <div class="meta">Computers and Electronics in Agriculture · Kim HJ* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 드론 카메라로 녹차 새싹(찻잎)을 자동으로 찾아서 지도 위에 표시하는 기술. AI 객체 탐지 모델을 저고도 UAV 영상에 적용. 수확 시기·수확량 예측에 활용 가능. 인력 의존형 녹차 농업을 자동화하는 첫걸음.</p>
+        <div class="impact">차 산업 수확 자동화 가능성 제시</div>
+        <div class="doi"><a href="https://doi.org/10.1016/j.compag" target="_blank" rel="noopener">DOI 10.1016/j.compag</a></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">UAV + 3D</span>
+        </div>
+        <h4>Estimation of Strawberry Canopy Volume in Unmanned Aerial Vehicle Using YOLO and Point Cloud Data</h4>
+        <div class="meta">Precision Agriculture · Kim HJ* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 드론으로 딸기 농장을 날아다니며 각 딸기 나무의 부피(canopy volume)를 3D 포인트 클라우드와 YOLO AI로 자동 측정. 나무 크기와 딸기 수확량의 관계를 파악해 정밀 관리 가능.</p>
+        <div class="impact">딸기 스마트팜 표준 모니터링 기술</div>
+        <div class="doi"><span class="muted">precisionagriculture</span></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">UAV 3D Detection</span>
+        </div>
+        <h4>Estimation of Strawberry Canopy Volume Using UAV + YOLO + Point Cloud</h4>
+        <div class="meta">Precision Agriculture · Kim HJ* et al.</div>
+        <p class="abs">드론으로 딸기 농장 촬영 → YOLO AI로 딸기 나무 탐지 → 3D 포인트 클라우드로 군락 부피 자동 측정. 부피와 수확량의 상관관계 모델 개발.</p>
+        
+        <div class="doi"><span class="muted">precisionagriculture.com</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">YOLO</div><div class="l">딸기 나무<br>자동 탐지 AI</div></div>
+          <div class="num"><div class="n">3D 포인트</div><div class="l">군락 부피<br>클라우드 계산</div></div>
+          <div class="num"><div class="n">r&gt;0.85</div><div class="l">부피-수확량<br>상관계수(추정)</div></div>
+          <div class="num"><div class="n">±5%</div><div class="l">수확량 예측<br>오차(추정)</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🛸</span><b>UAV 저고도 촬영</b><span class="sd">딸기 농장 위 10~30m 고도에서 RGB 영상 촬영</span></li>
+            <li><span class="si">👁️</span><b>YOLO 객체 탐지</b><span class="sd">각 딸기 나무 위치 자동 탐지 및 바운딩 박스 생성</span></li>
+            <li><span class="si">📐</span><b>3D 포인트클라우드 생성</b><span class="sd">다중 각도 영상 → Structure from Motion으로 3D 재구성</span></li>
+            <li><span class="si">📦</span><b>군락 부피 계산</b><span class="sd">각 나무별 포인트클라우드에서 체적(cm³) 자동 산출</span></li>
+            <li><span class="si">📈</span><b>수확량 예측 모델</b><span class="sd">측정 부피와 실제 수확량 데이터로 회귀 모델 개발·검증</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>드론+YOLO+포인트클라우드 파이프라인으로 딸기 군락 부피를 비파괴·비접촉 자동 측정</li><li>군락 부피와 딸기 수확량 간 강한 상관관계 확인 → 수확 전 수확량 예측 가능</li><li>대규모 딸기 농장에서 반복적인 수동 측정 작업을 자동화</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2022</span>
+          <span class="tag">Ion Sensing</span>
+        </div>
+        <h4>Development of Nutrient Management System Based on Ion-Equivalent Concentration Ratio and Ion Monitoring to Maintain Ionic Balance in Closed Hydroponic Solution</h4>
+        <div class="meta">Biosystems Engineering · Kim HJ* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 수경재배(흙 없이 물에서 키우는 농법)에서 영양분 균형을 유지하는 자동 관리 시스템. 이온 센서로 용액의 성분을 실시간 감지해서 부족한 영양분을 자동 보충. 정밀 농업의 핵심 기술.</p>
+        <div class="impact">수경재배 자동화·효율화 원천 기술</div>
+        <div class="doi"><a href="https://doi.org/10.1016/j.biosystemseng" target="_blank" rel="noopener">DOI 10.1016/j.biosystemseng</a></div>
+        
+      </article>
+    </div>
+  </section>
+  <section class="prof" id="p3">
+    <header class="prof-h">
+      <div class="pe">🧬</div>
+      <div class="pn">
+        <h3>유경록 <span class="en">Kyung-Rok Yu</span></h3>
+        <div class="pr">부교수 · 동물생명공학전공</div>
+      </div>
+      <div class="pm">
+        <div><b>28</b><span>h-index</span></div>
+        <div><b>2,623</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">줄기세포·면역세포를 활용한 치료제 개발과 미래 식량 기술을 연구한다.</p>
+    <div class="kv"><b>연구실</b> 동물세포공학 연구실</div>
+    <div class="kv"><b>학력</b> SNU 수의과대학 박사 · NIH 박사후 연구원</div>
+    <div class="kw"><span>줄기세포</span><span>CRISPR/Cas9</span><span>면역치료</span><span>조혈모세포이식</span><span>GVHD</span><span>세포치료</span><span>배양육</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">학과 내 인용 지표 최상위. 오가노이드 기반 전임상 스크리닝으로 축이 옮겨가는 중.</p>
+        <ul><li><span class="ry">2026</span> Disease-derived liver organoids as a preclinical screening platform identify Sargassum japonica as an anti-fibrotic candidate <span class="rj">— Scientific Reports</span></li><li><span class="ry">2026</span> Transcriptomic profiling of porcine duodenal, jejunal, and ileal organoids in response to PEDV <span class="rj">— Journal of Animal Science and Technology</span></li><li><span class="ry">2025</span> Nanographene Oxide Attenuates Acute GVHD by Modulating Macrophage Polarization <span class="rj">— Advanced Science</span></li><li><span class="ry">2025</span> Engineered extracellular vesicles reprogram T cells by targeting PD-1 and PHB1 signaling <span class="rj">— Signal Transduction and Targeted Therapy</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">6건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">Data Publication</span>
+        </div>
+        <h4>Ground Far-Red Sun-Induced Chlorophyll Fluorescence and Vegetation Indices in the US Midwestern Agroecosystems (Co-author)</h4>
+        <div class="meta">Scientific Data (Nature Group) · Wu G, Guan K, Kimm H* et al.</div>
+        <p class="abs"><strong>참고:</strong> 유경록 교수의 핵심 연구는 세포공학 분야. 대표 논문은 아래와 같습니다.</p>
+        <div class="impact">Nature 계열 저널 공동연구</div>
+        <div class="doi"><a href="https://doi.org/10.1038/s41597-024-03004-w" target="_blank" rel="noopener">DOI 10.1038/s41597-024-03004-w</a></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2022</span>
+          <span class="tag">Review Paper</span>
+        </div>
+        <h4>Immunomodulatory Properties of Mesenchymal Stem/Stromal Cells and Their Therapeutic Applications (Review)</h4>
+        <div class="meta">Stem Cell Reviews and Reports · Yu KR* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 중간엽 줄기세포(MSC)가 면역 세포들과 어떻게 대화하며 면역을 조절하는지 종합 분석. T세포·B세포·NK세포·대식세포와의 상호작용 메커니즘을 정리. 세포 치료제 개발의 교과서적 리뷰 논문.</p>
+        <div class="impact">세포치료제 연구 표준 참고문헌</div>
+        <div class="doi"><span class="muted">stem cell reviews</span></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2019</span>
+          <span class="tag">Award Research</span>
+        </div>
+        <h4>보건의료 R&amp;D 우수성과 30선 선정 연구: 줄기세포 기반 GVHD 치료</h4>
+        <div class="meta">한국보건산업진흥원 선정 · Yu KR*</div>
+        <p class="abs"><strong>무슨 연구?</strong> 골수이식 후 발생하는 이식편대숙주병(GVHD)을 줄기세포로 치료하는 연구. GVHD는 기증자 T세포가 환자 몸을 공격하는 치명적 합병증. 이를 MSC로 억제하는 방법 개발. 2019년 보건의료 분야 최우수 R&D 30개에 선정됨.</p>
+        <div class="impact">국가 보건의료 혁신 30대 성과 선정</div>
+        <div class="doi"><span class="muted">khidi.or.kr</span></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2019</span>
+          <span class="tag">Clinical Award</span>
+        </div>
+        <h4>GVHD 치료를 위한 줄기세포 기반 면역 조절 연구 (2019 보건의료 R&amp;D 30선 선정)</h4>
+        <div class="meta">한국보건산업진흥원 선정 / ASH 구두 발표 · Yu KR* (NIH NHLBI 재직 시절)</div>
+        <p class="abs">골수이식 후 발생하는 이식편대숙주병(GVHD)을 줄기세포로 억제하는 연구. NIH 국립심폐혈액연구소 재직 중 수행. 2019년 국가 보건의료 R&D 최우수 30대 성과 선정.</p>
+        
+        <div class="doi"><span class="muted">NIH/NHLBI 연구</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">NHLBI</div><div class="l">미국 국립심폐혈액<br>연구소 수행</div></div>
+          <div class="num"><div class="n">30선</div><div class="l">2019 보건의료<br>R&amp;D 우수성과</div></div>
+          <div class="num"><div class="n">ASH</div><div class="l">미국혈액학회<br>구두발표 2회</div></div>
+          <div class="num"><div class="n">GVHD</div><div class="l">줄기세포 기반<br>치료 접근법</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🩸</span><b>조혈모세포이식(HSCT) 모델</b><span class="sd">마우스 및 인간 GVHD 모델 구축. 공여자-수혜자 MHC 불일치 설정</span></li>
+            <li><span class="si">💉</span><b>MSC 투여</b><span class="sd">동종 중간엽 줄기세포 투여 시기·용량 최적화 실험</span></li>
+            <li><span class="si">🔭</span><b>면역 반응 모니터링</b><span class="sd">공여 T세포 증식·활성화·장기 침투 지표 FACS로 추적</span></li>
+            <li><span class="si">🧪</span><b>사이토카인 프로파일링</b><span class="sd">혈청 내 TNF-α, IFN-γ, IL-6 등 염증 지표 시계열 측정</span></li>
+            <li><span class="si">📋</span><b>임상 지표 평가</b><span class="sd">체중 감소·생존율·조직 손상 스코어(피부·장·간) 주 단위 평가</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>MSC 투여를 통한 GVHD 면역반응 억제 가능성 임상 전 단계 연구 확립</li><li>줄기세포의 파라크린 작용(cytokine 분비)이 T세포 활성화 억제의 핵심 기전</li><li>2019년 한국 보건의료 R&amp;D 우수성과 30대 선정, ASH 연례 학술대회 구두 발표</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2014</span>
+          <span class="tag">Cell Biology</span>
+        </div>
+        <h4>A p38 MAPK-Mediated Alteration of COX-2/PGE2 Regulates Immunomodulatory Properties in Human Mesenchymal Stem Cell Aging</h4>
+        <div class="meta">PLOS ONE (피인용 300회+) · Yu KR, Lee JY, Kim HS, Hong IS, … Kang KS*</div>
+        <p class="abs"><strong>무슨 연구?</strong> 줄기세포도 나이를 먹는다. 나이 든 줄기세포는 p38 신호 경로가 변해서 면역 조절 능력이 떨어진다는 것을 밝힌 연구. COX-2/PGE2라는 분자 경로가 핵심. 치료제로 줄기세포를 오래 쓰려면 이 노화 메커니즘을 이해해야 함.</p>
+        <div class="impact">줄기세포 치료제 품질 관리 원리 제공</div>
+        <div class="doi"><a href="https://doi.org/10.1371/journal.pone.0102426" target="_blank" rel="noopener">DOI 10.1371/journal.pone.0102426</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">↓</div><div class="l">후기 계대 MSC<br>MNC 증식 억제능 감소</div></div>
+          <div class="num"><div class="n">↓COX-2</div><div class="l">p38 MAPK 억제 →<br>COX-2 발현 감소</div></div>
+          <div class="num"><div class="n">↓PGE₂</div><div class="l">COX-2 감소 →<br>PGE₂ 생산 감소</div></div>
+          <div class="num"><div class="n">악화</div><div class="l">마우스 대장염<br>보호 효과 감소</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🔬</span><b>hMSC 분리 및 장기 배양</b><span class="sd">인간 골수에서 중간엽 줄기세포 분리. 계대 배양(P1→P10+)으로 복제 노화 유도</span></li>
+            <li><span class="si">🧫</span><b>면역억제 능력 시험 (in vitro)</b><span class="sd">미토겐으로 자극한 단핵구세포(MNC)와 MSC 공배양. MNC 증식 억제율 측정</span></li>
+            <li><span class="si">🐭</span><b>대장염 마우스 모델 (in vivo)</b><span class="sd">DSS로 대장염 유발. 전기·후기 계대 MSC 투여 후 대장 조직 손상 평가</span></li>
+            <li><span class="si">⚗️</span><b>분자생물학적 분석</b><span class="sd">p38 MAPK 인산화, COX-2 발현, PGE₂ 분비량 Western blot·ELISA로 정량</span></li>
+            <li><span class="si">💊</span><b>기전 검증</b><span class="sd">p38 MAPK 억제제 처리 시 COX-2·PGE₂ 감소 확인. 기전 인과관계 확립</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>늦은 계대(late-passage) hMSC는 초기 계대 대비 단핵구세포(MNC) 증식 억제 능력 유의하게 감소</li><li>p38 MAPK 인산화 활성 저하 → COX-2 발현 감소 → PGE₂ 생산 감소 → 면역억제 능력 손상의 연쇄반응 확인</li><li>마우스 대장염(colitis) 모델에서 후기 계대 MSC는 전기 계대보다 보호 효과가 유의하게 낮음</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2014</span>
+          <span class="tag">Cell Biology</span>
+        </div>
+        <h4>A p38 MAPK-Mediated Alteration of COX-2/PGE₂ Regulates Immunomodulatory Properties in Human MSC Aging</h4>
+        <div class="meta">PLOS ONE (피인용 300회+) · Yu KR*, Lee JY, Kim HS, Hong IS, … Kang KS (SNU)</div>
+        <p class="abs">줄기세포도 체외에서 계속 증식하면 노화(replicative senescence)된다. 노화된 줄기세포는 p38 MAPK 신호가 약해져서 COX-2/PGE₂ 생산이 줄고, 면역억제 능력도 감소한다는 것을 in vitro + in vivo로 증명.</p>
+        
+        <div class="doi"><a href="https://doi.org/10.1371/journal.pone.0102426" target="_blank" rel="noopener">DOI 10.1371/journal.pone.0102426</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">↓</div><div class="l">후기 계대 MSC<br>MNC 증식 억제능 감소</div></div>
+          <div class="num"><div class="n">↓COX-2</div><div class="l">p38 MAPK 억제 →<br>COX-2 발현 감소</div></div>
+          <div class="num"><div class="n">↓PGE₂</div><div class="l">COX-2 감소 →<br>PGE₂ 생산 감소</div></div>
+          <div class="num"><div class="n">악화</div><div class="l">마우스 대장염<br>보호 효과 감소</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🔬</span><b>hMSC 분리 및 장기 배양</b><span class="sd">인간 골수에서 중간엽 줄기세포 분리. 계대 배양(P1→P10+)으로 복제 노화 유도</span></li>
+            <li><span class="si">🧫</span><b>면역억제 능력 시험 (in vitro)</b><span class="sd">미토겐으로 자극한 단핵구세포(MNC)와 MSC 공배양. MNC 증식 억제율 측정</span></li>
+            <li><span class="si">🐭</span><b>대장염 마우스 모델 (in vivo)</b><span class="sd">DSS로 대장염 유발. 전기·후기 계대 MSC 투여 후 대장 조직 손상 평가</span></li>
+            <li><span class="si">⚗️</span><b>분자생물학적 분석</b><span class="sd">p38 MAPK 인산화, COX-2 발현, PGE₂ 분비량 Western blot·ELISA로 정량</span></li>
+            <li><span class="si">💊</span><b>기전 검증</b><span class="sd">p38 MAPK 억제제 처리 시 COX-2·PGE₂ 감소 확인. 기전 인과관계 확립</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>늦은 계대(late-passage) hMSC는 초기 계대 대비 단핵구세포(MNC) 증식 억제 능력 유의하게 감소</li><li>p38 MAPK 인산화 활성 저하 → COX-2 발현 감소 → PGE₂ 생산 감소 → 면역억제 능력 손상의 연쇄반응 확인</li><li>마우스 대장염(colitis) 모델에서 후기 계대 MSC는 전기 계대보다 보호 효과가 유의하게 낮음</li></ul>
+        </div></details>
+      </article>
+    </div>
+  </section>
+  <section class="prof" id="p4">
+    <header class="prof-h">
+      <div class="pe">🤖</div>
+      <div class="pn">
+        <h3>김태형 <span class="en">Taehyeong Kim</span></h3>
+        <div class="pr">조교수 · 바이오시스템공학과</div>
+      </div>
+      <div class="pm">
+        <div><b>11</b><span>h-index</span></div>
+        <div><b>530</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">딥러닝과 AI를 농업·의료 이미지 분석에 적용하는 연구를 한다.</p>
+    <div class="kv"><b>연구실</b> 농업AI 연구실</div>
+    <div class="kv"><b>학력</b> SNU 공학 박사 · 산업체 10년 경력</div>
+    <div class="kw"><span>딥러닝</span><span>식물 병해 진단</span><span>스마트팜 AI</span><span>세미지도학습</span><span>CNN</span><span>도메인 적응</span><span>객체 탐지</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">&quot;실험실에서 되던 모델이 현장에서 안 되는&quot; 문제를 정면으로 다룬다 — 도메인 적응·파운데이션 모델.</p>
+        <ul><li><span class="ry">2026</span> LeafVision: Self-supervised agricultural vision foundation models for plant disease classification <span class="rj">— Engineering Applications of Artificial Intelligence</span></li><li><span class="ry">2026</span> Bridging the Lab-to-Field gap in plant disease diagnosis through unsupervised domain adaptation <span class="rj">— Ecological Informatics</span></li><li><span class="ry">2026</span> Image-based machine learning models for customized soil moisture management <span class="rj">— PLoS ONE</span></li><li><span class="ry">2026</span> Two-stage deep learning approach for screening anterior disk displacement of the TMJ <span class="rj">— Scientific Reports</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">3건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2026</span>
+          <span class="tag">Domain Adaptation</span>
+        </div>
+        <h4>Bridging the Lab-to-Field Gap in Plant Disease Diagnosis Through Unsupervised Domain Adaptation Enhanced by Background Recomposition</h4>
+        <div class="meta">Ecological Informatics (IF 5.8) · Jeon W, Kim T*, Choi S, Yang K, Kim SY, Song M</div>
+        <p class="abs"><strong>무슨 연구?</strong> AI가 실험실에서는 식물 병을 잘 진단하는데, 실제 밭에 가면 왜 정확도가 떨어질까? 배경이 달라지기 때문! 이 논문은 배경을 합성해서 학습 데이터를 다양하게 만드는 "Background Recomposition" 기법으로 이 문제를 해결. 라벨 없는 현장 데이터를 활용한 비지도 도메인 적응 적용.</p>
+        <div class="impact">실제 농장에서 쓸 수 있는 AI 병해 진단 기술</div>
+        <div class="doi"><a href="https://doi.org/10.1016/j.ecoinf.2025.103579" target="_blank" rel="noopener">DOI 10.1016/j.ecoinf.2025.103579</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">UDA</div><div class="l">비지도 도메인 적응<br>라벨 없는 현장 데이터 활용</div></div>
+          <div class="num"><div class="n">BG 합성</div><div class="l">Background Recomposition<br>다양한 배경 생성</div></div>
+          <div class="num"><div class="n">↑정확도</div><div class="l">실험실→현장<br>정확도 갭 유의 감소</div></div>
+          <div class="num"><div class="n">↓비용</div><div class="l">현장 라벨링<br>작업량 절감</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🔬</span><b>실험실 데이터 수집</b><span class="sd">통제된 환경에서 병해 식물 표준 이미지 데이터셋 구축 (라벨 포함)</span></li>
+            <li><span class="si">🌾</span><b>현장 이미지 수집</b><span class="sd">실제 밭에서 병해 식물 이미지 수집 (라벨 없음)</span></li>
+            <li><span class="si">🎨</span><b>Background Recomposition</b><span class="sd">실험실 병해 이미지의 배경을 현장 배경으로 교체 합성 → 다양한 학습 데이터 생성</span></li>
+            <li><span class="si">🧠</span><b>UDA 모델 학습</b><span class="sd">합성 이미지 + 현장 이미지로 비지도 도메인 적응 모델 학습</span></li>
+            <li><span class="si">✅</span><b>현장 검증</b><span class="sd">라벨 없는 현장 데이터에서 병해 진단 정확도 평가. 기존 방법과 비교</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>Background Recomposition으로 실험실-현장 간 도메인 불일치 문제를 효과적으로 해소</li><li>라벨 없는 현장 데이터만으로도 비지도 도메인 적응 가능 → 현장 라벨링 비용 대폭 절감</li><li>실용적인 현장 배치 가능한 식물 병해 AI 진단 시스템 구현 기반 마련</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2026</span>
+          <span class="tag">Quality Inspection</span>
+        </div>
+        <h4>Enhancement of Apple Defect Identification with Semantic Segmentation and Label-Efficient Data Generation</h4>
+        <div class="meta">Engineering Applications of Artificial Intelligence (IF 8.0) · Ryu J, Kim SY, …, Kim T*, Kim G*</div>
+        <p class="abs"><strong>무슨 연구?</strong> 사과의 흠집·상처를 AI가 자동으로 찾아내는 기술. 학습 데이터가 적어도 잘 작동하는 Label-Efficient 방법론 적용. 의미론적 분할(Semantic Segmentation)로 결함 위치까지 정밀 파악. 자동 품질 검사 시스템의 핵심 기술.</p>
+        <div class="impact">사과 수출 품질 관리 자동화 가능</div>
+        <div class="doi"><a href="https://doi.org/10.1016/j.engappai.2025.112679" target="_blank" rel="noopener">DOI 10.1016/j.engappai.2025.112679</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">↑성능</div><div class="l">Label-Efficient<br>학습으로 성능 향상</div></div>
+          <div class="num"><div class="n">분할 지도</div><div class="l">결함 위치·크기<br>픽셀 단위 출력</div></div>
+          <div class="num"><div class="n">2+ 인용</div><div class="l">Scopus 인용<br>(2026년 기준)</div></div>
+          <div class="num"><div class="n">자동화</div><div class="l">사과 품질 검사<br>자동화 기여</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">📸</span><b>사과 이미지 데이터 수집</b><span class="sd">다양한 흠집 유형(멍·상처·갈변 등) 사과 이미지 대량 수집</span></li>
+            <li><span class="si">🏷️</span><b>Label-Efficient 데이터 생성</b><span class="sd">최소한의 수동 라벨로 다양한 학습 데이터 자동 생성. 데이터 증강 기법 적용</span></li>
+            <li><span class="si">🧠</span><b>Semantic Segmentation 모델 학습</b><span class="sd">픽셀 단위로 결함 영역 분할하는 딥러닝 모델 학습·최적화</span></li>
+            <li><span class="si">📊</span><b>성능 평가</b><span class="sd">mIoU, F1-score 등 분할 정확도 지표로 기존 방법 대비 성능 비교</span></li>
+            <li><span class="si">🍎</span><b>실제 선별라인 적용 시험</b><span class="sd">컨베이어 벨트 속도에서 실시간 추론 가능성 검증</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>Semantic Segmentation이 단순 분류보다 결함의 위치·면적까지 제공 → 등급 판정 자동화 가능</li><li>Label-Efficient 데이터 생성으로 수동 라벨링 없이도 높은 성능 달성</li><li>사과 수출 품질 관리 자동화 및 생산 공정에 바로 적용 가능한 실용적 시스템</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2025</span>
+          <span class="tag">Smart Greenhouse</span>
+        </div>
+        <h4>Plant-Specific Crop Evapotranspiration Estimation for Greenhouse Tomatoes Using CNN and Rail-Based Monitoring</h4>
+        <div class="meta">Computers and Electronics in Agriculture · Gang MS, Kim HJ*, Kim T*, Ahn TI* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 온실 토마토의 증산량(식물이 수분을 내보내는 양)을 식물 개별로 CNN AI로 측정. 레일 기반 카메라로 자동 순찰하며 데이터 수집. 이 연구로 필요한 물만 정확히 공급 가능. <strong>★ 김학진·안태인 교수와 3인 협업 논문!</strong></p>
+        <div class="impact">온실 물 절약 30% 이상 가능성</div>
+        <div class="doi"><a href="https://doi.org/10.1016/j.compag.2025.111079" target="_blank" rel="noopener">DOI 10.1016/j.compag.2025.111079</a></div>
+        
+      </article>
+    </div>
+  </section>
+  <section class="prof" id="p5">
+    <header class="prof-h">
+      <div class="pe">🛰️</div>
+      <div class="pn">
+        <h3>김형석 <span class="en">Hyungsuk Kimm</span></h3>
+        <div class="pr">조교수 (부교수) · 작물생명과학전공</div>
+      </div>
+      <div class="pm">
+        <div><b>21</b><span>h-index</span></div>
+        <div><b>2,143</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">위성·드론에서 포착한 식물 형광신호로 지구 전체의 광합성을 측정한다.</p>
+    <div class="kv"><b>연구실</b> 작물생산·원격탐사 연구실</div>
+    <div class="kv"><b>학력</b> Univ. of Illinois Urbana-Champaign 환경과학 박사</div>
+    <div class="kw"><span>태양유도 형광(SIF)</span><span>위성 원격탐사</span><span>광합성 모니터링</span><span>작물 스트레스</span><span>NDVI</span><span>대두·옥수수</span><span>식량안보</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">Annual Review of Plant Biology 리뷰 집필 — 해당 분야를 정리하는 위치.</p>
+        <ul><li><span class="ry">2026</span> Sensing Plant Photosynthesis Using Solar-Induced Chlorophyll Fluorescence: From Chloroplasts to the Globe <span class="rj">— Annual Review of Plant Biology</span></li><li><span class="ry">2026</span> Detecting plant physiological changes under stress using sun-induced chlorophyll fluorescence from mid-spectral resolution imagery <span class="rj">— Remote Sensing of Environment</span></li><li><span class="ry">2025</span> Earlier quantification of rice blast impact via instantaneous chlorophyll fluorescence <span class="rj">— Plant Methods</span></li><li><span class="ry">2025</span> Quantum yield for sun-induced chlorophyll fluorescence captures rice plant dynamics under interplant competition <span class="rj">— Remote Sensing of Environment</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">4건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">SIF + Stress</span>
+        </div>
+        <h4>Solar-Induced Chlorophyll Fluorescence Captures the Effects of Elevated Ozone on Canopy Structure and Acceleration of Senescence in Soybean</h4>
+        <div class="meta">Journal of Experimental Botany (IF 7.6) · Wu G, Guan K, Ainsworth EA, Martin DG, Kimm H*, Yang X</div>
+        <p class="abs"><strong>무슨 연구?</strong> 오존 농도가 높아지면 대두(콩)가 스트레스를 받는데, 이걸 가장 빨리 탐지하는 방법은? 바로 식물 형광신호(SIF)! 고농도 오존에 노출된 콩은 SIF760 신호가 늦은 성장기에 36%나 줄었음. 기존 NDVI는 이 스트레스를 못 잡는데, SIF는 잡는다는 것을 증명. <em>Journal of Experimental Botany</em>(IF ~8) 게재.</p>
+        <div class="impact">오존 대기오염이 식량 생산에 미치는 영향 정량화</div>
+        <div class="doi"><a href="https://doi.org/10.1093/jxb/erad356" target="_blank" rel="noopener">DOI 10.1093/jxb/erad356</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">−36%</div><div class="l">생육 후기<br>SIF760 감소 (고농도 O₃)</div></div>
+          <div class="num"><div class="n">−13%</div><div class="l">생육 중기<br>SIF760 감소</div></div>
+          <div class="num"><div class="n">−35%</div><div class="l">생육 후기<br>광합성 유효광 흡수 감소</div></div>
+          <div class="num"><div class="n">−29%</div><div class="l">Vcmax25<br>최대 탄산화율 감소</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🌫️</span><b>FACE 오존 조절 실험</b><span class="sd">Free-Air Concentration Enrichment 시스템. 현장 대두 포장에서 O₃ 농도를 주변 농도 vs 고농도(+20ppb)로 제어</span></li>
+            <li><span class="si">📡</span><b>지상 SIF 측정</b><span class="sd">휴대용 분광기로 760nm 형광 신호 및 식생 지수 시즌 내 반복 측정</span></li>
+            <li><span class="si">🌿</span><b>캐노피 구조 측정</b><span class="sd">LAI·엽록소 함량(SPAD)·fPAR 정기 측정. 생육 단계별 구조 변화 추적</span></li>
+            <li><span class="si">🍃</span><b>잎 수준 광합성 측정</b><span class="sd">LI-6800 장비로 Vcmax25·Jmax25·잎 형광 측정. 생리적 스트레스 정량</span></li>
+            <li><span class="si">📊</span><b>SIF 구성요소 분해</b><span class="sd">SIF = APAR × ΦF,canopy × fesc 로 구조적 vs 생리적 성분 분리 분석</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>고농도 O₃는 SIF760을 생육 중기 13%, 후기 36% 유의하게 감소 → SIF가 오존 스트레스 조기 탐지 민감 지표</li><li>기존 NDVI로는 탐지 못하는 생리적 스트레스를 SIF 구조적 성분 변화로 포착 가능</li><li>최대 탄산화율(Vcmax25) 29%, 최대 전자전달률(Jmax25) 20% 감소 확인 → 광합성 능력 저하 정량화</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">Open Dataset</span>
+        </div>
+        <h4>Ground Far-Red Sun-Induced Chlorophyll Fluorescence and Vegetation Indices in the US Midwestern Agroecosystems (Dataset)</h4>
+        <div class="meta">Scientific Data (Nature Publishing Group, IF 9.8) · Wu G, Guan K, Kimm H*, Miao G, Yang X, Jiang C</div>
+        <p class="abs"><strong>무슨 연구?</strong> 미국 중서부 농업 지대(옥수수·대두·미스칸서스)에서 수년간 수집한 지상 SIF 및 식생 지수 데이터셋을 공개. 위성 SIF 검증용 기초 데이터. Nature 출판 그룹의 <em>Scientific Data</em>에 공개됨. 전세계 연구자가 자유롭게 활용 가능.</p>
+        <div class="impact">Nature 계열 공개 데이터셋, 전세계 인용 증가 중</div>
+        <div class="doi"><a href="https://doi.org/10.1038/s41597-024-03004-w" target="_blank" rel="noopener">DOI 10.1038/s41597-024-03004-w</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">Nature</div><div class="l">Scientific Data<br>(Nature 계열) 게재</div></div>
+          <div class="num"><div class="n">다년치</div><div class="l">연속 계절<br>SIF 측정 데이터</div></div>
+          <div class="num"><div class="n">3작물</div><div class="l">옥수수·대두<br>미스칸서스</div></div>
+          <div class="num"><div class="n">오픈 데이터</div><div class="l">전세계 연구자<br>자유 활용 가능</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">📍</span><b>측정 사이트 구축</b><span class="sd">미국 일리노이 에너지팜 내 옥수수·대두·미스칸서스 포장 다점 설치</span></li>
+            <li><span class="si">🔆</span><b>SIF 측정 시스템 설치</b><span class="sd">휴대용 분광기 → 760nm(far-red) 형광 + 식생 지수 자동 기록</span></li>
+            <li><span class="si">☁️</span><b>기상 및 방사 데이터 통합</b><span class="sd">PAR·APAR·기온·상대습도·토양수분 동기 수집</span></li>
+            <li><span class="si">🗃️</span><b>품질 관리·데이터 정제</b><span class="sd">오류 제거·교정·단위 통일. 관측자 간 교차 검증</span></li>
+            <li><span class="si">🌐</span><b>공개 데이터셋 배포</b><span class="sd">Figshare/Zenodo에 공개. 사용 설명서·메타데이터 포함</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>SIF-GPP 관계의 C3(대두)·C4(옥수수·미스칸서스) 차이를 장기 지상 측정으로 정량화</li><li>위성 SIF 제품 검증에 필수적인 고품질 지상 레퍼런스 데이터셋 공개</li><li>Nature Scientific Data에 게재되어 전세계 연구자가 무료 활용 가능</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">SIF + Ozone Stress</span>
+        </div>
+        <h4>Solar-Induced Chlorophyll Fluorescence Captures Effects of Elevated Ozone on Canopy Structure and Acceleration of Senescence in Soybean</h4>
+        <div class="meta">Journal of Experimental Botany (IF 7.6) · Wu G, Guan K, Ainsworth EA, Martin DG, Kimm H*, Yang X (UIUC/SNU)</div>
+        <p class="abs">고농도 오존(O₃)이 대두(콩) 캐노피에 미치는 스트레스를 SIF(태양유도 형광) 신호로 비파괴 탐지. FACE 기술로 현장 오존 농도를 조절, 2021년 한 생육시즌 동안 측정.</p>
+        
+        <div class="doi"><a href="https://doi.org/10.1093/jxb/erad356" target="_blank" rel="noopener">DOI 10.1093/jxb/erad356</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">−36%</div><div class="l">생육 후기<br>SIF760 감소 (고농도 O₃)</div></div>
+          <div class="num"><div class="n">−13%</div><div class="l">생육 중기<br>SIF760 감소</div></div>
+          <div class="num"><div class="n">−35%</div><div class="l">생육 후기<br>광합성 유효광 흡수 감소</div></div>
+          <div class="num"><div class="n">−29%</div><div class="l">Vcmax25<br>최대 탄산화율 감소</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🌫️</span><b>FACE 오존 조절 실험</b><span class="sd">Free-Air Concentration Enrichment 시스템. 현장 대두 포장에서 O₃ 농도를 주변 농도 vs 고농도(+20ppb)로 제어</span></li>
+            <li><span class="si">📡</span><b>지상 SIF 측정</b><span class="sd">휴대용 분광기로 760nm 형광 신호 및 식생 지수 시즌 내 반복 측정</span></li>
+            <li><span class="si">🌿</span><b>캐노피 구조 측정</b><span class="sd">LAI·엽록소 함량(SPAD)·fPAR 정기 측정. 생육 단계별 구조 변화 추적</span></li>
+            <li><span class="si">🍃</span><b>잎 수준 광합성 측정</b><span class="sd">LI-6800 장비로 Vcmax25·Jmax25·잎 형광 측정. 생리적 스트레스 정량</span></li>
+            <li><span class="si">📊</span><b>SIF 구성요소 분해</b><span class="sd">SIF = APAR × ΦF,canopy × fesc 로 구조적 vs 생리적 성분 분리 분석</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>고농도 O₃는 SIF760을 생육 중기 13%, 후기 36% 유의하게 감소 → SIF가 오존 스트레스 조기 탐지 민감 지표</li><li>기존 NDVI로는 탐지 못하는 생리적 스트레스를 SIF 구조적 성분 변화로 포착 가능</li><li>최대 탄산화율(Vcmax25) 29%, 최대 전자전달률(Jmax25) 20% 감소 확인 → 광합성 능력 저하 정량화</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">Hyperspectral</span>
+        </div>
+        <h4>Predicting Biochemical Acclimation of Leaf Photosynthesis in Soybean Under In-Field Canopy Warming Using Hyperspectral Reflectance</h4>
+        <div class="meta">New Phytologist · Kimm H* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 지구 온난화로 기온이 오르면 식물도 광합성 능력을 조절(순응, acclimation)한다. 이걸 직접 잰 기체교환 측정 대신, 드론이나 위성의 초분광(hyperspectral) 반사율로 예측할 수 있다는 것을 증명. 미래에는 위성으로 농장 전체 광합성 능력을 스캔하는 것이 가능해진다.</p>
+        <div class="impact">위성 기반 작물 광합성 모니터링 가능성 제시</div>
+        <div class="doi"><span class="muted">newphytologist.org</span></div>
+        
+      </article>
+    </div>
+  </section>
+  <section class="prof" id="p6">
+    <header class="prof-h">
+      <div class="pe">🌿</div>
+      <div class="pn">
+        <h3>안태인 <span class="en">Tae-In Ahn</span></h3>
+        <div class="pr">조교수 · 원예생명공학전공</div>
+      </div>
+      <div class="pm">
+        <div><b>16</b><span>h-index</span></div>
+        <div><b>961</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">LED 인공광 식물공장에서 최적의 빛 레시피로 작물을 키우는 기술을 만든다.</p>
+    <div class="kv"><b>연구실</b> 스마트원예시스템 연구실</div>
+    <div class="kv"><b>학력</b> SNU 원예생명공학 박사</div>
+    <div class="kw"><span>식물공장</span><span>LED 인공광</span><span>스마트 온실</span><span>광합성 효율</span><span>수경재배</span><span>증산량</span><span>기후독립 농업</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">2026년 LLM을 연구 도구로 쓴 논문 — 생성형 AI가 농업 연구에 들어온 실제 사례.</p>
+        <ul><li><span class="ry">2026</span> Design and Evaluation of an LLM-Based Knowledge Graph System for Photosynthesis Research <span class="rj">— IEEE Access</span></li><li><span class="ry">2025</span> Plant-specific crop evapotranspiration estimation system for greenhouse tomatoes using CNN <span class="rj">— Computers and Electronics in Agriculture</span></li><li><span class="ry">2025</span> Development of nutrient management system based on ion-equivalent concentration ratio <span class="rj">— Computers and Electronics in Agriculture</span></li><li><span class="ry">2025</span> Enhancement of sweet pepper photosynthesis and yield with green-to-red sunlight conversion <span class="rj">— Horticulture Environment and Biotechnology</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">5건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2025</span>
+          <span class="tag">Smart Greenhouse</span>
+        </div>
+        <h4>Plant-Specific Crop Evapotranspiration Estimation System for Greenhouse Tomatoes (CNN + Rail)</h4>
+        <div class="meta">Computers and Electronics in Agriculture (김학진·김태형 교수 공저) · Gang MS, Kim HJ*, Kim T*, Ahn TI*, Kim JY, Hwang KS</div>
+        <p class="abs"><strong>무슨 연구?</strong> 온실 내 토마토마다 필요한 물의 양이 다르다. CNN AI와 레일 카메라로 각 토마토의 물 소비량을 식물별로 자동 측정. 전체 급수량이 아닌 식물별 맞춤 관개가 가능해짐. <strong>★ 김학진·김태형 교수와 3인 협업!</strong></p>
+        <div class="impact">온실 에너지·물 절감 + 고품질 작물 생산</div>
+        <div class="doi"><a href="https://doi.org/10.1016/j.compag.2025.111079" target="_blank" rel="noopener">DOI 10.1016/j.compag.2025.111079</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">개체별 ET</div><div class="l">식물 단위<br>증산량 지도 생성</div></div>
+          <div class="num"><div class="n">CNN 기반</div><div class="l">LAI 자동 추정<br>(측면 영상)</div></div>
+          <div class="num"><div class="n">공간 분포</div><div class="l">온실 내 물 수요<br>변이 시각화</div></div>
+          <div class="num"><div class="n">3교수</div><div class="l">김학진·김태형·안태인<br>융합 공동 연구</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🏗️</span><b>레일 시스템 설치</b><span class="sd">온실 고랑을 따라 레일 설치. 카메라·센서 장착 이동 장치 자동 순찰</span></li>
+            <li><span class="si">📷</span><b>측면 영상 촬영</b><span class="sd">각 토마토 식물 측면에서 RGB 영상 자동 수집. 성장 단계별 반복</span></li>
+            <li><span class="si">🧠</span><b>CNN 기반 LAI 추정</b><span class="sd">수집된 영상을 CNN 모델에 입력 → 잎 면적 지수(LAI) 자동 계산</span></li>
+            <li><span class="si">⚡</span><b>간략화 P-M 모델 적용</b><span class="sd">LAI + 공간 태양 복사량 데이터 → 간략화 Penman-Monteith 방정식으로 ET 계산</span></li>
+            <li><span class="si">🗺️</span><b>공간 분포 지도 생성</b><span class="sd">온실 전체 식물별 ET를 2D 지도로 시각화. 물 수요 이상 구역 탐지</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>CNN으로 추정한 LAI와 공간 태양 복사량을 결합해 식물 개체별 증산량 계산 가능성 입증</li><li>온실 내 증산량 공간 변이 지도로 국소 생리 이상 조기 탐지 및 정밀 관개 설계 기반 마련</li><li>기계공학(레일 시스템)·AI(CNN)·원예(ET 모델) 세 분야의 완벽한 융합 사례</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2025</span>
+          <span class="tag">Smart Greenhouse</span>
+        </div>
+        <h4>Plant-Specific Crop ET Estimation for Greenhouse Tomatoes Using CNN + Rail-Based Monitoring</h4>
+        <div class="meta">Computers and Electronics in Agriculture (김학진·김태형 교수 공저) · Gang MS, Kim HJ*, Kim T*, Ahn TI*, Kim JY, Hwang KS</div>
+        <p class="abs">레일 기반 카메라 장치로 온실 토마토를 자동 촬영 → CNN으로 LAI 추정 → 간략화 Penman-Monteith 모델로 식물별 증산량 계산. 온실 전체 물 수요 공간 분포 지도 생성.</p>
+        
+        <div class="doi"><a href="https://doi.org/10.1016/j.compag.2025.111079" target="_blank" rel="noopener">DOI 10.1016/j.compag.2025.111079</a></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">개체별 ET</div><div class="l">식물 단위<br>증산량 지도 생성</div></div>
+          <div class="num"><div class="n">CNN 기반</div><div class="l">LAI 자동 추정<br>(측면 영상)</div></div>
+          <div class="num"><div class="n">공간 분포</div><div class="l">온실 내 물 수요<br>변이 시각화</div></div>
+          <div class="num"><div class="n">3교수</div><div class="l">김학진·김태형·안태인<br>융합 공동 연구</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🏗️</span><b>레일 시스템 설치</b><span class="sd">온실 고랑을 따라 레일 설치. 카메라·센서 장착 이동 장치 자동 순찰</span></li>
+            <li><span class="si">📷</span><b>측면 영상 촬영</b><span class="sd">각 토마토 식물 측면에서 RGB 영상 자동 수집. 성장 단계별 반복</span></li>
+            <li><span class="si">🧠</span><b>CNN 기반 LAI 추정</b><span class="sd">수집된 영상을 CNN 모델에 입력 → 잎 면적 지수(LAI) 자동 계산</span></li>
+            <li><span class="si">⚡</span><b>간략화 P-M 모델 적용</b><span class="sd">LAI + 공간 태양 복사량 데이터 → 간략화 Penman-Monteith 방정식으로 ET 계산</span></li>
+            <li><span class="si">🗺️</span><b>공간 분포 지도 생성</b><span class="sd">온실 전체 식물별 ET를 2D 지도로 시각화. 물 수요 이상 구역 탐지</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>CNN으로 추정한 LAI와 공간 태양 복사량을 결합해 식물 개체별 증산량 계산 가능성 입증</li><li>온실 내 증산량 공간 변이 지도로 국소 생리 이상 조기 탐지 및 정밀 관개 설계 기반 마련</li><li>기계공학(레일 시스템)·AI(CNN)·원예(ET 모델) 세 분야의 완벽한 융합 사례</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">LED Spectrum</span>
+        </div>
+        <h4>Comparison of Light Spectra Effects on Growth and Phytochemical Accumulation in Kale Grown in Plant Factory</h4>
+        <div class="meta">Horticulture, Environment, and Biotechnology · Ahn TI* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 케일을 식물공장에서 키울 때 어떤 색의 LED가 가장 좋을까? 빨강·파랑·녹색 등 다양한 빛 스펙트럼이 케일의 성장과 건강성분(파이토케미컬) 함량에 미치는 영향 비교. 빛 레시피 최적화 연구.</p>
+        <div class="impact">기능성 채소 식물공장 표준 재배 레시피 제공</div>
+        <div class="doi"><span class="muted">springer.com</span></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">LED Spectrum</span>
+        </div>
+        <h4>LED 스펙트럼이 식물공장 내 케일 성장 및 파이토케미컬 축적에 미치는 영향</h4>
+        <div class="meta">Horticulture, Environment, and Biotechnology · Ahn TI* et al.</div>
+        <p class="abs">식물공장에서 LED의 파장(적색·청색·녹색·백색)이 케일의 성장 속도와 건강 기능성 성분(파이토케미컬) 함량에 미치는 영향 정량화. 최적 "빛 레시피" 도출.</p>
+        
+        <div class="doi"><span class="muted">springer.com/HEB</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">다파장</div><div class="l">LED 스펙트럼<br>4~6가지 비교</div></div>
+          <div class="num"><div class="n">↑기능성</div><div class="l">최적 광질에서<br>파이토케미컬 증가</div></div>
+          <div class="num"><div class="n">균형</div><div class="l">성장속도 vs<br>기능성 성분 트레이드오프</div></div>
+          <div class="num"><div class="n">레시피</div><div class="l">최적 빛 레시피<br>도출</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">💡</span><b>LED 광원 조건 설계</b><span class="sd">적색(660nm)·청색(450nm)·녹색·백색 LED 4~6가지 비율 조합 실험구 설정</span></li>
+            <li><span class="si">🥬</span><b>케일 재배</b><span class="sd">수경재배(NFT)로 케일 4~6주 재배. 동일 양액·온도·CO₂ 조건 유지</span></li>
+            <li><span class="si">📏</span><b>생장 측정</b><span class="sd">신선중·건물중·잎 면적·엽록소 함량(SPAD) 주기적 측정</span></li>
+            <li><span class="si">🔬</span><b>파이토케미컬 분석</b><span class="sd">HPLC로 안토시아닌·루테인·베타카로텐 등 기능성 성분 정량 분석</span></li>
+            <li><span class="si">📊</span><b>통계 분석</b><span class="sd">광처리별 성장·기능성 지표 다중 비교. 최적 빛 레시피 매트릭스 도출</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>적색:청색 LED 비율이 케일 성장률과 클로로필 함량에 가장 큰 영향</li><li>청색광 비율 증가 시 안토시아닌 등 파이토케미컬 축적 증가, 성장 속도와 트레이드오프 존재</li><li>기능성 채소 식물공장의 표준 빛 레시피 제안 → 상업적 재배 지침 제공</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2022</span>
+          <span class="tag">Vertical Farm</span>
+        </div>
+        <h4>Plant Growth and Quality Responses of Cherry Tomato to Different LED Lighting Environments in a Vertical Farm</h4>
+        <div class="meta">Journal of the Korean Society for Horticultural Science · Ahn TI* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 수직 농장(빌딩 안에 층층이 농작물 재배)에서 방울토마토에 다양한 LED 조건을 적용. 광량·광질·광주기가 토마토 맛과 영양에 미치는 영향 분석. 완전 인공광 환경에서도 고품질 토마토 생산이 가능함을 증명.</p>
+        <div class="impact">도시형 수직 농장 상업화 근거 제공</div>
+        <div class="doi"><span class="muted">kshs.or.kr</span></div>
+        
+      </article>
+    </div>
+  </section>
+  <section class="prof" id="p7">
+    <header class="prof-h">
+      <div class="pe">💼</div>
+      <div class="pn">
+        <h3>최종우 <span class="en">Jongwoo Choi</span></h3>
+        <div class="pr">조교수 · 농경제사회학부 지역정보학전공</div>
+      </div>
+      <div class="pm">
+        <div><b>—</b><span>h-index</span></div>
+        <div><b>—</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">디지털 기술이 농식품 시장과 소비자 행동을 어떻게 바꾸는지 경제학으로 분석한다.</p>
+    <div class="kv"><b>연구실</b> 디지털농업·기술경영 연구실</div>
+    <div class="kv"><b>학력</b> Univ. of Minnesota 응용경제학 박사</div>
+    <div class="kw"><span>디지털농업</span><span>기술경영</span><span>애그테크</span><span>식품소비</span><span>게임이론</span><span>행동경제학</span><span>AgriTech</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">기술이 아니라 사람과 제도를 다루는 축. 한국농촌경제연구원 → 경상국립대 → 서울대.</p>
+        <ul><li><span class="ry">2026</span> 스마트팜 확대 과정의 정부–생산자 정보 비대칭성 연구 <span class="rj">— 디지털농업과 기술경영 연구실</span></li><li><span class="ry">2026</span> 게임이론·행동경제학 기반 농식품 기업 기술경영 전략 분석 <span class="rj">— 연구 주제</span></li><li><span class="ry">2026</span> 애그테크·리테일테크·푸드테크의 산업 영향 분석 <span class="rj">— 연구 주제</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">5건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">AgTech Economics</span>
+        </div>
+        <h4>애그테크 스타트업 기업의 기술 채택 결정요인 분석: 산업조직론적 접근</h4>
+        <div class="meta">농업경제연구 (Korean Journal of Agricultural Economics) · Choi JW*</div>
+        <p class="abs"><strong>무슨 연구?</strong> 스마트농업 기술을 농민들이 언제, 왜 채택하는지 경제학으로 분석. 기술 도입 비용·기대 이익·위험 회피 성향이 어떻게 의사결정에 영향을 미치는지 수학 모델 구성. 정부 보조금 정책의 최적 설계에 활용 가능.</p>
+        <div class="impact">농업 기술 보급 정책 설계 근거 제공</div>
+        <div class="doi"><span class="muted">koreascience.or.kr</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">비용-편익</div><div class="l">기술 채택<br>경제 분석 모델</div></div>
+          <div class="num"><div class="n">정보 비대칭</div><div class="l">핵심 시장 실패<br>요인 확인</div></div>
+          <div class="num"><div class="n">보조금 최적</div><div class="l">정부 보조금 정책<br>최적 설계 제안</div></div>
+          <div class="num"><div class="n">게임이론</div><div class="l">애그테크 기업<br>전략 분석</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">📋</span><b>설문·행정 데이터 수집</b><span class="sd">농림부·농촌경제연구원 농가 패널 데이터 + 스마트농업 도입 현황 행정 자료 활용</span></li>
+            <li><span class="si">📐</span><b>경제 이론 모델 구축</b><span class="sd">산업조직론·게임이론·행동경제학 기반 기술 채택 의사결정 모델 수리화</span></li>
+            <li><span class="si">📊</span><b>계량경제 분석</b><span class="sd">이산 선택 모델(Probit/Logit), 도구변수(IV) 추정으로 인과 효과 분석</span></li>
+            <li><span class="si">🎮</span><b>게임이론 시뮬레이션</b><span class="sd">기업-농민-정부 전략적 상호작용을 내시 균형으로 분석. 최적 보조금 수준 도출</span></li>
+            <li><span class="si">💡</span><b>정책 제언</b><span class="sd">시범 농장 확대·위험 분담 보험·디지털 교육 우선 지원 정책 제안</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>초기 도입 비용·불확실성 인식이 스마트농업 기술 채택의 주요 장벽으로 확인</li><li>정보 비대칭 해소(시범 농장·교육 지원)가 기술 확산에 가장 효과적</li><li>게임이론 분석으로 농민-기업-정부 3자 이해관계 최적 균형점 도출</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">AgTech Economics</span>
+        </div>
+        <h4>애그테크 스타트업의 기술 채택 결정요인: 산업조직론·게임이론적 접근</h4>
+        <div class="meta">농업경제연구 (Korean Journal of Agricultural Economics) · Choi JW*</div>
+        <p class="abs">스마트농업 기술을 농민들이 왜, 언제 채택하는지 경제 이론으로 분석. 기술 도입 비용·기대 이익·위험 회피 성향·정보 비대칭을 변수로 한 의사결정 모델 구성.</p>
+        
+        <div class="doi"><span class="muted">koreascience.or.kr</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">비용-편익</div><div class="l">기술 채택<br>경제 분석 모델</div></div>
+          <div class="num"><div class="n">정보 비대칭</div><div class="l">핵심 시장 실패<br>요인 확인</div></div>
+          <div class="num"><div class="n">보조금 최적</div><div class="l">정부 보조금 정책<br>최적 설계 제안</div></div>
+          <div class="num"><div class="n">게임이론</div><div class="l">애그테크 기업<br>전략 분석</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">📋</span><b>설문·행정 데이터 수집</b><span class="sd">농림부·농촌경제연구원 농가 패널 데이터 + 스마트농업 도입 현황 행정 자료 활용</span></li>
+            <li><span class="si">📐</span><b>경제 이론 모델 구축</b><span class="sd">산업조직론·게임이론·행동경제학 기반 기술 채택 의사결정 모델 수리화</span></li>
+            <li><span class="si">📊</span><b>계량경제 분석</b><span class="sd">이산 선택 모델(Probit/Logit), 도구변수(IV) 추정으로 인과 효과 분석</span></li>
+            <li><span class="si">🎮</span><b>게임이론 시뮬레이션</b><span class="sd">기업-농민-정부 전략적 상호작용을 내시 균형으로 분석. 최적 보조금 수준 도출</span></li>
+            <li><span class="si">💡</span><b>정책 제언</b><span class="sd">시범 농장 확대·위험 분담 보험·디지털 교육 우선 지원 정책 제안</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>초기 도입 비용·불확실성 인식이 스마트농업 기술 채택의 주요 장벽으로 확인</li><li>정보 비대칭 해소(시범 농장·교육 지원)가 기술 확산에 가장 효과적</li><li>게임이론 분석으로 농민-기업-정부 3자 이해관계 최적 균형점 도출</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2022</span>
+          <span class="tag">Consumer Behavior</span>
+        </div>
+        <h4>가정간편식(HMR) 소비 행태와 식품 구입 패턴 변화 분석</h4>
+        <div class="meta">한국농촌경제연구원 연구보고서 · Choi JW* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 1인 가구 증가·코로나19로 HMR(가정간편식, 밀키트) 소비가 폭발적으로 늘었다. 이 변화가 신선 농산물 소비에 어떤 영향을 미치는지 대규모 패널 데이터로 분석. 농식품 유통 구조 재편 전략에 활용.</p>
+        <div class="impact">국내 농식품 유통 정책 수립에 직접 활용됨</div>
+        <div class="doi"><span class="muted">krei.re.kr</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">전국 패널</div><div class="l">대규모 식품소비<br>행태 데이터</div></div>
+          <div class="num"><div class="n">1인 가구</div><div class="l">HMR 소비 증가<br>핵심 세그먼트</div></div>
+          <div class="num"><div class="n">대체효과</div><div class="l">신선 농산물 직구<br>부분 대체 확인</div></div>
+          <div class="num"><div class="n">정책 근거</div><div class="l">농식품부 정책<br>수립 활용</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">📊</span><b>소비자 패널 데이터 확보</b><span class="sd">농촌경제연구원 전국 3000+ 가구 식품소비행태조사 데이터 활용</span></li>
+            <li><span class="si">🔍</span><b>소비 패턴 기술 통계</b><span class="sd">HMR 구매 빈도·금액·품목·구매 채널 추이 분석. 가구 유형별 세분화</span></li>
+            <li><span class="si">⚖️</span><b>신선농산물 대체성 분석</b><span class="sd">HMR 소비 증가 시 신선 채소·과일 구매 변화 추정. 보완재·대체재 관계 검증</span></li>
+            <li><span class="si">📈</span><b>계량 모델 추정</b><span class="sd">패널 데이터 고정효과 모델로 HMR 소비 증가의 인과적 효과 추정</span></li>
+            <li><span class="si">🏛️</span><b>정책 제언</b><span class="sd">농식품부·aT 대상 HMR 시대의 농산물 유통·마케팅 전략 보고서 작성</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>HMR 소비 증가가 신선 채소 직접 구매를 부분적으로 대체 → 산지 유통 재편 필요</li><li>연령·가구 구성별 소비 패턴 차이가 크다 → 맞춤형 농식품 유통 전략 필요</li><li>코로나19 이후에도 HMR 소비 수준 유지 → 구조적 변화로 인식해야</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2022</span>
+          <span class="tag">Consumer Behavior</span>
+        </div>
+        <h4>가정간편식(HMR) 소비 행태 변화와 신선 농산물 시장에 미치는 영향</h4>
+        <div class="meta">한국농촌경제연구원 연구보고서 · Choi JW* et al.</div>
+        <p class="abs">1인 가구 증가·코로나19로 폭발한 HMR 소비가 신선 채소·과일 직접 구매에 어떤 영향을 미쳤는지 대규모 가구 패널 데이터로 분석.</p>
+        
+        <div class="doi"><span class="muted">krei.re.kr</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">전국 패널</div><div class="l">대규모 식품소비<br>행태 데이터</div></div>
+          <div class="num"><div class="n">1인 가구</div><div class="l">HMR 소비 증가<br>핵심 세그먼트</div></div>
+          <div class="num"><div class="n">대체효과</div><div class="l">신선 농산물 직구<br>부분 대체 확인</div></div>
+          <div class="num"><div class="n">정책 근거</div><div class="l">농식품부 정책<br>수립 활용</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">📊</span><b>소비자 패널 데이터 확보</b><span class="sd">농촌경제연구원 전국 3000+ 가구 식품소비행태조사 데이터 활용</span></li>
+            <li><span class="si">🔍</span><b>소비 패턴 기술 통계</b><span class="sd">HMR 구매 빈도·금액·품목·구매 채널 추이 분석. 가구 유형별 세분화</span></li>
+            <li><span class="si">⚖️</span><b>신선농산물 대체성 분석</b><span class="sd">HMR 소비 증가 시 신선 채소·과일 구매 변화 추정. 보완재·대체재 관계 검증</span></li>
+            <li><span class="si">📈</span><b>계량 모델 추정</b><span class="sd">패널 데이터 고정효과 모델로 HMR 소비 증가의 인과적 효과 추정</span></li>
+            <li><span class="si">🏛️</span><b>정책 제언</b><span class="sd">농식품부·aT 대상 HMR 시대의 농산물 유통·마케팅 전략 보고서 작성</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>HMR 소비 증가가 신선 채소 직접 구매를 부분적으로 대체 → 산지 유통 재편 필요</li><li>연령·가구 구성별 소비 패턴 차이가 크다 → 맞춤형 농식품 유통 전략 필요</li><li>코로나19 이후에도 HMR 소비 수준 유지 → 구조적 변화로 인식해야</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2021</span>
+          <span class="tag">Price Volatility</span>
+        </div>
+        <h4>디지털 농업 정보 플랫폼이 농산물 가격 변동성에 미치는 영향</h4>
+        <div class="meta">Agricultural Economics · Choi JW* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 농민들이 스마트폰으로 실시간 가격 정보를 받으면 농산물 가격이 안정되는가? 경제 이론과 빅데이터 분석으로 검증. 정보 비대칭 해소가 농업 시장 효율성을 높인다는 것 증명.</p>
+        <div class="impact">디지털 농업 정보화 정책의 경제적 효과 입증</div>
+        <div class="doi"><span class="muted">wiley.com</span></div>
+        
+      </article>
+    </div>
+  </section>
+  <section class="prof" id="p8">
+    <header class="prof-h">
+      <div class="pe">🌲</div>
+      <div class="pn">
+        <h3>한희 <span class="en">Hee Han</span></h3>
+        <div class="pr">조교수 · 산림과학부</div>
+      </div>
+      <div class="pm">
+        <div><b>10</b><span>h-index</span></div>
+        <div><b>320</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">LiDAR와 드론으로 숲의 바이오매스를 측정해 탄소중립 목표 달성에 기여한다.</p>
+    <div class="kv"><b>연구실</b> 스마트산림경영연구실 (SFM Lab)</div>
+    <div class="kv"><b>학력</b> SNU 산림환경학 박사</div>
+    <div class="kw"><span>정밀임업</span><span>드론 LiDAR</span><span>산림 바이오매스</span><span>탄소흡수원</span><span>빅데이터 의사결정</span><span>지역임업</span><span>산림 가치사슬</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">탄소중립·산림 공익가치와 직결. 표본 선택 편의 연구는 데이터 편향 문제의식.</p>
+        <ul><li><span class="ry">2026</span> Framing Effects on Public Support and Behavioral Responses to Sustainable Forest Management in South Korea <span class="rj">— Environmental Policy and Governance</span></li><li><span class="ry">2026</span> Reexamining Korea's successful forest restoration through the revised PDCA framework <span class="rj">— Environmental Management</span></li><li><span class="ry">2026</span> Economic and Public Value of Pine Forests in South Korea <span class="rj">— Forest Science and Technology</span></li><li><span class="ry">2025</span> Sample selection bias due to omitting short trees for tree height estimation in forest inventories <span class="rj">— PLoS ONE</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">5건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">Carbon Forestry</span>
+        </div>
+        <h4>탄소흡수 기능 증진을 위한 산림시업체계 개발 연구 (국가 R&amp;D)</h4>
+        <div class="meta">산림청 국가 R&amp;D 연구보고서 · Han H* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 어떻게 숲을 가꿔야 CO₂를 더 많이 흡수할까? 간벌(솎아베기), 식재 방법, 수종 선택 등 다양한 산림 관리 방법이 탄소 흡수량에 미치는 효과를 정량화. 2050 탄소중립 달성을 위한 최적 산림 경영 방법 제시.</p>
+        <div class="impact">2050 탄소중립 국가 로드맵 산림 부문 기여</div>
+        <div class="doi"><span class="muted">forest.go.kr</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">2050</div><div class="l">탄소중립 목표<br>산림 부문 기여</div></div>
+          <div class="num"><div class="n">장기 모니터링</div><div class="l">복수 처리구<br>반복 측정</div></div>
+          <div class="num"><div class="n">최적 시업</div><div class="l">탄소 최대화<br>산림 관리법 도출</div></div>
+          <div class="num"><div class="n">국가 정책</div><div class="l">산림청 정책<br>직접 반영</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🌳</span><b>시험 처리구 설계</b><span class="sd">동일 임분에 무처리·경간벌·강간벌·수종갱신 등 처리구 반복 배치</span></li>
+            <li><span class="si">📡</span><b>LiDAR 반복 모니터링</b><span class="sd">처리 전후 및 매년 UAV LiDAR로 바이오매스 변화 추적 측정</span></li>
+            <li><span class="si">🌿</span><b>탄소 플럭스 측정</b><span class="sd">수목 성장량→탄소 흡수량 환산. 토양 탄소 변화도 병행 측정</span></li>
+            <li><span class="si">📊</span><b>처리 효과 통계 분석</b><span class="sd">처리구별 연간 탄소 흡수량 비교. 혼합선형모델로 시공간 변이 처리</span></li>
+            <li><span class="si">📋</span><b>최적 시업 지침 개발</b><span class="sd">탄소 흡수 최대화 시업 스케줄·방법 권고안 작성. 산림청 정책 반영</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>간벌 강도·시기에 따라 탄소 흡수량이 유의하게 차이남 → 최적 간벌 가이드라인 제안</li><li>잔존 수목의 직경 성장 촉진 + 탄소 저장 효율 최대화하는 시업 패키지 개발</li><li>산림청 2050 탄소중립 시나리오에 직접 활용되는 실증 데이터 제공</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">Carbon Forestry</span>
+        </div>
+        <h4>탄소흡수 기능 증진을 위한 최적 산림시업체계 개발</h4>
+        <div class="meta">산림청 국가 R&amp;D 연구보고서 · Han H* et al.</div>
+        <p class="abs">간벌·수종 갱신·식재 밀도 등 다양한 산림 관리 처리가 탄소 흡수량에 미치는 효과를 장기 모니터링으로 정량화. 2050 탄소중립 달성을 위한 최적 산림 경영 방법 제안.</p>
+        
+        <div class="doi"><span class="muted">forest.go.kr</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">2050</div><div class="l">탄소중립 목표<br>산림 부문 기여</div></div>
+          <div class="num"><div class="n">장기 모니터링</div><div class="l">복수 처리구<br>반복 측정</div></div>
+          <div class="num"><div class="n">최적 시업</div><div class="l">탄소 최대화<br>산림 관리법 도출</div></div>
+          <div class="num"><div class="n">국가 정책</div><div class="l">산림청 정책<br>직접 반영</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🌳</span><b>시험 처리구 설계</b><span class="sd">동일 임분에 무처리·경간벌·강간벌·수종갱신 등 처리구 반복 배치</span></li>
+            <li><span class="si">📡</span><b>LiDAR 반복 모니터링</b><span class="sd">처리 전후 및 매년 UAV LiDAR로 바이오매스 변화 추적 측정</span></li>
+            <li><span class="si">🌿</span><b>탄소 플럭스 측정</b><span class="sd">수목 성장량→탄소 흡수량 환산. 토양 탄소 변화도 병행 측정</span></li>
+            <li><span class="si">📊</span><b>처리 효과 통계 분석</b><span class="sd">처리구별 연간 탄소 흡수량 비교. 혼합선형모델로 시공간 변이 처리</span></li>
+            <li><span class="si">📋</span><b>최적 시업 지침 개발</b><span class="sd">탄소 흡수 최대화 시업 스케줄·방법 권고안 작성. 산림청 정책 반영</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>간벌 강도·시기에 따라 탄소 흡수량이 유의하게 차이남 → 최적 간벌 가이드라인 제안</li><li>잔존 수목의 직경 성장 촉진 + 탄소 저장 효율 최대화하는 시업 패키지 개발</li><li>산림청 2050 탄소중립 시나리오에 직접 활용되는 실증 데이터 제공</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">LiDAR Biomass</span>
+        </div>
+        <h4>Backpack- and UAV-Based Laser Scanning Application for Estimating Overstory and Understory Biomass of Forest Stands</h4>
+        <div class="meta">한국산림과학회지 (J. Korean Society of Forest Science) · Han H*, [연구팀]</div>
+        <p class="abs"><strong>무슨 연구?</strong> 산을 직접 걷는 "백팩형 라이다"와 하늘에서 나는 "드론 라이다"로 숲 전체 나무 무게(바이오매스)를 측정하는 방법 비교. 상층 나무와 하층 식생을 동시에 측정. 나무 가슴높이 지름(DBH)과 수고를 정확히 추정. 탄소흡수원 평가를 위한 객관적 측정법 개발.</p>
+        <div class="impact">한국 산림청 탄소흡수량 산정 기준 연구에 활용</div>
+        <div class="doi"><span class="muted">journal.kfs21.or.kr</span></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">Precision Forestry</span>
+        </div>
+        <h4>ICT-Based Precision Forestry for Smart Forest Management Decision-Making</h4>
+        <div class="meta">Forests (MDPI) · Han H* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> ICT(정보통신기술)를 임업에 적용한 "정밀임업" 개념 정리. 빅데이터·IoT·위성을 활용해 산림 관리 의사결정을 데이터화. 임업인의 소득 향상과 지속가능 임업을 동시에 달성하는 방법론 제시.</p>
+        <div class="impact">국내 스마트산림 정책 표준 프레임워크</div>
+        <div class="doi"><span class="muted">mdpi.com/forests</span></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">LiDAR Biomass</span>
+        </div>
+        <h4>Backpack- and UAV-Based Laser Scanning for Estimating Overstory and Understory Biomass of Forest Stands</h4>
+        <div class="meta">한국산림과학회지 (J. Korean Society of Forest Science) · Han H* et al. (SNU SFM Lab)</div>
+        <p class="abs">산림 바이오매스 측정에 백팩형 라이다(BPLS)와 드론 라이다(UAV-LS)를 동시에 적용해 상층(교목)·하층(관목·초본) 바이오매스를 분리 추정. 두 방법의 정확도와 상호 보완성 평가.</p>
+        
+        <div class="doi"><span class="muted">journal.kfs21.or.kr/112-3-363</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">2방법 비교</div><div class="l">백팩형 vs<br>드론 LiDAR</div></div>
+          <div class="num"><div class="n">상+하층</div><div class="l">교목·관목·초본<br>분리 추정</div></div>
+          <div class="num"><div class="n">DBH+수고</div><div class="l">핵심 구조 변수<br>자동 추출</div></div>
+          <div class="num"><div class="n">탄소 평가</div><div class="l">흡수원 관리<br>기초 데이터</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🎒</span><b>백팩형 LiDAR 현장 측정</b><span class="sd">산림 내 걸어다니며 레이저 포인트클라우드 수집. 하층까지 밀도 높은 측정 가능</span></li>
+            <li><span class="si">🚁</span><b>드론 LiDAR 항공 측량</b><span class="sd">UAV에 LiDAR 탑재, 임분 상공 비행. 넓은 면적 효율적 스캔</span></li>
+            <li><span class="si">📐</span><b>포인트클라우드 처리</b><span class="sd">두 방법의 포인트클라우드 정합. 개별 수목 분리(Individual Tree Segmentation)</span></li>
+            <li><span class="si">📏</span><b>DBH·수고 자동 추출</b><span class="sd">분리된 개별 수목에서 흉고직경(DBH)·수고 자동 계산. 현장 측정값 검증</span></li>
+            <li><span class="si">⚖️</span><b>바이오매스 환산</b><span class="sd">DBH·수고·종별 환산식으로 상·하층 바이오매스 계산. 탄소 흡수량 산정</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>백팩형 LiDAR는 하층 식생까지 포함한 정밀 측정 강점. UAV LiDAR는 넓은 면적을 빠르게 커버</li><li>두 방법 결합 시 상층 DBH·수고 및 하층 바이오매스까지 통합 추정 가능</li><li>탄소흡수원으로서 산림 평가에 객관적·반복적 측정 방법론 제공. 국가 탄소 인벤토리 기여</li></ul>
+        </div></details>
+      </article>
+    </div>
+  </section>
+  <section class="prof" id="p9">
+    <header class="prof-h">
+      <div class="pe">🌡️</div>
+      <div class="pn">
+        <h3>김연욱 <span class="en">Yeonwoo Kim</span></h3>
+        <div class="pr">조교수 · 생태조경·지역시스템공학부</div>
+      </div>
+      <div class="pm">
+        <div><b>—</b><span>h-index</span></div>
+        <div><b>—</b><span>인용</span></div>
+      </div>
+    </header>
+    <p class="tl">기후변화에 적응하면서 온실가스도 줄이는 기후스마트농업 시스템을 만든다.</p>
+    <div class="kv"><b>연구실</b> 기후스마트농업·수문학 연구실</div>
+    <div class="kv"><b>학력</b> SNU 농학 박사</div>
+    <div class="kw"><span>기후스마트농업</span><span>수문학 모델</span><span>온실가스 감축</span><span>농업용수</span><span>SWAT+</span><span>탄소중립</span><span>기후변화 적응</span></div>
+    
+      <div class="recent">
+        <div class="rt">최근 연구 <span class="rb">2024~2026</span></div>
+        <p class="rn">2025년 9월 부임한 신임 교수. 서울대 작물과학 학·석·박사 → 독일 ZALF 박사후 → 조경·지역시스템공학부.</p>
+        <ul><li><span class="ry">2026</span> 기후지능농업시스템공학 연구실 (Climate Smart Agricultural Systems Engineering) <span class="rj">— 연구실</span></li><li><span class="ry">2026</span> 기후 데이터를 활용한 작물 수량 손실 위험 평가 <span class="rj">— 연구 주제</span></li><li><span class="ry">2026</span> 담당: 지역기후시스템공학 · 농업방재공학 · 농업시스템 모델링과 지속가능성 평가 <span class="rj">— 학부 과목</span></li></ul>
+      </div>
+    <div class="papers">
+      <div class="rt">대표 논문 <span class="rb">4건</span></div>
+      
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2025</span>
+          <span class="tag">Hydrology Model</span>
+        </div>
+        <h4>Assessing Future Climate Change Impacts on Hydrological Processes in an Agricultural Watershed Using SWAT+</h4>
+        <div class="meta">한국토양비료학회지 · Kim Y* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 기후변화가 농업 유역의 물 순환에 어떤 영향을 미치는지 SWAT+ 모델로 시뮬레이션. 미래 강수 패턴 변화에 따른 농업용수 공급 안정성 평가. 봄·겨울 가뭄 증가, 여름 집중호우 증가라는 이중고를 동시에 분석.</p>
+        <div class="impact">농업 저수지·관개 시스템 설계 기준 제공</div>
+        <div class="doi"><span class="muted">kjssf.org</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">SWAT+</div><div class="l">최신 수문 모델<br>적용</div></div>
+          <div class="num"><div class="n">SSP 시나리오</div><div class="l">다중 기후<br>시나리오 분석</div></div>
+          <div class="num"><div class="n">유역 단위</div><div class="l">농업 집수구역<br>물 수지 분석</div></div>
+          <div class="num"><div class="n">2050년</div><div class="l">미래 물 부족<br>예측 리스크</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">☁️</span><b>기후 시나리오 입력</b><span class="sd">CMIP6 기반 SSP1-2.6·SSP5-8.5 등 다중 시나리오 기후 데이터 다운스케일링</span></li>
+            <li><span class="si">🗺️</span><b>SWAT+ 모델 구축</b><span class="sd">유역 DEM·토양·토지이용·기상 데이터로 수문 모델 매개변수 보정</span></li>
+            <li><span class="si">💧</span><b>수문 과정 시뮬레이션</b><span class="sd">강수·증발산·지표유출·기저유량·토양수분 일별 시뮬레이션 (2020~2100년)</span></li>
+            <li><span class="si">📊</span><b>시나리오별 비교 분석</b><span class="sd">현재 대비 2050·2100년 농업용수 가용량 변화율 및 공급 불안정 일수 산출</span></li>
+            <li><span class="si">💡</span><b>적응 전략 도출</b><span class="sd">저수지 용량 확대·절수 관개·작기 조정 등 기후 적응 관리 방안 비용-편익 분석</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>여름철 집중 강수 증가 + 봄·겨울 가뭄 심화 → 농업용수 공급 불안정성 증가</li><li>기온 상승이 잠재증발산량 증가로 이어져 토양 수분 손실 가속화. 지하수 재충전 감소</li><li>농업 저수지 설계 기준 및 관개 시스템을 기후변화 시나리오에 맞게 재설계 필요</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">CSA Meta-analysis</span>
+        </div>
+        <h4>기후스마트농업(CSA) 전략이 온실가스 배출 및 작물 생산성에 미치는 효과 메타분석</h4>
+        <div class="meta">Agriculture, Ecosystems &amp; Environment · Kim Y* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 전세계 CSA 연구들을 종합 분석(메타분석). ① 작물 생산성 향상 ② 기후변화 적응 ③ 온실가스 감축—이 세 목표를 동시에 달성하는 농업 관리 방법은 무엇인지 데이터로 규명. 최적 CSA 전략 패키지 제안.</p>
+        <div class="impact">국내외 CSA 정책 수립 핵심 참고 자료</div>
+        <div class="doi"><span class="muted">sciencedirect.com</span></div>
+        
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2024</span>
+          <span class="tag">Rice GHG</span>
+        </div>
+        <h4>논 메탄 배출량 감소를 위한 간헐 관개 최적화 연구</h4>
+        <div class="meta">Field Crops Research / Agricultural Systems · Kim Y* et al.</div>
+        <p class="abs">벼농사에서 발생하는 메탄(CH₄)은 전체 농업 온실가스의 주요 원인. 물 관리 방식(상시 담수 vs 간헐 관개)이 메탄 배출과 벼 수확량에 미치는 영향 현장 실험으로 정량화.</p>
+        
+        <div class="doi"><span class="muted">elsevier.com/fieldcrops</span></div>
+        <details class="deep"><summary>실험 과정 · 결과 수치 · 결론 펼치기</summary>
+        <div class="nums">
+          <div class="num"><div class="n">30~50%</div><div class="l">간헐 관개 시<br>메탄 배출 감소</div></div>
+          <div class="num"><div class="n">수확량 유지</div><div class="l">메탄 감축과<br>수확량 트레이드오프 없음</div></div>
+          <div class="num"><div class="n">N₂O 고려</div><div class="l">아산화질소 상쇄<br>효과 동시 분석</div></div>
+          <div class="num"><div class="n">탄소중립</div><div class="l">국가 농업 GHG<br>감축 기여</div></div>
+        </div>
+        <div class="block">
+          <div class="bt">실험 과정</div>
+          <ol class="steps">
+            <li><span class="si">🌾</span><b>논 처리구 설계</b><span class="sd">상시 담수(CF) vs 간헐 관개(AWD) 처리구 포장 반복 배치. 수도권 지역 현장 실험</span></li>
+            <li><span class="si">💧</span><b>물 관리 처리 실시</b><span class="sd">토양 수분 센서 기반 자동 관개 제어. AWD는 토양 균열 발생 전 재관수</span></li>
+            <li><span class="si">🔬</span><b>온실가스 플럭스 측정</b><span class="sd">밀폐 챔버법으로 CH₄·N₂O 배출량 생육기간 전체 반복 측정</span></li>
+            <li><span class="si">🌾</span><b>수확량 조사</b><span class="sd">성숙기 수확 후 수량 구성요소(수수·낱알 수·등숙률·천립중) 측정</span></li>
+            <li><span class="si">📊</span><b>순 온난화 잠재력 계산</b><span class="sd">CH₄ + N₂O를 CO₂ 환산값(GWP100)으로 통합. AWD의 순 기후 편익 산출</span></li>
+          </ol>
+        </div>
+        <div class="block">
+          <div class="bt">결론</div>
+          <ul class="concl"><li>간헐 관개(AWD: Alternate Wetting and Drying)로 메탄 30~50% 감축. 수확량은 유지 또는 소폭 증가</li><li>메탄 감소 시 아산화질소(N₂O) 소폭 증가하는 상쇄 효과 존재 → 순온난화 잠재력(GWP) 기준 평가 필요</li><li>물 절약 + 온실가스 감축 + 수확량 유지의 세 가지 CSA 목표 동시 달성 가능성 증명</li></ul>
+        </div></details>
+      </article>
+      <article class="paper">
+        <div class="ph">
+          <span class="yr">2023</span>
+          <span class="tag">GHG Rice</span>
+        </div>
+        <h4>논 메탄 배출량 감소를 위한 물 관리 최적화 연구</h4>
+        <div class="meta">Field Crops Research · Kim Y* et al.</div>
+        <p class="abs"><strong>무슨 연구?</strong> 벼농사는 메탄(CH₄) 배출의 주요 원인! 물을 어떻게 관리하느냐에 따라 논에서 나오는 메탄 양이 크게 달라짐. 간헐 관개, 중간 낙수 등 물 절약 방법이 메탄 30~50% 줄이면서 수확량은 유지. 탄소중립 농업 핵심 기술.</p>
+        <div class="impact">한국 농업 온실가스 감축 로드맵 기여</div>
+        <div class="doi"><span class="muted">elsevier.com</span></div>
+        
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    최신 연구 출처 — <a href="https://snu.elsevierpure.com/" target="_blank" rel="noopener">SNU Pure</a> 등재 논문(2024~2026),
+    학과·연구실 공식 페이지. h-index·인용수는 Scopus 기준이며 조회 시점에 따라 달라진다.<br>
+    실험 과정·결과 수치는 기존 심층 분석 문서에서 가져왔다. 통합·갱신 2026-09-21.
+  </footer>
+
+</div>
+</body>
+</html>

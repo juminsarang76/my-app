@@ -61,8 +61,9 @@ public/
 ├── univ/              ← 입시전쟁 계열 (개인정보 — .gitignore·.vercelignore 로 제외, 로컬 전용)
 │   └── 입시전쟁.html   허브. 13개 형제 문서 + "오늘 입시뉴스" 섹션
 ├── docs/
-│   ├── minjun/        민준입시.html 허브 + 2027 대입 자료
-│   │   └── snu/       SNU 스마트시스템과학과 9개
+│   ├── minjun/        민준입시.html 허브 + 2027 대입 자료 + 면접준비.html
+│   │   └── snu/       SNU 스마트시스템과학과 자료
+│   │                   교수연구_통합분석.html = 구 「분석대시보드」+「실험·결과 심층분석」 통합본
 │   ├── lecture/       강의.html 허브 + 강의 자료
 │   └── wow/
 ├── MD/                ← `/articlemd` 가 참조. 옮기지 말 것
