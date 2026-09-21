@@ -20,6 +20,7 @@ export default function AdminPage() {
   const [approveTarget, setApproveTarget] = useState<HaruUser | null>(null)
   const [selectedMenus, setSelectedMenus] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
+  const [tempPassword, setTempPassword] = useState<{ name: string; email: string; password: string } | null>(null)
 
   useEffect(() => {
     const user = getStoredUser()
@@ -77,6 +78,20 @@ export default function AdminPage() {
     setUsers(prev => prev.map(u => u.id !== userId ? u : { ...u, status: 'pending', permissions: [] }))
   }
 
+  // 비밀번호는 해시로만 저장돼 조회가 불가능하다. 임시값을 새로 발급해 한 번 보여주고
+  // 당사자가 /password 에서 바꾸게 한다.
+  async function handleResetPassword(userId: string) {
+    if (!confirm('이 사용자의 비밀번호를 임시값으로 초기화할까요?\n기존 비밀번호는 즉시 사용할 수 없게 됩니다.')) return
+    const res = await fetch('/api/admin/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', authorization: 'Bearer ' + adminToken },
+      body: JSON.stringify({ user_id: userId }),
+    })
+    const data = await res.json()
+    if (res.ok) setTempPassword({ name: data.name, email: data.email, password: data.tempPassword })
+    else alert(data.error ?? '초기화에 실패했습니다.')
+  }
+
   async function togglePermission(userId: string, menuKey: string, granted: boolean) {
     await fetch('/api/admin/permissions', {
       method: granted ? 'DELETE' : 'POST',
@@ -101,6 +116,30 @@ export default function AdminPage() {
 
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: 860, margin: '0 auto', padding: '32px 16px' }}>
+
+      {/* 임시 비밀번호 — 닫으면 다시 볼 수 없으므로 당사자에게 바로 전달해야 한다 */}
+      {tempPassword && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999, padding: 20 }}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: '28px 24px', maxWidth: 440, width: '100%' }}>
+            <h3 style={{ margin: '0 0 4px', fontSize: 17, color: '#1e293b' }}>임시 비밀번호 발급</h3>
+            <p style={{ margin: '0 0 16px', fontSize: 13, color: '#64748b' }}>
+              {tempPassword.name} · {tempPassword.email}
+            </p>
+            <div style={{ background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 10, padding: '14px 16px', marginBottom: 14, textAlign: 'center' }}>
+              <code style={{ fontSize: 20, fontWeight: 700, letterSpacing: 1, color: '#0369A1', wordBreak: 'break-all' }}>
+                {tempPassword.password}
+              </code>
+            </div>
+            <div style={{ background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: 8, padding: '10px 14px', marginBottom: 18, fontSize: 12.5, color: '#92400E', lineHeight: 1.6 }}>
+              이 창을 닫으면 다시 볼 수 없습니다. 당사자에게 전달하고,
+              로그인 후 <b>비밀번호</b> 메뉴에서 바꾸도록 안내해주세요.
+            </div>
+            <button onClick={() => setTempPassword(null)} style={{ width: '100%', padding: '11px', background: '#1D9E75', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>
+              확인했습니다
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 승인 모달 */}
       {approveTarget && (
@@ -173,6 +212,15 @@ export default function AdminPage() {
                       style={{ padding: '7px 16px', background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>거부</button>
                     <button onClick={() => handleDelete(user.id)}
                       style={{ padding: '7px 14px', background: '#F1F5F9', color: '#94a3b8', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>삭제</button>
+                  </div>
+                )}
+
+                {tab === 'approved' && (
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => handleResetPassword(user.id)}
+                      style={{ padding: '7px 14px', background: '#FEF3C7', color: '#92400E', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>비밀번호 초기화</button>
+                    <button onClick={() => handleReset(user.id)}
+                      style={{ padding: '7px 14px', background: '#F1F5F9', color: '#64748b', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>승인 재설정</button>
                   </div>
                 )}
 

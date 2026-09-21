@@ -49,6 +49,7 @@ Path alias `@/*` → project root (e.g. `@/app/lib/news`).
 | `/stocks` | Server | 증시지수 — Yahoo Finance data, TradingView links, 5 min revalidate |
 | `/ipsi-news` | Client | 오늘 입시뉴스 — `/api/admission-news/daily` 조회, 카카오톡 전송 |
 | `/password` | Client | 비밀번호 변경 — 본인 세션 토큰으로 인가 |
+| `/reset` | Client | 비밀번호 재설정 — 카카오톡으로 받은 1회성 토큰 사용 |
 | `/photos` | Server | 플레이스홀더 |
 
 ### 정적 문서 (`public/`)
@@ -94,6 +95,9 @@ Hobby 플랜은 크론 2개가 상한이므로 더 추가하려면 기존 것을
 | `/api/realtime-report` | POST | 수집 → 요약 → Supabase 저장. Kakao 전송 없음 |
 | `/api/send-kakao` | POST | `{ summary, date, title?, link? }` body → Kakao Talk 전송. `title`/`link` 생략 시 실시간요약 문구 |
 | `/api/auth/change-password` | POST | 본인 비밀번호 변경. `Authorization: Bearer <세션토큰>` 필요 |
+| `/api/auth/forgot` | POST | 비밀번호 찾기. **관리자 계정 전용** — 카카오 "나에게 보내기"는 앱 소유자에게만 가기 때문. 계정 유무와 무관하게 같은 응답 |
+| `/api/auth/reset` | POST | 1회성 토큰으로 새 비밀번호 설정 |
+| `/api/admin/reset-password` | POST | 관리자가 타 사용자 비밀번호를 임시값으로 초기화. 관리자 본인은 불가 |
 | `/api/admission-news` | GET | 2027 대입 뉴스 분석 (6월~오늘, 저장 없음) |
 | `/api/admission-news/daily` | GET | 최신 `ipsi_` 행 조회 — `입시전쟁.html`이 호출 |
 | `/api/admission-news/daily?run=1` | GET | 오늘 입시뉴스 수집 → 요약 → 저장 → Kakao 전송. Vercel 크론이 매일 KST 22:00 호출 (Vercel 크론은 GET만 보내므로 생성도 GET) |
@@ -160,6 +164,9 @@ geeks_news   jsonb
   수동 실행 시에도 같은 헤더가 필요하다.
 - **비밀번호**: `app/lib/password.ts`. 신규는 `scrypt$<salt>$<derived>` 형식으로 저장한다.
   기존 솔트 없는 SHA-256 해시는 로그인에 성공하는 순간 자동으로 scrypt 로 교체된다(`needsUpgrade`) — 별도 마이그레이션 불필요.
+- **비밀번호 재설정**: 링크에는 난수 원문, 서버(`app_state.password_reset`)에는 sha256 해시만 둔다.
+  TTL 30분, 사용 즉시 무효화하는 1회성이다(`app/lib/reset.ts`).
+  비밀번호는 복호화가 불가능하므로 **조회 기능은 만들 수 없다** — 재설정만 가능하다.
 - 보안 헤더는 `next.config.ts`의 `headers()`에서 전 경로에 적용한다.
 
 ### Color palette

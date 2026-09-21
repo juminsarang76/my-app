@@ -12,6 +12,30 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const [forgotBusy, setForgotBusy] = useState(false)
+  const [forgotMsg, setForgotMsg] = useState('')
+
+  // 카카오 "나에게 보내기"는 앱 소유자에게만 가므로 관리자 계정 전용 경로다.
+  // 서버는 계정 존재 여부와 무관하게 같은 응답을 돌려준다.
+  async function handleForgot() {
+    if (!email.trim()) { setForgotMsg('이메일을 먼저 입력해주세요.'); return }
+    setForgotBusy(true)
+    setForgotMsg('')
+    try {
+      const res = await fetch('/api/auth/forgot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      })
+      const data = await res.json()
+      setForgotMsg(data.message ?? '요청을 처리했습니다.')
+    } catch {
+      setForgotMsg('요청 중 오류가 발생했습니다.')
+    } finally {
+      setForgotBusy(false)
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -82,6 +106,18 @@ export default function LoginPage() {
             {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
+
+        <div style={{ textAlign: 'center', marginTop: 16, fontSize: 13 }}>
+          <button type="button" onClick={handleForgot} disabled={forgotBusy}
+            style={{ background: 'none', border: 'none', padding: 0, color: '#64748b', fontSize: 13, textDecoration: 'underline', cursor: forgotBusy ? 'default' : 'pointer', fontFamily: 'inherit' }}>
+            {forgotBusy ? '전송 중…' : '비밀번호를 잊으셨나요?'}
+          </button>
+        </div>
+        {forgotMsg && (
+          <div style={{ marginTop: 10, background: '#E0F2FE', border: '1px solid #BAE6FD', borderRadius: 8, padding: '10px 14px', fontSize: 12.5, color: '#0284C7', lineHeight: 1.6 }}>
+            {forgotMsg}
+          </div>
+        )}
 
         <div style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: '#64748b' }}>
           계정이 없으신가요?{' '}
