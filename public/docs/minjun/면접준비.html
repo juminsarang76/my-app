@@ -57,6 +57,12 @@
   th{ font-size:12px; color:var(--muted); font-weight:700; letter-spacing:.04em; }
   .tw{ overflow-x:auto; }
 
+  table.grid{ font-size:12.5px; min-width:840px; }
+  table.grid th{ background:var(--sunken); white-space:nowrap; }
+  table.grid td{ vertical-align:top; line-height:1.55; }
+  table.grid .nm2{ font-weight:700; white-space:nowrap; font-size:13.5px; }
+  table.grid .ed{ font-size:11.5px; color:var(--ink2); white-space:nowrap; }
+  table.grid .u{ color:var(--muted); font-size:11px; }
   .prof{ background:var(--raised); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:10px; }
   .prof summary{ cursor:pointer; list-style:none; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
   .prof summary::-webkit-details-marker{ display:none; }
@@ -140,7 +146,108 @@
     특히 세특·동아리·탐구 보고서에 적힌 용어 중 <b>스스로 설명 못 하는 단어가 하나라도 있으면 그게 질문이 된다.</b>
   </div>
 
-  <h2 class="sec">2. 학과를 아는가 — 교수 9인의 지금 연구</h2>
+  <h2 class="sec" id="oneview">2. 한눈에 보기 — 교수 9인</h2>
+  <p class="lede">이름 · 원소속 · 출신 대학 · 대표 논문 한 줄 · 연구실을 한 표에 모았다.
+     면접 전날 이것만 훑어도 된다.</p>
+
+  <div class="tw"><table class="grid">
+    <thead>
+      <tr><th>교수</th><th>서울대 소속</th><th>학사</th><th>석사</th><th>박사</th><th>대표 논문 (한 줄)</th><th>연구실</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="nm2">김광수</td>
+        <td>농림생물자원학부<br>작물생명과학전공</td>
+        <td class="ed">—</td>
+        <td class="ed">—</td>
+        <td class="ed">Iowa State Univ.<br>농업기상학</td>
+        <td>저사양 IoT 기기에서 <b>칼만 필터</b>로 토양 상태를 실시간 추정<br><span class="u">Scientific Reports, 2025</span></td>
+        <td><span class="u">미확인 · 식물생명과학연구소장</span></td>
+      </tr>
+      <tr>
+        <td class="nm2">김학진</td>
+        <td>바이오시스템공학과</td>
+        <td class="ed">—</td>
+        <td class="ed">—</td>
+        <td class="ed">Univ. of Missouri<br>정밀농업</td>
+        <td>드론 영상과 객체인식으로 <b>녹차 새싹</b>을 찾아 지도로 만듦<br><span class="u">Smart Agricultural Technology, 2026</span></td>
+        <td><a href="http://bicpal.snu.ac.kr" target="_blank" rel="noopener">바이오시스템제어 및 정밀농업</a><br><span class="u">bicpal.snu.ac.kr</span></td>
+      </tr>
+      <tr>
+        <td class="nm2">유경록</td>
+        <td>농생명공학부<br>동물생명공학전공</td>
+        <td class="ed">서울대 농생대<br>(2007)</td>
+        <td class="ed">석·박 통합 추정</td>
+        <td class="ed">서울대 수의대<br>(2013)</td>
+        <td>간 <b>오가노이드</b>로 약 후보를 걸러 모자반에서 항섬유화 물질 발굴<br><span class="u">Scientific Reports, 2026</span></td>
+        <td><a href="https://calslab.snu.ac.kr/cellyu/" target="_blank" rel="noopener">동물세포공학 연구실</a><br><span class="u">calslab.snu.ac.kr/cellyu</span></td>
+      </tr>
+      <tr>
+        <td class="nm2">김태형</td>
+        <td>바이오시스템공학과</td>
+        <td class="ed">—</td>
+        <td class="ed">성균관대<br>공학</td>
+        <td class="ed">서울대<br>공학</td>
+        <td><b>자기지도 학습</b>으로 식물병을 알아보는 범용 AI 모델(LeafVision) 구축<br><span class="u">Engineering Applications of AI, 2026</span></td>
+        <td><a href="https://laba.snu.ac.kr" target="_blank" rel="noopener">LABA · AI and Agricultural Big Data</a><br><span class="u">laba.snu.ac.kr</span></td>
+      </tr>
+      <tr>
+        <td class="nm2">김형석</td>
+        <td>농림생물자원학부<br>작물생명과학전공</td>
+        <td class="ed">—</td>
+        <td class="ed">—</td>
+        <td class="ed">UIUC<br>환경과학</td>
+        <td>식물이 내는 <b>엽록소 형광</b>으로 광합성을 엽록체부터 지구 규모까지 측정<br><span class="u">Annual Review of Plant Biology, 2026</span></td>
+        <td><a href="https://ceslab.snu.ac.kr" target="_blank" rel="noopener">CES@SNU · Crop, Environment, Sustainability</a><br><span class="u">ceslab.snu.ac.kr</span></td>
+      </tr>
+      <tr>
+        <td class="nm2">안태인</td>
+        <td>농림생물자원학부<br>원예생명공학전공</td>
+        <td class="ed">—</td>
+        <td class="ed">—</td>
+        <td class="ed">서울대<br>원예생명공학</td>
+        <td>광합성 연구를 돕는 <b>LLM 기반 지식그래프</b> 시스템 설계<br><span class="u">IEEE Access, 2026</span></td>
+        <td><span class="u">phpf.snu.ac.kr — 등록됐으나 응답 없음</span></td>
+      </tr>
+      <tr>
+        <td class="nm2">최종우</td>
+        <td>농경제사회학부<br>지역정보학전공</td>
+        <td class="ed">—</td>
+        <td class="ed">Univ. of Michigan<br>(Ann Arbor)</td>
+        <td class="ed">Univ. of Minnesota<br>응용경제학</td>
+        <td>스마트팜이 퍼질 때 생기는 <b>정부–농가 정보 비대칭</b> 문제 분석<br><span class="u">연구 주제</span></td>
+        <td><a href="https://lim.snu.ac.kr/" target="_blank" rel="noopener">LIM · 산업경영연구실</a><br><span class="u">lim.snu.ac.kr</span></td>
+      </tr>
+      <tr>
+        <td class="nm2">한희</td>
+        <td>농림생물자원학부<br>산림환경학전공</td>
+        <td class="ed">서울대<br>(2007)</td>
+        <td class="ed">서울대<br>(2009)</td>
+        <td class="ed">서울대<br>(2014)</td>
+        <td>산림경영을 <b>어떻게 설명하느냐</b>에 따라 대중의 지지가 달라짐<br><span class="u">Environmental Policy and Governance, 2026</span></td>
+        <td><a href="https://sites.google.com/view/snuformgt" target="_blank" rel="noopener">SFM LAB · 스마트산림경영</a><br><span class="u">sites.google.com/view/snuformgt</span></td>
+      </tr>
+      <tr>
+        <td class="nm2">김연욱</td>
+        <td>생태조경·지역시스템<br>공학부</td>
+        <td class="ed">서울대 작물과학<br>(2014)</td>
+        <td class="ed">서울대<br>(2016)</td>
+        <td class="ed">서울대<br>(2019)</td>
+        <td>기후 데이터로 <b>작물 수량 손실 위험</b>을 평가<br><span class="u">연구 주제 · 2025.09 부임</span></td>
+        <td><a href="https://csase.snu.ac.kr" target="_blank" rel="noopener">기후지능농업시스템공학</a><br><span class="u">csase.snu.ac.kr</span></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout">
+    <b>표 읽을 때 주의.</b> 학사·석사가 <code>—</code>인 분들은 공개된 자료에서 확인되지 않았다.
+    학과 명부와 CALS 프로필 모두 <b>박사 학위만</b> 싣는다.
+    또 직급이 자료마다 다르다 — 한희 교수는 연구실 페이지에 2026년부터 부교수로 적혀 있으나
+    학과 명부에는 조교수다. 최근 승진이 반영되지 않은 것으로 보인다.
+    면접에서 직급을 단정해 말하지 않는 편이 안전하다.
+  </div>
+
+  <h2 class="sec">3. 교수별 상세 — 지금 하는 연구</h2>
   <p class="lede">"왜 이 학과인가"에 답하려면 이 학과가 <b>실제로 무엇을 하는 곳인지</b> 알아야 한다.
      아래는 2025~2026년에 실제로 나온 논문이다. 오래된 소개자료가 아니라 지금 굴러가는 연구다.</p>
 
@@ -324,7 +431,7 @@
       기후 재해와 농업 피해를 다루므로 기후변화 관련 탐구와 직접 이어진다.</div>
   </details>
 
-  <h2 class="sec" id="labs">3. 연구실 들여다보기</h2>
+  <h2 class="sec" id="labs">4. 연구실 들여다보기</h2>
   <p class="lede">연구실 사이트에는 학과 소개에 없는 것이 있다. <b>지금 어떤 과제를 받아 돌리는지</b>,
      대학원생이 무엇을 하는지, 어떤 과목을 가르치는지. 면접에서 한 문장만 인용해도 무게가 다르다.</p>
 
@@ -456,7 +563,7 @@
     원예생명공학전공은 교수별 연구실 주소를 <code>[연구분야].snu.ac.kr</code> 형태로 나란히 적어둔다.
   </div>
 
-  <h2 class="sec">4. 나올 수밖에 없는 질문</h2>
+  <h2 class="sec">5. 나올 수밖에 없는 질문</h2>
   <p class="lede">개별 질문이라 예측은 불가능하지만, <b>구조상 반드시 나오는 유형</b>은 있다.</p>
 
   <div class="card">
@@ -488,7 +595,7 @@
     </div>
   </div>
 
-  <h2 class="sec">5. 남은 기간 운용</h2>
+  <h2 class="sec">6. 남은 기간 운용</h2>
   <p class="lede">수능(11/19)이 먼저고 면접(12/04)이 뒤다. 순서가 정해져 있다.</p>
 
   <div class="tw"><table>
