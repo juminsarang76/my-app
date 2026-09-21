@@ -836,5 +836,24 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
 animateBars();
 </script>
+
+<!-- 민준입시로 돌아가기 -->
+<a href="강의.html" data-backbtn class="mj-back">
+  <span class="mj-back-ico">←</span><span>강의 목록</span>
+</a>
+<style>
+  .mj-back{
+    position:fixed; left:16px; bottom:16px; z-index:99999;
+    display:inline-flex; align-items:center; gap:7px;
+    padding:9px 15px 9px 12px; border-radius:999px;
+    background:#0369A1; color:#fff !important;
+    font:600 13px/1.2 "IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+    text-decoration:none !important; box-shadow:0 3px 14px rgba(0,0,0,.22);
+    border:none; transition:transform .12s ease, background .12s ease;
+  }
+  .mj-back:hover{ background:#075985; transform:translateY(-1px); }
+  .mj-back-ico{ font-size:15px; line-height:1; }
+  @media print{ .mj-back{ display:none !important; } }
+</style>
 </body>
 </html>
